@@ -30,18 +30,17 @@ is_idle = (droid) ->
 # Metrics
 
 # The Group Class
-Group = (group, orders, reserve) ->
-  # If we're not given a list of droids,
-  # get them from enumDroid (all of the player's pieces).
-  group = enumDroid()  unless group
-  @group = group
-  # orders is a list of things for the group to do
-  orders = []  unless orders
-  @orders = orders
-  # reserve are the units we can draw from.
-  reserve = []  unless reserve
-  @reserve = reserve
-  @recruit = (n, type, at) ->
+class Group
+  constructor: (@group, @orders, @reserve) ->
+    # If we're not given a list of droids,
+    # get them from enumDroid (all of the player's pieces).
+    @group = enumDroid()  unless @group
+    # orders is a list of things for the group to do
+    @orders = []  unless @orders
+    # reserve are the units we can draw from.
+    @reserve = []  unless @reserve
+
+  recruit: (n, type, at) ->
     recruits = @reserve
     # NOTE: recruits won't be this.reserve if filtered!
     recruits = recruits.filter(type)  if type
@@ -53,7 +52,8 @@ Group = (group, orders, reserve) ->
       @reserve.removeObject droid
       @group.push droid
       i++
-  @cut = (n, type, at) ->
+
+  cut: (n, type, at) ->
     cuts = @group
     # NOTE: cuts won't be this.group if filtered!
     cuts = cuts.filter(type)  if type
@@ -65,14 +65,16 @@ Group = (group, orders, reserve) ->
       @group.removeObject droid
       @reserve.push droid
       i++
-  @buildDroid = (order) ->
+
+  buildDroid: (order) ->
     factories = @group.factories().idle()
     i = 0
     while i < factories.length
       return (factories[i])  if buildDroid(factories[i], order.name, order.body, order.propulsion, "", order.droid_type, order.turret)
       i++
     null
-  @build = (order) ->
+
+  build: (order) ->
     builders = [] # going to return the number of builders
     structure = order.structure
     if isStructureAvailable(structure)
@@ -98,8 +100,6 @@ Group = (group, orders, reserve) ->
             builders.push trucks[i]  if trucks[i].build(structure, pos)
             i++
     builders
-  # return this
-  @
 # The Group Class End
 
 CyberBorg.is_truck = (droid) ->

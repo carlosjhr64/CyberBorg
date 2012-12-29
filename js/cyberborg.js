@@ -23,14 +23,18 @@ is_idle = function(droid) {
   return not_idle.indexOf(droid.order) === Array.NONE;
 };
 
-Group = function(group, orders, reserve) {
-  if (!group) group = enumDroid();
-  this.group = group;
-  if (!orders) orders = [];
-  this.orders = orders;
-  if (!reserve) reserve = [];
-  this.reserve = reserve;
-  this.recruit = function(n, type, at) {
+Group = (function() {
+
+  function Group(group, orders, reserve) {
+    this.group = group;
+    this.orders = orders;
+    this.reserve = reserve;
+    if (!this.group) this.group = enumDroid();
+    if (!this.orders) this.orders = [];
+    if (!this.reserve) this.reserve = [];
+  }
+
+  Group.prototype.recruit = function(n, type, at) {
     var droid, i, recruits, _results;
     recruits = this.reserve;
     if (type) recruits = recruits.filter(type);
@@ -46,7 +50,8 @@ Group = function(group, orders, reserve) {
     }
     return _results;
   };
-  this.cut = function(n, type, at) {
+
+  Group.prototype.cut = function(n, type, at) {
     var cuts, droid, i, _results;
     cuts = this.group;
     if (type) cuts = cuts.filter(type);
@@ -62,7 +67,8 @@ Group = function(group, orders, reserve) {
     }
     return _results;
   };
-  this.buildDroid = function(order) {
+
+  Group.prototype.buildDroid = function(order) {
     var factories, i;
     factories = this.group.factories().idle();
     i = 0;
@@ -74,7 +80,8 @@ Group = function(group, orders, reserve) {
     }
     return null;
   };
-  this.build = function(order) {
+
+  Group.prototype.build = function(order) {
     var at, builders, count, i, pos, structure, trucks;
     builders = [];
     structure = order.structure;
@@ -105,8 +112,10 @@ Group = function(group, orders, reserve) {
     }
     return builders;
   };
-  return this;
-};
+
+  return Group;
+
+})();
 
 CyberBorg.is_truck = function(droid) {
   return droid.droidType === DROID_CONSTRUCT;
