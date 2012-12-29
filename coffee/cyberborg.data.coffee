@@ -8,11 +8,10 @@ CyberBorg::base_orders = ->
   p33 = -> p(3,3)
   p11 = -> p(1,1)
 
-  order = (params) ->
-    # str, x, y, p = *params
-    p = params[3]
-    p.structure = params[0]
-    p.at = x: params[1], y: params[2]
+  order = (str, x, y, p) ->
+    # str, x, y, p = data...
+    p.structure = str
+    p.at = x: x, y: y
     p
 
   # Phase 1, p33(),  Build up the initial base as fast a posible
@@ -38,7 +37,7 @@ CyberBorg::base_orders = ->
   data.push(p11()) for data in phase2
 
   orders = phase1.concat(phase2)
-  orders.map (data) -> order(data)
+  orders.map (data) -> order(data...)
 
 CyberBorg::factory_orders = ->
   # A wheeled viper

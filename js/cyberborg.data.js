@@ -17,12 +17,11 @@ CyberBorg.prototype.base_orders = function() {
   p11 = function() {
     return p(1, 1);
   };
-  order = function(params) {
-    p = params[3];
-    p.structure = params[0];
+  order = function(str, x, y, p) {
+    p.structure = str;
     p.at = {
-      x: params[1],
-      y: params[2]
+      x: x,
+      y: y
     };
     return p;
   };
@@ -38,7 +37,7 @@ CyberBorg.prototype.base_orders = function() {
   }
   orders = phase1.concat(phase2);
   return orders.map(function(data) {
-    return order(data);
+    return order.apply(null, data);
   });
 };
 
