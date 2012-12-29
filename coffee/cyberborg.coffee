@@ -1,28 +1,28 @@
 # Let's keep our Array hacks in their own files for now.
+include "multiplay/skirmish/cyberborg.array.js"
 
 # Let's keep our Object hacks in their own files for now.
+include "multiplay/skirmish/cyberborg.object.js"
+
 CyberBorg = ->
-  
   # Constants
   @NORTH = 0
   @EAST = 90
   @SOUTH = 180
   @WEST = 270
   @ALL_PLAYERS = -1
-  
   # Attributes can be assigned dynamically
   # this.reserve = null;
   # this.resources = null;
   # this.etc...
   @get_resources = (at) ->
     enumFeature(@ALL_PLAYERS, "OilResource").nearest at
+  @
 
 # Filters
 is_idle = (droid) ->
-  
   # It's not really a droid  :P
   return (structureIdle(droid))  if droid.type is STRUCTURE
-  
   # It's a droid
   not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH]
   not_idle.indexOf(droid.order) is Array.NONE
@@ -31,58 +31,47 @@ is_idle = (droid) ->
 
 # The Group Class
 Group = (group, orders, reserve) ->
-  
   # If we're not given a list of droids,
   # get them from enumDroid (all of the player's pieces).
   group = enumDroid()  unless group
   @group = group
-  
   # orders is a list of things for the group to do
   orders = []  unless orders
   @orders = orders
-  
   # reserve are the units we can draw from.
   reserve = []  unless reserve
   @reserve = reserve
   @recruit = (n, type, at) ->
     recruits = @reserve
-    
     # NOTE: recruits won't be this.reserve if filtered!
     recruits = recruits.filter(type)  if type
     recruits.nearest at  if at
     i = 0
-
     while i < n
       break  unless recruits[0]
       droid = recruits.shift()
       @reserve.removeObject droid
       @group.push droid
       i++
-
   @cut = (n, type, at) ->
     cuts = @group
-    
     # NOTE: cuts won't be this.group if filtered!
     cuts = cuts.filter(type)  if type
     cuts.nearest at  if at
     i = 0
-
     while i < n
       droid = cuts.pop()
       break  unless droid
       @group.removeObject droid
       @reserve.push droid
       i++
-
   @buildDroid = (order) ->
     factories = @group.factories().idle()
     i = 0
-
     while i < factories.length
       return (factories[i])  if buildDroid(factories[i], order.name, order.body, order.propulsion, "", order.droid_type, order.turret)
       i++
     null
-
   @build = (order) ->
     builders = [] # going to return the number of builders
     structure = order.structure
@@ -93,7 +82,6 @@ Group = (group, orders, reserve) ->
       count = trucks.length
       if count < order.min
         @recruit order.min - count, CyberBorg.is_truck, at
-        
         # Note that reserve trucks should always be idle for this to work.
         trucks = @group.trucks().idle()
       else
@@ -106,13 +94,14 @@ Group = (group, orders, reserve) ->
         pos = pickStructLocation(trucks[0], structure, at.x, at.y)
         if pos
           i = 0
-
           while i < trucks.length
             builders.push trucks[i]  if trucks[i].build(structure, pos)
             i++
     builders
-include "multiplay/skirmish/cyberborg.array.js"
-include "multiplay/skirmish/cyberborg.object.js"
+  # return this
+  @
+# The Group Class End
+
 CyberBorg.is_truck = (droid) ->
   droid.droidType is DROID_CONSTRUCT
 
@@ -126,8 +115,6 @@ CyberBorg.distance_metric = (a, b) ->
 
 CyberBorg.nearest_metric = (a, b, at) ->
   CyberBorg.distance_metric(a, at) - CyberBorg.distance_metric(b, at)
-
-# The Group Class End
 
 # ###########################################################################################
 #  
