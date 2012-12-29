@@ -1,0 +1,89 @@
+Ctrl	0		Assign Group 0
+Funct	F3		Build
+Key	b		Center View on HQ
+Funct	F6		Commanders
+Key	`		Console
+Ctrl	-		Decrease Game Speed
+Funct	F4		Design
+Funct	Escape		Display In-Game Options
+Key	/		Do or Die!
+Alt	h		Drop a beacon
+Key	f		Fire at Will
+Key	t		Go to Transport
+Key	c		Hold Fire
+Key	h		Hold Position
+Ctrl	=		Increase Game Speed
+Funct	F5		Intelligense Display
+Funct	F1		Manufature
+Num	Enter		Multiplayer Option / Alliance dialog
+Num	0		Order Menu
+Key	q		Patrol
+Num	8		Pitch Back
+Num	2		Pitch Forward
+Funct	F2		Research
+Ctrl	Backspace	Reset Game Speed
+Num	5		Reset Pitch
+Key	.		Retreat at Heavy Damage
+Key	,		Retreat at Medium Daamge
+Key	e		Return Fire
+Key	r		Return for Repair
+Ctrl	r		Return for Recycling
+Shift	h		Return to HQ
+Num	4		Rotate Left
+Num	6		Rotate Right
+Alt	0		Select Commander 0
+Ctrl	u		Selecte every unit
+Key	0		Select Group 0
+Shift	c		Select Combat Cyborgs
+Ctrl	a		Select all Combat Units
+Ctrl	c		Select all Cyborgs
+Shift	e		Select all Engineers
+Ctrl	f		Select all Half-tracks
+Ctrl	d		Select all Heavily Damaged Units
+Ctrl	h		Select all Hovers
+Shift	g		Select all Land Combat Units
+Shift	m		Select all Mechanics
+Shift	r		Select all Repair Tanks
+Shift	s		Select all Sensor Units
+Shift	z		Select all Similar Units
+Ctrl	t		Select all Tracks
+Shift	p		Select all Transporters
+Shift	t		Select all Trucks
+Ctrl	s		Select all Units on Screen
+Ctrl	v		Select all VTOLs
+Ctrl	w		Select all Wheels
+Key	Page Down	Select next Cybord Factory
+Key	Page Up		Select next Factory
+Key	End		Select next Power Generator
+Key	Home		Select next Research Facility
+Key	Return		Send Text Message
+Key	z		Sensor Display Off
+Key	z		Sensor Display On
+Key	Backspace	Snap View to North
+Key	s		Stop Droid
+Funct	F10		Take Screen Shot
+Funct	F8		Toggle Console Display
+Funct	F9		Toggle Damage Bars On/Off
+Funct	F11		Toggle Formation Speed Limiting
+Key	Tab		Toggle Overlays
+Funct	F7		Toggle Radar
+Shift	F12		Toggle Sensor Display
+Key	Space		Toggle Tracking Camera
+Shift	Tab		Toggle ally-enemy radar view
+Ctrl	Tab		Toggle radar terrain
+Alt	s		Toggles shadows
+Atl	t		Trap cursor
+Ctrl	Left		View East
+Funct	F12		View Location of Previous Message
+Ctrl	Up		View North
+Ctrl	Down		View South
+Key	d		View Unassigned Units
+Ctrl	Right		View West
+Shift	Delete		View next Commander
+Num	*		View new Oil Derrick
+Ctrl	Delete		View next Repair Unit
+Shift	Page Down	View next Sensor Unit
+Key	Delete		View next Truck
+Num	-		Zoom In
+Num	+		Zoom Out
+Key	-		Zoom Radar Out
