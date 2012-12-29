@@ -4,17 +4,46 @@ include("multiplay/skirmish/cyberborg.array.js");
 
 include("multiplay/skirmish/cyberborg.object.js");
 
-CyberBorg = function() {
-  this.NORTH = 0;
-  this.EAST = 90;
-  this.SOUTH = 180;
-  this.WEST = 270;
-  this.ALL_PLAYERS = -1;
-  this.get_resources = function(at) {
+CyberBorg = (function() {
+
+  CyberBorg.NORTH = 0;
+
+  CyberBorg.EAST = 90;
+
+  CyberBorg.SOUTH = 180;
+
+  CyberBorg.WEST = 270;
+
+  CyberBorg.ALL_PLAYERS = -1;
+
+  function CyberBorg() {}
+
+  CyberBorg.prototype.get_resources = function(at) {
     return enumFeature(this.ALL_PLAYERS, "OilResource").nearest(at);
   };
-  return this;
-};
+
+  CyberBorg.is_truck = function(droid) {
+    return droid.droidType === DROID_CONSTRUCT;
+  };
+
+  CyberBorg.is_factory = function(structure) {
+    return structure.stattype === FACTORY;
+  };
+
+  CyberBorg.distance_metric = function(a, b) {
+    var x, y;
+    x = a.x - b.x;
+    y = a.y - b.y;
+    return x * x + y * y;
+  };
+
+  CyberBorg.nearest_metric = function(a, b, at) {
+    return CyberBorg.distance_metric(a, at) - CyberBorg.distance_metric(b, at);
+  };
+
+  return CyberBorg;
+
+})();
 
 is_idle = function(droid) {
   var not_idle;
@@ -116,22 +145,3 @@ Group = (function() {
   return Group;
 
 })();
-
-CyberBorg.is_truck = function(droid) {
-  return droid.droidType === DROID_CONSTRUCT;
-};
-
-CyberBorg.is_factory = function(structure) {
-  return structure.stattype === FACTORY;
-};
-
-CyberBorg.distance_metric = function(a, b) {
-  var x, y;
-  x = a.x - b.x;
-  y = a.y - b.y;
-  return x * x + y * y;
-};
-
-CyberBorg.nearest_metric = function(a, b, at) {
-  return CyberBorg.distance_metric(a, at) - CyberBorg.distance_metric(b, at);
-};

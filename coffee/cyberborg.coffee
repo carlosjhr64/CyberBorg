@@ -4,20 +4,36 @@ include "multiplay/skirmish/cyberborg.array.js"
 # Let's keep our Object hacks in their own files for now.
 include "multiplay/skirmish/cyberborg.object.js"
 
-CyberBorg = ->
+class CyberBorg
   # Constants
   @NORTH = 0
   @EAST = 90
   @SOUTH = 180
   @WEST = 270
   @ALL_PLAYERS = -1
+
+  constructor: () ->
+
   # Attributes can be assigned dynamically
   # this.reserve = null;
   # this.resources = null;
   # this.etc...
-  @get_resources = (at) ->
+  get_resources: (at) ->
     enumFeature(@ALL_PLAYERS, "OilResource").nearest at
-  @
+
+  @is_truck = (droid) ->
+    droid.droidType is DROID_CONSTRUCT
+
+  @is_factory = (structure) ->
+    structure.stattype is FACTORY
+
+  @distance_metric = (a, b) ->
+    x = a.x - b.x
+    y = a.y - b.y
+    x * x + y * y
+
+  @nearest_metric = (a, b, at) ->
+    CyberBorg.distance_metric(a, at) - CyberBorg.distance_metric(b, at)
 
 # Filters
 is_idle = (droid) ->
@@ -101,20 +117,6 @@ class Group
             i++
     builders
 # The Group Class End
-
-CyberBorg.is_truck = (droid) ->
-  droid.droidType is DROID_CONSTRUCT
-
-CyberBorg.is_factory = (structure) ->
-  structure.stattype is FACTORY
-
-CyberBorg.distance_metric = (a, b) ->
-  x = a.x - b.x
-  y = a.y - b.y
-  x * x + y * y
-
-CyberBorg.nearest_metric = (a, b, at) ->
-  CyberBorg.distance_metric(a, at) - CyberBorg.distance_metric(b, at)
 
 # ###########################################################################################
 #  
