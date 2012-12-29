@@ -5,94 +5,45 @@ Number::times = (action) ->
     i++
 
 CyberBorg::base_orders = ->
+  lf = "A0LightFactory"; cc = "A0CommandCentre"
+  rf = "A0ResearchFacility"; pg = "A0PowerGenerator"
+
+  p = (n,x) -> min: n, max:x
+  p33 = -> p(3,3)
+  p11 = -> p(1,1)
+
+  order = (p, str, x, y) ->
+    p.structure =  str
+    p.at = x: x, y: y
+    p
+
   [
-    
     # Phase 1  Build up the initial base as fast a posible
-    min: 3
-    max: 3
-    structure: "A0LightFactory"
-    at:
-      x: 9
-      y: 234
+    order(p33(), lf, 9, 234)
   ,
-    min: 3
-    max: 3
-    structure: "A0ResearchFacility"
-    at:
-      x: 6
-      y: 234
+    order(p33(), rf, 6, 234)
   ,
-    min: 3
-    max: 3
-    structure: "A0CommandCentre"
-    at:
-      x: 6
-      y: 237
+    order(p33(), cc, 6, 237)
   ,
-    min: 3
-    max: 3
-    structure: "A0PowerGenerator"
-    at:
-      x: 3
-      y: 234
+    order(p33(), pg, 3, 234)
   ,
     
     # Phase 2  Just have one truck max out the base with research and power
-    min: 1
-    max: 1
-    structure: "A0ResearchFacility"
-    at:
-      x: 3
-      y: 237
+    order(p11(), rf, 3, 237)
   ,
-    min: 1
-    max: 1
-    structure: "A0PowerGenerator"
-    at:
-      x: 3
-      y: 240
+    order(p11(), pg, 3, 240)
   ,
-    min: 1
-    max: 1
-    structure: "A0ResearchFacility"
-    at:
-      x: 6
-      y: 240
+    order(p11(), rf, 6, 240)
   ,
-    min: 1
-    max: 1
-    structure: "A0PowerGenerator"
-    at:
-      x: 9
-      y: 240
+    order(p11(), pg, 9, 240)
   ,
-    min: 1
-    max: 1
-    structure: "A0ResearchFacility"
-    at:
-      x: 12
-      y: 240
+    order(p11(), rf, 12, 240)
   ,
-    min: 1
-    max: 1
-    structure: "A0PowerGenerator"
-    at:
-      x: 12
-      y: 243
+    order(p11(), pg, 12, 243)
   ,
-    min: 1
-    max: 1
-    structure: "A0ResearchFacility"
-    at:
-      x: 9
-      y: 243
+    order(p11(), rf, 9, 243)
   ,
-    min: 1
-    max: 1
-    structure: "A0PowerGenerator"
-    at:
-      x: 6
-      y: 243
+    order(p11(), pg, 6, 243)
   ]
 
 CyberBorg::factory_orders = ->
