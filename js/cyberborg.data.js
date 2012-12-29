@@ -11,7 +11,7 @@ Number.prototype.times = function(action) {
 };
 
 CyberBorg.prototype.base_orders = function() {
-  var cc, lf, order, p, p11, p33, pg, rf;
+  var cc, data, lf, order, orders, p, p11, p33, pg, phase1, phase2, rf, _i, _j, _len, _len2;
   lf = "A0LightFactory";
   cc = "A0CommandCentre";
   rf = "A0ResearchFacility";
@@ -28,15 +28,29 @@ CyberBorg.prototype.base_orders = function() {
   p11 = function() {
     return p(1, 1);
   };
-  order = function(p, str, x, y) {
-    p.structure = str;
+  order = function(params) {
+    p = params[0];
+    p.structure = params[1];
     p.at = {
-      x: x,
-      y: y
+      x: params[2],
+      y: params[3]
     };
     return p;
   };
-  return [order(p33(), lf, 9, 234), order(p33(), rf, 6, 234), order(p33(), cc, 6, 237), order(p33(), pg, 3, 234), order(p11(), rf, 3, 237), order(p11(), pg, 3, 240), order(p11(), rf, 6, 240), order(p11(), pg, 9, 240), order(p11(), rf, 12, 240), order(p11(), pg, 12, 243), order(p11(), rf, 9, 243), order(p11(), pg, 6, 243)];
+  phase1 = [[lf, 9, 234], [rf, 6, 234], [cc, 6, 237], [pg, 3, 234]];
+  for (_i = 0, _len = phase1.length; _i < _len; _i++) {
+    data = phase1[_i];
+    data.unshift(p33());
+  }
+  phase2 = [[rf, 3, 237], [pg, 3, 240], [rf, 6, 240], [pg, 9, 240], [rf, 12, 240], [pg, 12, 243], [rf, 9, 243], [pg, 6, 243]];
+  for (_j = 0, _len2 = phase2.length; _j < _len2; _j++) {
+    data = phase2[_j];
+    data.unshift(p11());
+  }
+  orders = phase1.concat(phase2);
+  return orders.map(function(data) {
+    return order(data);
+  });
 };
 
 CyberBorg.prototype.factory_orders = function() {

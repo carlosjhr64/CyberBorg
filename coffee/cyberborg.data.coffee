@@ -12,39 +12,26 @@ CyberBorg::base_orders = ->
   p33 = -> p(3,3)
   p11 = -> p(1,1)
 
-  order = (p, str, x, y) ->
-    p.structure =  str
-    p.at = x: x, y: y
+  order = (params) ->
+    # p, str, x, y = *params
+    p = params[0]
+    p.structure = params[1]
+    p.at = x: params[2], y: params[3]
     p
 
-  [
-    # Phase 1  Build up the initial base as fast a posible
-    order(p33(), lf, 9, 234)
-  ,
-    order(p33(), rf, 6, 234)
-  ,
-    order(p33(), cc, 6, 237)
-  ,
-    order(p33(), pg, 3, 234)
-  ,
+  # Phase 1, p33(),  Build up the initial base as fast a posible
+  phase1 = [ [lf, 9, 234], [rf, 6, 234], [cc, 6, 237], [pg, 3, 234] ]
+  data.unshift(p33()) for data in phase1
     
-    # Phase 2  Just have one truck max out the base with research and power
-    order(p11(), rf, 3, 237)
-  ,
-    order(p11(), pg, 3, 240)
-  ,
-    order(p11(), rf, 6, 240)
-  ,
-    order(p11(), pg, 9, 240)
-  ,
-    order(p11(), rf, 12, 240)
-  ,
-    order(p11(), pg, 12, 243)
-  ,
-    order(p11(), rf, 9, 243)
-  ,
-    order(p11(), pg, 6, 243)
+  # Phase 2, p11(),  just have one truck max out the base with research and power.
+  phase2 = [
+    [rf, 3, 237], [pg, 3, 240], [rf, 6, 240], [pg, 9, 240]
+    [rf, 12, 240], [pg, 12, 243], [rf, 9, 243], [pg, 6, 243]
   ]
+  data.unshift(p11()) for data in phase2
+
+  orders = phase1.concat(phase2)
+  orders.map (data) -> order(data)
 
 CyberBorg::factory_orders = ->
   # A wheeled viper
