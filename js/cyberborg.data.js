@@ -1,15 +1,4 @@
 
-Number.prototype.times = function(action) {
-  var i, _results;
-  i = 0;
-  _results = [];
-  while (i < this.valueOf()) {
-    action();
-    _results.push(i++);
-  }
-  return _results;
-};
-
 CyberBorg.prototype.base_orders = function() {
   var command_center, data, light_factory, order, orders, p, p11, p33, phase1, phase2, power_generator, research_facility, _i, _j, _len, _len2;
   light_factory = "A0LightFactory";

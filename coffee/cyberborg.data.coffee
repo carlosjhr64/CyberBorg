@@ -1,10 +1,3 @@
-# This is like ruby's number.times{ }
-Number::times = (action) ->
-  i = 0
-  while i < this.valueOf()
-    action()
-    i++
-
 CyberBorg::base_orders = ->
   light_factory = "A0LightFactory"
   command_center = "A0CommandCentre"

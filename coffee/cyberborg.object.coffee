@@ -4,7 +4,7 @@ Object::build = (structure_id, pos, direction) ->
   orderDroidBuild this, DORDER_BUILD, structure_id, pos.x, pos.y, direction
 
 Object::namexy = ->
-  @name + "(" + @x + "," + @y + ")"
+  "#{@name}(#{@x},#{@y})"
 
 Object::position = ->
   x: @x
@@ -12,3 +12,11 @@ Object::position = ->
 
 Object::is_truck = ->
   CyberBorg.is_truck this
+
+# This is like ruby's number.times{ }
+Number::times = (action) ->
+  i = 0
+  while i < this.valueOf()
+    action()
+    i++
+
