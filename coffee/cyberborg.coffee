@@ -6,7 +6,7 @@ include "multiplay/skirmish/cyberborg.object.js"
 
 # Warzone 2100 Objects
 class WZObject
-  # There are two way to convert a game data object into a WZObject object.
+  # There are two ways to convert a game data object into a WZObject object.
   # The first way is by copying the object's data into a WZObject.
   # That's the constructor's way (for the second way, see bless below).
   constructor: (object) ->
@@ -18,7 +18,7 @@ class WZObject
   namexy: () -> "#{@name}(#{@x},#{@y})"
   position: () -> x: @x, y: @y
   is_truck: () -> CyberBorg.is_truck @
-  # There are two way to convert a game data object into a WZObject object.
+  # There are two ways to convert a game data object into a WZObject object.
   # The second way is by linking WZObject's methods to the object's data.
   # That's the bless's way (for the first way, see constructor above).
   @bless = (object) ->
