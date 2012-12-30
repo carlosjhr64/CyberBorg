@@ -86,6 +86,8 @@ CyberBorg = (function() {
     });
   };
 
+  CyberBorg.groups = {};
+
   function CyberBorg() {}
 
   CyberBorg.prototype.get_resources = function(at) {

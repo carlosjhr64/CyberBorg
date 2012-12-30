@@ -61,7 +61,8 @@ eventStartLevel = ->
   #
   #     Let's store what we know so far as cyberBorg attributes.
   #  
-  cyberBorg.reserve = reserve
+  groups = CyberBorg.groups
+  groups.reserve = reserve
   cyberBorg.derricks = derricks
   
   #
@@ -73,7 +74,7 @@ eventStartLevel = ->
   #    Also, from the datafile, we give base its orders list.
   #    Finally, the base needs the reserve group.
   #  
-  cyberBorg.base = new Group([], cyberBorg.base_orders(), cyberBorg.reserve.group)
+  groups.base = new Group([], cyberBorg.base_orders(), reserve.group)
   
   #
   #    Structures are also considered units the AI can order.
@@ -81,7 +82,7 @@ eventStartLevel = ->
   #    At this time, the concept of a reserve does not look useful for structures, but
   #    that could change.  Reserve just defaults to empty, [],
   #  
-  cyberBorg.factory = new Group([], cyberBorg.factory_orders())
+  groups.factory = new Group([], cyberBorg.factory_orders())
   
   #
   #     Our first concern is our base.
@@ -95,7 +96,8 @@ eventStartLevel = ->
 #    It should be called every time base group is ready to build the next structure.
 #
 base_group = ->
-  base = cyberBorg.base
+  groups = CyberBorg.groups
+  base = groups.base
   order = base.orders.next()
   if order
     builders = base.build(order)
@@ -117,6 +119,7 @@ base_group = ->
 eventStructureBuilt = (structure, droid) ->
   structure = new WZObject(structure)
   droid = new WZObject(droid)
+  groups = CyberBorg.groups
   
   # So every time we build a structure, this function gets called.
   # Let's tell the player what got built.
@@ -126,14 +129,14 @@ eventStructureBuilt = (structure, droid) ->
   
   # We want to keep BASE_GROUP busy.
   # If the droid belongs to BASE_GROUP, it needs to move on to the next build order.
-  base_group()  if cyberBorg.base.group.contains(droid)
+  base_group()  if groups.base.group.contains(droid)
   
   # So the first thing that get built is a Factory.
   # It's just how this AI plays the game.
   # Another AI might choose a diffetent build order.
   # Anyways, when a factory gets built, we need to get it started building droids.
   if (structure.type is STRUCTURE) and (structure.stattype is FACTORY)
-    cyberBorg.factory.group.push structure
+    groups.factory.group.push(structure)
     factory_group()
   
   # Because we've overridden rules.js eventStructureBuilt,
@@ -174,7 +177,8 @@ min_map_and_design_on = (structure) ->
 factory_group = ->
   # FACTORY_ORDERS is a list of droids to build, and
   # we build them one at a time.
-  factory = cyberBorg.factory
+  groups = CyberBorg.groups
+  factory = groups.factory
   order = factory.orders.next()
   if order
     if factory.buildDroid(order)
@@ -191,6 +195,7 @@ factory_group = ->
 eventDroidBuilt = (droid, structure) ->
   droid = new WZObject(droid)
   structure = new WZObject(structure)
+  groups = CyberBorg.groups
   
   # Tell the player what got built.
   console "Built #{droid.name}."
@@ -199,12 +204,12 @@ eventDroidBuilt = (droid, structure) ->
   # If it's a truck, maybe it should go to the nearest job?
   # Well, the style for this AI is to work with groups.
   # So what we'll do is add the new droids to the RESERVE.
-  cyberBorg.reserve.group.push droid
+  groups.reserve.group.push droid
   
   # If a factory just built a droid, it's ready for the next build.
   # It is possible that the droid was "created",
   # so we need to check that in fact it's factory built.
-  factory_group()  if cyberBorg.factory.group.contains(structure)
+  factory_group()  if groups.factory.group.contains(structure)
 
 # Player commands...
 eventChat = (sender, to, message) ->
@@ -215,10 +220,11 @@ eventChat = (sender, to, message) ->
       else console("What?")
 
 report = (who) ->
+  groups = CyberBorg.groups
   switch who
     when 'base'
-      console(droid.namexy()) for droid in cyberBorg.base.group
+      console(droid.namexy()) for droid in groups.base.group
     when 'reserve'
-      console(droid.namexy()) for droid in cyberBorg.reserve.group
+      console(droid.namexy()) for droid in groups.reserve.group
     else console("What???")
   

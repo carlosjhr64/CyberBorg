@@ -47,12 +47,10 @@ class CyberBorg
   @enum_droid = (params...) ->
     enumDroid(params...).map (object) -> new WZObject(object)
 
-  constructor: () ->
+  # Need a way to register groups
+  @groups = {}
 
-  # Attributes can be assigned dynamically
-  # this.reserve = null;
-  # this.resources = null;
-  # this.etc...
+  constructor: () ->
 
   get_resources: (at) ->
     CyberBorg.enum_feature(@ALL_PLAYERS, "OilResource").nearest(at)
