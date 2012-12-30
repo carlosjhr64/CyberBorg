@@ -10,10 +10,17 @@ class WZObject
   # The first way is by copying the object's data into a WZObject.
   # That's the constructor's way (for the second way, see bless below).
   constructor: (object) -> @copy(object)
-
   copy: (object) ->
     @game_time = gameTime
     @[key] = object[key] for key of object
+  # There are two ways to convert a game data object into a WZObject object.
+  # The second way is by linking WZObject's methods to the object's data.
+  # That's the bless's way (for the first way, see constructor above).
+  # Unfortunately, we're given a read only object, so have to use the constructor.
+  @bless = (object) ->
+    object['game_time'] = gameTime
+    object[name] = method for name, method of WZObject.prototype
+    object
 
   # TODO only needs to update volatile data :-??
   update: () -> @copy(objFromId(@))
@@ -26,14 +33,15 @@ class WZObject
   position: () -> x: @x, y: @y
 
   is_truck: () -> CyberBorg.is_truck @
-  # There are two ways to convert a game data object into a WZObject object.
-  # The second way is by linking WZObject's methods to the object's data.
-  # That's the bless's way (for the first way, see constructor above).
-  # Unfortunately, we're given a read only object, so have to use the constructor.
-  @bless = (object) ->
-    object['game_time'] = gameTime
-    object[name] = method for name, method of WZObject.prototype
-    object
+
+
+class WZArray
+  constructor: (array) -> @copy(array)
+  copy: (array) ->
+    @[i] = array[i] for i of array
+  @bless = (array) ->
+    array[name] = method for name, method of WZArray.prototype
+    array
 
 # CyberBorg will help package data and prodide utilities
 class CyberBorg

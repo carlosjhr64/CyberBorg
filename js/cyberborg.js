@@ -1,4 +1,4 @@
-var CyberBorg, Group, WZObject, is_idle,
+var CyberBorg, Group, WZArray, WZObject, is_idle,
   __slice = Array.prototype.slice;
 
 include("multiplay/skirmish/cyberborg.array.js");
@@ -19,6 +19,17 @@ WZObject = (function() {
       _results.push(this[key] = object[key]);
     }
     return _results;
+  };
+
+  WZObject.bless = function(object) {
+    var method, name, _ref;
+    object['game_time'] = gameTime;
+    _ref = WZObject.prototype;
+    for (name in _ref) {
+      method = _ref[name];
+      object[name] = method;
+    }
+    return object;
   };
 
   WZObject.prototype.update = function() {
@@ -44,18 +55,36 @@ WZObject = (function() {
     return CyberBorg.is_truck(this);
   };
 
-  WZObject.bless = function(object) {
-    var method, name, _ref;
-    object['game_time'] = gameTime;
-    _ref = WZObject.prototype;
-    for (name in _ref) {
-      method = _ref[name];
-      object[name] = method;
+  return WZObject;
+
+})();
+
+WZArray = (function() {
+
+  function WZArray(array) {
+    this.copy(array);
+  }
+
+  WZArray.prototype.copy = function(array) {
+    var i, _results;
+    _results = [];
+    for (i in array) {
+      _results.push(this[i] = array[i]);
     }
-    return object;
+    return _results;
   };
 
-  return WZObject;
+  WZArray.bless = function(array) {
+    var method, name, _ref;
+    _ref = WZArray.prototype;
+    for (name in _ref) {
+      method = _ref[name];
+      array[name] = method;
+    }
+    return array;
+  };
+
+  return WZArray;
 
 })();
 
