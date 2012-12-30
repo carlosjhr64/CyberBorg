@@ -117,6 +117,7 @@ base_group = ->
 #    eventStructureBuilt is WZ2100 JS API.
 #
 eventStructureBuilt = (structure, droid) ->
+  CyberBorg.update()
   structure = new WZObject(structure)
   droid = new WZObject(droid)
   groups = CyberBorg.groups
@@ -193,6 +194,7 @@ factory_group = ->
 #  When a droid is built, it triggers a droid built event and
 #  eventDroidBuilt(a WZ2100 JS API) is called.
 eventDroidBuilt = (droid, structure) ->
+  CyberBorg.update()
   droid = new WZObject(droid)
   structure = new WZObject(structure)
   groups = CyberBorg.groups
@@ -212,19 +214,23 @@ eventDroidBuilt = (droid, structure) ->
   factory_group()  if groups.factory.group.contains(structure)
 
 # Player commands...
+# Some useful debuging feedback and could be used for player commands.
 eventChat = (sender, to, message) ->
+  CyberBorg.update()
   if sender is 0
     switch message
       when 'report base' then report('base')
       when 'report reserve' then report('reserve')
       else console("What?")
 
+# Report to player console droids' position...
 report = (who) ->
   groups = CyberBorg.groups
+  droids = []
   switch who
     when 'base'
-      console(droid.namexy()) for droid in groups.base.group
+      droids.push(droid.namexy()) for droid in groups.base.group
     when 'reserve'
-      console(droid.namexy()) for droid in groups.reserve.group
+      droids.push(droid.namexy()) for droid in groups.reserve.group
     else console("What???")
-  
+  console("#{droids.join(', ')}.") if droids.length

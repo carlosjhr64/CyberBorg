@@ -40,6 +40,7 @@ base_group = function() {
 
 eventStructureBuilt = function(structure, droid) {
   var groups;
+  CyberBorg.update();
   structure = new WZObject(structure);
   droid = new WZObject(droid);
   groups = CyberBorg.groups;
@@ -78,6 +79,7 @@ factory_group = function() {
 
 eventDroidBuilt = function(droid, structure) {
   var groups;
+  CyberBorg.update();
   droid = new WZObject(droid);
   structure = new WZObject(structure);
   groups = CyberBorg.groups;
@@ -87,6 +89,7 @@ eventDroidBuilt = function(droid, structure) {
 };
 
 eventChat = function(sender, to, message) {
+  CyberBorg.update();
   if (sender === 0) {
     switch (message) {
       case 'report base':
@@ -100,28 +103,26 @@ eventChat = function(sender, to, message) {
 };
 
 report = function(who) {
-  var droid, groups, _i, _j, _len, _len2, _ref, _ref2, _results, _results2;
+  var droid, droids, groups, _i, _j, _len, _len2, _ref, _ref2;
   groups = CyberBorg.groups;
+  droids = [];
   switch (who) {
     case 'base':
       _ref = groups.base.group;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         droid = _ref[_i];
-        _results.push(console(droid.namexy()));
+        droids.push(droid.namexy());
       }
-      return _results;
       break;
     case 'reserve':
       _ref2 = groups.reserve.group;
-      _results2 = [];
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         droid = _ref2[_j];
-        _results2.push(console(droid.namexy()));
+        droids.push(droid.namexy());
       }
-      return _results2;
       break;
     default:
-      return console("What???");
+      console("What???");
   }
+  if (droids.length) return console("" + (droids.join(', ')) + ".");
 };

@@ -13,6 +13,7 @@ WZObject = (function() {
 
   WZObject.prototype.copy = function(object) {
     var key, _results;
+    this.game_time = gameTime;
     _results = [];
     for (key in object) {
       _results.push(this[key] = object[key]);
@@ -87,6 +88,28 @@ CyberBorg = (function() {
   };
 
   CyberBorg.groups = {};
+
+  CyberBorg.update = function() {
+    var group, name, object, _results;
+    _results = [];
+    for (name in CyberBorg.groups) {
+      group = CyberBorg.groups[name].group;
+      _results.push((function() {
+        var _i, _len, _results2;
+        _results2 = [];
+        for (_i = 0, _len = group.length; _i < _len; _i++) {
+          object = group[_i];
+          if (object.game_time < gameTime) {
+            _results2.push(object.update());
+          } else {
+            _results2.push(void 0);
+          }
+        }
+        return _results2;
+      })());
+    }
+    return _results;
+  };
 
   function CyberBorg() {}
 

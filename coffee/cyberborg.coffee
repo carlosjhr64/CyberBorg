@@ -11,7 +11,9 @@ class WZObject
   # That's the constructor's way (for the second way, see bless below).
   constructor: (object) -> @copy(object)
 
-  copy: (object) -> @[key] = object[key] for key of object
+  copy: (object) ->
+    @game_time = gameTime
+    @[key] = object[key] for key of object
 
   # TODO only needs to update volatile data :-??
   update: () -> @copy(objFromId(@))
@@ -33,6 +35,7 @@ class WZObject
     object[name] = method for name, method of WZObject.prototype
     object
 
+# CyberBorg will help package data and prodide utilities
 class CyberBorg
   # Constants
   @NORTH = 0
@@ -49,6 +52,12 @@ class CyberBorg
 
   # Need a way to register groups
   @groups = {}
+
+  @update = () ->
+    for name of CyberBorg.groups
+      group = CyberBorg.groups[name].group
+      for object in group
+        object.update() if object.game_time < gameTime
 
   constructor: () ->
 
