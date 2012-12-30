@@ -4,6 +4,27 @@ include "multiplay/skirmish/cyberborg.array.js"
 # Let's keep our Object hacks in their own files for now.
 include "multiplay/skirmish/cyberborg.object.js"
 
+# Warzone 2100 Objects
+class WZObject
+  # There are two way to convert a game data object into a WZObject object.
+  # The first way is by copying the object's data into a WZObject.
+  # That's the constructor's way (for the second way, see bless below).
+  constructor: (object) ->
+    for key of object
+      @[key] = object[key]
+
+  build: (structure_id, pos, direction) ->
+    orderDroidBuild this, DORDER_BUILD, structure_id, pos.x, pos.y, direction
+  namexy: () -> "#{@name}(#{@x},#{@y})"
+  position: () -> x: @x, y: @y
+  is_truck: () -> CyberBorg.is_truck @
+  # There are two way to convert a game data object into a WZObject object.
+  # The second way is by linking WZObject's methods to the object's data.
+  # That's the bless's way (for the first way, see constructor above).
+  @bless = (object) ->
+    object[name] = method for name, method of WZObject.prototype
+    object
+
 class CyberBorg
   # Constants
   @NORTH = 0
@@ -13,10 +34,10 @@ class CyberBorg
   @ALL_PLAYERS = -1
 
   @enum_feature = (params...) ->
-    enumFeature(params...).map (object) -> new WZObject(object)
+    enumFeature(params...).map (object) -> WZObject.bless(object)
 
   @enum_droid = (params...) ->
-    enumDroid(params...).map (object) -> new WZObject(object)
+    enumDroid(params...).map (object) -> WZObject.bless(object)
 
   constructor: () ->
 
@@ -49,19 +70,6 @@ is_idle = (droid) ->
   # It's a droid
   not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH]
   not_idle.indexOf(droid.order) is Array.NONE
-
-# Warzone 2100 Objects
-class WZObject
-  constructor: (object) ->
-    # TODO too much data juggling.  Can't I just somehow "bless" the object into the class?
-    for key of object
-      @[key] = object[key]
-
-  build: (structure_id, pos, direction) ->
-    orderDroidBuild this, DORDER_BUILD, structure_id, pos.x, pos.y, direction
-  namexy: () -> "#{@name}(#{@x},#{@y})"
-  position: () -> x: @x, y: @y
-  is_truck: () -> CyberBorg.is_truck @
 
 # The Group Class
 class Group

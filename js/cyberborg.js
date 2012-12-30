@@ -5,6 +5,48 @@ include("multiplay/skirmish/cyberborg.array.js");
 
 include("multiplay/skirmish/cyberborg.object.js");
 
+WZObject = (function() {
+
+  function WZObject(object) {
+    var key;
+    for (key in object) {
+      this[key] = object[key];
+    }
+  }
+
+  WZObject.prototype.build = function(structure_id, pos, direction) {
+    return orderDroidBuild(this, DORDER_BUILD, structure_id, pos.x, pos.y, direction);
+  };
+
+  WZObject.prototype.namexy = function() {
+    return "" + this.name + "(" + this.x + "," + this.y + ")";
+  };
+
+  WZObject.prototype.position = function() {
+    return {
+      x: this.x,
+      y: this.y
+    };
+  };
+
+  WZObject.prototype.is_truck = function() {
+    return CyberBorg.is_truck(this);
+  };
+
+  WZObject.bless = function(object) {
+    var method, name, _ref;
+    _ref = WZObject.prototype;
+    for (name in _ref) {
+      method = _ref[name];
+      object[name] = method;
+    }
+    return object;
+  };
+
+  return WZObject;
+
+})();
+
 CyberBorg = (function() {
 
   CyberBorg.NORTH = 0;
@@ -21,7 +63,7 @@ CyberBorg = (function() {
     var params;
     params = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
     return enumFeature.apply(null, params).map(function(object) {
-      return new WZObject(object);
+      return WZObject.bless(object);
     });
   };
 
@@ -29,7 +71,7 @@ CyberBorg = (function() {
     var params;
     params = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
     return enumDroid.apply(null, params).map(function(object) {
-      return new WZObject(object);
+      return WZObject.bless(object);
     });
   };
 
@@ -68,38 +110,6 @@ is_idle = function(droid) {
   not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH];
   return not_idle.indexOf(droid.order) === Array.NONE;
 };
-
-WZObject = (function() {
-
-  function WZObject(object) {
-    var key;
-    for (key in object) {
-      this[key] = object[key];
-    }
-  }
-
-  WZObject.prototype.build = function(structure_id, pos, direction) {
-    return orderDroidBuild(this, DORDER_BUILD, structure_id, pos.x, pos.y, direction);
-  };
-
-  WZObject.prototype.namexy = function() {
-    return "" + this.name + "(" + this.x + "," + this.y + ")";
-  };
-
-  WZObject.prototype.position = function() {
-    return {
-      x: this.x,
-      y: this.y
-    };
-  };
-
-  WZObject.prototype.is_truck = function() {
-    return CyberBorg.is_truck(this);
-  };
-
-  return WZObject;
-
-})();
 
 Group = (function() {
 
