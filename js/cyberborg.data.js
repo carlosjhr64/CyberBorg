@@ -36,9 +36,10 @@ CyberBorg.prototype.base_orders = function() {
     data.push(p11());
   }
   orders = phase1.concat(phase2);
-  return orders.map(function(data) {
+  orders = orders.map(function(data) {
     return order.apply(null, data);
   });
+  return WZArray.bless(orders);
 };
 
 CyberBorg.prototype.factory_orders = function() {
@@ -65,5 +66,5 @@ CyberBorg.prototype.factory_orders = function() {
   12..times(function() {
     return orders.push(whb1(mg1));
   });
-  return orders;
+  return WZArray.bless(orders);
 };

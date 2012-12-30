@@ -61,18 +61,7 @@ WZObject = (function() {
 
 WZArray = (function() {
 
-  function WZArray(array) {
-    this.copy(array);
-  }
-
-  WZArray.prototype.copy = function(array) {
-    var i, _results;
-    _results = [];
-    for (i in array) {
-      _results.push(this[i] = array[i]);
-    }
-    return _results;
-  };
+  function WZArray() {}
 
   WZArray.bless = function(array) {
     var method, name, _ref;

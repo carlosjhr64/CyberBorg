@@ -36,9 +36,6 @@ class WZObject
 
 
 class WZArray
-  constructor: (array) -> @copy(array)
-  copy: (array) ->
-    @[i] = array[i] for i of array
   @bless = (array) ->
     array[name] = method for name, method of WZArray.prototype
     array

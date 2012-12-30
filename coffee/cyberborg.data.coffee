@@ -37,7 +37,8 @@ CyberBorg::base_orders = ->
   data.push(p11()) for data in phase2
 
   orders = phase1.concat(phase2)
-  orders.map (data) -> order(data...)
+  orders = orders.map (data) -> order(data...)
+  WZArray.bless(orders)
 
 CyberBorg::factory_orders = ->
   # A wheeled viper
@@ -54,4 +55,4 @@ CyberBorg::factory_orders = ->
   (2).times -> orders.push(whb1(truck))
   # ... 12 machine gunners
   (12).times -> orders.push(whb1(mg1))
-  orders
+  WZArray.bless(orders)
