@@ -1,4 +1,5 @@
-var CyberBorg, Group, is_idle;
+var CyberBorg, Group, WZObject, is_idle,
+  __slice = Array.prototype.slice;
 
 include("multiplay/skirmish/cyberborg.array.js");
 
@@ -16,10 +17,26 @@ CyberBorg = (function() {
 
   CyberBorg.ALL_PLAYERS = -1;
 
+  CyberBorg.enum_feature = function() {
+    var params;
+    params = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    return enumFeature.apply(null, params).map(function(object) {
+      return new WZObject(object);
+    });
+  };
+
+  CyberBorg.enum_droid = function() {
+    var params;
+    params = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    return enumDroid.apply(null, params).map(function(object) {
+      return new WZObject(object);
+    });
+  };
+
   function CyberBorg() {}
 
   CyberBorg.prototype.get_resources = function(at) {
-    return enumFeature(this.ALL_PLAYERS, "OilResource").nearest(at);
+    return CyberBorg.enum_feature(this.ALL_PLAYERS, "OilResource").nearest(at);
   };
 
   CyberBorg.is_truck = function(droid) {
@@ -52,13 +69,45 @@ is_idle = function(droid) {
   return not_idle.indexOf(droid.order) === Array.NONE;
 };
 
+WZObject = (function() {
+
+  function WZObject(object) {
+    var key;
+    for (key in object) {
+      this[key] = object[key];
+    }
+  }
+
+  WZObject.prototype.build = function(structure_id, pos, direction) {
+    return orderDroidBuild(this, DORDER_BUILD, structure_id, pos.x, pos.y, direction);
+  };
+
+  WZObject.prototype.namexy = function() {
+    return "" + this.name + "(" + this.x + "," + this.y + ")";
+  };
+
+  WZObject.prototype.position = function() {
+    return {
+      x: this.x,
+      y: this.y
+    };
+  };
+
+  WZObject.prototype.is_truck = function() {
+    return CyberBorg.is_truck(this);
+  };
+
+  return WZObject;
+
+})();
+
 Group = (function() {
 
   function Group(group, orders, reserve) {
     this.group = group;
     this.orders = orders;
     this.reserve = reserve;
-    if (!this.group) this.group = enumDroid();
+    if (!this.group) this.group = CyberBorg.enum_droid();
     if (!this.orders) this.orders = [];
     if (!this.reserve) this.reserve = [];
   }

@@ -115,6 +115,8 @@ base_group = ->
 #    eventStructureBuilt is WZ2100 JS API.
 #
 eventStructureBuilt = (structure, droid) ->
+  structure = new WZObject(structure)
+  droid = new WZObject(droid)
   
   # So every time we build a structure, this function gets called.
   # Let's tell the player what got built.
@@ -160,6 +162,8 @@ eventStructureBuilt = (structure, droid) ->
 
 # This turns on minimap and design
 min_map_and_design_on = (structure) ->
+  structure = new WZObject(structure)
+
   if structure.player is selectedPlayer and structure.type is STRUCTURE and structure.stattype is HQ
     setMiniMap true # show minimap
     setDesign true # permit designs
@@ -185,6 +189,8 @@ factory_group = ->
 #  When a droid is built, it triggers a droid built event and
 #  eventDroidBuilt(a WZ2100 JS API) is called.
 eventDroidBuilt = (droid, structure) ->
+  droid = new WZObject(droid)
+  structure = new WZObject(structure)
   
   # Tell the player what got built.
   console "Built #{droid.name}."

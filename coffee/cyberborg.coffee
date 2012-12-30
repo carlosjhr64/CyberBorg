@@ -12,14 +12,21 @@ class CyberBorg
   @WEST = 270
   @ALL_PLAYERS = -1
 
+  @enum_feature = (params...) ->
+    enumFeature(params...).map (object) -> new WZObject(object)
+
+  @enum_droid = (params...) ->
+    enumDroid(params...).map (object) -> new WZObject(object)
+
   constructor: () ->
 
   # Attributes can be assigned dynamically
   # this.reserve = null;
   # this.resources = null;
   # this.etc...
+
   get_resources: (at) ->
-    enumFeature(@ALL_PLAYERS, "OilResource").nearest at
+    CyberBorg.enum_feature(@ALL_PLAYERS, "OilResource").nearest at
 
   @is_truck = (droid) ->
     droid.droidType is DROID_CONSTRUCT
@@ -43,14 +50,25 @@ is_idle = (droid) ->
   not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH]
   not_idle.indexOf(droid.order) is Array.NONE
 
-# Metrics
+# Warzone 2100 Objects
+class WZObject
+  constructor: (object) ->
+    # TODO too much data juggling.  Can't I just somehow "bless" the object into the class?
+    for key of object
+      @[key] = object[key]
+
+  build: (structure_id, pos, direction) ->
+    orderDroidBuild this, DORDER_BUILD, structure_id, pos.x, pos.y, direction
+  namexy: () -> "#{@name}(#{@x},#{@y})"
+  position: () -> x: @x, y: @y
+  is_truck: () -> CyberBorg.is_truck @
 
 # The Group Class
 class Group
   constructor: (@group, @orders, @reserve) ->
     # If we're not given a list of droids,
     # get them from enumDroid (all of the player's pieces).
-    @group = enumDroid()  unless @group
+    @group = CyberBorg.enum_droid()  unless @group
     # orders is a list of things for the group to do
     @orders = []  unless @orders
     # reserve are the units we can draw from.

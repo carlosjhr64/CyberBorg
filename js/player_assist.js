@@ -37,6 +37,8 @@ base_group = function() {
 };
 
 eventStructureBuilt = function(structure, droid) {
+  structure = new WZObject(structure);
+  droid = new WZObject(droid);
   console("" + (structure.namexy()) + " Built!");
   if (cyberBorg.base.group.contains(droid)) base_group();
   if ((structure.type === STRUCTURE) && (structure.stattype === FACTORY)) {
@@ -47,6 +49,7 @@ eventStructureBuilt = function(structure, droid) {
 };
 
 min_map_and_design_on = function(structure) {
+  structure = new WZObject(structure);
   if (structure.player === selectedPlayer && structure.type === STRUCTURE && structure.stattype === HQ) {
     setMiniMap(true);
     return setDesign(true);
@@ -69,6 +72,8 @@ factory_group = function() {
 };
 
 eventDroidBuilt = function(droid, structure) {
+  droid = new WZObject(droid);
+  structure = new WZObject(structure);
   console("Built " + droid.name + ".");
   cyberBorg.reserve.group.push(droid);
   if (cyberBorg.factory.group.contains(structure)) return factory_group();
