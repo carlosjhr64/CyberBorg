@@ -9,19 +9,27 @@ class WZObject
   # There are two ways to convert a game data object into a WZObject object.
   # The first way is by copying the object's data into a WZObject.
   # That's the constructor's way (for the second way, see bless below).
-  constructor: (object) ->
-    for key of object
-      @[key] = object[key]
+  constructor: (object) -> @copy(object)
+
+  copy: (object) -> @[key] = object[key] for key of object
+
+  # TODO only needs to update volatile data :-??
+  update: () -> @copy(objFromId(@))
 
   build: (structure_id, pos, direction) ->
-    orderDroidBuild this, DORDER_BUILD, structure_id, pos.x, pos.y, direction
+    orderDroidBuild(@, DORDER_BUILD, structure_id, pos.x, pos.y, direction)
+
   namexy: () -> "#{@name}(#{@x},#{@y})"
+
   position: () -> x: @x, y: @y
+
   is_truck: () -> CyberBorg.is_truck @
   # There are two ways to convert a game data object into a WZObject object.
   # The second way is by linking WZObject's methods to the object's data.
   # That's the bless's way (for the first way, see constructor above).
+  # Unfortunately, we're given a read only object, so have to use the constructor.
   @bless = (object) ->
+    object['game_time'] = gameTime
     object[name] = method for name, method of WZObject.prototype
     object
 
@@ -34,10 +42,10 @@ class CyberBorg
   @ALL_PLAYERS = -1
 
   @enum_feature = (params...) ->
-    enumFeature(params...).map (object) -> WZObject.bless(object)
+    enumFeature(params...).map (object) -> new WZObject(object)
 
   @enum_droid = (params...) ->
-    enumDroid(params...).map (object) -> WZObject.bless(object)
+    enumDroid(params...).map (object) -> new WZObject(object)
 
   constructor: () ->
 
@@ -133,7 +141,7 @@ class Group
           @cut(count - order.min, CyberBorg.is_truck, at)
           trucks = @group.trucks().idle()
       if trucks.length > 0
-        trucks.nearest at # sort by distance
+        trucks.nearest(at) # sort by distance
         # assume nearest one can do
         pos = pickStructLocation(trucks[0], structure, at.x, at.y)
         if pos

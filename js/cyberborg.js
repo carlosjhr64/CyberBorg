@@ -8,11 +8,21 @@ include("multiplay/skirmish/cyberborg.object.js");
 WZObject = (function() {
 
   function WZObject(object) {
-    var key;
-    for (key in object) {
-      this[key] = object[key];
-    }
+    this.copy(object);
   }
+
+  WZObject.prototype.copy = function(object) {
+    var key, _results;
+    _results = [];
+    for (key in object) {
+      _results.push(this[key] = object[key]);
+    }
+    return _results;
+  };
+
+  WZObject.prototype.update = function() {
+    return this.copy(objFromId(this));
+  };
 
   WZObject.prototype.build = function(structure_id, pos, direction) {
     return orderDroidBuild(this, DORDER_BUILD, structure_id, pos.x, pos.y, direction);
@@ -35,6 +45,7 @@ WZObject = (function() {
 
   WZObject.bless = function(object) {
     var method, name, _ref;
+    object['game_time'] = gameTime;
     _ref = WZObject.prototype;
     for (name in _ref) {
       method = _ref[name];
@@ -63,7 +74,7 @@ CyberBorg = (function() {
     var params;
     params = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
     return enumFeature.apply(null, params).map(function(object) {
-      return WZObject.bless(object);
+      return new WZObject(object);
     });
   };
 
@@ -71,7 +82,7 @@ CyberBorg = (function() {
     var params;
     params = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
     return enumDroid.apply(null, params).map(function(object) {
-      return WZObject.bless(object);
+      return new WZObject(object);
     });
   };
 
