@@ -5,7 +5,7 @@ Warzone 2100 AI.
 
 WZ2100 people at
   http://wz2100.net/
-has added a javascript API.
+have added a javascript API.
   https://warzone.atlassian.net/wiki/display/jsapi/API
 
 I hate JavaScript.  :))
