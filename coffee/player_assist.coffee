@@ -205,3 +205,20 @@ eventDroidBuilt = (droid, structure) ->
   # It is possible that the droid was "created",
   # so we need to check that in fact it's factory built.
   factory_group()  if cyberBorg.factory.group.contains(structure)
+
+# Player commands...
+eventChat = (sender, to, message) ->
+  if sender is 0
+    switch message
+      when 'report base' then report('base')
+      when 'report reserve' then report('reserve')
+      else console("What?")
+
+report = (who) ->
+  switch who
+    when 'base'
+      console(droid.namexy()) for droid in cyberBorg.base.group
+    when 'reserve'
+      console(droid.namexy()) for droid in cyberBorg.reserve.group
+    else console("What???")
+  

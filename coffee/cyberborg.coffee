@@ -257,19 +257,6 @@ class Group
 #}
 #
 
-# TODO Commented out for now
-#function eventChat(sender, to, message) {
-#  if (sender==0)
-#  {
-#    switch (message){
-#      case "build base":
-#        build_base(); break;
-#      default:
-#        console("What?");
-#    }
-#  }
-#}
-#
 #//  6.
 #//  The second structure that this AI builds is a research facility.
 #//  When that happens, do_research gets called from eventStructureBuilt (see 3.).

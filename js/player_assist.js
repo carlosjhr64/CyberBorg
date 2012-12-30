@@ -1,4 +1,4 @@
-var base_group, cyberBorg, eventDroidBuilt, eventStartLevel, eventStructureBuilt, factory_group, min_map_and_design_on;
+var base_group, cyberBorg, eventChat, eventDroidBuilt, eventStartLevel, eventStructureBuilt, factory_group, min_map_and_design_on, report;
 
 include("multiplay/skirmish/cyberborg.js");
 
@@ -77,4 +77,43 @@ eventDroidBuilt = function(droid, structure) {
   console("Built " + droid.name + ".");
   cyberBorg.reserve.group.push(droid);
   if (cyberBorg.factory.group.contains(structure)) return factory_group();
+};
+
+eventChat = function(sender, to, message) {
+  if (sender === 0) {
+    switch (message) {
+      case 'report base':
+        return report('base');
+      case 'report reserve':
+        return report('reserve');
+      default:
+        return console("What?");
+    }
+  }
+};
+
+report = function(who) {
+  var droid, _i, _j, _len, _len2, _ref, _ref2, _results, _results2;
+  switch (who) {
+    case 'base':
+      _ref = cyberBorg.base.group;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        droid = _ref[_i];
+        _results.push(console(droid.namexy()));
+      }
+      return _results;
+      break;
+    case 'reserve':
+      _ref2 = cyberBorg.reserve.group;
+      _results2 = [];
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        droid = _ref2[_j];
+        _results2.push(console(droid.namexy()));
+      }
+      return _results2;
+      break;
+    default:
+      return console("What???");
+  }
 };
