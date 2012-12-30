@@ -47,7 +47,7 @@ class CyberBorg
   # this.etc...
 
   get_resources: (at) ->
-    CyberBorg.enum_feature(@ALL_PLAYERS, "OilResource").nearest at
+    CyberBorg.enum_feature(@ALL_PLAYERS, "OilResource").nearest(at)
 
   @is_truck = (droid) ->
     droid.droidType is DROID_CONSTRUCT
@@ -91,8 +91,8 @@ class Group
     while i < n
       break  unless recruits[0]
       droid = recruits.shift()
-      @reserve.removeObject droid
-      @group.push droid
+      @reserve.removeObject(droid)
+      @group.push(droid)
       i++
 
   cut: (n, type, at) ->
@@ -104,8 +104,8 @@ class Group
     while i < n
       droid = cuts.pop()
       break  unless droid
-      @group.removeObject droid
-      @reserve.push droid
+      @group.removeObject(droid)
+      @reserve.push(droid)
       i++
 
   buildDroid: (order) ->
@@ -125,12 +125,12 @@ class Group
       trucks = @group.trucks().idle()
       count = trucks.length
       if count < order.min
-        @recruit order.min - count, CyberBorg.is_truck, at
+        @recruit(order.min - count, CyberBorg.is_truck, at)
         # Note that reserve trucks should always be idle for this to work.
         trucks = @group.trucks().idle()
       else
         if count > order.max
-          @cut count - order.min, CyberBorg.is_truck, at
+          @cut(count - order.min, CyberBorg.is_truck, at)
           trucks = @group.trucks().idle()
       if trucks.length > 0
         trucks.nearest at # sort by distance
