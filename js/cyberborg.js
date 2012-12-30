@@ -101,19 +101,21 @@ CyberBorg = (function() {
   CyberBorg.ALL_PLAYERS = -1;
 
   CyberBorg.enum_feature = function() {
-    var params;
+    var array, params;
     params = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    return enumFeature.apply(null, params).map(function(object) {
+    array = enumFeature.apply(null, params).map(function(object) {
       return new WZObject(object);
     });
+    return WZArray.bless(array);
   };
 
   CyberBorg.enum_droid = function() {
-    var params;
+    var array, params;
     params = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    return enumDroid.apply(null, params).map(function(object) {
+    array = enumDroid.apply(null, params).map(function(object) {
       return new WZObject(object);
     });
+    return WZArray.bless(array);
   };
 
   CyberBorg.is_truck = function(droid) {

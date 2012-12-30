@@ -53,10 +53,12 @@ class CyberBorg
   @ALL_PLAYERS = -1
 
   @enum_feature = (params...) ->
-    enumFeature(params...).map (object) -> new WZObject(object)
+    array = enumFeature(params...).map (object) -> new WZObject(object)
+    WZArray.bless(array)
 
   @enum_droid = (params...) ->
-    enumDroid(params...).map (object) -> new WZObject(object)
+    array = enumDroid(params...).map (object) -> new WZObject(object)
+    WZArray.bless(array)
 
   @is_truck = (droid) ->
     droid.droidType is DROID_CONSTRUCT
