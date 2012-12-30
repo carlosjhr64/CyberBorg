@@ -84,6 +84,24 @@ WZArray = (function() {
     return array;
   };
 
+  WZArray.prototype.center = function() {
+    var at, i, n;
+    at = {
+      x: 0,
+      y: 0
+    };
+    n = this.length;
+    i = 0;
+    while (i < n) {
+      at.x += this[i].x;
+      at.y += this[i].y;
+      i++;
+    }
+    at.x = at.x / n;
+    at.y = at.y / n;
+    return at;
+  };
+
   return WZArray;
 
 })();

@@ -3,23 +3,6 @@
 Array.INIT = -1
 Array.NONE = -1
 
-# center WZ2100
-Array::center = ->
-  at =
-    x: 0
-    y: 0
-
-  n = @length
-  i = 0
-
-  while i < n
-    at.x += this[i].x
-    at.y += this[i].y
-    i++
-  at.x = at.x / n
-  at.y = at.y / n
-  at
-
 # concat JS-ARRAY
 
 # constructor JS-ARRAY

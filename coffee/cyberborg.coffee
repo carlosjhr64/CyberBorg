@@ -43,6 +43,21 @@ class WZArray
     array[name] = method for name, method of WZArray.prototype
     array
 
+  # center WZ2100
+  center: ->
+    at =
+      x: 0
+      y: 0
+    n = @length
+    i = 0
+    while i < n
+      at.x += this[i].x
+      at.y += this[i].y
+      i++
+    at.x = at.x / n
+    at.y = at.y / n
+    at
+
 # CyberBorg will help package data and prodide utilities
 class CyberBorg
   # Constants
