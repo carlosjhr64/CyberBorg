@@ -50,20 +50,6 @@ class CyberBorg
   @enum_droid = (params...) ->
     enumDroid(params...).map (object) -> new WZObject(object)
 
-  # Need a way to register groups
-  @groups = {}
-
-  @update = () ->
-    for name of CyberBorg.groups
-      group = CyberBorg.groups[name].group
-      for object in group
-        object.update() if object.game_time < gameTime
-
-  constructor: () ->
-
-  get_resources: (at) ->
-    CyberBorg.enum_feature(@ALL_PLAYERS, "OilResource").nearest(at)
-
   @is_truck = (droid) ->
     droid.droidType is DROID_CONSTRUCT
 
@@ -77,6 +63,18 @@ class CyberBorg
 
   @nearest_metric = (a, b, at) ->
     CyberBorg.distance_metric(a, at) - CyberBorg.distance_metric(b, at)
+
+  @get_resources = (at) ->
+    CyberBorg.enum_feature(@ALL_PLAYERS, "OilResource").nearest(at)
+
+  # Need a way to register groups
+  constructor: (@groups={}) ->
+
+  update: () ->
+    for name of @groups
+      group = @groups[name].group
+      for object in group
+        object.update() if object.game_time < gameTime
 
 # Filters
 is_idle = (droid) ->

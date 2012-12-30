@@ -44,14 +44,14 @@ eventStartLevel = ->
   #     Let's tell the user how many units we have to start.
   #  
   console "We have #{reserve.group.length} droids available, and
-    #{reserve.group.count(CyberBorg.is_truck)} of them are trucks."
+  #{reserve.group.count(CyberBorg.is_truck)} of them are trucks."
   
   #
   #     cyberBorg can list all the resources available on the map and
   #     sort them according to distance from where we are.
   #     It will provide the AI a guide to our territorial expansion.
   #  
-  derricks = cyberBorg.get_resources(reserve.group.center())
+  derricks = CyberBorg.get_resources(reserve.group.center())
   
   #
   #     So let's tell the player how many resource points there are.
@@ -61,7 +61,7 @@ eventStartLevel = ->
   #
   #     Let's store what we know so far as cyberBorg attributes.
   #  
-  groups = CyberBorg.groups
+  groups = cyberBorg.groups
   groups.reserve = reserve
   cyberBorg.derricks = derricks
   
@@ -96,7 +96,7 @@ eventStartLevel = ->
 #    It should be called every time base group is ready to build the next structure.
 #
 base_group = ->
-  groups = CyberBorg.groups
+  groups = cyberBorg.groups
   base = groups.base
   order = base.orders.next()
   if order
@@ -117,10 +117,10 @@ base_group = ->
 #    eventStructureBuilt is WZ2100 JS API.
 #
 eventStructureBuilt = (structure, droid) ->
-  CyberBorg.update()
+  cyberBorg.update()
   structure = new WZObject(structure)
   droid = new WZObject(droid)
-  groups = CyberBorg.groups
+  groups = cyberBorg.groups
   
   # So every time we build a structure, this function gets called.
   # Let's tell the player what got built.
@@ -178,7 +178,7 @@ min_map_and_design_on = (structure) ->
 factory_group = ->
   # FACTORY_ORDERS is a list of droids to build, and
   # we build them one at a time.
-  groups = CyberBorg.groups
+  groups = cyberBorg.groups
   factory = groups.factory
   order = factory.orders.next()
   if order
@@ -194,10 +194,10 @@ factory_group = ->
 #  When a droid is built, it triggers a droid built event and
 #  eventDroidBuilt(a WZ2100 JS API) is called.
 eventDroidBuilt = (droid, structure) ->
-  CyberBorg.update()
+  cyberBorg.update()
   droid = new WZObject(droid)
   structure = new WZObject(structure)
-  groups = CyberBorg.groups
+  groups = cyberBorg.groups
   
   # Tell the player what got built.
   console "Built #{droid.name}."
@@ -216,7 +216,7 @@ eventDroidBuilt = (droid, structure) ->
 # Player commands...
 # Some useful debuging feedback and could be used for player commands.
 eventChat = (sender, to, message) ->
-  CyberBorg.update()
+  cyberBorg.update()
   if sender is 0
     switch message
       when 'report base' then report('base')
@@ -225,7 +225,7 @@ eventChat = (sender, to, message) ->
 
 # Report to player console droids' position...
 report = (who) ->
-  groups = CyberBorg.groups
+  groups = cyberBorg.groups
   droids = []
   switch who
     when 'base'

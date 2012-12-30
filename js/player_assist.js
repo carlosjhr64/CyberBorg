@@ -10,10 +10,10 @@ eventStartLevel = function() {
   var derricks, groups, reserve;
   console("This is player_assist.js");
   reserve = new Group();
-  console("We have " + reserve.group.length + " droids available, and    " + (reserve.group.count(CyberBorg.is_truck)) + " of them are trucks.");
-  derricks = cyberBorg.get_resources(reserve.group.center());
+  console("We have " + reserve.group.length + " droids available, and  " + (reserve.group.count(CyberBorg.is_truck)) + " of them are trucks.");
+  derricks = CyberBorg.get_resources(reserve.group.center());
   console("There are " + derricks.length + " resource points.");
-  groups = CyberBorg.groups;
+  groups = cyberBorg.groups;
   groups.reserve = reserve;
   cyberBorg.derricks = derricks;
   groups.base = new Group([], cyberBorg.base_orders(), reserve.group);
@@ -23,7 +23,7 @@ eventStartLevel = function() {
 
 base_group = function() {
   var base, builders, count, groups, order;
-  groups = CyberBorg.groups;
+  groups = cyberBorg.groups;
   base = groups.base;
   order = base.orders.next();
   if (order) {
@@ -40,10 +40,10 @@ base_group = function() {
 
 eventStructureBuilt = function(structure, droid) {
   var groups;
-  CyberBorg.update();
+  cyberBorg.update();
   structure = new WZObject(structure);
   droid = new WZObject(droid);
-  groups = CyberBorg.groups;
+  groups = cyberBorg.groups;
   console("" + (structure.namexy()) + " Built!");
   if (groups.base.group.contains(droid)) base_group();
   if ((structure.type === STRUCTURE) && (structure.stattype === FACTORY)) {
@@ -63,7 +63,7 @@ min_map_and_design_on = function(structure) {
 
 factory_group = function() {
   var factory, groups, order;
-  groups = CyberBorg.groups;
+  groups = cyberBorg.groups;
   factory = groups.factory;
   order = factory.orders.next();
   if (order) {
@@ -79,17 +79,17 @@ factory_group = function() {
 
 eventDroidBuilt = function(droid, structure) {
   var groups;
-  CyberBorg.update();
+  cyberBorg.update();
   droid = new WZObject(droid);
   structure = new WZObject(structure);
-  groups = CyberBorg.groups;
+  groups = cyberBorg.groups;
   console("Built " + droid.name + ".");
   groups.reserve.group.push(droid);
   if (groups.factory.group.contains(structure)) return factory_group();
 };
 
 eventChat = function(sender, to, message) {
-  CyberBorg.update();
+  cyberBorg.update();
   if (sender === 0) {
     switch (message) {
       case 'report base':
@@ -104,7 +104,7 @@ eventChat = function(sender, to, message) {
 
 report = function(who) {
   var droid, droids, groups, _i, _j, _len, _len2, _ref, _ref2;
-  groups = CyberBorg.groups;
+  groups = cyberBorg.groups;
   droids = [];
   switch (who) {
     case 'base':

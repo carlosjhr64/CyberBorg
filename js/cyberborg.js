@@ -87,36 +87,6 @@ CyberBorg = (function() {
     });
   };
 
-  CyberBorg.groups = {};
-
-  CyberBorg.update = function() {
-    var group, name, object, _results;
-    _results = [];
-    for (name in CyberBorg.groups) {
-      group = CyberBorg.groups[name].group;
-      _results.push((function() {
-        var _i, _len, _results2;
-        _results2 = [];
-        for (_i = 0, _len = group.length; _i < _len; _i++) {
-          object = group[_i];
-          if (object.game_time < gameTime) {
-            _results2.push(object.update());
-          } else {
-            _results2.push(void 0);
-          }
-        }
-        return _results2;
-      })());
-    }
-    return _results;
-  };
-
-  function CyberBorg() {}
-
-  CyberBorg.prototype.get_resources = function(at) {
-    return CyberBorg.enum_feature(this.ALL_PLAYERS, "OilResource").nearest(at);
-  };
-
   CyberBorg.is_truck = function(droid) {
     return droid.droidType === DROID_CONSTRUCT;
   };
@@ -134,6 +104,36 @@ CyberBorg = (function() {
 
   CyberBorg.nearest_metric = function(a, b, at) {
     return CyberBorg.distance_metric(a, at) - CyberBorg.distance_metric(b, at);
+  };
+
+  CyberBorg.get_resources = function(at) {
+    return CyberBorg.enum_feature(this.ALL_PLAYERS, "OilResource").nearest(at);
+  };
+
+  function CyberBorg(groups) {
+    this.groups = groups != null ? groups : {};
+  }
+
+  CyberBorg.prototype.update = function() {
+    var group, name, object, _results;
+    _results = [];
+    for (name in this.groups) {
+      group = this.groups[name].group;
+      _results.push((function() {
+        var _i, _len, _results2;
+        _results2 = [];
+        for (_i = 0, _len = group.length; _i < _len; _i++) {
+          object = group[_i];
+          if (object.game_time < gameTime) {
+            _results2.push(object.update());
+          } else {
+            _results2.push(void 0);
+          }
+        }
+        return _results2;
+      })());
+    }
+    return _results;
   };
 
   return CyberBorg;
