@@ -59,12 +59,20 @@ class WZArray
     at
 
   #  current WZ2100
-  current: WZArray.INIT
+  _current: WZArray.INIT
+  current: this[@_current]
 
   # next WZ2100
   next: (gameobj) ->
-    @current += 1  if @current < @length
-    order = this[@current]
+    @_current += 1  if @_current < this.length
+    order = this[@_current]
+    @is[gameobj.id] = order  if gameobj
+    order
+
+  # previous WZ2100
+  previous: (gameobj) ->
+    @_current -= 1  if @_current > WZArray.init
+    order = this[@_current]
     @is[gameobj.id] = order  if gameobj
     order
 

@@ -95,12 +95,22 @@ WZArray = (function() {
     return at;
   };
 
-  WZArray.prototype.current = WZArray.INIT;
+  WZArray.prototype._current = WZArray.INIT;
+
+  WZArray.prototype.current = WZArray[WZArray._current];
 
   WZArray.prototype.next = function(gameobj) {
     var order;
-    if (this.current < this.length) this.current += 1;
-    order = this[this.current];
+    if (this._current < this.length) this._current += 1;
+    order = this[this._current];
+    if (gameobj) this.is[gameobj.id] = order;
+    return order;
+  };
+
+  WZArray.prototype.previous = function(gameobj) {
+    var order;
+    if (this._current > WZArray.init) this._current -= 1;
+    order = this[this._current];
     if (gameobj) this.is[gameobj.id] = order;
     return order;
   };
