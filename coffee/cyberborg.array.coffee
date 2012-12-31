@@ -29,7 +29,7 @@ Array::indexOfObject = (droid) ->
 # idle WZ2100
 Array::idle = ->
   selected = @filter(is_idle)
-  selected
+  WZArray.bless(selected)
 
 #  in_group  WZ2100
 Array::in_group = (group) ->
@@ -37,7 +37,7 @@ Array::in_group = (group) ->
   selected = @filter((droid) ->
     group.group.indexOf(droid) > Array.NONE
   )
-  selected
+  WZArray.bless(selected)
 
 # indexOf  JS-ARRAY
 
@@ -61,7 +61,7 @@ Array::nearest = (at) ->
 # not_built WZ2100
 Array::not_built = ->
   selected = @filter(not_built)
-  selected
+  WZArray.bless(selected)
 
 # not_in_group  WZ2100
 Array::not_in_group = (group) ->
@@ -69,7 +69,7 @@ Array::not_in_group = (group) ->
   selected = @filter((droid) ->
     group.group.indexOf(droid) is Array.NONE
   )
-  selected
+  WZArray.bless(selected)
 
 # of  WZ2100
 Array::of = (gameobj) ->
@@ -93,9 +93,6 @@ Array::removeObject = (droid) ->
 
 # replace  RUBY
 
-# reserve WZ2100 TODO is used?
-Array::reserve = []
-
 # reverse  JS-ARRAY
 
 # shift  JS-ARRAY
@@ -115,11 +112,11 @@ Array::reserve = []
 # trucks  WZ2100
 Array::trucks = ->
   selected = @filter(CyberBorg.is_truck)
-  selected
+  WZArray.bless(selected)
 
 # factories WZ2100
 Array::factories = ->
   selected = @filter(CyberBorg.is_factory)
-  selected
+  WZArray.bless(selected)
 
 # unshift  JS-ARRAY

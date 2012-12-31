@@ -21,7 +21,7 @@ Array.prototype.indexOfObject = function(droid) {
 Array.prototype.idle = function() {
   var selected;
   selected = this.filter(is_idle);
-  return selected;
+  return WZArray.bless(selected);
 };
 
 Array.prototype.in_group = function(group) {
@@ -29,7 +29,7 @@ Array.prototype.in_group = function(group) {
   selected = this.filter(function(droid) {
     return group.group.indexOf(droid) > Array.NONE;
   });
-  return selected;
+  return WZArray.bless(selected);
 };
 
 Array.prototype.is = {};
@@ -44,7 +44,7 @@ Array.prototype.nearest = function(at) {
 Array.prototype.not_built = function() {
   var selected;
   selected = this.filter(not_built);
-  return selected;
+  return WZArray.bless(selected);
 };
 
 Array.prototype.not_in_group = function(group) {
@@ -52,7 +52,7 @@ Array.prototype.not_in_group = function(group) {
   selected = this.filter(function(droid) {
     return group.group.indexOf(droid) === Array.NONE;
   });
-  return selected;
+  return WZArray.bless(selected);
 };
 
 Array.prototype.of = function(gameobj) {
@@ -66,16 +66,14 @@ Array.prototype.removeObject = function(droid) {
   return i;
 };
 
-Array.prototype.reserve = [];
-
 Array.prototype.trucks = function() {
   var selected;
   selected = this.filter(CyberBorg.is_truck);
-  return selected;
+  return WZArray.bless(selected);
 };
 
 Array.prototype.factories = function() {
   var selected;
   selected = this.filter(CyberBorg.is_factory);
-  return selected;
+  return WZArray.bless(selected);
 };
