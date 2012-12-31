@@ -27,7 +27,7 @@ Array.prototype.idle = function() {
 Array.prototype.in_group = function(group) {
   var selected;
   selected = this.filter(function(droid) {
-    return group.group.indexOf(droid) > Array.NONE;
+    return group.group.indexOfObject(droid) > Array.NONE;
   });
   return WZArray.bless(selected);
 };
@@ -50,7 +50,7 @@ Array.prototype.not_built = function() {
 Array.prototype.not_in_group = function(group) {
   var selected;
   selected = this.filter(function(droid) {
-    return group.group.indexOf(droid) === Array.NONE;
+    return group.group.indexOfObject(droid) === Array.NONE;
   });
   return WZArray.bless(selected);
 };

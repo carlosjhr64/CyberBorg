@@ -4,9 +4,7 @@ Array.INIT = -1
 Array.NONE = -1
 
 # concat JS-ARRAY
-
 # constructor JS-ARRAY
-
 # contains WZ2100
 Array::contains = (droid) ->
   @indexOfObject(droid) > Array.NONE
@@ -21,11 +19,8 @@ Array::indexOfObject = (droid) ->
   Array.NONE
 
 # every JS-ARRAY
-
 # filter JS-ARRAY
-
 # forEach JS-ARRAY
-
 # idle WZ2100
 Array::idle = ->
   selected = @filter(is_idle)
@@ -35,23 +30,18 @@ Array::idle = ->
 Array::in_group = (group) ->
   #selected = this.filter( function(droid) { return(droid.group == group.group); });
   selected = @filter((droid) ->
-    group.group.indexOf(droid) > Array.NONE
+    group.group.indexOfObject(droid) > Array.NONE
   )
   WZArray.bless(selected)
 
 # indexOf  JS-ARRAY
-
 # is WZ2100
 Array::is = {}
 
 # join  JS-ARRAY
-
 # lastIndexOf  JS-ARRAY
-
 # length  JS-ARRAY
-
 # map  JS-ARRAY
-
 # nearest WZ2100
 Array::nearest = (at) ->
   @sort (a, b) ->
@@ -67,7 +57,7 @@ Array::not_built = ->
 Array::not_in_group = (group) ->
   #var selected = this.filter( function(droid) { return(droid.group != group.group); });
   selected = @filter((droid) ->
-    group.group.indexOf(droid) is Array.NONE
+    group.group.indexOfObject(droid) is Array.NONE
   )
   WZArray.bless(selected)
 
@@ -76,15 +66,10 @@ Array::of = (gameobj) ->
   @is[gameobj.id]
 
 # pop JS-ARRAY
-
 # push JS-ARRAY
-
 # reduceRight JS-ARRAY
-
 # reduce  JS-ARRAY
-
 # reject! RUBY
-
 # remove WS2100
 Array::removeObject = (droid) ->
   i = @indexOfObject(droid)
@@ -92,23 +77,14 @@ Array::removeObject = (droid) ->
   i
 
 # replace  RUBY
-
 # reverse  JS-ARRAY
-
 # shift  JS-ARRAY
-
 # slice  JS-ARRAY
-
 # some  JS-ARRAY
-
 # sort  JS-ARRAY
-
 # splice  JS-ARRAY
-
 # toSource  JS-ARRAY
-
 # toString  JS-ARRAY
-
 # trucks  WZ2100
 Array::trucks = ->
   selected = @filter(CyberBorg.is_truck)
