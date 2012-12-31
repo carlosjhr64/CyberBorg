@@ -131,8 +131,28 @@ WZArray = (function() {
     return order;
   };
 
+  WZArray.prototype.not_built = function() {
+    return this.filters(not_built);
+  };
+
+  WZArray.prototype.not_in_group = function(group) {
+    return this.filters(function(droid) {
+      return group.group.indexOfObject(droid) === Array.NONE;
+    });
+  };
+
+  WZArray.prototype.is = {};
+
+  WZArray.prototype.of = function(gameobj) {
+    return this.is[gameobj.id];
+  };
+
   WZArray.prototype.trucks = function() {
     return this.filters(CyberBorg.is_truck);
+  };
+
+  WZArray.prototype.factories = function() {
+    return this.filters(CyberBorg.is_factory);
   };
 
   return WZArray;

@@ -92,6 +92,21 @@ class WZArray
     @is[gameobj.id] = order  if gameobj
     order
 
+  # not_built WZ2100
+  not_built: -> @filters(not_built)
+
+  # not_in_group  WZ2100
+  not_in_group: (group) ->
+    @filters((droid) -> group.group.indexOfObject(droid) is Array.NONE)
+
+  # indexOf  JS-ARRAY
+  # is WZ2100
+  is: {}
+
+  # of  WZ2100
+  of: (gameobj) ->
+    @is[gameobj.id]
+
   # replace  RUBY
   # reverse  JS-ARRAY
   # shift  JS-ARRAY
@@ -103,6 +118,11 @@ class WZArray
   # toString  JS-ARRAY
   # trucks  WZ2100
   trucks: -> @filters(CyberBorg.is_truck)
+
+  # factories WZ2100
+  factories: -> @filters(CyberBorg.is_factory)
+
+  # unshift  JS-ARRAY
 
 # CyberBorg will help package data and prodide utilities
 class CyberBorg

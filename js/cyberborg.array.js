@@ -32,8 +32,6 @@ Array.prototype.in_group = function(group) {
   });
 };
 
-Array.prototype.is = {};
-
 Array.prototype.nearest = function(at) {
   this.sort(function(a, b) {
     return CyberBorg.nearest_metric(a, b, at);
@@ -41,27 +39,9 @@ Array.prototype.nearest = function(at) {
   return this;
 };
 
-Array.prototype.not_built = function() {
-  return this.filters(not_built);
-};
-
-Array.prototype.not_in_group = function(group) {
-  return this.filters(function(droid) {
-    return group.group.indexOfObject(droid) === Array.NONE;
-  });
-};
-
-Array.prototype.of = function(gameobj) {
-  return this.is[gameobj.id];
-};
-
 Array.prototype.removeObject = function(droid) {
   var i;
   i = this.indexOfObject(droid);
   if (i > Array.NONE) this.splice(i, 1);
   return i;
-};
-
-Array.prototype.factories = function() {
-  return this.filters(CyberBorg.is_factory);
 };

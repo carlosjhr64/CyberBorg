@@ -31,10 +31,6 @@ Array::idle = -> @filters(is_idle)
 Array::in_group = (group) ->
   @filters((droid) -> group.group.indexOfObject(droid) > Array.NONE)
 
-# indexOf  JS-ARRAY
-# is WZ2100
-Array::is = {}
-
 # join  JS-ARRAY
 # lastIndexOf  JS-ARRAY
 # length  JS-ARRAY
@@ -44,17 +40,6 @@ Array::nearest = (at) ->
   @sort (a, b) ->
     CyberBorg.nearest_metric a, b, at
   this
-
-# not_built WZ2100
-Array::not_built = -> @filters(not_built)
-
-# not_in_group  WZ2100
-Array::not_in_group = (group) ->
-  @filters((droid) -> group.group.indexOfObject(droid) is Array.NONE)
-
-# of  WZ2100
-Array::of = (gameobj) ->
-  @is[gameobj.id]
 
 # pop JS-ARRAY
 # push JS-ARRAY
@@ -67,7 +52,3 @@ Array::removeObject = (droid) ->
   @splice i, 1  if i > Array.NONE
   i
 
-# factories WZ2100
-Array::factories = -> @filters(CyberBorg.is_factory)
-
-# unshift  JS-ARRAY
