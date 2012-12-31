@@ -78,6 +78,20 @@ WZArray = (function() {
     return array;
   };
 
+  WZArray.prototype.in_group = function(group) {
+    return this.filters(function(droid) {
+      return group.group.indexOfObject(droid) > WZArray.NONE;
+    });
+  };
+
+  WZArray.prototype.filters = function(type) {
+    return WZArray.bless(this.filter(type));
+  };
+
+  WZArray.prototype.idle = function() {
+    return this.filters(is_idle);
+  };
+
   WZArray.prototype.center = function() {
     var at, i, n;
     at = {
@@ -137,7 +151,7 @@ WZArray = (function() {
 
   WZArray.prototype.not_in_group = function(group) {
     return this.filters(function(droid) {
-      return group.group.indexOfObject(droid) === Array.NONE;
+      return group.group.indexOfObject(droid) === WZArray.NONE;
     });
   };
 
@@ -246,7 +260,7 @@ is_idle = function(droid) {
   var not_idle;
   if (droid.type === STRUCTURE) return structureIdle(droid);
   not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH];
-  return not_idle.indexOf(droid.order) === Array.NONE;
+  return not_idle.indexOf(droid.order) === WZArray.NONE;
 };
 
 Group = (function() {

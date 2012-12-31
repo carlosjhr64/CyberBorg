@@ -18,19 +18,6 @@ Array::indexOfObject = (droid) ->
     i++
   Array.NONE
 
-# every JS-ARRAY
-# filter JS-ARRAY
-# filters WZArray
-Array::filters = (type) -> WZArray.bless(this.filter(type))
-
-# forEach JS-ARRAY
-# idle WZ2100
-Array::idle = -> @filters(is_idle)
-
-#  in_group  WZ2100
-Array::in_group = (group) ->
-  @filters((droid) -> group.group.indexOfObject(droid) > Array.NONE)
-
 # join  JS-ARRAY
 # lastIndexOf  JS-ARRAY
 # length  JS-ARRAY

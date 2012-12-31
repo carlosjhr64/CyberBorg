@@ -46,6 +46,19 @@ class WZArray
     array[name] = method for name, method of WZArray.prototype
     array
 
+  #  in_group  WZ2100
+  in_group: (group) ->
+    @filters((droid) -> group.group.indexOfObject(droid) > WZArray.NONE)
+
+  # every JS-ARRAY
+  # filter JS-ARRAY
+  # filters WZArray
+  filters: (type) -> WZArray.bless(this.filter(type))
+
+  # forEach JS-ARRAY
+  # idle WZ2100
+  idle: -> @filters(is_idle)
+
   # center WZ2100
   center: ->
     at =
@@ -97,7 +110,7 @@ class WZArray
 
   # not_in_group  WZ2100
   not_in_group: (group) ->
-    @filters((droid) -> group.group.indexOfObject(droid) is Array.NONE)
+    @filters((droid) -> group.group.indexOfObject(droid) is WZArray.NONE)
 
   # indexOf  JS-ARRAY
   # is WZ2100
@@ -173,7 +186,7 @@ is_idle = (droid) ->
   return (structureIdle(droid))  if droid.type is STRUCTURE
   # It's a droid
   not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH]
-  not_idle.indexOf(droid.order) is Array.NONE
+  not_idle.indexOf(droid.order) is WZArray.NONE
 
 # The Group Class
 class Group
@@ -259,7 +272,7 @@ class Group
 #var DERRICKS = null; // Set at start of game
 #
 #
-#var BASE_ORDER = Array.INIT;
+#var BASE_ORDER = WZArray.INIT;
 #
 #var RESEARCH_ORDERS = [
 #  'R-Wpn-MG1Mk1',		// Machine Gun Turret
@@ -289,7 +302,7 @@ class Group
 #
 #function is_resource(object){
 #  var a_resource = [ OIL_RESOURCE, RESOURCE_EXTRACTOR ];
-#  return (a_resource.indexOf(object.stattype) > Array.NONE);
+#  return (a_resource.indexOf(object.stattype) > WZArray.NONE);
 #}
 #
 #//  The API is moving from 3 switches to just two.
