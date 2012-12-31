@@ -52,6 +52,12 @@ class CyberBorg
     not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH]
     not_idle.indexOf(object.order) is WZArray.NONE
 
+  @is_resource = (object) ->
+    [
+      OIL_RESOURCE,
+      RESOURCE_EXTRACTOR
+    ].indexOf(object.stattype) > WZArray.NONE
+
   # The API is moving from 3 switches to just two.
   # BEING_BUILT, BUILT, and BEING_DEMOLISHED to just
   # BEING_BUILT and BUILT.
@@ -79,6 +85,9 @@ class CyberBorg
   @get_resources = (at) ->
     CyberBorg.enum_feature(@ALL_PLAYERS, "OilResource").nearest(at)
 
+  @get_my_trucks = (at) -> # TODO out of group style?
+    CyberBorg.enum_droid(me, DROID_CONSTRUCT)
+
 
 # ###########################################################################################
 #  
@@ -93,35 +102,7 @@ class CyberBorg
 #
 #var BASE_ORDER = WZArray.INIT;
 #
-#var RESEARCH_ORDERS = [
-#  'R-Wpn-MG1Mk1',		// Machine Gun Turret
-#  'R-Struc-PowerModuleMk1',	// Power Module
-#  'R-Defense-Tower01',
-#  'R-Wpn-MG3Mk1',		// Heavy Machine Gun
-#  'R-Struc-RepairFacility',		// Repair Facility
-#  'R-Defense-WallTower02',	// Ligh Cannon Hardpoint
-#  'R-Defense-AASite-QuadMg1',	// AA
-#  'R-Vehicle-Body04',		// Bug Body
-#  'R-Struc-VTOLFactory',	// Vtol Factory
-#  'R-Vehicle-Prop-VTOL',	// Vtol
-#  'R-Wpn-Bomb01',		// Vtol Bomb
-#];
-#var RESEARCH_FACILITIES = [];
 #
-#// JS Utilities
-#
-#
-#// General Utilities
-#
-#// WZ2100 Utilities
-#
-#function my_trucks(){
-#  return(enumDroid(me, DROID_CONSTRUCT));
-#}
-#
-#function is_resource(object){
-#  var a_resource = [ OIL_RESOURCE, RESOURCE_EXTRACTOR ];
-#  return (a_resource.indexOf(object.stattype) > WZArray.NONE);
 #}
 #
 

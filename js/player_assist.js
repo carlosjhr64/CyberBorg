@@ -405,6 +405,10 @@ CyberBorg = (function() {
     return not_idle.indexOf(object.order) === WZArray.NONE;
   };
 
+  CyberBorg.is_resource = function(object) {
+    return [OIL_RESOURCE, RESOURCE_EXTRACTOR].indexOf(object.stattype) > WZArray.NONE;
+  };
+
   CyberBorg.is_not_built = function(structure) {
     return structure.status !== BUILT;
   };
@@ -428,6 +432,10 @@ CyberBorg = (function() {
 
   CyberBorg.get_resources = function(at) {
     return CyberBorg.enum_feature(this.ALL_PLAYERS, "OilResource").nearest(at);
+  };
+
+  CyberBorg.get_my_trucks = function(at) {
+    return CyberBorg.enum_droid(me, DROID_CONSTRUCT);
   };
 
   return CyberBorg;
