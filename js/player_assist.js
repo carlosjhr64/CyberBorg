@@ -5,6 +5,7 @@ WZObject = (function() {
 
   function WZObject(object) {
     this.copy(object);
+    this.is_wzobject = true;
   }
 
   WZObject.prototype.copy = function(object) {
@@ -15,18 +16,6 @@ WZObject = (function() {
       _results.push(this[key] = object[key]);
     }
     return _results;
-  };
-
-  WZObject.bless = function(object) {
-    var method, name, _ref;
-    if (object.game_time) return object;
-    object['game_time'] = gameTime;
-    _ref = WZObject.prototype;
-    for (name in _ref) {
-      method = _ref[name];
-      object[name] = method;
-    }
-    return object;
   };
 
   WZObject.prototype.update = function() {
