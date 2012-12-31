@@ -8,34 +8,22 @@ class WZArray
     array.is_wzarray = true
     array
 
-  # Counts the number of type in list
-  counts: (type) ->
-    count = 0
-    i = 0
-    while i < @length
-      count += 1  if type(this[i])
-      i++
-    count
-
-  # True if list contains object
-  contains: (object) ->
-    @indexOfObject(object) > WZArray.NONE
+  ###############
+  ### QUERIES ###
+  ###############
 
   # indexOfObject
   indexOfObject: (object) ->
     id = object.id
     i = 0
     while i < @length
-      return (i)  if this[i].id is id
+      return (i)  if @[i].id is id
       i++
     WZArray.NONE
 
-  # Sorts list by distance.
-  # Nearest object would be first on list.
-  nearest: (at) ->
-    @sort (a, b) ->
-      CyberBorg.nearest_metric a, b, at
-    this
+  # True if list contains object
+  contains: (object) ->
+    @indexOfObject(object) > WZArray.NONE
 
   # Remove object from list.
   removeObject: (object) ->
@@ -43,15 +31,56 @@ class WZArray
     @splice i, 1  if i > WZArray.NONE
     i
 
+  ###############
+  ### FILTERS ###
+  ###############
+
+  # Ensures filtering results in a WZArray
+  filters: (type) -> WZArray.bless(@.filter(type))
+
+  # trucks  WZ2100
+  trucks: -> @filters(CyberBorg.is_truck)
+
+  # factories WZ2100
+  factories: -> @filters(CyberBorg.is_factory)
+
+  # not_built WZ2100
+  not_built: -> @filters(not_built) # TODO where is not_built
+
+  # not_in  WZ2100
+  not_in: (group) ->
+    @filters((object) -> group.group.indexOfObject(object) is WZArray.NONE)
+
   #  select objects from list in group
   in: (group) ->
     @filters((object) -> group.group.indexOfObject(object) > WZArray.NONE)
 
-  # Ensures filtering results in a WZArray
-  filters: (type) -> WZArray.bless(this.filter(type))
-
   # Selects from list objects that are idle in the game
   idle: -> @filters(CyberBorg.is_idle)
+
+  #############
+  ### SORTS ###
+  #############
+
+  # Sorts list by distance.
+  # Nearest object would be first on list.
+  nearest: (at) ->
+    @sort (a, b) ->
+      CyberBorg.nearest_metric a, b, at
+    @
+
+  ################
+  ### SUMARIES ###
+  ################
+
+  # Counts the number of type in list
+  counts: (type) ->
+    count = 0
+    i = 0
+    while i < @length
+      count += 1  if type(@[i])
+      i++
+    count
 
   # Returns the center of the list (group).
   center: ->
@@ -61,49 +90,45 @@ class WZArray
     n = @length
     i = 0
     while i < n
-      at.x += this[i].x
-      at.y += this[i].y
+      at.x += @[i].x
+      at.y += @[i].y
       i++
     at.x = at.x / n
     at.y = at.y / n
     at
 
+  #################
+  ### ACCESSING ###
+  #################
+
   # first
-  first: -> this[0]
+  first: -> @[0]
 
   #  current WZ2100
   _current: WZArray.INIT
-  current: this[@_current]
+  current: @[@_current]
 
   # next WZ2100
   next: (gameobj) ->
-    @_current += 1  if @_current < this.length
-    order = this[@_current]
+    @_current += 1  if @_current < @.length
+    order = @[@_current]
     @is[gameobj.id] = order  if gameobj
     order
 
   # previous WZ2100
   previous: (gameobj) ->
     @_current -= 1  if @_current > WZArray.init
-    order = this[@_current]
+    order = @[@_current]
     @is[gameobj.id] = order  if gameobj
     order
 
-  # not_built WZ2100
-  not_built: -> @filters(not_built) # TODO where is not_built
-
-  # not_in  WZ2100
-  not_in: (group) ->
-    @filters((object) -> group.group.indexOfObject(object) is WZArray.NONE)
+  ##############
+  ### STORES ###
+  ##############
 
   # is WZ2100
   is: {}
 
   # of  WZ2100
-  of: (gameobj) -> @is[gameobj.id]
+  of: (object) -> @is[object.id]
 
-  # trucks  WZ2100
-  trucks: -> @filters(CyberBorg.is_truck)
-
-  # factories WZ2100
-  factories: -> @filters(CyberBorg.is_factory)

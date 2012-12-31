@@ -20,20 +20,8 @@ WZArray = (function() {
     return array;
   };
 
-  WZArray.prototype.counts = function(type) {
-    var count, i;
-    count = 0;
-    i = 0;
-    while (i < this.length) {
-      if (type(this[i])) count += 1;
-      i++;
-    }
-    return count;
-  };
-
-  WZArray.prototype.contains = function(object) {
-    return this.indexOfObject(object) > WZArray.NONE;
-  };
+  /* QUERIES
+  */
 
   WZArray.prototype.indexOfObject = function(object) {
     var i, id;
@@ -46,11 +34,8 @@ WZArray = (function() {
     return WZArray.NONE;
   };
 
-  WZArray.prototype.nearest = function(at) {
-    this.sort(function(a, b) {
-      return CyberBorg.nearest_metric(a, b, at);
-    });
-    return this;
+  WZArray.prototype.contains = function(object) {
+    return this.indexOfObject(object) > WZArray.NONE;
   };
 
   WZArray.prototype.removeObject = function(object) {
@@ -60,18 +45,63 @@ WZArray = (function() {
     return i;
   };
 
+  /* FILTERS
+  */
+
+  WZArray.prototype.filters = function(type) {
+    return WZArray.bless(this.filter(type));
+  };
+
+  WZArray.prototype.trucks = function() {
+    return this.filters(CyberBorg.is_truck);
+  };
+
+  WZArray.prototype.factories = function() {
+    return this.filters(CyberBorg.is_factory);
+  };
+
+  WZArray.prototype.not_built = function() {
+    return this.filters(not_built);
+  };
+
+  WZArray.prototype.not_in = function(group) {
+    return this.filters(function(object) {
+      return group.group.indexOfObject(object) === WZArray.NONE;
+    });
+  };
+
   WZArray.prototype["in"] = function(group) {
     return this.filters(function(object) {
       return group.group.indexOfObject(object) > WZArray.NONE;
     });
   };
 
-  WZArray.prototype.filters = function(type) {
-    return WZArray.bless(this.filter(type));
-  };
-
   WZArray.prototype.idle = function() {
     return this.filters(CyberBorg.is_idle);
+  };
+
+  /* SORTS
+  */
+
+  WZArray.prototype.nearest = function(at) {
+    this.sort(function(a, b) {
+      return CyberBorg.nearest_metric(a, b, at);
+    });
+    return this;
+  };
+
+  /* SUMARIES
+  */
+
+  WZArray.prototype.counts = function(type) {
+    var count, i;
+    count = 0;
+    i = 0;
+    while (i < this.length) {
+      if (type(this[i])) count += 1;
+      i++;
+    }
+    return count;
   };
 
   WZArray.prototype.center = function() {
@@ -91,6 +121,9 @@ WZArray = (function() {
     at.y = at.y / n;
     return at;
   };
+
+  /* ACCESSING
+  */
 
   WZArray.prototype.first = function() {
     return this[0];
@@ -116,28 +149,13 @@ WZArray = (function() {
     return order;
   };
 
-  WZArray.prototype.not_built = function() {
-    return this.filters(not_built);
-  };
-
-  WZArray.prototype.not_in = function(group) {
-    return this.filters(function(object) {
-      return group.group.indexOfObject(object) === WZArray.NONE;
-    });
-  };
+  /* STORES
+  */
 
   WZArray.prototype.is = {};
 
-  WZArray.prototype.of = function(gameobj) {
-    return this.is[gameobj.id];
-  };
-
-  WZArray.prototype.trucks = function() {
-    return this.filters(CyberBorg.is_truck);
-  };
-
-  WZArray.prototype.factories = function() {
-    return this.filters(CyberBorg.is_factory);
+  WZArray.prototype.of = function(object) {
+    return this.is[object.id];
   };
 
   return WZArray;
