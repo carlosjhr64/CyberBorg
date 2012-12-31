@@ -105,6 +105,10 @@ CyberBorg = (function() {
     return not_idle.indexOf(object.order) === WZArray.NONE;
   };
 
+  CyberBorg.not_built = function(structure) {
+    return structure.status !== BUILT;
+  };
+
   CyberBorg.distance_metric = function(a, b) {
     var x, y;
     x = a.x - b.x;

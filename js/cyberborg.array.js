@@ -61,7 +61,7 @@ WZArray = (function() {
   };
 
   WZArray.prototype.not_built = function() {
-    return this.filters(not_built);
+    return this.filters(CyberBorg.not_built);
   };
 
   WZArray.prototype.not_in = function(group) {
