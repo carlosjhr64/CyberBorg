@@ -24,10 +24,6 @@ Array::indexOfObject = (droid) ->
 
 # filter JS-ARRAY
 
-# first
-Array::first = ->
-  this[0]
-
 # forEach JS-ARRAY
 
 # idle WZ2100

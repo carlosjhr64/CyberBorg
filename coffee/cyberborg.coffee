@@ -58,6 +58,10 @@ class WZArray
     at.y = at.y / n
     at
 
+  # first
+  first: ->
+    this[0]
+
   # count WZ2100 (clobbers ruby?) TODO
   count: (type) ->
     count = 0

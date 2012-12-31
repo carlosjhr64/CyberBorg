@@ -95,6 +95,10 @@ WZArray = (function() {
     return at;
   };
 
+  WZArray.prototype.first = function() {
+    return this[0];
+  };
+
   WZArray.prototype.count = function(type) {
     var count, i;
     count = 0;

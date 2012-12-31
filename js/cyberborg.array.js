@@ -18,10 +18,6 @@ Array.prototype.indexOfObject = function(droid) {
   return Array.NONE;
 };
 
-Array.prototype.first = function() {
-  return this[0];
-};
-
 Array.prototype.idle = function() {
   var selected;
   selected = this.filter(is_idle);
