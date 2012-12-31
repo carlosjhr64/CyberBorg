@@ -1,9 +1,3 @@
-# Let's keep our Array hacks in their own files for now.
-include "multiplay/skirmish/cyberborg.array.js"
-
-# Let's keep our Object hacks in their own files for now.
-include "multiplay/skirmish/cyberborg.object.js"
-
 # Warzone 2100 Objects
 class WZObject
   # There are two ways to convert a game data object into a WZObject object.

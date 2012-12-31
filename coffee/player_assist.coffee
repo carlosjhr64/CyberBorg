@@ -4,11 +4,7 @@
 #  This AI will use a custom library, CyberBorg.
 #  It provides some usefull classes, helper functions, and
 #  it extends Array in useful ways for the game.
-include "multiplay/skirmish/cyberborg.js"
-
-#  To keep things tidy, we keep the data this AI uses in a separate file.
-#  Let's bring it in.
-include "multiplay/skirmish/cyberborg.data.js"
+#  We're joining all files on compile, so we won't need includes.
 
 #  So lets get CyberBorg to help us out.
 cyberBorg = new CyberBorg()

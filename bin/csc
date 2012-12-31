@@ -1,0 +1,8 @@
+coffee	\
+--join	js/player_assist.js		\
+--bare --compile --watch		\
+	coffee/cyberborg.coffee 	\
+	coffee/cyberborg.object.coffee 	\
+	coffee/cyberborg.array.coffee 	\
+	coffee/cyberborg.data.coffee	\
+	coffee/player_assist.coffee 
