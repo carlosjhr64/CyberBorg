@@ -1,11 +1,31 @@
 # CyberBorg will help package data and prodide utilities
 class CyberBorg
-  # Constants
+  #################
+  ### CONSTANTS ###
+  #################
+
   @NORTH = 0
   @EAST = 90
   @SOUTH = 180
   @WEST = 270
   @ALL_PLAYERS = -1
+
+  ###################
+  ### CONSTRUCTOR ###
+  ###################
+
+  # Need a way to register groups
+  constructor: (@groups={}) ->
+
+  update: () ->
+    for name of @groups
+      group = @groups[name].group
+      for object in group
+        object.update() if object.game_time < gameTime
+
+  #############
+  ### ENUMS ###
+  #############
 
   @enum_feature = (params...) ->
     array = enumFeature(params...).map (object) -> new WZObject(object)
@@ -14,6 +34,10 @@ class CyberBorg
   @enum_droid = (params...) ->
     array = enumDroid(params...).map (object) -> new WZObject(object)
     WZArray.bless(array)
+
+  #################
+  ### IS WUT??? ###
+  #################
 
   @is_truck = (droid) ->
     droid.droidType is DROID_CONSTRUCT
@@ -34,7 +58,11 @@ class CyberBorg
   # It may be confusing to have a function called being_built
   # when it could in fact be being demolished.
   #  So the function is named by what it tests and means.
-  @not_built = (structure) -> structure.status != BUILT
+  @is_not_built = (structure) -> structure.status != BUILT
+
+  ###############
+  ### METRICS ###
+  ###############
 
   @distance_metric = (a, b) ->
     x = a.x - b.x
@@ -44,17 +72,13 @@ class CyberBorg
   @nearest_metric = (a, b, at) ->
     CyberBorg.distance_metric(a, at) - CyberBorg.distance_metric(b, at)
 
+  ############
+  ### GETS ###
+  ############
+
   @get_resources = (at) ->
     CyberBorg.enum_feature(@ALL_PLAYERS, "OilResource").nearest(at)
 
-  # Need a way to register groups
-  constructor: (@groups={}) ->
-
-  update: () ->
-    for name of @groups
-      group = @groups[name].group
-      for object in group
-        object.update() if object.game_time < gameTime
 
 # ###########################################################################################
 #  

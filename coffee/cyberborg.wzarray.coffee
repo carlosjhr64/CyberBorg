@@ -45,7 +45,7 @@ class WZArray
   factories: -> @filters(CyberBorg.is_factory)
 
   # not_built WZ2100
-  not_built: -> @filters(CyberBorg.not_built)
+  not_built: -> @filters(CyberBorg.is_not_built)
 
   # not_in  WZ2100
   not_in: (group) ->
