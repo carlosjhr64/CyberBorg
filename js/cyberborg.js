@@ -238,7 +238,7 @@ Group = (function() {
   Group.prototype.recruit = function(n, type, at) {
     var droid, i, recruits, _results;
     recruits = this.reserve;
-    if (type) recruits = recruits.filter(type);
+    if (type) recruits = recruits.filters(type);
     if (at) recruits.nearest(at);
     i = 0;
     _results = [];
@@ -255,7 +255,7 @@ Group = (function() {
   Group.prototype.cut = function(n, type, at) {
     var cuts, droid, i, _results;
     cuts = this.group;
-    if (type) cuts = cuts.filter(type);
+    if (type) cuts = cuts.filters(type);
     if (at) cuts.nearest(at);
     i = 0;
     _results = [];

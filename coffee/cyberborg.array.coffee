@@ -20,19 +20,16 @@ Array::indexOfObject = (droid) ->
 
 # every JS-ARRAY
 # filter JS-ARRAY
+# filters WZArray
+Array::filters = (type) -> WZArray.bless(this.filter(type))
+
 # forEach JS-ARRAY
 # idle WZ2100
-Array::idle = ->
-  selected = @filter(is_idle)
-  WZArray.bless(selected)
+Array::idle = -> @filters(is_idle)
 
 #  in_group  WZ2100
 Array::in_group = (group) ->
-  #selected = this.filter( function(droid) { return(droid.group == group.group); });
-  selected = @filter((droid) ->
-    group.group.indexOfObject(droid) > Array.NONE
-  )
-  WZArray.bless(selected)
+  @filters((droid) -> group.group.indexOfObject(droid) > Array.NONE)
 
 # indexOf  JS-ARRAY
 # is WZ2100
@@ -49,17 +46,11 @@ Array::nearest = (at) ->
   this
 
 # not_built WZ2100
-Array::not_built = ->
-  selected = @filter(not_built)
-  WZArray.bless(selected)
+Array::not_built = -> @filters(not_built)
 
 # not_in_group  WZ2100
 Array::not_in_group = (group) ->
-  #var selected = this.filter( function(droid) { return(droid.group != group.group); });
-  selected = @filter((droid) ->
-    group.group.indexOfObject(droid) is Array.NONE
-  )
-  WZArray.bless(selected)
+  @filters((droid) -> group.group.indexOfObject(droid) is Array.NONE)
 
 # of  WZ2100
 Array::of = (gameobj) ->
@@ -86,13 +77,9 @@ Array::removeObject = (droid) ->
 # toSource  JS-ARRAY
 # toString  JS-ARRAY
 # trucks  WZ2100
-Array::trucks = ->
-  selected = @filter(CyberBorg.is_truck)
-  WZArray.bless(selected)
+Array::trucks = -> @filters(CyberBorg.is_truck)
 
 # factories WZ2100
-Array::factories = ->
-  selected = @filter(CyberBorg.is_factory)
-  WZArray.bless(selected)
+Array::factories = -> @filters(CyberBorg.is_factory)
 
 # unshift  JS-ARRAY

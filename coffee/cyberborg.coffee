@@ -154,7 +154,7 @@ class Group
   recruit: (n, type, at) ->
     recruits = @reserve
     # NOTE: recruits won't be this.reserve if filtered!
-    recruits = recruits.filter(type)  if type
+    recruits = recruits.filters(type)  if type
     recruits.nearest at  if at
     i = 0
     while i < n
@@ -167,7 +167,7 @@ class Group
   cut: (n, type, at) ->
     cuts = @group
     # NOTE: cuts won't be this.group if filtered!
-    cuts = cuts.filter(type)  if type
+    cuts = cuts.filters(type)  if type
     cuts.nearest at  if at
     i = 0
     while i < n
