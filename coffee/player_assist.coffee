@@ -79,6 +79,7 @@ eventStartLevel = ->
   #    that could change.  Reserve just defaults to empty, [],
   #  
   groups.factory = new Group([], cyberBorg.factory_orders())
+  groups.research = new Group([], cyberBorg.research_orders())
   
   #
   #     Our first concern is our base.
@@ -132,27 +133,24 @@ eventStructureBuilt = (structure, droid) ->
   # It's just how this AI plays the game.
   # Another AI might choose a diffetent build order.
   # Anyways, when a factory gets built, we need to get it started building droids.
-  if (structure.type is STRUCTURE) and (structure.stattype is FACTORY)
-    groups.factory.group.push(structure)
-    factory_group()
-  
-  # Because we've overridden rules.js eventStructureBuilt,
-  # we need to need to enforce one of the rules in the game.
-  # Unfortunately, rules.js is the human player's file.
-  # We are in it's name space.
-  # min_map_and_design_on turns on mini-map and design when HQ is built,
-  # as per rules.js.
-  # TODO check if this file is being runned by rules.js first.
-  # May be being runned as a stand alone AI.
-  min_map_and_design_on structure  if structure.stattype is HQ
+  if (structure.type is STRUCTURE)
+    switch structure.stattype
+      when FACTORY
+        groups.factory.group.push(structure)
+        factory_group()
+      when RESEARCH_LAB
+        research_group(structure)
+      when HQ
+        # Because we've overridden rules.js eventStructureBuilt,
+        # we need to need to enforce one of the rules in the game.
+        # Unfortunately, rules.js is the human player's file.
+        # We are in it's name space.
+        # min_map_and_design_on turns on mini-map and design when HQ is built,
+        # as per rules.js.
+        # TODO check if this file is being runned by rules.js first.
+        # May be being runned as a stand alone AI.
+        min_map_and_design_on structure
 
-# If a new research facility get built, we need to get it started.
-# TODO
-#  if (structure.name == "Research Facility") {
-#debug('Calling do_research');
-#    do_research(structure); }
-#debug('exiting eventStructureBuilt');
-#
 
 # Laid off trucks are placed in the RESERVE.
 # This may be trucks that were in the BASE_GROUP, but
@@ -230,3 +228,42 @@ report = (who) ->
       droids.push(droid.namexy()) for droid in groups.reserve.group
     else console("What???")
   console("#{droids.join(', ')}.") if droids.length
+
+# The second structure that this AI builds is a research facility.
+# When that happens, research_group gets called from eventStructureBuilt.
+# This AI builds five research facilities (the standard limit).
+# The AI also makes use of WZ2100 JS API's pursueResearch, which
+# allows one to specify the desired technology rather than
+# having to specify each technologyy in it's research path.
+# This requires a bit a management.
+research_group = (structure, completed) ->
+  structure = new WZObject(structure)
+  groups = cyberBorg.groups
+  research = groups.research
+  orders = research.orders
+  # orders.of(structure) is the order previously given to the structure to pursue.
+  # orders.next(structure) gives the next order for the structure.
+  # It may be that the structure was not already pursuing a research,
+  # so it's either or.
+  order = orders.of(structure) or orders.next(structure)
+  # we need to know what the structure just got done researching, if anything.
+  if completed
+    console("#{structure.namexy()} pursuing #{order} got done with #{completed.name}.")
+    # If we've reached the technology sought, then get the next order.
+    order = orders.next(structure) if order == completed.name
+    # Eventually, we run out of orders, so we need to check.
+  if order
+    # So let the player know what we're researching, and order the facilty to pursue it.
+    console("#{structure.namexy()} is doing #{order}.")
+    pursueResearch(structure, order)
+  else
+    console('Research orders complete?')
+
+# Every time a research facility is done researching a technology,
+# a research event is triggered, and eventResearched is called.
+# eventResearched is WZ2100 JS API.
+eventResearched = (completed, structure) ->
+  # A new research tecnology can be acquired by picking up it's plan,
+  # which can be found from the ruins of a demolished facility.
+  # So we need to check that in fact the technology came from an active structure.
+  research_group(structure, completed) if structure

@@ -1,4 +1,4 @@
-var CyberBorg, Group, WZArray, WZObject, base_group, cyberBorg, eventChat, eventDroidBuilt, eventStartLevel, eventStructureBuilt, factory_group, min_map_and_design_on, report,
+var CyberBorg, Group, WZArray, WZObject, base_group, cyberBorg, eventChat, eventDroidBuilt, eventResearched, eventStartLevel, eventStructureBuilt, factory_group, min_map_and_design_on, report, research_group,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -522,6 +522,7 @@ eventStartLevel = function() {
   cyberBorg.derricks = derricks;
   groups.base = new Group([], cyberBorg.base_orders(), reserve.group);
   groups.factory = new Group([], cyberBorg.factory_orders());
+  groups.research = new Group([], cyberBorg.research_orders());
   return base_group();
 };
 
@@ -550,11 +551,17 @@ eventStructureBuilt = function(structure, droid) {
   groups = cyberBorg.groups;
   console("" + (structure.namexy()) + " Built!");
   if (groups.base.group.contains(droid)) base_group();
-  if ((structure.type === STRUCTURE) && (structure.stattype === FACTORY)) {
-    groups.factory.group.push(structure);
-    factory_group();
+  if (structure.type === STRUCTURE) {
+    switch (structure.stattype) {
+      case FACTORY:
+        groups.factory.group.push(structure);
+        return factory_group();
+      case RESEARCH_LAB:
+        return research_group(structure);
+      case HQ:
+        return min_map_and_design_on(structure);
+    }
   }
-  if (structure.stattype === HQ) return min_map_and_design_on(structure);
 };
 
 min_map_and_design_on = function(structure) {
@@ -629,4 +636,27 @@ report = function(who) {
       console("What???");
   }
   if (droids.length) return console("" + (droids.join(', ')) + ".");
+};
+
+research_group = function(structure, completed) {
+  var groups, order, orders, research;
+  structure = new WZObject(structure);
+  groups = cyberBorg.groups;
+  research = groups.research;
+  orders = research.orders;
+  order = orders.of(structure) || orders.next(structure);
+  if (completed) {
+    console("" + (structure.namexy()) + " pursuing " + order + " got done with " + completed.name + ".");
+    if (order === completed.name) order = orders.next(structure);
+  }
+  if (order) {
+    console("" + (structure.namexy()) + " is doing " + order + ".");
+    return pursueResearch(structure, order);
+  } else {
+    return console('Research orders complete?');
+  }
+};
+
+eventResearched = function(completed, structure) {
+  if (structure) return research_group(structure, completed);
 };
