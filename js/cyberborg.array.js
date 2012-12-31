@@ -62,10 +62,6 @@ Array.prototype.removeObject = function(droid) {
   return i;
 };
 
-Array.prototype.trucks = function() {
-  return this.filters(CyberBorg.is_truck);
-};
-
 Array.prototype.factories = function() {
   return this.filters(CyberBorg.is_factory);
 };

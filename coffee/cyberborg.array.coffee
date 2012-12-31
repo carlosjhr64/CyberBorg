@@ -67,18 +67,6 @@ Array::removeObject = (droid) ->
   @splice i, 1  if i > Array.NONE
   i
 
-# replace  RUBY
-# reverse  JS-ARRAY
-# shift  JS-ARRAY
-# slice  JS-ARRAY
-# some  JS-ARRAY
-# sort  JS-ARRAY
-# splice  JS-ARRAY
-# toSource  JS-ARRAY
-# toString  JS-ARRAY
-# trucks  WZ2100
-Array::trucks = -> @filters(CyberBorg.is_truck)
-
 # factories WZ2100
 Array::factories = -> @filters(CyberBorg.is_factory)
 

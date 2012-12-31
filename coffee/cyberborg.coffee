@@ -18,6 +18,7 @@ class WZObject
   # That's the bless's way (for the first way, see constructor above).
   # Unfortunately, we're given a read only object, so have to use the constructor.
   @bless = (object) ->
+    return object if object.game_time # very likely already blessed
     object['game_time'] = gameTime
     object[name] = method for name, method of WZObject.prototype
     object
@@ -40,6 +41,8 @@ class WZArray
   @NONE = -1
 
   @bless = (array) ->
+    # TODO when "is" is WZArray, uncoment below
+    #return array if array.is # if array.is, very likely already blessed.
     array[name] = method for name, method of WZArray.prototype
     array
 
@@ -88,6 +91,18 @@ class WZArray
     order = this[@_current]
     @is[gameobj.id] = order  if gameobj
     order
+
+  # replace  RUBY
+  # reverse  JS-ARRAY
+  # shift  JS-ARRAY
+  # slice  JS-ARRAY
+  # some  JS-ARRAY
+  # sort  JS-ARRAY
+  # splice  JS-ARRAY
+  # toSource  JS-ARRAY
+  # toString  JS-ARRAY
+  # trucks  WZ2100
+  trucks: -> @filters(CyberBorg.is_truck)
 
 # CyberBorg will help package data and prodide utilities
 class CyberBorg
@@ -145,11 +160,11 @@ class Group
   constructor: (@group, @orders, @reserve) ->
     # If we're not given a list of droids,
     # get them from enumDroid (all of the player's pieces).
-    @group = CyberBorg.enum_droid()  unless @group
+    if @group then WZArray.bless(@group) else @group = CyberBorg.enum_droid()
     # orders is a list of things for the group to do
-    @orders = []  unless @orders
+    if @orders then WZArray.bless(@orders) else @orders = WZArray.bless([])
     # reserve are the units we can draw from.
-    @reserve = []  unless @reserve
+    if @reserves then WZArray.bless(@reserves) else @reserves = WZArray.bless([])
 
   recruit: (n, type, at) ->
     recruits = @reserve
@@ -243,15 +258,6 @@ class Group
 #
 #// JS Utilities
 #
-#function getObjectClass(obj) {
-#    if (obj && obj.constructor && obj.constructor.toString) {
-#        var arr = obj.constructor.toString().match(/function\s*(\w+)/);
-#        if (arr && arr.length == 2) {
-#            return arr[1];
-#        }
-#    }
-#    return(undefined);
-#}
 #
 #// General Utilities
 #

@@ -23,6 +23,7 @@ WZObject = (function() {
 
   WZObject.bless = function(object) {
     var method, name, _ref;
+    if (object.game_time) return object;
     object['game_time'] = gameTime;
     _ref = WZObject.prototype;
     for (name in _ref) {
@@ -130,6 +131,10 @@ WZArray = (function() {
     return order;
   };
 
+  WZArray.prototype.trucks = function() {
+    return this.filters(CyberBorg.is_truck);
+  };
+
   return WZArray;
 
 })();
@@ -230,9 +235,21 @@ Group = (function() {
     this.group = group;
     this.orders = orders;
     this.reserve = reserve;
-    if (!this.group) this.group = CyberBorg.enum_droid();
-    if (!this.orders) this.orders = [];
-    if (!this.reserve) this.reserve = [];
+    if (this.group) {
+      WZArray.bless(this.group);
+    } else {
+      this.group = CyberBorg.enum_droid();
+    }
+    if (this.orders) {
+      WZArray.bless(this.orders);
+    } else {
+      this.orders = WZArray.bless([]);
+    }
+    if (this.reserves) {
+      WZArray.bless(this.reserves);
+    } else {
+      this.reserves = WZArray.bless([]);
+    }
   }
 
   Group.prototype.recruit = function(n, type, at) {
