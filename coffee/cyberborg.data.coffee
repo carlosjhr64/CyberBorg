@@ -1,13 +1,16 @@
 CyberBorg::base_orders = ->
+  # What we're building
   light_factory = "A0LightFactory"
   command_center = "A0CommandCentre"
   research_facility = "A0ResearchFacility"
   power_generator = "A0PowerGenerator"
 
+  # With how many trucks
   p = (n,x) -> min: n, max:x
   p33 = -> p(3,3)
   p11 = -> p(1,1)
 
+  # Returning an object
   order = (str, x, y, p) ->
     # str, x, y, p = data...
     p.structure = str
@@ -36,8 +39,11 @@ CyberBorg::base_orders = ->
   ]
   data.push(p11()) for data in phase2
 
+  # Join the phases
   orders = phase1.concat(phase2)
+  # Convert array data to an object
   orders = orders.map (data) -> order(data...)
+  # Convert the list to wzarray
   WZArray.bless(orders)
 
 CyberBorg::factory_orders = ->

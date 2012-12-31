@@ -1,4 +1,4 @@
-var CyberBorg, Group, WZArray, WZObject, base_group, cyberBorg, eventChat, eventDroidBuilt, eventStartLevel, eventStructureBuilt, factory_group, getObjectClass, min_map_and_design_on, report,
+var CyberBorg, Group, WZArray, WZObject, base_group, cyberBorg, eventChat, eventDroidBuilt, eventStartLevel, eventStructureBuilt, factory_group, min_map_and_design_on, report,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -10,15 +10,6 @@ Number.prototype.times = function(action) {
     _results.push(i++);
   }
   return _results;
-};
-
-getObjectClass = function(obj) {
-  var arr;
-  if (obj && obj.constructor && obj.constructor.toString) {
-    arr = obj.constructor.toString().match(/function\s*(\w+)/);
-    if (arr && (arr.length === 2)) return arr[1];
-  }
-  return;
 };
 
 WZObject = (function() {
