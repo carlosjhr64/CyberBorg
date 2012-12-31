@@ -33,7 +33,8 @@ class WZObject
 
   position: () -> x: @x, y: @y
 
-  is_truck: () -> CyberBorg.is_truck @
+  is_truck: () -> CyberBorg.is_truck(@)
+
 
 
 # CyberBorg will help package data and prodide utilities
@@ -59,6 +60,13 @@ class CyberBorg
   @is_factory = (structure) ->
     structure.stattype is FACTORY
 
+  @is_idle = (object) ->
+    # It's not really a droid  :P
+    return (structureIdle(object))  if object.type is STRUCTURE
+    # It's a droid
+    not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH]
+    not_idle.indexOf(object.order) is WZArray.NONE
+
   @distance_metric = (a, b) ->
     x = a.x - b.x
     y = a.y - b.y
@@ -78,14 +86,6 @@ class CyberBorg
       group = @groups[name].group
       for object in group
         object.update() if object.game_time < gameTime
-
-# Filters
-is_idle = (droid) ->
-  # It's not really a droid  :P
-  return (structureIdle(droid))  if droid.type is STRUCTURE
-  # It's a droid
-  not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH]
-  not_idle.indexOf(droid.order) is WZArray.NONE
 
 # The Group Class
 class Group

@@ -71,7 +71,7 @@ WZArray = (function() {
   };
 
   WZArray.prototype.idle = function() {
-    return this.filters(is_idle);
+    return this.filters(CyberBorg.is_idle);
   };
 
   WZArray.prototype.center = function() {

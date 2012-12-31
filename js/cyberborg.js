@@ -1,4 +1,4 @@
-var CyberBorg, Group, WZObject, is_idle,
+var CyberBorg, Group, WZObject,
   __slice = Array.prototype.slice;
 
 include("multiplay/skirmish/cyberborg.array.js");
@@ -98,6 +98,13 @@ CyberBorg = (function() {
     return structure.stattype === FACTORY;
   };
 
+  CyberBorg.is_idle = function(object) {
+    var not_idle;
+    if (object.type === STRUCTURE) return structureIdle(object);
+    not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH];
+    return not_idle.indexOf(object.order) === WZArray.NONE;
+  };
+
   CyberBorg.distance_metric = function(a, b) {
     var x, y;
     x = a.x - b.x;
@@ -142,13 +149,6 @@ CyberBorg = (function() {
   return CyberBorg;
 
 })();
-
-is_idle = function(droid) {
-  var not_idle;
-  if (droid.type === STRUCTURE) return structureIdle(droid);
-  not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH];
-  return not_idle.indexOf(droid.order) === WZArray.NONE;
-};
 
 Group = (function() {
 

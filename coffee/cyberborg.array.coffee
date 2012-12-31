@@ -51,7 +51,7 @@ class WZArray
   filters: (type) -> WZArray.bless(this.filter(type))
 
   # Selects from list objects that are idle in the game
-  idle: -> @filters(is_idle) # TODO is_idle?
+  idle: -> @filters(CyberBorg.is_idle)
 
   # Returns the center of the list (group).
   center: ->
