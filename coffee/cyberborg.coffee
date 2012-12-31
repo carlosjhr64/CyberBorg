@@ -58,6 +58,15 @@ class WZArray
     at.y = at.y / n
     at
 
+  # count WZ2100 (clobbers ruby?) TODO
+  count: (type) ->
+    count = 0
+    i = 0
+    while i < @length
+      count += 1  if type(this[i])
+      i++
+    count
+
   #  current WZ2100
   _current: WZArray.INIT
   current: this[@_current]

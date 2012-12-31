@@ -15,21 +15,10 @@ Array::contains = (droid) ->
 Array::indexOfObject = (droid) ->
   id = droid.id
   i = 0
-
   while i < @length
     return (i)  if this[i].id is id
     i++
   Array.NONE
-
-# count WZ2100 (clobbers ruby?) TODO
-Array::count = (type) ->
-  count = 0
-  i = 0
-
-  while i < @length
-    count += 1  if type(this[i])
-    i++
-  count
 
 # every JS-ARRAY
 

@@ -95,6 +95,17 @@ WZArray = (function() {
     return at;
   };
 
+  WZArray.prototype.count = function(type) {
+    var count, i;
+    count = 0;
+    i = 0;
+    while (i < this.length) {
+      if (type(this[i])) count += 1;
+      i++;
+    }
+    return count;
+  };
+
   WZArray.prototype._current = WZArray.INIT;
 
   WZArray.prototype.current = WZArray[WZArray._current];
