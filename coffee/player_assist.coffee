@@ -71,6 +71,7 @@ eventStartLevel = ->
   #    Finally, the base needs the reserve group.
   #  
   groups.base = new Group([], cyberBorg.base_orders(), reserve.group)
+  groups.derricks = new Group([], cyberBorg.derricks_orders(derricks), reserve.group)
   
   #
   #    Structures are also considered units the AI can order.
@@ -200,7 +201,7 @@ eventDroidBuilt = (droid, structure) ->
   # If it's a truck, maybe it should go to the nearest job?
   # Well, the style for this AI is to work with groups.
   # So what we'll do is add the new droids to the RESERVE.
-  groups.reserve.group.push droid
+  groups.reserve.group.push(droid)
   
   # If a factory just built a droid, it's ready for the next build.
   # It is possible that the droid was "created",
@@ -238,9 +239,7 @@ report = (who) ->
 # This requires a bit a management.
 research_group = (structure, completed) ->
   structure = new WZObject(structure)
-  groups = cyberBorg.groups
-  research = groups.research
-  orders = research.orders
+  orders = cyberBorg.groups.research.orders
   # orders.of(structure) is the order previously given to the structure to pursue.
   # orders.next(structure) gives the next order for the structure.
   # It may be that the structure was not already pursuing a research,
@@ -267,3 +266,81 @@ eventResearched = (completed, structure) ->
   # which can be found from the ruins of a demolished facility.
   # So we need to check that in fact the technology came from an active structure.
   research_group(structure, completed) if structure
+
+eventDroidIdle = (droid) ->
+  droid = new WZObject(droid)
+  groups = cyberBorg.groups
+
+  if groups.reserve.group.contains(droid)
+    # groups that accept idle reserve droids
+    console("Idle droid applies to derricks.")
+    apply_to_derricks_group(droid)
+
+  if groups.derricks.group.contains(droid)
+      console("Derricks droid reporting for duty!")
+      derricks_group(droid)
+
+# We have a droid applying for derricks group.
+# Returns true if droid gets employed.
+# This allows a chain of employment applications.
+apply_to_derricks_group = (droid) ->
+  derricks = cyberBorg.groups.derricks
+  group = derricks.group
+  # See if we're employing
+  if droid.is_truck()
+    trucks = group.counts(CyberBorg.is_truck)
+    return false if trucks > 3 # TODO should be in the orders?
+  else
+    if droid.is_weapon
+      weapons = group.counts(CyberBorg.is_weapon)
+      return false if weapons > 9 # TODO should be in the orders
+    else
+      # I guess they're only looking for trucks'n'weapons LOL
+      return false
+  # OK, you're in!
+  derricks.add(droid)
+  true
+
+derricks_group = (droid) ->
+  if droid.is_truck()
+    # TODO
+    cosole("Droid to build derick.")
+    return true
+
+  if droid.is_weapon()
+    cosole("Droid to defend derick.")
+    # TODO
+    return true
+
+  # Could not find employment here.
+  return false
+
+#
+#function derrick_moves(droid){
+#  var moving = false;
+#
+#  if (droid.is_truck()){
+#    var at = DERRICKS[BUILD_DERRICK];
+#    if (at){
+#      droid.build("A0ResourceExtractor", at);
+#      BUILD_DERRICK = (BUILD_DERRICK + 1) % PHASE_MODULO;
+#      moving = true;
+#    }
+#  }else{
+#    if (droid.group != DERRICK_GROUP) {
+#      var at = DERRICKS[(PHASE_MODULO - 1) - GUARD_DERRICK];
+#      if (at){
+#        DERRICK_GROUP.add(droid);
+#        // Problem here is that we've ordered an individual droid  :(
+#        orderDroidLoc(droid, DORDER_SCOUT, at.x, at.y);
+#        GUARD_DERRICK = (GUARD_DERRICK + 1) % PHASE_MODULO;
+#        moving = true;
+#      }
+#    }else{
+#      // presumably guarding the position
+#      moving = true;
+#    }
+#  }
+#
+#  return(moving);
+#}

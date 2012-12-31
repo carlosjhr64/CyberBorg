@@ -18,3 +18,4 @@ class WZObject
   position: () -> x: @x, y: @y
 
   is_truck: () -> CyberBorg.is_truck(@)
+  is_weapon: () -> CyberBorg.is_weapon(@)

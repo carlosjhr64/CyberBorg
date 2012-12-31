@@ -1,4 +1,4 @@
-var CyberBorg, Group, WZArray, WZObject, base_group, cyberBorg, eventChat, eventDroidBuilt, eventResearched, eventStartLevel, eventStructureBuilt, factory_group, min_map_and_design_on, report, research_group,
+var CyberBorg, Group, WZArray, WZObject, apply_to_derricks_group, base_group, cyberBorg, derricks_group, eventChat, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, factory_group, min_map_and_design_on, report, research_group,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -50,6 +50,10 @@ WZObject = (function() {
 
   WZObject.prototype.is_truck = function() {
     return CyberBorg.is_truck(this);
+  };
+
+  WZObject.prototype.is_weapon = function() {
+    return CyberBorg.is_weapon(this);
   };
 
   return WZObject;
@@ -110,6 +114,10 @@ WZArray = (function() {
 
   WZArray.prototype.trucks = function() {
     return this.filters(CyberBorg.is_truck);
+  };
+
+  WZArray.prototype.weapons = function() {
+    return this.filters(CyberBorg.is_weapon);
   };
 
   WZArray.prototype.factories = function() {
@@ -241,6 +249,24 @@ Group = (function() {
     }
   }
 
+  Group.prototype.add = function(droid) {
+    if (this.reserve.contains(droid)) {
+      this.reserve.removeObject(droid);
+      return this.group.push(droid);
+    } else {
+      throw "Can't add " + droid.namexy + " b/c it's not in reserve.";
+    }
+  };
+
+  Group.prototype.remove = function(droid) {
+    if (this.group.contains(droid)) {
+      this.group.removeObject(droid);
+      return this.reserve.push(droid);
+    } else {
+      throw "Can't remove " + droid.namexy + " b/c it's not in group.";
+    }
+  };
+
   Group.prototype.recruit = function(n, type, at) {
     var droid, i, recruits, _results;
     recruits = this.reserve;
@@ -251,8 +277,7 @@ Group = (function() {
     while (i < n) {
       if (!recruits[0]) break;
       droid = recruits.shift();
-      this.reserve.removeObject(droid);
-      this.group.push(droid);
+      this.add(droid);
       _results.push(i++);
     }
     return _results;
@@ -268,8 +293,7 @@ Group = (function() {
     while (i < n) {
       droid = cuts.pop();
       if (!droid) break;
-      this.group.removeObject(droid);
-      this.reserve.push(droid);
+      this.remove(droid);
       _results.push(i++);
     }
     return _results;
@@ -394,6 +418,10 @@ CyberBorg = (function() {
     return droid.droidType === DROID_CONSTRUCT;
   };
 
+  CyberBorg.is_weapon = function(droid) {
+    return droid.droidType === DROID_WEAPON;
+  };
+
   CyberBorg.is_factory = function(structure) {
     return structure.stattype === FACTORY;
   };
@@ -516,6 +544,34 @@ CyberBorg.prototype.research_orders = function() {
   return ['R-Wpn-MG1Mk1', 'R-Struc-PowerModuleMk1', 'R-Defense-Tower01', 'R-Wpn-MG3Mk1', 'R-Struc-RepairFacility', 'R-Defense-WallTower02', 'R-Defense-AASite-QuadMg1', 'R-Vehicle-Body04', 'R-Struc-VTOLFactory', 'R-Vehicle-Prop-VTOL', 'R-Wpn-Bomb01'];
 };
 
+CyberBorg.prototype.derricks_orders = function(derricks) {
+  var derrick, extractor, order, orders, p, p11, _i, _len;
+  extractor = "A0ResourceExtractor";
+  p = function(n, x) {
+    return {
+      min: n,
+      max: x
+    };
+  };
+  p11 = function() {
+    return p(1, 1);
+  };
+  order = function(str, x, y, p) {
+    p.structure = str;
+    p.at = {
+      x: x,
+      y: y
+    };
+    return p;
+  };
+  orders = [];
+  for (_i = 0, _len = derricks.length; _i < _len; _i++) {
+    derrick = derricks[_i];
+    orders.push(order(extractor, derrick.x, derrick.y, p11));
+  }
+  return WZArray.bless(orders);
+};
+
 cyberBorg = new CyberBorg();
 
 eventStartLevel = function() {
@@ -529,6 +585,7 @@ eventStartLevel = function() {
   groups.reserve = reserve;
   cyberBorg.derricks = derricks;
   groups.base = new Group([], cyberBorg.base_orders(), reserve.group);
+  groups.derricks = new Group([], cyberBorg.derricks_orders(derricks), reserve.group);
   groups.factory = new Group([], cyberBorg.factory_orders());
   groups.research = new Group([], cyberBorg.research_orders());
   return base_group();
@@ -647,11 +704,9 @@ report = function(who) {
 };
 
 research_group = function(structure, completed) {
-  var groups, order, orders, research;
+  var order, orders;
   structure = new WZObject(structure);
-  groups = cyberBorg.groups;
-  research = groups.research;
-  orders = research.orders;
+  orders = cyberBorg.groups.research.orders;
   order = orders.of(structure) || orders.next(structure);
   if (completed) {
     console("" + (structure.namexy()) + " pursuing " + order + " got done with " + completed.name + ".");
@@ -667,4 +722,49 @@ research_group = function(structure, completed) {
 
 eventResearched = function(completed, structure) {
   if (structure) return research_group(structure, completed);
+};
+
+eventDroidIdle = function(droid) {
+  var groups;
+  droid = new WZObject(droid);
+  groups = cyberBorg.groups;
+  if (groups.reserve.group.contains(droid)) {
+    console("Idle droid applies to derricks.");
+    apply_to_derricks_group(droid);
+  }
+  if (groups.derricks.group.contains(droid)) {
+    console("Derricks droid reporting for duty!");
+    return derricks_group(droid);
+  }
+};
+
+apply_to_derricks_group = function(droid) {
+  var derricks, group, trucks, weapons;
+  derricks = cyberBorg.groups.derricks;
+  group = derricks.group;
+  if (droid.is_truck()) {
+    trucks = group.counts(CyberBorg.is_truck);
+    if (trucks > 3) return false;
+  } else {
+    if (droid.is_weapon) {
+      weapons = group.counts(CyberBorg.is_weapon);
+      if (weapons > 9) return false;
+    } else {
+      return false;
+    }
+  }
+  derricks.add(droid);
+  return true;
+};
+
+derricks_group = function(droid) {
+  if (droid.is_truck()) {
+    cosole("Droid to build derick.");
+    return true;
+  }
+  if (droid.is_weapon()) {
+    cosole("Droid to defend derick.");
+    return true;
+  }
+  return false;
 };

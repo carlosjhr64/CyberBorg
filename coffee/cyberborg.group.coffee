@@ -9,6 +9,21 @@ class Group
     # reserve are the units we can draw from.
     if @reserves then WZArray.bless(@reserves) else @reserves = WZArray.bless([])
 
+  add: (droid) ->
+    # Need to enforce the reserve codition
+    if @reserve.contains(droid)
+      @reserve.removeObject(droid)
+      @group.push(droid)
+    else
+      throw "Can't add #{droid.namexy} b/c it's not in reserve."
+
+  remove: (droid) ->
+    if @group.contains(droid)
+      @group.removeObject(droid)
+      @reserve.push(droid)
+    else
+      throw "Can't remove #{droid.namexy} b/c it's not in group."
+
   recruit: (n, type, at) ->
     recruits = @reserve
     # NOTE: recruits won't be this.reserve if filtered!
@@ -18,8 +33,7 @@ class Group
     while i < n
       break  unless recruits[0]
       droid = recruits.shift()
-      @reserve.removeObject(droid)
-      @group.push(droid)
+      @add(droid)
       i++
 
   cut: (n, type, at) ->
@@ -31,8 +45,7 @@ class Group
     while i < n
       droid = cuts.pop()
       break  unless droid
-      @group.removeObject(droid)
-      @reserve.push(droid)
+      @remove(droid)
       i++
 
   buildDroid: (order) ->

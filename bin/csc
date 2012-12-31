@@ -9,4 +9,5 @@ coffee							\
 	coffee/cyberborg.data.base_orders.coffee	\
 	coffee/cyberborg.data.factory_orders.coffee	\
 	coffee/cyberborg.data.research_orders.coffee	\
+	coffee/cyberborg.data.derricks_orders.coffee	\
 	coffee/player_assist.coffee

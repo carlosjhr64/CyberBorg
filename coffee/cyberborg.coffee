@@ -42,6 +42,9 @@ class CyberBorg
   @is_truck = (droid) ->
     droid.droidType is DROID_CONSTRUCT
 
+  @is_weapon = (droid) ->
+    droid.droidType is DROID_WEAPON
+
   @is_factory = (structure) ->
     structure.stattype is FACTORY
 
@@ -111,35 +114,6 @@ class CyberBorg
 #
 #
 #var DERRICK_GROUP = new Group();
-#
-#function derrick_moves(droid){
-#  var moving = false;
-#
-#  if (droid.is_truck()){
-#    var at = DERRICKS[BUILD_DERRICK];
-#    if (at){
-#      droid.build("A0ResourceExtractor", at);
-#      BUILD_DERRICK = (BUILD_DERRICK + 1) % PHASE_MODULO;
-#      moving = true;
-#    }
-#  }else{
-#    if (droid.group != DERRICK_GROUP) {
-#      var at = DERRICKS[(PHASE_MODULO - 1) - GUARD_DERRICK];
-#      if (at){
-#        DERRICK_GROUP.add(droid);
-#        // Problem here is that we've ordered an individual droid  :(
-#        orderDroidLoc(droid, DORDER_SCOUT, at.x, at.y);
-#        GUARD_DERRICK = (GUARD_DERRICK + 1) % PHASE_MODULO;
-#        moving = true;
-#      }
-#    }else{
-#      // presumably guarding the position
-#      moving = true;
-#    }
-#  }
-#
-#  return(moving);
-#}
 #
 #function make_busy(droids){
 #  var clss = getObjectClass(droids);

@@ -41,6 +41,8 @@ class WZArray
   # trucks  WZ2100
   trucks: -> @filters(CyberBorg.is_truck)
 
+  weapons: -> @filters(CyberBorg.is_weapon)
+
   # factories WZ2100
   factories: -> @filters(CyberBorg.is_factory)
 
