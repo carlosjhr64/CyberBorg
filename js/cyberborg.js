@@ -63,6 +63,10 @@ WZArray = (function() {
 
   function WZArray() {}
 
+  WZArray.INIT = -1;
+
+  WZArray.NONE = -1;
+
   WZArray.bless = function(array) {
     var method, name, _ref;
     _ref = WZArray.prototype;
@@ -89,6 +93,16 @@ WZArray = (function() {
     at.x = at.x / n;
     at.y = at.y / n;
     return at;
+  };
+
+  WZArray.prototype.current = WZArray.INIT;
+
+  WZArray.prototype.next = function(gameobj) {
+    var order;
+    if (this.current < this.length) this.current += 1;
+    order = this[this.current];
+    if (gameobj) this.is[gameobj.id] = order;
+    return order;
   };
 
   return WZArray;

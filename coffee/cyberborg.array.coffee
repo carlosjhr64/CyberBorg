@@ -31,9 +31,6 @@ Array::count = (type) ->
     i++
   count
 
-#  current WZ2100
-Array::current = Array.INIT
-
 # every JS-ARRAY
 
 # filter JS-ARRAY
@@ -75,13 +72,6 @@ Array::nearest = (at) ->
   @sort (a, b) ->
     CyberBorg.nearest_metric a, b, at
   this
-
-# next WZ2100
-Array::next = (gameobj) ->
-  @current += 1  if @current < @length
-  order = this[@current]
-  @is[gameobj.id] = order  if gameobj
-  order
 
 # not_built WZ2100
 Array::not_built = ->

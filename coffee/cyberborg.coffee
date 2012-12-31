@@ -36,6 +36,9 @@ class WZObject
 
 
 class WZArray
+  @INIT = -1
+  @NONE = -1
+
   @bless = (array) ->
     array[name] = method for name, method of WZArray.prototype
     array
@@ -54,6 +57,16 @@ class WZArray
     at.x = at.x / n
     at.y = at.y / n
     at
+
+  #  current WZ2100
+  current: WZArray.INIT
+
+  # next WZ2100
+  next: (gameobj) ->
+    @current += 1  if @current < @length
+    order = this[@current]
+    @is[gameobj.id] = order  if gameobj
+    order
 
 # CyberBorg will help package data and prodide utilities
 class CyberBorg

@@ -29,8 +29,6 @@ Array.prototype.count = function(type) {
   return count;
 };
 
-Array.prototype.current = Array.INIT;
-
 Array.prototype.first = function() {
   return this[0];
 };
@@ -56,14 +54,6 @@ Array.prototype.nearest = function(at) {
     return CyberBorg.nearest_metric(a, b, at);
   });
   return this;
-};
-
-Array.prototype.next = function(gameobj) {
-  var order;
-  if (this.current < this.length) this.current += 1;
-  order = this[this.current];
-  if (gameobj) this.is[gameobj.id] = order;
-  return order;
 };
 
 Array.prototype.not_built = function() {
