@@ -504,6 +504,10 @@ CyberBorg.prototype.factory_orders = function() {
   return WZArray.bless(orders);
 };
 
+CyberBorg.prototype.research_orders = function() {
+  return ['R-Wpn-MG1Mk1', 'R-Struc-PowerModuleMk1', 'R-Defense-Tower01', 'R-Wpn-MG3Mk1', 'R-Struc-RepairFacility', 'R-Defense-WallTower02', 'R-Defense-AASite-QuadMg1', 'R-Vehicle-Body04', 'R-Struc-VTOLFactory', 'R-Vehicle-Prop-VTOL', 'R-Wpn-Bomb01'];
+};
+
 cyberBorg = new CyberBorg();
 
 eventStartLevel = function() {
