@@ -3,20 +3,20 @@ class WZArray
   @NONE = -1
 
   @bless = (array) ->
-    # TODO when "is" is WZArray, uncoment below
-    #return array if array.is # if array.is, very likely already blessed.
+    return array if array.is_wzarray
     array[name] = method for name, method of WZArray.prototype
+    array.is_wzarray = true
     array
 
   # *** Array Extensions ***
   # concat JS-ARRAY
   # constructor JS-ARRAY
   # contains WZ2100
-  Array::contains = (droid) ->
+  contains: (droid) ->
     @indexOfObject(droid) > WZArray.NONE
 
   # indexOfObject WZ2100
-  Array::indexOfObject = (droid) ->
+  indexOfObject: (droid) ->
     id = droid.id
     i = 0
     while i < @length
@@ -29,7 +29,7 @@ class WZArray
   # length  JS-ARRAY
   # map  JS-ARRAY
   # nearest WZ2100
-  Array::nearest = (at) ->
+  nearest: (at) ->
     @sort (a, b) ->
       CyberBorg.nearest_metric a, b, at
     this
@@ -40,7 +40,7 @@ class WZArray
   # reduce  JS-ARRAY
   # reject! RUBY
   # remove WS2100
-  Array::removeObject = (droid) ->
+  removeObject: (droid) ->
     i = @indexOfObject(droid)
     @splice i, 1  if i > WZArray.NONE
     i
@@ -77,8 +77,9 @@ class WZArray
   first: ->
     this[0]
 
-  # count WZ2100 (clobbers ruby?) TODO
-  count: (type) ->
+  # count Ruby
+  # counts WZ2100
+  counts: (type) ->
     count = 0
     i = 0
     while i < @length

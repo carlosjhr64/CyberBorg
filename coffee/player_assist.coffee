@@ -44,7 +44,7 @@ eventStartLevel = ->
   #     Let's tell the user how many units we have to start.
   #  
   console "We have #{reserve.group.length} droids available, and
-  #{reserve.group.count(CyberBorg.is_truck)} of them are trucks."
+  #{reserve.group.counts(CyberBorg.is_truck)} of them are trucks."
   
   #
   #     cyberBorg can list all the resources available on the map and

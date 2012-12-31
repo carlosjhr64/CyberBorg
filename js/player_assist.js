@@ -10,7 +10,7 @@ eventStartLevel = function() {
   var derricks, groups, reserve;
   console("This is player_assist.js");
   reserve = new Group();
-  console("We have " + reserve.group.length + " droids available, and  " + (reserve.group.count(CyberBorg.is_truck)) + " of them are trucks.");
+  console("We have " + reserve.group.length + " droids available, and  " + (reserve.group.counts(CyberBorg.is_truck)) + " of them are trucks.");
   derricks = CyberBorg.get_resources(reserve.group.center());
   console("There are " + derricks.length + " resource points.");
   groups = cyberBorg.groups;

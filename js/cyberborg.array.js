@@ -10,19 +10,21 @@ WZArray = (function() {
 
   WZArray.bless = function(array) {
     var method, name, _ref;
+    if (array.is_wzarray) return array;
     _ref = WZArray.prototype;
     for (name in _ref) {
       method = _ref[name];
       array[name] = method;
     }
+    array.is_wzarray = true;
     return array;
   };
 
-  Array.prototype.contains = function(droid) {
+  WZArray.prototype.contains = function(droid) {
     return this.indexOfObject(droid) > WZArray.NONE;
   };
 
-  Array.prototype.indexOfObject = function(droid) {
+  WZArray.prototype.indexOfObject = function(droid) {
     var i, id;
     id = droid.id;
     i = 0;
@@ -33,14 +35,14 @@ WZArray = (function() {
     return WZArray.NONE;
   };
 
-  Array.prototype.nearest = function(at) {
+  WZArray.prototype.nearest = function(at) {
     this.sort(function(a, b) {
       return CyberBorg.nearest_metric(a, b, at);
     });
     return this;
   };
 
-  Array.prototype.removeObject = function(droid) {
+  WZArray.prototype.removeObject = function(droid) {
     var i;
     i = this.indexOfObject(droid);
     if (i > WZArray.NONE) this.splice(i, 1);
@@ -83,7 +85,7 @@ WZArray = (function() {
     return this[0];
   };
 
-  WZArray.prototype.count = function(type) {
+  WZArray.prototype.counts = function(type) {
     var count, i;
     count = 0;
     i = 0;
