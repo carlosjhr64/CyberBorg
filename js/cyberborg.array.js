@@ -20,13 +20,24 @@ WZArray = (function() {
     return array;
   };
 
-  WZArray.prototype.contains = function(droid) {
-    return this.indexOfObject(droid) > WZArray.NONE;
+  WZArray.prototype.counts = function(type) {
+    var count, i;
+    count = 0;
+    i = 0;
+    while (i < this.length) {
+      if (type(this[i])) count += 1;
+      i++;
+    }
+    return count;
   };
 
-  WZArray.prototype.indexOfObject = function(droid) {
+  WZArray.prototype.contains = function(object) {
+    return this.indexOfObject(object) > WZArray.NONE;
+  };
+
+  WZArray.prototype.indexOfObject = function(object) {
     var i, id;
-    id = droid.id;
+    id = object.id;
     i = 0;
     while (i < this.length) {
       if (this[i].id === id) return i;
@@ -42,16 +53,16 @@ WZArray = (function() {
     return this;
   };
 
-  WZArray.prototype.removeObject = function(droid) {
+  WZArray.prototype.removeObject = function(object) {
     var i;
-    i = this.indexOfObject(droid);
+    i = this.indexOfObject(object);
     if (i > WZArray.NONE) this.splice(i, 1);
     return i;
   };
 
-  WZArray.prototype.in_group = function(group) {
-    return this.filters(function(droid) {
-      return group.group.indexOfObject(droid) > WZArray.NONE;
+  WZArray.prototype["in"] = function(group) {
+    return this.filters(function(object) {
+      return group.group.indexOfObject(object) > WZArray.NONE;
     });
   };
 
@@ -85,17 +96,6 @@ WZArray = (function() {
     return this[0];
   };
 
-  WZArray.prototype.counts = function(type) {
-    var count, i;
-    count = 0;
-    i = 0;
-    while (i < this.length) {
-      if (type(this[i])) count += 1;
-      i++;
-    }
-    return count;
-  };
-
   WZArray.prototype._current = WZArray.INIT;
 
   WZArray.prototype.current = WZArray[WZArray._current];
@@ -120,9 +120,9 @@ WZArray = (function() {
     return this.filters(not_built);
   };
 
-  WZArray.prototype.not_in_group = function(group) {
-    return this.filters(function(droid) {
-      return group.group.indexOfObject(droid) === WZArray.NONE;
+  WZArray.prototype.not_in = function(group) {
+    return this.filters(function(object) {
+      return group.group.indexOfObject(object) === WZArray.NONE;
     });
   };
 

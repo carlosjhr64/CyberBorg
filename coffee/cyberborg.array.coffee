@@ -8,57 +8,52 @@ class WZArray
     array.is_wzarray = true
     array
 
-  # *** Array Extensions ***
-  # concat JS-ARRAY
-  # constructor JS-ARRAY
-  # contains WZ2100
-  contains: (droid) ->
-    @indexOfObject(droid) > WZArray.NONE
+  # Counts the number of type in list
+  counts: (type) ->
+    count = 0
+    i = 0
+    while i < @length
+      count += 1  if type(this[i])
+      i++
+    count
 
-  # indexOfObject WZ2100
-  indexOfObject: (droid) ->
-    id = droid.id
+  # True if list contains object
+  contains: (object) ->
+    @indexOfObject(object) > WZArray.NONE
+
+  # indexOfObject
+  indexOfObject: (object) ->
+    id = object.id
     i = 0
     while i < @length
       return (i)  if this[i].id is id
       i++
     WZArray.NONE
 
-  # join  JS-ARRAY
-  # lastIndexOf  JS-ARRAY
-  # length  JS-ARRAY
-  # map  JS-ARRAY
-  # nearest WZ2100
+  # Sorts list by distance.
+  # Nearest object would be first on list.
   nearest: (at) ->
     @sort (a, b) ->
       CyberBorg.nearest_metric a, b, at
     this
 
-  # pop JS-ARRAY
-  # push JS-ARRAY
-  # reduceRight JS-ARRAY
-  # reduce  JS-ARRAY
-  # reject! RUBY
-  # remove WS2100
-  removeObject: (droid) ->
-    i = @indexOfObject(droid)
+  # Remove object from list.
+  removeObject: (object) ->
+    i = @indexOfObject(object)
     @splice i, 1  if i > WZArray.NONE
     i
 
-  #  in_group  WZ2100
-  in_group: (group) ->
-    @filters((droid) -> group.group.indexOfObject(droid) > WZArray.NONE)
+  #  select objects from list in group
+  in: (group) ->
+    @filters((object) -> group.group.indexOfObject(object) > WZArray.NONE)
 
-  # every JS-ARRAY
-  # filter JS-ARRAY
-  # filters WZArray
+  # Ensures filtering results in a WZArray
   filters: (type) -> WZArray.bless(this.filter(type))
 
-  # forEach JS-ARRAY
-  # idle WZ2100
-  idle: -> @filters(is_idle)
+  # Selects from list objects that are idle in the game
+  idle: -> @filters(is_idle) # TODO is_idle?
 
-  # center WZ2100
+  # Returns the center of the list (group).
   center: ->
     at =
       x: 0
@@ -74,18 +69,7 @@ class WZArray
     at
 
   # first
-  first: ->
-    this[0]
-
-  # count Ruby
-  # counts WZ2100
-  counts: (type) ->
-    count = 0
-    i = 0
-    while i < @length
-      count += 1  if type(this[i])
-      i++
-    count
+  first: -> this[0]
 
   #  current WZ2100
   _current: WZArray.INIT
@@ -106,33 +90,20 @@ class WZArray
     order
 
   # not_built WZ2100
-  not_built: -> @filters(not_built)
+  not_built: -> @filters(not_built) # TODO where is not_built
 
-  # not_in_group  WZ2100
-  not_in_group: (group) ->
-    @filters((droid) -> group.group.indexOfObject(droid) is WZArray.NONE)
+  # not_in  WZ2100
+  not_in: (group) ->
+    @filters((object) -> group.group.indexOfObject(object) is WZArray.NONE)
 
-  # indexOf  JS-ARRAY
   # is WZ2100
   is: {}
 
   # of  WZ2100
-  of: (gameobj) ->
-    @is[gameobj.id]
+  of: (gameobj) -> @is[gameobj.id]
 
-  # replace  RUBY
-  # reverse  JS-ARRAY
-  # shift  JS-ARRAY
-  # slice  JS-ARRAY
-  # some  JS-ARRAY
-  # sort  JS-ARRAY
-  # splice  JS-ARRAY
-  # toSource  JS-ARRAY
-  # toString  JS-ARRAY
   # trucks  WZ2100
   trucks: -> @filters(CyberBorg.is_truck)
 
   # factories WZ2100
   factories: -> @filters(CyberBorg.is_factory)
-
-  # unshift  JS-ARRAY
