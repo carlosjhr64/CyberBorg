@@ -1,4 +1,4 @@
-var CyberBorg, Group, WZArray, WZObject, base_group, cyberBorg, derricks_group, eventChat, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, factory_group, min_map_and_design_on, report, research_group,
+var CyberBorg, Group, WZArray, WZObject, base_group, cyberBorg, derricks_trucks_group, eventChat, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, factory_group, min_map_and_design_on, report, research_group,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -667,7 +667,7 @@ eventStartLevel = function() {
   groups.reserve = reserve;
   cyberBorg.derricks = derricks;
   groups.base = new Group([], cyberBorg.base_orders(), reserve.group);
-  groups.derricks = new Group([], cyberBorg.derricks_trucks_orders(derricks), reserve.group);
+  groups.derricks_trucks = new Group([], cyberBorg.derricks_trucks_orders(derricks), reserve.group);
   groups.factory = new Group([], cyberBorg.factory_orders());
   groups.research = new Group([], cyberBorg.research_orders());
   return base_group();
@@ -812,15 +812,15 @@ eventDroidIdle = function(droid) {
   groups = cyberBorg.groups;
   if (groups.reserve.group.contains(droid)) {
     console("Idle droid applies...");
-    groups.base.applying(droid) || groups.derricks.applying(droid);
+    groups.base.applying(droid) || groups.derricks_trucks.applying(droid);
   }
-  if (groups.derricks.group.contains(droid)) {
+  if (groups.derricks_trucks.group.contains(droid)) {
     console("Derricks droid reporting for duty!");
-    return derricks_group(droid);
+    return derricks_trucks_group(droid);
   }
 };
 
-derricks_group = function(droid) {
+derricks_trucks_group = function(droid) {
   if (droid.is_truck()) {
     console("Droid to build derick.");
     return true;

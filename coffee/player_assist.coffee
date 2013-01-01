@@ -71,7 +71,7 @@ eventStartLevel = ->
   #    Finally, the base needs the reserve group.
   #  
   groups.base = new Group([], cyberBorg.base_orders(), reserve.group)
-  groups.derricks = new Group([], cyberBorg.derricks_trucks_orders(derricks), reserve.group)
+  groups.derricks_trucks = new Group([], cyberBorg.derricks_trucks_orders(derricks), reserve.group)
   
   #
   #    Structures are also considered units the AI can order.
@@ -275,13 +275,13 @@ eventDroidIdle = (droid) ->
     # groups that accept idle reserve droids
     console("Idle droid applies...")
     groups.base.applying(droid) or
-    groups.derricks.applying(droid)
+    groups.derricks_trucks.applying(droid)
 
-  if groups.derricks.group.contains(droid)
+  if groups.derricks_trucks.group.contains(droid)
       console("Derricks droid reporting for duty!")
-      derricks_group(droid)
+      derricks_trucks_group(droid)
 
-derricks_group = (droid) ->
+derricks_trucks_group = (droid) ->
   if droid.is_truck()
     # TODO
     console("Droid to build derick.")
