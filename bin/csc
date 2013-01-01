@@ -1,13 +1,14 @@
-coffee							\
---join	js/player_assist.js				\
---bare --compile --watch				\
-	coffee/cyberborg.extensions.coffee		\
-	coffee/cyberborg.wzobject.coffee		\
-	coffee/cyberborg.wzarray.coffee			\
-	coffee/cyberborg.group.coffee			\
-	coffee/cyberborg.coffee				\
-	coffee/cyberborg.data.base_orders.coffee	\
-	coffee/cyberborg.data.factory_orders.coffee	\
-	coffee/cyberborg.data.research_orders.coffee	\
-	coffee/cyberborg.data.derricks_orders.coffee	\
+coffee								\
+--join	js/player_assist.js					\
+--bare --compile --watch					\
+	coffee/cyberborg.extensions.coffee			\
+	coffee/cyberborg.wzobject.coffee			\
+	coffee/cyberborg.wzarray.coffee				\
+	coffee/cyberborg.group.coffee				\
+	coffee/cyberborg.coffee					\
+	coffee/cyberborg.data.base_orders.coffee		\
+	coffee/cyberborg.data.factory_orders.coffee		\
+	coffee/cyberborg.data.research_orders.coffee		\
+	coffee/cyberborg.data.derricks_trucks_orders.coffee	\
+	coffee/cyberborg.data.derricks_weapons_orders.coffee	\
 	coffee/player_assist.coffee

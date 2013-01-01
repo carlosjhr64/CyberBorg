@@ -572,23 +572,23 @@ CyberBorg.prototype.research_orders = function() {
   return ['R-Wpn-MG1Mk1', 'R-Struc-PowerModuleMk1', 'R-Defense-Tower01', 'R-Wpn-MG3Mk1', 'R-Struc-RepairFacility', 'R-Defense-WallTower02', 'R-Defense-AASite-QuadMg1', 'R-Vehicle-Body04', 'R-Struc-VTOLFactory', 'R-Vehicle-Prop-VTOL', 'R-Wpn-Bomb01'];
 };
 
-CyberBorg.prototype.derricks_orders = function(derricks) {
+CyberBorg.prototype.derricks_trucks_orders = function(derricks) {
   var derrick, extractor, order, orders, p, p11, _i, _len;
   extractor = "A0ResourceExtractor";
-  p = function(n, x, et, em) {
+  p = function(n, x, et) {
     return {
       min: n,
       max: x,
+      order: DORDER_BUILD,
       employ: function(name) {
         return {
-          'Truck': et,
-          'MgWhB1': em
+          'Truck': et
         }[name];
       }
     };
   };
   p11 = function() {
-    return p(1, 1, 3, 9);
+    return p(1, 1, 3);
   };
   order = function(str, x, y, p) {
     p.structure = str;
@@ -606,6 +606,54 @@ CyberBorg.prototype.derricks_orders = function(derricks) {
   return WZArray.bless(orders);
 };
 
+CyberBorg.prototype.derricks_weapons_orders = function(derricks) {
+  var derrick, extractor, order, orders, p, p11, _i, _len;
+  extractor = "A0ResourceExtractor";
+  p = function(n, x, em) {
+    return {
+      min: n,
+      max: x,
+      order: DORDER_SCOUT,
+      employ: function(name) {
+        return {
+          'MgWhB1': em
+        }[name];
+      }
+    };
+  };
+  p11 = function() {
+    return p(1, 1, 9);
+  };
+  order = function(str, x, y, p) {
+    p.structure = str;
+    p.at = {
+      x: x,
+      y: y
+    };
+    return p;
+  };
+  orders = [];
+  for (_i = 0, _len = derricks.length; _i < _len; _i++) {
+    derrick = derricks[_i];
+    orders.push(order(extractor, derrick.x, derrick.y, p11()));
+  }
+  WZArray.bless(orders);
+  orders._current = 4;
+  orders._current_min = 4;
+  orders._current_max = 8;
+  orders.next = function() {
+    orders._current -= 1;
+    orders._current = orders._current_max;
+    if (orders._current < orders._current_min) {
+      orders._current_max += 1;
+      orders._current_min += 1;
+      orders._current += orders._current_max;
+    }
+    return orders[orders._current];
+  };
+  return orders;
+};
+
 cyberBorg = new CyberBorg();
 
 eventStartLevel = function() {
@@ -619,7 +667,7 @@ eventStartLevel = function() {
   groups.reserve = reserve;
   cyberBorg.derricks = derricks;
   groups.base = new Group([], cyberBorg.base_orders(), reserve.group);
-  groups.derricks = new Group([], cyberBorg.derricks_orders(derricks), reserve.group);
+  groups.derricks = new Group([], cyberBorg.derricks_trucks_orders(derricks), reserve.group);
   groups.factory = new Group([], cyberBorg.factory_orders());
   groups.research = new Group([], cyberBorg.research_orders());
   return base_group();

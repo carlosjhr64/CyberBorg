@@ -71,7 +71,7 @@ eventStartLevel = ->
   #    Finally, the base needs the reserve group.
   #  
   groups.base = new Group([], cyberBorg.base_orders(), reserve.group)
-  groups.derricks = new Group([], cyberBorg.derricks_orders(derricks), reserve.group)
+  groups.derricks = new Group([], cyberBorg.derricks_trucks_orders(derricks), reserve.group)
   
   #
   #    Structures are also considered units the AI can order.

@@ -1,15 +1,16 @@
-CyberBorg::derricks_orders = (derricks) ->
+CyberBorg::derricks_trucks_orders = (derricks) ->
   # What we're building
   extractor = "A0ResourceExtractor"
 
-  p = (n,x,et,em) ->
+  p = (n,x,et) ->
     min: n
     max: x
+    order: DORDER_BUILD
     employ: (name) ->
-      ('Truck': et, 'MgWhB1': em)[name]
+      ('Truck': et)[name]
 
   # With how many trucks, etc...
-  p11 = -> p(1,1,3,9)
+  p11 = -> p(1,1,3)
 
   # Returning an object
   order = (str, x, y, p) ->
