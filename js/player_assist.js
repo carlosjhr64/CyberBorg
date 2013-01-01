@@ -1,4 +1,4 @@
-var CyberBorg, Group, WZArray, WZObject, apply_to_derricks_group, base_group, cyberBorg, derricks_group, eventChat, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, factory_group, min_map_and_design_on, report, research_group,
+var CyberBorg, Group, WZArray, WZObject, apply_to_base_group, apply_to_derricks_group, base_group, cyberBorg, derricks_group, eventChat, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, factory_group, min_map_and_design_on, report, research_group,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -195,7 +195,9 @@ WZArray = (function() {
 
   WZArray.prototype._current = WZArray.INIT;
 
-  WZArray.prototype.current = WZArray[WZArray._current];
+  WZArray.prototype.current = function() {
+    return this[this._current];
+  };
 
   WZArray.prototype.next = function(gameobj) {
     var order;
@@ -729,13 +731,28 @@ eventDroidIdle = function(droid) {
   droid = new WZObject(droid);
   groups = cyberBorg.groups;
   if (groups.reserve.group.contains(droid)) {
-    console("Idle droid applies to derricks.");
-    apply_to_derricks_group(droid);
+    console("Idle droid applies...");
+    apply_to_base_group(droid) || apply_to_derricks_group(droid);
   }
   if (groups.derricks.group.contains(droid)) {
     console("Derricks droid reporting for duty!");
     return derricks_group(droid);
   }
+};
+
+apply_to_base_group = function(droid) {
+  var base, group, order, trucks;
+  base = cyberBorg.groups.base;
+  group = base.group;
+  if (droid.is_truck()) {
+    order = base.orders.current();
+    trucks = group.counts(CyberBorg.is_truck);
+    if (trucks > order.max) return false;
+  } else {
+    return false;
+  }
+  base.add(droid);
+  return true;
 };
 
 apply_to_derricks_group = function(droid) {
@@ -759,11 +776,11 @@ apply_to_derricks_group = function(droid) {
 
 derricks_group = function(droid) {
   if (droid.is_truck()) {
-    cosole("Droid to build derick.");
+    console("Droid to build derick.");
     return true;
   }
   if (droid.is_weapon()) {
-    cosole("Droid to defend derick.");
+    console("Droid to defend derick.");
     return true;
   }
   return false;

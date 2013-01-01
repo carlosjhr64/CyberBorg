@@ -108,7 +108,7 @@ class WZArray
 
   #  current WZ2100
   _current: WZArray.INIT
-  current: @[@_current]
+  current: () -> @[@_current]
 
   # next WZ2100
   next: (gameobj) ->
