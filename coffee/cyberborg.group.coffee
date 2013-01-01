@@ -67,6 +67,7 @@ class Group
     factories = @group.factories().idle()
     i = 0
     while i < factories.length
+      # Want factory.build(...)
       return (factories[i])  if buildDroid(factories[i], order.name, order.body, order.propulsion, "", order.droid_type, order.turret)
       i++
     null
@@ -90,10 +91,19 @@ class Group
       if trucks.length > 0
         trucks.nearest(at) # sort by distance
         # assume nearest one can do
-        pos = pickStructLocation(trucks[0], structure, at.x, at.y)
+        pos = at
+        #if structure != "A0ResourceExtractor"
+        #  # TODO DEBUG why is pickStructLocation not giving me "at" back?
+        #  # when I can actually build at "at"???
+        #  pos = pickStructLocation(trucks[0], structure, at.x, at.y)
         if pos
+          debug("#{structure}: at is #{at.x},#{at.y} but pos is #{pos.x},#{pos.y}")
           i = 0
           while i < trucks.length
-            builders.push trucks[i]  if trucks[i].build(structure, pos)
+            truck = trucks[i]
+            if truck.build(structure, pos)
+              # TODO this should be better abstracted, use order.order
+              truck.order = DORDER_BUILD
+              builders.push(truck)
             i++
     builders

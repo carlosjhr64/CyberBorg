@@ -25,23 +25,23 @@ CyberBorg::base_orders = ->
 
   # Phase 1, p333,  Build up the initial base as fast a posible
   phase1 = [
-    [light_factory, 9, 234]
-    [research_facility, 6, 234]
-    [command_center, 6, 237]
-    [power_generator, 3, 234]
+    [light_factory, 10, 235]
+    [research_facility, 7, 235]
+    [command_center, 7, 238]
+    [power_generator, 4, 235]
   ]
   data.push(p333()) for data in phase1
     
   # Phase 2, p111,  just have one truck max out the base with research and power.
   phase2 = [
-    [research_facility, 3, 237]
-    [power_generator, 3, 240]
-    [research_facility, 6, 240]
-    [power_generator, 9, 240]
-    [research_facility, 12, 240]
-    [power_generator, 12, 243]
-    [research_facility, 9, 243]
-    [power_generator, 6, 243]
+    [research_facility,  4, 238]
+    [power_generator,    4, 241]
+    [research_facility,  7, 241]
+    [power_generator,   10, 241]
+    [research_facility, 13, 241]
+    [power_generator,   13, 244]
+    [research_facility, 10, 244]
+    [power_generator,    7, 244]
   ]
   data.push(p111()) for data in phase2
 

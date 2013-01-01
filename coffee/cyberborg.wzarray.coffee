@@ -67,9 +67,7 @@ class WZArray
   # Sorts list by distance.
   # Nearest object would be first on list.
   nearest: (at) ->
-    @sort (a, b) ->
-      CyberBorg.nearest_metric a, b, at
-    @
+    @sort (a, b) -> CyberBorg.nearest_metric(a, b, at)
 
   ################
   ### SUMARIES ###
@@ -125,12 +123,10 @@ class WZArray
     @is[gameobj.id] = order  if gameobj
     order
 
-  # previous WZ2100
-  previous: (gameobj) ->
-    @_current -= 1  if @_current > WZArray.init
-    order = @[@_current]
-    @is[gameobj.id] = order  if gameobj
-    order
+  revert: (gameobj) ->
+    @_current -= 1  if @_current > WZArray.INIT
+
+  # previous WZ2100 is this needed?
 
   ##############
   ### STORES ###

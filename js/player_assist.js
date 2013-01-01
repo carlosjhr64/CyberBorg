@@ -148,10 +148,9 @@ WZArray = (function() {
   */
 
   WZArray.prototype.nearest = function(at) {
-    this.sort(function(a, b) {
+    return this.sort(function(a, b) {
       return CyberBorg.nearest_metric(a, b, at);
     });
-    return this;
   };
 
   /* SUMARIES
@@ -218,12 +217,8 @@ WZArray = (function() {
     return order;
   };
 
-  WZArray.prototype.previous = function(gameobj) {
-    var order;
-    if (this._current > WZArray.init) this._current -= 1;
-    order = this[this._current];
-    if (gameobj) this.is[gameobj.id] = order;
-    return order;
+  WZArray.prototype.revert = function(gameobj) {
+    if (this._current > WZArray.INIT) return this._current -= 1;
   };
 
   /* STORES
@@ -336,7 +331,7 @@ Group = (function() {
   };
 
   Group.prototype.build = function(order) {
-    var at, builders, count, i, pos, structure, trucks;
+    var at, builders, count, i, pos, structure, truck, trucks;
     builders = [];
     structure = order.structure;
     if (isStructureAvailable(structure)) {
@@ -354,11 +349,16 @@ Group = (function() {
       }
       if (trucks.length > 0) {
         trucks.nearest(at);
-        pos = pickStructLocation(trucks[0], structure, at.x, at.y);
+        pos = at;
         if (pos) {
+          debug("" + structure + ": at is " + at.x + "," + at.y + " but pos is " + pos.x + "," + pos.y);
           i = 0;
           while (i < trucks.length) {
-            if (trucks[i].build(structure, pos)) builders.push(trucks[i]);
+            truck = trucks[i];
+            if (truck.build(structure, pos)) {
+              truck.order = DORDER_BUILD;
+              builders.push(truck);
+            }
             i++;
           }
         }
@@ -524,12 +524,12 @@ CyberBorg.prototype.base_orders = function() {
     };
     return p;
   };
-  phase1 = [[light_factory, 9, 234], [research_facility, 6, 234], [command_center, 6, 237], [power_generator, 3, 234]];
+  phase1 = [[light_factory, 10, 235], [research_facility, 7, 235], [command_center, 7, 238], [power_generator, 4, 235]];
   for (_i = 0, _len = phase1.length; _i < _len; _i++) {
     data = phase1[_i];
     data.push(p333());
   }
-  phase2 = [[research_facility, 3, 237], [power_generator, 3, 240], [research_facility, 6, 240], [power_generator, 9, 240], [research_facility, 12, 240], [power_generator, 12, 243], [research_facility, 9, 243], [power_generator, 6, 243]];
+  phase2 = [[research_facility, 4, 238], [power_generator, 4, 241], [research_facility, 7, 241], [power_generator, 10, 241], [research_facility, 13, 241], [power_generator, 13, 244], [research_facility, 10, 244], [power_generator, 7, 244]];
   for (_j = 0, _len2 = phase2.length; _j < _len2; _j++) {
     data = phase2[_j];
     data.push(p111());
@@ -698,6 +698,7 @@ eventStructureBuilt = function(structure, droid) {
   groups = cyberBorg.groups;
   console("" + (structure.namexy()) + " Built!");
   if (groups.base.group.contains(droid)) base_group();
+  if (groups.derricks_trucks.group.contains(droid)) derricks_trucks_group();
   if (structure.type === STRUCTURE) {
     switch (structure.stattype) {
       case FACTORY:
@@ -816,18 +817,26 @@ eventDroidIdle = function(droid) {
   }
   if (groups.derricks_trucks.group.contains(droid)) {
     console("Derricks droid reporting for duty!");
-    return derricks_trucks_group(droid);
+    return derricks_trucks_group();
   }
 };
 
-derricks_trucks_group = function(droid) {
-  if (droid.is_truck()) {
-    console("Droid to build derick.");
-    return true;
+derricks_trucks_group = function() {
+  var builders, count, derricks_trucks, groups, order;
+  groups = cyberBorg.groups;
+  derricks_trucks = groups.derricks_trucks;
+  order = derricks_trucks.orders.next();
+  while (order) {
+    builders = derricks_trucks.build(order);
+    count = builders.length;
+    if (count === 0) {
+      console("Derricks group has orders pending.");
+      derricks_trucks.orders.revert();
+      break;
+    } else {
+      console("There are " + count + " droids working on " + order.structure + "(" + order.at.x + "," + order.at.y + ")}.");
+    }
+    order = derricks_trucks.orders.next();
   }
-  if (droid.is_weapon()) {
-    console("Droid to defend derick.");
-    return true;
-  }
-  return false;
+  if (!order) return console("Derricks trucks orders complete!");
 };

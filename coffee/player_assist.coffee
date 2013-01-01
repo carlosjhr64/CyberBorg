@@ -129,6 +129,7 @@ eventStructureBuilt = (structure, droid) ->
   # We want to keep BASE_GROUP busy.
   # If the droid belongs to BASE_GROUP, it needs to move on to the next build order.
   base_group()  if groups.base.group.contains(droid)
+  derricks_trucks_group()  if groups.derricks_trucks.group.contains(droid)
   
   # So the first thing that get built is a Factory.
   # It's just how this AI plays the game.
@@ -279,21 +280,26 @@ eventDroidIdle = (droid) ->
 
   if groups.derricks_trucks.group.contains(droid)
       console("Derricks droid reporting for duty!")
-      derricks_trucks_group(droid)
+      derricks_trucks_group()
 
-derricks_trucks_group = (droid) ->
-  if droid.is_truck()
-    # TODO
-    console("Droid to build derick.")
-    return true
-
-  if droid.is_weapon()
-    console("Droid to defend derick.")
-    # TODO
-    return true
-
-  # Could not find employment here.
-  return false
+derricks_trucks_group = () ->
+  groups = cyberBorg.groups
+  derricks_trucks = groups.derricks_trucks
+  order = derricks_trucks.orders.next()
+  while order
+    builders = derricks_trucks.build(order)
+    # TODO if count is 0, either
+    # no trucks were found for the job or
+    # the structure was not available.  This is bad.
+    count = builders.length
+    if count is 0
+      console "Derricks group has orders pending."
+      derricks_trucks.orders.revert()
+      break
+    else
+      console "There are #{count} droids working on #{order.structure}(#{order.at.x},#{order.at.y})}."
+    order = derricks_trucks.orders.next()
+  console "Derricks trucks orders complete!" if !order
 
 #
 #function derrick_moves(droid){
