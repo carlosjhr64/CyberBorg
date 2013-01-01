@@ -5,7 +5,7 @@ CyberBorg::derricks_weapons_orders = (derricks) ->
   p = (n,x,em) ->
     min: n
     max: x
-    order: DORDER_SCOUT
+    number: DORDER_SCOUT
     employ: (name) ->
       ('MgWhB1': em)[name]
 

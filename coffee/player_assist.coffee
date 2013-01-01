@@ -72,6 +72,7 @@ eventStartLevel = ->
   #  
   groups.base = new Group([], cyberBorg.base_orders(), reserve.group)
   groups.derricks_trucks = new Group([], cyberBorg.derricks_trucks_orders(derricks), reserve.group)
+  groups.derricks_weapons = new Group([], cyberBorg.derricks_weapons_orders(derricks), reserve.group)
   
   #
   #    Structures are also considered units the AI can order.
@@ -130,6 +131,7 @@ eventStructureBuilt = (structure, droid) ->
   # If the droid belongs to BASE_GROUP, it needs to move on to the next build order.
   base_group()  if groups.base.group.contains(droid)
   derricks_trucks_group()  if groups.derricks_trucks.group.contains(droid)
+  derricks_weapons_group()  if groups.derricks_weapons.group.contains(droid)
   
   # So the first thing that get built is a Factory.
   # It's just how this AI plays the game.
@@ -276,11 +278,15 @@ eventDroidIdle = (droid) ->
     # groups that accept idle reserve droids
     console("Idle droid applies...")
     groups.base.applying(droid) or
-    groups.derricks_trucks.applying(droid)
+    groups.derricks_trucks.applying(droid) or
+    groups.derricks_weapons.applying(droid)
 
   if groups.derricks_trucks.group.contains(droid)
-      console("Derricks droid reporting for duty!")
+      console("Derricks truck reporting for duty!")
       derricks_trucks_group()
+  if groups.derricks_weapons.group.contains(droid)
+      console("Derricks weapons reporting for duty!")
+      derricks_weapons_group()
 
 derricks_trucks_group = () ->
   groups = cyberBorg.groups
@@ -301,32 +307,20 @@ derricks_trucks_group = () ->
     order = derricks_trucks.orders.next()
   console "Derricks trucks orders complete!" if !order
 
-#
-#function derrick_moves(droid){
-#  var moving = false;
-#
-#  if (droid.is_truck()){
-#    var at = DERRICKS[BUILD_DERRICK];
-#    if (at){
-#      droid.build("A0ResourceExtractor", at);
-#      BUILD_DERRICK = (BUILD_DERRICK + 1) % PHASE_MODULO;
-#      moving = true;
-#    }
-#  }else{
-#    if (droid.group != DERRICK_GROUP) {
-#      var at = DERRICKS[(PHASE_MODULO - 1) - GUARD_DERRICK];
-#      if (at){
-#        DERRICK_GROUP.add(droid);
-#        // Problem here is that we've ordered an individual droid  :(
-#        orderDroidLoc(droid, DORDER_SCOUT, at.x, at.y);
-#        GUARD_DERRICK = (GUARD_DERRICK + 1) % PHASE_MODULO;
-#        moving = true;
-#      }
-#    }else{
-#      // presumably guarding the position
-#      moving = true;
-#    }
-#  }
-#
-#  return(moving);
-#}
+derricks_weapons_group = () ->
+  groups = cyberBorg.groups
+  derricks_weapons = groups.derricks_weapons
+  order = derricks_weapons.orders.next()
+  while order
+    fighters = derricks_weapons.execute(order)
+    # TODO if count is 0, then
+    # no weapons were found for the job.
+    count = fighters.length
+    if count is 0
+      console "Derricks weapons group has orders pending."
+      derricks_weapons.orders.revert()
+      break
+    else
+      console "There are #{count} weapons working going to (#{order.at.x},#{order.at.y})}."
+    order = derricks_weapons.orders.next()
+  console "Derricks weapons orders complete!" if !order

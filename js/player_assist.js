@@ -1,4 +1,4 @@
-var CyberBorg, Group, WZArray, WZObject, base_group, cyberBorg, derricks_trucks_group, eventChat, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, factory_group, min_map_and_design_on, report, research_group,
+var CyberBorg, Group, WZArray, WZObject, base_group, cyberBorg, derricks_trucks_group, derricks_weapons_group, eventChat, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, factory_group, min_map_and_design_on, report, research_group,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -33,10 +33,6 @@ WZObject = (function() {
     return this.copy(objFromId(this));
   };
 
-  WZObject.prototype.build = function(structure_id, pos, direction) {
-    return orderDroidBuild(this, DORDER_BUILD, structure_id, pos.x, pos.y, direction);
-  };
-
   WZObject.prototype.namexy = function() {
     return "" + this.name + "(" + this.x + "," + this.y + ")";
   };
@@ -54,6 +50,55 @@ WZObject = (function() {
 
   WZObject.prototype.is_weapon = function() {
     return CyberBorg.is_weapon(this);
+  };
+
+  WZObject.prototype.execute = function(order) {
+    var at, number;
+    number = order.number;
+    at = order.at;
+    switch (number) {
+      case DORDER_ATTACK:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_BUILD:
+        return orderDroidBuild(this, DORDER_BUILD, order.structure, at.x, at.y, order.direction);
+      case DORDER_DEMOLISH:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_DISEMBARK:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_EMBARK:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_FIRESUPPORT:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_HELPBUILD:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_HOLD:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_LINEBUILD:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_MOVE:
+      case DORDER_SCOUT:
+        return orderDroidLoc(this, number, at.x, at.y);
+      case DORDER_OBSERVE:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_PATROL:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_REARM:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_RECOVER:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_REPAIR:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_RETREAT:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_RTB:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_RTR:
+        return debug("TODO: need to implement number " + number + ".");
+      case DORDER_STOP:
+        return debug("TODO: need to implement number " + number + ".");
+      default:
+        return debug("DEBUG: Order number " + number + " not listed.");
+    }
   };
 
   return WZObject;
@@ -355,7 +400,7 @@ Group = (function() {
           i = 0;
           while (i < trucks.length) {
             truck = trucks[i];
-            if (truck.build(structure, pos)) {
+            if (truck.execute(order)) {
               truck.order = DORDER_BUILD;
               builders.push(truck);
             }
@@ -365,6 +410,10 @@ Group = (function() {
       }
     }
     return builders;
+  };
+
+  Group.prototype.execute = function(order) {
+    return debug("Group::execute TODO");
   };
 
   return Group;
@@ -503,6 +552,7 @@ CyberBorg.prototype.base_orders = function() {
     return {
       min: n,
       max: x,
+      number: DORDER_BUILD,
       employ: function(name) {
         return {
           'Truck': e
@@ -579,7 +629,7 @@ CyberBorg.prototype.derricks_trucks_orders = function(derricks) {
     return {
       min: n,
       max: x,
-      order: DORDER_BUILD,
+      number: DORDER_BUILD,
       employ: function(name) {
         return {
           'Truck': et
@@ -613,7 +663,7 @@ CyberBorg.prototype.derricks_weapons_orders = function(derricks) {
     return {
       min: n,
       max: x,
-      order: DORDER_SCOUT,
+      number: DORDER_SCOUT,
       employ: function(name) {
         return {
           'MgWhB1': em
@@ -668,6 +718,7 @@ eventStartLevel = function() {
   cyberBorg.derricks = derricks;
   groups.base = new Group([], cyberBorg.base_orders(), reserve.group);
   groups.derricks_trucks = new Group([], cyberBorg.derricks_trucks_orders(derricks), reserve.group);
+  groups.derricks_weapons = new Group([], cyberBorg.derricks_weapons_orders(derricks), reserve.group);
   groups.factory = new Group([], cyberBorg.factory_orders());
   groups.research = new Group([], cyberBorg.research_orders());
   return base_group();
@@ -699,6 +750,7 @@ eventStructureBuilt = function(structure, droid) {
   console("" + (structure.namexy()) + " Built!");
   if (groups.base.group.contains(droid)) base_group();
   if (groups.derricks_trucks.group.contains(droid)) derricks_trucks_group();
+  if (groups.derricks_weapons.group.contains(droid)) derricks_weapons_group();
   if (structure.type === STRUCTURE) {
     switch (structure.stattype) {
       case FACTORY:
@@ -813,11 +865,15 @@ eventDroidIdle = function(droid) {
   groups = cyberBorg.groups;
   if (groups.reserve.group.contains(droid)) {
     console("Idle droid applies...");
-    groups.base.applying(droid) || groups.derricks_trucks.applying(droid);
+    groups.base.applying(droid) || groups.derricks_trucks.applying(droid) || groups.derricks_weapons.applying(droid);
   }
   if (groups.derricks_trucks.group.contains(droid)) {
-    console("Derricks droid reporting for duty!");
-    return derricks_trucks_group();
+    console("Derricks truck reporting for duty!");
+    derricks_trucks_group();
+  }
+  if (groups.derricks_weapons.group.contains(droid)) {
+    console("Derricks weapons reporting for duty!");
+    return derricks_weapons_group();
   }
 };
 
@@ -839,4 +895,24 @@ derricks_trucks_group = function() {
     order = derricks_trucks.orders.next();
   }
   if (!order) return console("Derricks trucks orders complete!");
+};
+
+derricks_weapons_group = function() {
+  var count, derricks_weapons, fighters, groups, order;
+  groups = cyberBorg.groups;
+  derricks_weapons = groups.derricks_weapons;
+  order = derricks_weapons.orders.next();
+  while (order) {
+    fighters = derricks_weapons.execute(order);
+    count = fighters.length;
+    if (count === 0) {
+      console("Derricks weapons group has orders pending.");
+      derricks_weapons.orders.revert();
+      break;
+    } else {
+      console("There are " + count + " weapons working going to (" + order.at.x + "," + order.at.y + ")}.");
+    }
+    order = derricks_weapons.orders.next();
+  }
+  if (!order) return console("Derricks weapons orders complete!");
 };

@@ -101,9 +101,12 @@ class Group
           i = 0
           while i < trucks.length
             truck = trucks[i]
-            if truck.build(structure, pos)
+            if truck.execute(order)
               # TODO this should be better abstracted, use order.order
               truck.order = DORDER_BUILD
               builders.push(truck)
             i++
     builders
+
+  execute: (order) ->
+    debug("Group::execute TODO") # TODO

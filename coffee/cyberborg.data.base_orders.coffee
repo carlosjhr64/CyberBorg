@@ -9,6 +9,7 @@ CyberBorg::base_orders = ->
   p = (n,x,e) ->
     min: n
     max: x
+    number: DORDER_BUILD
     employ: (name) ->
       # making this a function gives us more flexibility
       ('Truck': e)[name]
