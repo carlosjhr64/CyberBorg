@@ -2,9 +2,15 @@ CyberBorg::derricks_orders = (derricks) ->
   # What we're building
   extractor = "A0ResourceExtractor"
 
-  # With how many trucks
-  p = (n,x) -> min: n, max:x
-  p11 = -> p(1,1)
+  p = (n,x,et,em) ->
+    min: n
+    max: x
+    employ:
+      'Truck': et
+      'MgWhB1': em
+
+  # With how many trucks, etc...
+  p11 = -> p(1,1,3,9)
 
   # Returning an object
   order = (str, x, y, p) ->
@@ -14,5 +20,5 @@ CyberBorg::derricks_orders = (derricks) ->
     p
 
   orders = []
-  orders.push(order(extractor, derrick.x, derrick.y, p11)) for derrick in derricks
+  orders.push(order(extractor, derrick.x, derrick.y, p11())) for derrick in derricks
   WZArray.bless(orders)

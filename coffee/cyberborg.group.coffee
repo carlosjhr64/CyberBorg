@@ -24,6 +24,21 @@ class Group
     else
       throw "Can't remove #{droid.namexy} b/c it's not in group."
 
+  # We have a droid applying for base group.
+  # Returns true if droid gets employed.
+  # This allows a chain of employment applications.
+  applying: (droid) ->
+    # See if we're employing
+    name = droid.name
+    # Group may be just about to start
+    order = @orders.current() or @orders.first()
+    employ = order.employ[name]
+    return false if not employ or @group.counts_named(name) >= employ
+    # OK, you're in!
+    # TODO should help right away
+    @add(droid)
+    true
+
   recruit: (n, type, at) ->
     recruits = @reserve
     # NOTE: recruits won't be this.reserve if filtered!

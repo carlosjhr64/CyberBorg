@@ -84,6 +84,14 @@ class WZArray
       i++
     count
 
+  counts_named: (name) ->
+    count = 0
+    i = 0
+    while i < @length
+      count += 1 if @[i].name == name
+      i++
+    count
+
   # Returns the center of the list (group).
   center: ->
     at =

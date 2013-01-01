@@ -274,54 +274,12 @@ eventDroidIdle = (droid) ->
   if groups.reserve.group.contains(droid)
     # groups that accept idle reserve droids
     console("Idle droid applies...")
-    apply_to_base_group(droid) or
-    apply_to_derricks_group(droid)
+    groups.base.applying(droid) or
+    groups.derricks.applying(droid)
 
   if groups.derricks.group.contains(droid)
       console("Derricks droid reporting for duty!")
       derricks_group(droid)
-
-# We have a droid applying for base group.
-# Returns true if droid gets employed.
-# This allows a chain of employment applications.
-apply_to_base_group = (droid) ->
-  base = cyberBorg.groups.base
-  group = base.group
-  # See if we're employing
-  if droid.is_truck()
-    order = base.orders.current()
-    trucks = group.counts(CyberBorg.is_truck)
-    # TODO find a better way for order to have the employment strategy
-    return false if trucks > order.max
-  else
-    return false
-  # OK, you're in!
-  # TODO should help right away
-  base.add(droid)
-  true
-
-# We have a droid applying for derricks group.
-# Returns true if droid gets employed.
-# This allows a chain of employment applications.
-apply_to_derricks_group = (droid) ->
-  derricks = cyberBorg.groups.derricks
-  group = derricks.group
-  # See if we're employing
-  if droid.is_truck()
-    trucks = group.counts(CyberBorg.is_truck)
-    # TODO find a way for order to have the employment strategy
-    return false if trucks > 3
-  else
-    if droid.is_weapon
-      weapons = group.counts(CyberBorg.is_weapon)
-      # TODO find a way for order to have the employment strategy
-      return false if weapons > 9
-    else
-      # I guess they're only looking for trucks'n'weapons LOL
-      return false
-  # OK, you're in!
-  derricks.add(droid)
-  true
 
 derricks_group = (droid) ->
   if droid.is_truck()

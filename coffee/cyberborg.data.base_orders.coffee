@@ -6,9 +6,14 @@ CyberBorg::base_orders = ->
   power_generator = "A0PowerGenerator"
 
   # With how many trucks
-  p = (n,x) -> min: n, max:x
-  p33 = -> p(3,3)
-  p11 = -> p(1,1)
+  p = (n,x,e) ->
+    min: n
+    max: x
+    employ:
+      'Truck': e
+
+  p333 = -> p(3,3,3)
+  p111 = -> p(1,1,1)
 
   # Returning an object
   order = (str, x, y, p) ->
@@ -17,16 +22,16 @@ CyberBorg::base_orders = ->
     p.at = x: x, y: y
     p
 
-  # Phase 1, p33(),  Build up the initial base as fast a posible
+  # Phase 1, p333,  Build up the initial base as fast a posible
   phase1 = [
     [light_factory, 9, 234]
     [research_facility, 6, 234]
     [command_center, 6, 237]
     [power_generator, 3, 234]
   ]
-  data.push(p33()) for data in phase1
+  data.push(p333()) for data in phase1
     
-  # Phase 2, p11(),  just have one truck max out the base with research and power.
+  # Phase 2, p111,  just have one truck max out the base with research and power.
   phase2 = [
     [research_facility, 3, 237]
     [power_generator, 3, 240]
@@ -37,7 +42,7 @@ CyberBorg::base_orders = ->
     [research_facility, 9, 243]
     [power_generator, 6, 243]
   ]
-  data.push(p11()) for data in phase2
+  data.push(p111()) for data in phase2
 
   # Join the phases
   orders = phase1.concat(phase2)
