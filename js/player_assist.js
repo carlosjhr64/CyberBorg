@@ -284,7 +284,7 @@ Group = (function() {
     var employ, name, order;
     name = droid.name;
     order = this.orders.current() || this.orders.first();
-    employ = order.employ[name];
+    employ = order.employ(name);
     if (!employ || this.group.counts_named(name) >= employ) return false;
     this.add(droid);
     return true;
@@ -503,8 +503,10 @@ CyberBorg.prototype.base_orders = function() {
     return {
       min: n,
       max: x,
-      employ: {
-        'Truck': e
+      employ: function(name) {
+        return {
+          'Truck': e
+        }[name];
       }
     };
   };
@@ -577,9 +579,11 @@ CyberBorg.prototype.derricks_orders = function(derricks) {
     return {
       min: n,
       max: x,
-      employ: {
-        'Truck': et,
-        'MgWhB1': em
+      employ: function(name) {
+        return {
+          'Truck': et,
+          'MgWhB1': em
+        }[name];
       }
     };
   };

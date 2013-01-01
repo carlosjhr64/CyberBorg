@@ -32,7 +32,7 @@ class Group
     name = droid.name
     # Group may be just about to start
     order = @orders.current() or @orders.first()
-    employ = order.employ[name]
+    employ = order.employ(name)
     return false if not employ or @group.counts_named(name) >= employ
     # OK, you're in!
     # TODO should help right away

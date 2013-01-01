@@ -5,9 +5,8 @@ CyberBorg::derricks_orders = (derricks) ->
   p = (n,x,et,em) ->
     min: n
     max: x
-    employ:
-      'Truck': et
-      'MgWhB1': em
+    employ: (name) ->
+      ('Truck': et, 'MgWhB1': em)[name]
 
   # With how many trucks, etc...
   p11 = -> p(1,1,3,9)

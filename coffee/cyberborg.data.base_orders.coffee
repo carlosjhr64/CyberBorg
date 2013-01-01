@@ -9,8 +9,9 @@ CyberBorg::base_orders = ->
   p = (n,x,e) ->
     min: n
     max: x
-    employ:
-      'Truck': e
+    employ: (name) ->
+      # making this a function gives us more flexibility
+      ('Truck': e)[name]
 
   p333 = -> p(3,3,3)
   p111 = -> p(1,1,1)
