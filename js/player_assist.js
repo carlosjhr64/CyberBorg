@@ -1,4 +1,4 @@
-var CyberBorg, Group, WZArray, WZObject, base_group, cyberBorg, derricks_trucks_group, derricks_weapons_group, eventChat, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, factory_group, min_map_and_design_on, report, research_group,
+var CyberBorg, Group, WZArray, WZObject, cyberBorg, eventChat, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, group_executions, min_map_and_design_on, report,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -52,7 +52,7 @@ WZObject = (function() {
     return CyberBorg.is_weapon(this);
   };
 
-  WZObject.prototype.execute = function(order) {
+  WZObject.prototype.executes = function(order) {
     var at, number;
     number = order.number;
     at = order.at;
@@ -189,6 +189,12 @@ WZArray = (function() {
     return this.filters(CyberBorg.is_idle);
   };
 
+  WZArray.prototype.like = function(rgx) {
+    return this.filters(function(object) {
+      return rgx.test(object.name);
+    });
+  };
+
   /* SORTS
   */
 
@@ -266,6 +272,16 @@ WZArray = (function() {
     if (this._current > WZArray.INIT) return this._current -= 1;
   };
 
+  WZArray.prototype.named = function(name) {
+    var i;
+    i = 0;
+    while (i < this.length) {
+      if (this[i].name === name) return this[i];
+      i++;
+    }
+    return null;
+  };
+
   /* STORES
   */
 
@@ -281,7 +297,9 @@ WZArray = (function() {
 
 Group = (function() {
 
-  function Group(group, orders, reserve) {
+  function Group(name, rank, group, orders, reserve) {
+    this.name = name;
+    this.rank = rank;
     this.group = group;
     this.orders = orders;
     this.reserve = reserve;
@@ -412,8 +430,28 @@ Group = (function() {
     return builders;
   };
 
-  Group.prototype.execute = function(order) {
-    return debug("Group::execute TODO");
+  Group.prototype.units = function(order) {
+    var units;
+    units = this.group.idle();
+    units = units.like(order.like) in order.like;
+    if (order.at) units.nearest(order.at);
+    if (order.max) return units = units.slice(0, (order.max - 1) + 1 || 9e9);
+  };
+
+  Group.prototype.execute = function(order, units) {
+    var executers, unit, _i, _len;
+    if (units == null) units = units(order);
+    executers = [];
+    if (units.length >= order.min) {
+      for (_i = 0, _len = units.length; _i < _len; _i++) {
+        unit = units[_i];
+        if (unit.executes(order)) {
+          unit.order = order.number;
+          executers.push(unit);
+        }
+      }
+    }
+    return executers;
   };
 
   return Group;
@@ -437,19 +475,21 @@ CyberBorg = (function() {
   */
 
   function CyberBorg(groups) {
-    this.groups = groups != null ? groups : {};
+    this.groups = groups != null ? groups : WZArray.bless([]);
   }
 
   CyberBorg.prototype.update = function() {
-    var group, name, object, _results;
+    var group, list, object, _i, _len, _ref, _results;
+    _ref = this.groups;
     _results = [];
-    for (name in this.groups) {
-      group = this.groups[name].group;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      group = _ref[_i];
+      list = group.list;
       _results.push((function() {
-        var _i, _len, _results2;
+        var _j, _len2, _results2;
         _results2 = [];
-        for (_i = 0, _len = group.length; _i < _len; _i++) {
-          object = group[_i];
+        for (_j = 0, _len2 = list.length; _j < _len2; _j++) {
+          object = list[_j];
           if (object.game_time < gameTime) {
             _results2.push(object.update());
           } else {
@@ -618,11 +658,11 @@ CyberBorg.prototype.factory_orders = function() {
   return WZArray.bless(orders);
 };
 
-CyberBorg.prototype.research_orders = function() {
+CyberBorg.prototype.lab_orders = function() {
   return ['R-Wpn-MG1Mk1', 'R-Struc-PowerModuleMk1', 'R-Defense-Tower01', 'R-Wpn-MG3Mk1', 'R-Struc-RepairFacility', 'R-Defense-WallTower02', 'R-Defense-AASite-QuadMg1', 'R-Vehicle-Body04', 'R-Struc-VTOLFactory', 'R-Vehicle-Prop-VTOL', 'R-Wpn-Bomb01'];
 };
 
-CyberBorg.prototype.derricks_trucks_orders = function(derricks) {
+CyberBorg.prototype.derricks_orders = function(derricks) {
   var derrick, extractor, order, orders, p, p11, _i, _len;
   extractor = "A0ResourceExtractor";
   p = function(n, x, et) {
@@ -656,7 +696,7 @@ CyberBorg.prototype.derricks_trucks_orders = function(derricks) {
   return WZArray.bless(orders);
 };
 
-CyberBorg.prototype.derricks_weapons_orders = function(derricks) {
+CyberBorg.prototype.scouts_orders = function(derricks) {
   var derrick, extractor, order, orders, p, p11, _i, _len;
   extractor = "A0ResourceExtractor";
   p = function(n, x, em) {
@@ -688,83 +728,67 @@ CyberBorg.prototype.derricks_weapons_orders = function(derricks) {
     orders.push(order(extractor, derrick.x, derrick.y, p11()));
   }
   WZArray.bless(orders);
-  orders._current = 4;
-  orders._current_min = 4;
-  orders._current_max = 8;
-  orders.next = function() {
-    orders._current -= 1;
-    orders._current = orders._current_max;
-    if (orders._current < orders._current_min) {
-      orders._current_max += 1;
-      orders._current_min += 1;
-      orders._current += orders._current_max;
-    }
-    return orders[orders._current];
-  };
   return orders;
 };
 
 cyberBorg = new CyberBorg();
 
 eventStartLevel = function() {
-  var derricks, groups, reserve;
+  var base, derricks, factories, groups, labs, reserve, resources, scouts;
   console("This is player_assist.js");
-  reserve = new Group();
+  reserve = new Group('Reserve', 0);
   console("We have " + reserve.group.length + " droids available, and  " + (reserve.group.counts(CyberBorg.is_truck)) + " of them are trucks.");
-  derricks = CyberBorg.get_resources(reserve.group.center());
-  console("There are " + derricks.length + " resource points.");
+  resources = CyberBorg.get_resources(reserve.group.center());
+  console("There are " + resources.length + " resource points.");
   groups = cyberBorg.groups;
-  groups.reserve = reserve;
-  cyberBorg.derricks = derricks;
-  groups.base = new Group([], cyberBorg.base_orders(), reserve.group);
-  groups.derricks_trucks = new Group([], cyberBorg.derricks_trucks_orders(derricks), reserve.group);
-  groups.derricks_weapons = new Group([], cyberBorg.derricks_weapons_orders(derricks), reserve.group);
-  groups.factory = new Group([], cyberBorg.factory_orders());
-  groups.research = new Group([], cyberBorg.research_orders());
-  return base_group();
-};
-
-base_group = function() {
-  var base, builders, count, groups, order;
-  groups = cyberBorg.groups;
-  base = groups.base;
-  order = base.orders.next();
-  if (order) {
-    builders = base.build(order);
-    count = builders.length;
-    console("There are " + count + " droids working on " + order.structure + ".");
-    if (builders.length === 0) {
-      return console("Base group was unable to complete base orders.");
-    }
-  } else {
-    return console("Base orders complete?");
-  }
+  groups.push(reserve);
+  base = new Group('Base', 100, [], cyberBorg.base_orders(), reserve.group);
+  groups.push(base);
+  derricks = new Group('Derricks', 90, [], cyberBorg.derricks_orders(resources), reserve.group);
+  groups.push(derricks);
+  scouts = new Group('Scouts', 80, [], cyberBorg.scouts_orders(resources), reserve.group);
+  groups.push(scouts);
+  factories = new Group('Factories', 20, [], cyberBorg.factory_orders());
+  groups.push(factories);
+  labs = new Group('Labs', 19, [], cyberBorg.lab_orders());
+  groups.push(labs);
+  groups.sort(function(a, b) {
+    return b.rank - a.rank;
+  });
+  return group_executions();
 };
 
 eventStructureBuilt = function(structure, droid) {
   var groups;
+  debug("in eventStructureBuilt");
+  return null;
   cyberBorg.update();
   structure = new WZObject(structure);
   droid = new WZObject(droid);
   groups = cyberBorg.groups;
   console("" + (structure.namexy()) + " Built!");
-  if (groups.base.group.contains(droid)) base_group();
-  if (groups.derricks_trucks.group.contains(droid)) derricks_trucks_group();
-  if (groups.derricks_weapons.group.contains(droid)) derricks_weapons_group();
   if (structure.type === STRUCTURE) {
     switch (structure.stattype) {
       case FACTORY:
-        groups.factory.group.push(structure);
-        return factory_group();
+        groups.named('Factories').list.push(structure);
+        break;
       case RESEARCH_LAB:
-        return research_group(structure);
+        groups.named('Labs').list.push(structure);
+        break;
       case HQ:
-        return min_map_and_design_on(structure);
+        min_map_and_design_on(structure);
     }
   }
+  return group_executions({
+    name: 'StructureBuilt',
+    structure: structure,
+    droid: droid
+  });
 };
 
 min_map_and_design_on = function(structure) {
+  debug("min_map_and_design_on");
+  return null;
   structure = new WZObject(structure);
   if (structure.player === selectedPlayer && structure.type === STRUCTURE && structure.stattype === HQ) {
     setMiniMap(true);
@@ -772,34 +796,26 @@ min_map_and_design_on = function(structure) {
   }
 };
 
-factory_group = function() {
-  var factory, groups, order;
-  groups = cyberBorg.groups;
-  factory = groups.factory;
-  order = factory.orders.next();
-  if (order) {
-    if (factory.buildDroid(order)) {
-      return console("Building " + order.name + ".");
-    } else {
-      return console("" + order.name + " rejected?");
-    }
-  } else {
-    return console("Droid builds done?");
-  }
-};
-
 eventDroidBuilt = function(droid, structure) {
   var groups;
+  debug("in eventDroidBuilt");
+  return null;
   cyberBorg.update();
   droid = new WZObject(droid);
   structure = new WZObject(structure);
   groups = cyberBorg.groups;
   console("Built " + droid.name + ".");
-  groups.reserve.group.push(droid);
-  if (groups.factory.group.contains(structure)) return factory_group();
+  groups.named('Reseve').list.push(droid);
+  return group_executions({
+    name: 'DroidBuilt',
+    structure: structure,
+    droid: droid
+  });
 };
 
 eventChat = function(sender, to, message) {
+  debug("in eventChat");
+  return null;
   cyberBorg.update();
   if (sender === 0) {
     switch (message) {
@@ -815,6 +831,8 @@ eventChat = function(sender, to, message) {
 
 report = function(who) {
   var droid, droids, groups, _i, _j, _len, _len2, _ref, _ref2;
+  debug("in report");
+  return null;
   groups = cyberBorg.groups;
   droids = [];
   switch (who) {
@@ -838,81 +856,61 @@ report = function(who) {
   if (droids.length) return console("" + (droids.join(', ')) + ".");
 };
 
-research_group = function(structure, completed) {
-  var order, orders;
-  structure = new WZObject(structure);
-  orders = cyberBorg.groups.research.orders;
-  order = orders.of(structure) || orders.next(structure);
-  if (completed) {
-    console("" + (structure.namexy()) + " pursuing " + order + " got done with " + completed.name + ".");
-    if (order === completed.name) order = orders.next(structure);
-  }
-  if (order) {
-    console("" + (structure.namexy()) + " is doing " + order + ".");
-    return pursueResearch(structure, order);
-  } else {
-    return console('Research orders complete?');
-  }
-};
-
 eventResearched = function(completed, structure) {
-  if (structure) return research_group(structure, completed);
+  debug("in eventResearched");
+  return null;
+  structure = new WZObject(structure);
+  return group_executions({
+    name: 'Researched',
+    structure: structure,
+    research: completed
+  });
 };
 
 eventDroidIdle = function(droid) {
   var groups;
+  debug("in eventDroidIdle");
+  return null;
   droid = new WZObject(droid);
   groups = cyberBorg.groups;
-  if (groups.reserve.group.contains(droid)) {
-    console("Idle droid applies...");
-    groups.base.applying(droid) || groups.derricks_trucks.applying(droid) || groups.derricks_weapons.applying(droid);
-  }
-  if (groups.derricks_trucks.group.contains(droid)) {
-    console("Derricks truck reporting for duty!");
-    derricks_trucks_group();
-  }
-  if (groups.derricks_weapons.group.contains(droid)) {
-    console("Derricks weapons reporting for duty!");
-    return derricks_weapons_group();
-  }
+  return group_executions({
+    name: 'DroidIdle',
+    droid: droid
+  });
 };
 
-derricks_trucks_group = function() {
-  var builders, count, derricks_trucks, groups, order;
+group_executions = function(event) {
+  var count, executers, group, groups, order, orders, _i, _len, _results;
   groups = cyberBorg.groups;
-  derricks_trucks = groups.derricks_trucks;
-  order = derricks_trucks.orders.next();
-  while (order) {
-    builders = derricks_trucks.build(order);
-    count = builders.length;
-    if (count === 0) {
-      console("Derricks group has orders pending.");
-      derricks_trucks.orders.revert();
-      break;
+  _results = [];
+  for (_i = 0, _len = groups.length; _i < _len; _i++) {
+    group = groups[_i];
+    orders = group.orders;
+    order = orders.next();
+    debug("" + group.name + " has " + orders.length + " orders");
+    debug(order);
+    continue;
+    if (order) {
+      while (order) {
+        console(order);
+        executers = group.execute(order);
+        count = executers.length;
+        if (count === 0) {
+          orders.revert();
+          console("Group " + name + " has pending orders.");
+          break;
+        }
+        console("There are " + count + " " + name + " units        working on " + order.codename + ".");
+        order = orders.next();
+      }
+      if (!order) {
+        _results.push(console("Group " + name + " orders complete!"));
+      } else {
+        _results.push(void 0);
+      }
     } else {
-      console("There are " + count + " droids working on " + order.structure + "(" + order.at.x + "," + order.at.y + ")}.");
+      _results.push(void 0);
     }
-    order = derricks_trucks.orders.next();
   }
-  if (!order) return console("Derricks trucks orders complete!");
-};
-
-derricks_weapons_group = function() {
-  var count, derricks_weapons, fighters, groups, order;
-  groups = cyberBorg.groups;
-  derricks_weapons = groups.derricks_weapons;
-  order = derricks_weapons.orders.next();
-  while (order) {
-    fighters = derricks_weapons.execute(order);
-    count = fighters.length;
-    if (count === 0) {
-      console("Derricks weapons group has orders pending.");
-      derricks_weapons.orders.revert();
-      break;
-    } else {
-      console("There are " + count + " weapons working going to (" + order.at.x + "," + order.at.y + ")}.");
-    }
-    order = derricks_weapons.orders.next();
-  }
-  if (!order) return console("Derricks weapons orders complete!");
+  return _results;
 };

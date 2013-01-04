@@ -1,4 +1,4 @@
-CyberBorg::derricks_weapons_orders = (derricks) ->
+CyberBorg::scouts_orders = (derricks) ->
   # What we're building
   extractor = "A0ResourceExtractor"
 
@@ -22,16 +22,16 @@ CyberBorg::derricks_weapons_orders = (derricks) ->
   orders = []
   orders.push(order(extractor, derrick.x, derrick.y, p11())) for derrick in derricks
   WZArray.bless(orders)
-  orders._current = 4
-  orders._current_min = 4
-  orders._current_max = 8
-  orders.next = () ->
-    orders._current -=1
-    orders._current = orders._current_max
-    if orders._current < orders._current_min
-      orders._current_max += 1
-      orders._current_min += 1
-      orders._current += orders._current_max
-    return orders[orders._current]
+  # TODO
+  #orders._current = 4
+  #orders._current_min = 4
+  #orders._current_max = 8
+  #orders.next = () ->
+  #  orders._current -=1
+  #  orders._current = orders._current_max
+  #  if orders._current < orders._current_min
+  #    orders._current_max += 1
+  #    orders._current_min += 1
+  #    orders._current += orders._current_max
+  #  return orders[orders._current]
   return orders
-    

@@ -17,7 +17,7 @@ class WZObject
   is_truck: () -> CyberBorg.is_truck(@)
   is_weapon: () -> CyberBorg.is_weapon(@)
 
-  execute: (order) ->
+  executes: (order) ->
     number = order.number
     at = order.at
     switch number

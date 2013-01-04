@@ -60,6 +60,8 @@ class WZArray
   # Selects from list objects that are idle in the game
   idle: -> @filters(CyberBorg.is_idle)
 
+  like: (rgx) -> @filters((object) -> rgx.test(object.name))
+
   #############
   ### SORTS ###
   #############
@@ -125,6 +127,13 @@ class WZArray
 
   revert: (gameobj) ->
     @_current -= 1  if @_current > WZArray.INIT
+
+  named: (name) ->
+    i = 0
+    while i < @length
+      return(@[i]) if @[i].name == name
+      i++
+    null
 
   # previous WZ2100 is this needed?
 

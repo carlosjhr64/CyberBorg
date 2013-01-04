@@ -1,4 +1,4 @@
-CyberBorg::research_orders = ->
+CyberBorg::lab_orders = ->
   [
     'R-Wpn-MG1Mk1',		# Machine Gun Turret
     'R-Struc-PowerModuleMk1',	# Power Module

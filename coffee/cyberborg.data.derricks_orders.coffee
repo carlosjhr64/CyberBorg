@@ -1,4 +1,4 @@
-CyberBorg::derricks_trucks_orders = (derricks) ->
+CyberBorg::derricks_orders = (derricks) ->
   # What we're building
   extractor = "A0ResourceExtractor"
 

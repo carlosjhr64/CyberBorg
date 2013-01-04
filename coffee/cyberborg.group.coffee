@@ -1,6 +1,6 @@
 # The Group Class
 class Group
-  constructor: (@group, @orders, @reserve) ->
+  constructor: (@name, @rank, @group, @orders, @reserve) ->
     # If we're not given a list of droids,
     # get them from enumDroid (all of the player's pieces).
     if @group then WZArray.bless(@group) else @group = CyberBorg.enum_droid()
@@ -72,7 +72,7 @@ class Group
       i++
     null
 
-  build: (order) ->
+  build: (order) -> #PREDICATE!  TODO this method goes away!
     builders = [] # going to return the number of builders
     structure = order.structure
     if isStructureAvailable(structure)
@@ -108,5 +108,17 @@ class Group
             i++
     builders
 
-  execute: (order) ->
-    debug("Group::execute TODO") # TODO
+  units: (order) ->
+    units = @group.idle()
+    units = units.like(order.like) of order.like
+    units.nearest(order.at) if order.at
+    units = units[0..(order.max - 1)] if order.max
+
+  execute: (order, units=units(order)) ->
+    executers = [] # Going to return the units executing order.
+    if units.length >= order.min
+      for unit in units
+        if unit.executes(order)
+          unit.order = order.number
+          executers.push(unit)
+    return executers
