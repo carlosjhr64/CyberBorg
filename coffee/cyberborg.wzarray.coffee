@@ -63,6 +63,14 @@ class WZArray
   like: (rgx) -> @filters((object) -> rgx.test(object.name))
 
   #############
+  ### EDITS ###
+  #############
+
+  cap: (n) -> WZArray.bless(@[0..(n - 1)])
+
+  add: (arr) -> WZArray.bless(@concat(arr))
+
+  #############
   ### SORTS ###
   #############
 

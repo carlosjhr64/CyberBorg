@@ -195,6 +195,17 @@ WZArray = (function() {
     });
   };
 
+  /* EDITS
+  */
+
+  WZArray.prototype.cap = function(n) {
+    return WZArray.bless(this.slice(0, (n - 1) + 1 || 9e9));
+  };
+
+  WZArray.prototype.add = function(arr) {
+    return WZArray.bless(this.concat(arr));
+  };
+
   /* SORTS
   */
 
@@ -325,7 +336,7 @@ Group = (function() {
       this.reserve.removeObject(droid);
       return this.group.push(droid);
     } else {
-      throw "Can't add " + droid.namexy + " b/c it's not in reserve.";
+      throw new Error("Can't add " + droid.namexy + " b/c it's not in reserve.");
     }
   };
 
@@ -334,115 +345,131 @@ Group = (function() {
       this.group.removeObject(droid);
       return this.reserve.push(droid);
     } else {
-      throw "Can't remove " + droid.namexy + " b/c it's not in group.";
+      throw new Error("Can't remove " + droid.namexy + " b/c it's not in group.");
     }
   };
 
-  Group.prototype.applying = function(droid) {
-    var employ, name, order;
-    name = droid.name;
-    order = this.orders.current() || this.orders.first();
-    employ = order.employ(name);
-    if (!employ || this.group.counts_named(name) >= employ) return false;
-    this.add(droid);
-    return true;
-  };
-
-  Group.prototype.recruit = function(n, type, at) {
-    var droid, i, recruits, _results;
-    recruits = this.reserve;
-    if (type) recruits = recruits.filters(type);
-    if (at) recruits.nearest(at);
-    i = 0;
-    _results = [];
-    while (i < n) {
-      if (!recruits[0]) break;
-      droid = recruits.shift();
-      this.add(droid);
-      _results.push(i++);
-    }
-    return _results;
-  };
-
-  Group.prototype.cut = function(n, type, at) {
-    var cuts, droid, i, _results;
-    cuts = this.group;
-    if (type) cuts = cuts.filters(type);
-    if (at) cuts.nearest(at);
-    i = 0;
-    _results = [];
-    while (i < n) {
-      droid = cuts.pop();
-      if (!droid) break;
-      this.remove(droid);
-      _results.push(i++);
-    }
-    return _results;
-  };
-
-  Group.prototype.buildDroid = function(order) {
-    var factories, i;
-    factories = this.group.factories().idle();
-    i = 0;
-    while (i < factories.length) {
-      if (buildDroid(factories[i], order.name, order.body, order.propulsion, "", order.droid_type, order.turret)) {
-        return factories[i];
-      }
-      i++;
-    }
-    return null;
-  };
-
-  Group.prototype.build = function(order) {
-    var at, builders, count, i, pos, structure, truck, trucks;
-    builders = [];
-    structure = order.structure;
-    if (isStructureAvailable(structure)) {
-      at = order.at;
-      trucks = this.group.trucks().idle();
-      count = trucks.length;
-      if (count < order.min) {
-        this.recruit(order.min - count, CyberBorg.is_truck, at);
-        trucks = this.group.trucks().idle();
-      } else {
-        if (count > order.max) {
-          this.cut(count - order.min, CyberBorg.is_truck, at);
-          trucks = this.group.trucks().idle();
-        }
-      }
-      if (trucks.length > 0) {
-        trucks.nearest(at);
-        pos = at;
-        if (pos) {
-          debug("" + structure + ": at is " + at.x + "," + at.y + " but pos is " + pos.x + "," + pos.y);
-          i = 0;
-          while (i < trucks.length) {
-            truck = trucks[i];
-            if (truck.execute(order)) {
-              truck.order = DORDER_BUILD;
-              builders.push(truck);
-            }
-            i++;
-          }
-        }
-      }
-    }
-    return builders;
-  };
+  /*
+  
+    # We have a droid applying for base group.
+    # Returns true if droid gets employed.
+    # This allows a chain of employment applications.
+    applying: (droid) ->
+      # See if we're employing
+      name = droid.name
+      # Group may be just about to start
+      order = @orders.current() or @orders.first()
+      employ = order.employ(name)
+      return false if not employ or @group.counts_named(name) >= employ
+      # OK, you're in!
+      # TODO should help right away
+      @add(droid)
+      true
+  
+    recruit: (n, type, at) ->
+      recruits = @reserve
+      # NOTE: recruits won't be this.reserve if filtered!
+      recruits = recruits.filters(type)  if type
+      recruits.nearest at  if at
+      i = 0
+      while i < n
+        break  unless recruits[0]
+        droid = recruits.shift()
+        @add(droid)
+        i++
+  
+    cut: (n, type, at) ->
+      cuts = @group
+      # NOTE: cuts won't be this.group if filtered!
+      cuts = cuts.filters(type)  if type
+      cuts.nearest at  if at
+      i = 0
+      while i < n
+        droid = cuts.pop()
+        break  unless droid
+        @remove(droid)
+        i++
+  
+    buildDroid: (order) ->
+      factories = @group.factories().idle()
+      i = 0
+      while i < factories.length
+        # Want factory.build(...)
+        return (factories[i])  if buildDroid(factories[i], order.name, order.body, order.propulsion, "", order.droid_type, order.turret)
+        i++
+      null
+  
+    build: (order) -> #PREDICATE!  TODO this method goes away!
+      builders = [] # going to return the number of builders
+      structure = order.structure
+      if isStructureAvailable(structure)
+        at = order.at # where to build the structure
+        # Get available trucks
+        trucks = @group.trucks().idle()
+        count = trucks.length
+        if count < order.min
+          @recruit(order.min - count, CyberBorg.is_truck, at)
+          # Note that reserve trucks should always be idle for this to work.
+          trucks = @group.trucks().idle()
+        else
+          if count > order.max
+            @cut(count - order.min, CyberBorg.is_truck, at)
+            trucks = @group.trucks().idle()
+        if trucks.length > 0
+          trucks.nearest(at) # sort by distance
+          # assume nearest one can do
+          pos = at
+          #if structure != "A0ResourceExtractor"
+          #  # TODO DEBUG why is pickStructLocation not giving me "at" back?
+          #  # when I can actually build at "at"???
+          #  pos = pickStructLocation(trucks[0], structure, at.x, at.y)
+          if pos
+            debug("#{structure}: at is #{at.x},#{at.y} but pos is #{pos.x},#{pos.y}")
+            i = 0
+            while i < trucks.length
+              truck = trucks[i]
+              if truck.execute(order)
+                # TODO this should be better abstracted, use order.order
+                truck.order = DORDER_BUILD
+                builders.push(truck)
+              i++
+      builders
+  */
 
   Group.prototype.units = function(order) {
-    var units;
+    var count, max, reserve, unit, units, _i, _len;
     units = this.group.idle();
-    units = units.like(order.like) in order.like;
+    if (order.like) units = units.like(order.like);
+    if (order.recruit && units.length < order.recruit) {
+      reserve = this.reserve;
+      if (order.like) reserve = reserve.like(order.like);
+      units = units.add(reserve);
+    }
+    if (order.constript && units.length < order.conscript) {
+      debug("Order conscript not implemented");
+    }
+    if (units.length < order.min) return null;
     if (order.at) units.nearest(order.at);
-    if (order.max) return units = units.slice(0, (order.max - 1) + 1 || 9e9);
+    max = order.max;
+    count = 0;
+    for (_i = 0, _len = units.length; _i < _len; _i++) {
+      unit = units[_i];
+      count += 1;
+      if (count <= max) {
+        if (!this.group.contains(unit)) this.add(unit);
+      } else {
+        if (count > order.cut) if (this.group.contains(unit)) this.remove(unit);
+      }
+    }
+    if (units.length > max) units = units.cap(max);
+    return units;
   };
 
   Group.prototype.execute = function(order, units) {
     var executers, unit, _i, _len;
-    if (units == null) units = units(order);
+    if (units == null) units = this.units(order);
     executers = [];
-    if (units.length >= order.min) {
+    if (units) {
       for (_i = 0, _len = units.length; _i < _len; _i++) {
         unit = units[_i];
         if (unit.executes(order)) {
@@ -583,56 +610,62 @@ CyberBorg = (function() {
 })();
 
 CyberBorg.prototype.base_orders = function() {
-  var command_center, data, light_factory, order, orders, p, p111, p333, phase1, phase2, power_generator, research_facility, _i, _j, _len, _len2;
+  var command_center, dorder_build, light_factory, orders, phase1, phase2, power_generator, research_facility, with_one_truck, with_three_trucks;
   light_factory = "A0LightFactory";
   command_center = "A0CommandCentre";
   research_facility = "A0ResearchFacility";
   power_generator = "A0PowerGenerator";
-  p = function(n, x, e) {
-    return {
-      min: n,
-      max: x,
+  dorder_build = function(arr) {
+    var order;
+    order = {
+      "function": 'orderDroidBuild',
       number: DORDER_BUILD,
-      employ: function(name) {
-        return {
-          'Truck': e
-        }[name];
+      structure: arr[0],
+      at: {
+        x: arr[1],
+        y: arr[2]
       }
     };
+    return order;
   };
-  p333 = function() {
-    return p(3, 3, 3);
-  };
-  p111 = function() {
-    return p(1, 1, 1);
-  };
-  order = function(str, x, y, p) {
-    p.structure = str;
-    p.at = {
-      x: x,
-      y: y
+  with_three_trucks = function(obj) {
+    obj.like = /Truck/;
+    obj.min = 1;
+    obj.max = 3;
+    obj.recruit = 3;
+    obj.conscript = 1;
+    obj.cut = 3;
+    obj.employ = function(name) {
+      return {
+        Truck: 3
+      }[name];
     };
-    return p;
+    return obj;
   };
-  phase1 = [[light_factory, 10, 235], [research_facility, 7, 235], [command_center, 7, 238], [power_generator, 4, 235]];
-  for (_i = 0, _len = phase1.length; _i < _len; _i++) {
-    data = phase1[_i];
-    data.push(p333());
-  }
-  phase2 = [[research_facility, 4, 238], [power_generator, 4, 241], [research_facility, 7, 241], [power_generator, 10, 241], [research_facility, 13, 241], [power_generator, 13, 244], [research_facility, 10, 244], [power_generator, 7, 244]];
-  for (_j = 0, _len2 = phase2.length; _j < _len2; _j++) {
-    data = phase2[_j];
-    data.push(p111());
-  }
+  with_one_truck = function(obj) {
+    obj.min = 1;
+    obj.max = 1;
+    obj.recruit = 1;
+    obj.cut = 1;
+    obj.employ = function(name) {
+      return {
+        Truck: 1
+      }[name];
+    };
+    return obj;
+  };
+  phase1 = [with_three_trucks(dorder_build([light_factory, 10, 235])), with_three_trucks(dorder_build([research_facility, 7, 235])), with_three_trucks(dorder_build([command_center, 7, 238])), with_three_trucks(dorder_build([power_generator, 4, 235]))];
+  phase2 = [with_one_truck(dorder_build([research_facility, 4, 238])), with_one_truck(dorder_build([power_generator, 4, 241])), with_one_truck(dorder_build([research_facility, 7, 241])), with_one_truck(dorder_build([power_generator, 10, 241])), with_one_truck(dorder_build([research_facility, 13, 241])), with_one_truck(dorder_build([power_generator, 13, 244])), with_one_truck(dorder_build([research_facility, 10, 244])), with_one_truck(dorder_build([power_generator, 7, 244]))];
   orders = phase1.concat(phase2);
-  orders = orders.map(function(data) {
-    return order.apply(null, data);
-  });
   return WZArray.bless(orders);
 };
 
 CyberBorg.prototype.factory_orders = function() {
-  var mg1, orders, truck, whb1;
+  var build, mg1, orders, truck, whb1;
+  build = function(object) {
+    object["function"] = "buildDroid";
+    return object;
+  };
   whb1 = function(droid) {
     droid.body = "Body1REC";
     droid.propulsion = "wheeled01";
@@ -650,16 +683,21 @@ CyberBorg.prototype.factory_orders = function() {
   };
   orders = [];
   2..times(function() {
-    return orders.push(whb1(truck));
+    return orders.push(build(whb1(truck)));
   });
   12..times(function() {
-    return orders.push(whb1(mg1));
+    return orders.push(build(whb1(mg1)));
   });
   return WZArray.bless(orders);
 };
 
 CyberBorg.prototype.lab_orders = function() {
-  return ['R-Wpn-MG1Mk1', 'R-Struc-PowerModuleMk1', 'R-Defense-Tower01', 'R-Wpn-MG3Mk1', 'R-Struc-RepairFacility', 'R-Defense-WallTower02', 'R-Defense-AASite-QuadMg1', 'R-Vehicle-Body04', 'R-Struc-VTOLFactory', 'R-Vehicle-Prop-VTOL', 'R-Wpn-Bomb01'];
+  return ['R-Wpn-MG1Mk1', 'R-Struc-PowerModuleMk1', 'R-Defense-Tower01', 'R-Wpn-MG3Mk1', 'R-Struc-RepairFacility', 'R-Defense-WallTower02', 'R-Defense-AASite-QuadMg1', 'R-Vehicle-Body04', 'R-Struc-VTOLFactory', 'R-Vehicle-Prop-VTOL', 'R-Wpn-Bomb01'].map(function(name) {
+    return {
+      name: name,
+      research: name
+    };
+  });
 };
 
 CyberBorg.prototype.derricks_orders = function(derricks) {
@@ -667,6 +705,7 @@ CyberBorg.prototype.derricks_orders = function(derricks) {
   extractor = "A0ResourceExtractor";
   p = function(n, x, et) {
     return {
+      "function": 'orderDroidBuild',
       min: n,
       max: x,
       number: DORDER_BUILD,
@@ -880,19 +919,20 @@ eventDroidIdle = function(droid) {
 };
 
 group_executions = function(event) {
-  var count, executers, group, groups, order, orders, _i, _len, _results;
+  var count, executers, group, groups, name, order, orders, _i, _len, _results;
   groups = cyberBorg.groups;
   _results = [];
   for (_i = 0, _len = groups.length; _i < _len; _i++) {
     group = groups[_i];
+    name = group.name;
     orders = group.orders;
     order = orders.next();
-    debug("" + group.name + " has " + orders.length + " orders");
+    debug("" + name + " has " + orders.length + " orders");
     debug(order);
-    continue;
+    if (name !== 'Base') continue;
     if (order) {
       while (order) {
-        console(order);
+        debug("" + name + " " + order["function"]);
         executers = group.execute(order);
         count = executers.length;
         if (count === 0) {
@@ -900,7 +940,7 @@ group_executions = function(event) {
           console("Group " + name + " has pending orders.");
           break;
         }
-        console("There are " + count + " " + name + " units        working on " + order.codename + ".");
+        console("There are " + count + " " + name + " units        working on " + order["function"] + ".");
         order = orders.next();
       }
       if (!order) {

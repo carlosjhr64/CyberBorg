@@ -15,14 +15,16 @@ class Group
       @reserve.removeObject(droid)
       @group.push(droid)
     else
-      throw "Can't add #{droid.namexy} b/c it's not in reserve."
+      throw new Error("Can't add #{droid.namexy} b/c it's not in reserve.")
 
   remove: (droid) ->
     if @group.contains(droid)
       @group.removeObject(droid)
       @reserve.push(droid)
     else
-      throw "Can't remove #{droid.namexy} b/c it's not in group."
+      throw new Error("Can't remove #{droid.namexy} b/c it's not in group.")
+
+  ###
 
   # We have a droid applying for base group.
   # Returns true if droid gets employed.
@@ -108,17 +110,55 @@ class Group
             i++
     builders
 
+  ###
+
   units: (order) ->
     units = @group.idle()
-    units = units.like(order.like) of order.like
-    units.nearest(order.at) if order.at
-    units = units[0..(order.max - 1)] if order.max
+    units = units.like(order.like) if order.like
 
-  execute: (order, units=units(order)) ->
+    # Do we need to recruit?
+    if order.recruit and units.length < order.recruit
+      # Note the reserve is expected to be idle
+      reserve = @reserve
+      reserve = reserve.like(order.like) if order.like
+      # Just add reserve for now
+      units = units.add(reserve)
+
+    # Do we need to conscript?
+    if order.constript and units.length < order.conscript
+      debug("Order conscript not implemented")
+      # TODO conscript some more units
+      # This one get's complicated b/c it takes droids already employed in other groups.
+      # Should check rank to ensure lower ranks don't take from higher ranks.
+    
+    # Check we have the minimum units required for the order.
+    # If not, shotcut out of this function.
+    return null if units.length < order.min
+
+    # Sort by distance to site if given at.
+    units.nearest(order.at) if order.at
+
+    # Select units in and out of the group
+    max = order.max
+    count = 0
+    for unit in units
+      count += 1
+      if count <= max
+        @add(unit) if not @group.contains(unit)
+      else
+        if count > order.cut
+          @remove(unit) if @group.contains(unit)
+
+    # Let cap the units if more than max
+    units = units.cap(max) if units.length > max
+    units
+
+  execute: (order, units=@units(order)) ->
     executers = [] # Going to return the units executing order.
-    if units.length >= order.min
+    if units
       for unit in units
         if unit.executes(order)
+          # Unit no longer idle
           unit.order = order.number
           executers.push(unit)
     return executers

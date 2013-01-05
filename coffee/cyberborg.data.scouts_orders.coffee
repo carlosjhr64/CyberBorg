@@ -1,3 +1,16 @@
+#   ***Order Attributes***
+#   function:  the function name to call
+#   number:    order number for order functins, like orderDroid(... order.number ...).
+#   min:       minimum number of units required to execute order.
+#   max:       maximum allowed number of units to execute order.
+#   employ:    (unit_name)-> amount of the unit the group will to employ.
+#   at:        preferred location.
+#   structure:
+#   body:
+#   propulsion:
+#   turret:
+#   research:
+# { name: min: max: number: employ: at: ... }
 CyberBorg::scouts_orders = (derricks) ->
   # What we're building
   extractor = "A0ResourceExtractor"

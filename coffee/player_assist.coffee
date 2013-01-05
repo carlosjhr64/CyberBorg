@@ -304,18 +304,18 @@ eventDroidIdle = (droid) ->
 group_executions = (event) ->
   groups = cyberBorg.groups
   for group in groups
+    name = group.name
     orders = group.orders
     order = orders.next()
 
-    # TODO
-    debug("#{group.name} has #{orders.length} orders")
+    # TODO to delete start
+    debug("#{name} has #{orders.length} orders")
     debug(order)
-    continue
-    # TODO
-
+    continue unless name is 'Base'
+    # TODO delete end
     if order
       while order
-        console(order) # TODO :-??
+        debug("#{name} #{order.function}") # TODO :-??
         executers = group.execute(order)
         count = executers.length
         if count is 0
@@ -323,6 +323,6 @@ group_executions = (event) ->
           console("Group #{name} has pending orders.")
           break
         console("There are #{count} #{name} units
-        working on #{order.codename}.")
+        working on #{order.function}.")
         order = orders.next()
       console "Group #{name} orders complete!" if !order
