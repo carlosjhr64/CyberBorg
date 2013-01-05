@@ -319,6 +319,7 @@ Group = (function() {
     } else {
       this.group = CyberBorg.enum_droid();
     }
+    this.list = this.group;
     if (this.orders) {
       WZArray.bless(this.orders);
     } else {
@@ -440,13 +441,15 @@ Group = (function() {
     var count, max, reserve, unit, units, _i, _len;
     units = this.group.idle();
     if (order.like) units = units.like(order.like);
-    if (order.recruit && units.length < order.recruit) {
-      reserve = this.reserve;
-      if (order.like) reserve = reserve.like(order.like);
-      units = units.add(reserve);
-    }
-    if (order.constript && units.length < order.conscript) {
-      debug("Order conscript not implemented");
+    if (this.group.length < order.limit) {
+      if (order.recruit && units.length < order.recruit) {
+        reserve = this.reserve;
+        if (order.like) reserve = reserve.like(order.like);
+        units = units.add(reserve);
+      }
+      if (order.constript && units.length < order.conscript) {
+        debug("Order conscript not implemented");
+      }
     }
     if (units.length < order.min) return null;
     if (order.at) units.nearest(order.at);
@@ -630,6 +633,7 @@ CyberBorg.prototype.base_orders = function() {
   };
   with_three_trucks = function(obj) {
     obj.like = /Truck/;
+    obj.limit = 3;
     obj.min = 1;
     obj.max = 3;
     obj.recruit = 3;
@@ -637,7 +641,7 @@ CyberBorg.prototype.base_orders = function() {
     obj.cut = 3;
     obj.employ = function(name) {
       return {
-        Truck: 3
+        Truck: 0
       }[name];
     };
     return obj;
@@ -649,7 +653,7 @@ CyberBorg.prototype.base_orders = function() {
     obj.cut = 1;
     obj.employ = function(name) {
       return {
-        Truck: 1
+        Truck: 0
       }[name];
     };
     return obj;
@@ -799,8 +803,6 @@ eventStartLevel = function() {
 
 eventStructureBuilt = function(structure, droid) {
   var groups;
-  debug("in eventStructureBuilt");
-  return null;
   cyberBorg.update();
   structure = new WZObject(structure);
   droid = new WZObject(droid);
@@ -809,17 +811,17 @@ eventStructureBuilt = function(structure, droid) {
   if (structure.type === STRUCTURE) {
     switch (structure.stattype) {
       case FACTORY:
-        groups.named('Factories').list.push(structure);
+        groups.named('Factories').group.push(structure);
         break;
       case RESEARCH_LAB:
-        groups.named('Labs').list.push(structure);
+        groups.named('Labs').group.push(structure);
         break;
       case HQ:
         min_map_and_design_on(structure);
     }
   }
   return group_executions({
-    name: 'StructureBuilt',
+    event: 'StructureBuilt',
     structure: structure,
     droid: droid
   });
@@ -844,9 +846,9 @@ eventDroidBuilt = function(droid, structure) {
   structure = new WZObject(structure);
   groups = cyberBorg.groups;
   console("Built " + droid.name + ".");
-  groups.named('Reseve').list.push(droid);
+  groups.named('Reseve').group.push(droid);
   return group_executions({
-    name: 'DroidBuilt',
+    event: 'DroidBuilt',
     structure: structure,
     droid: droid
   });
@@ -900,7 +902,7 @@ eventResearched = function(completed, structure) {
   return null;
   structure = new WZObject(structure);
   return group_executions({
-    name: 'Researched',
+    event: 'Researched',
     structure: structure,
     research: completed
   });
@@ -913,7 +915,7 @@ eventDroidIdle = function(droid) {
   droid = new WZObject(droid);
   groups = cyberBorg.groups;
   return group_executions({
-    name: 'DroidIdle',
+    event: 'DroidIdle',
     droid: droid
   });
 };
@@ -940,7 +942,7 @@ group_executions = function(event) {
           console("Group " + name + " has pending orders.");
           break;
         }
-        console("There are " + count + " " + name + " units        working on " + order["function"] + ".");
+        console("There are " + count + " " + name + " units working on " + order["function"] + ".");
         order = orders.next();
       }
       if (!order) {

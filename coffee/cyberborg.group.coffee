@@ -4,6 +4,7 @@ class Group
     # If we're not given a list of droids,
     # get them from enumDroid (all of the player's pieces).
     if @group then WZArray.bless(@group) else @group = CyberBorg.enum_droid()
+    @list = @group # alias
     # orders is a list of things for the group to do
     if @orders then WZArray.bless(@orders) else @orders = WZArray.bless([])
     # reserve are the units we can draw from.
@@ -116,20 +117,22 @@ class Group
     units = @group.idle()
     units = units.like(order.like) if order.like
 
-    # Do we need to recruit?
-    if order.recruit and units.length < order.recruit
-      # Note the reserve is expected to be idle
-      reserve = @reserve
-      reserve = reserve.like(order.like) if order.like
-      # Just add reserve for now
-      units = units.add(reserve)
+    # Limits the maximum size of group (idle or not)
+    if @group.length < order.limit
+      # Do we need to recruit?
+      if order.recruit and units.length < order.recruit
+        # Note the reserve is expected to be idle
+        reserve = @reserve
+        reserve = reserve.like(order.like) if order.like
+        # Just add reserve for now
+        units = units.add(reserve)
 
-    # Do we need to conscript?
-    if order.constript and units.length < order.conscript
-      debug("Order conscript not implemented")
-      # TODO conscript some more units
-      # This one get's complicated b/c it takes droids already employed in other groups.
-      # Should check rank to ensure lower ranks don't take from higher ranks.
+      # Do we need to conscript?
+      if order.constript and units.length < order.conscript
+        debug("Order conscript not implemented")
+        # TODO conscript some more units
+        # This one get's complicated b/c it takes droids already employed in other groups.
+        # Should check rank to ensure lower ranks don't take from higher ranks.
     
     # Check we have the minimum units required for the order.
     # If not, shotcut out of this function.

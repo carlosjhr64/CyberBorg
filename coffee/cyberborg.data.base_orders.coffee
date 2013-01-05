@@ -28,14 +28,16 @@ CyberBorg::base_orders = ->
 
   with_three_trucks = (obj) ->
     obj.like = /Truck/
+    obj.limit = 3 # maximum group size
     obj.min = 1 # it will execute the order only with at least this amount
     obj.max = 3 # it will execute the order with no more than this amount
     obj.recruit = 3 # it will try to execute with at least this amount but less than max
     obj.conscript = 1 # steal from another group if necessary to execute this order
     obj.cut = 3 # layoff units above this amout
+    # Employ is just a way to add to a group an idle truck b/4 it gets recruited by another group
     obj.employ = (name) ->
       # Group size sought through employment
-      (Truck: 3)[name] # this is undefined unless name is 'Truck'
+      (Truck: 0)[name] # this is undefined unless name is 'Truck'
     obj
 
   with_one_truck = (obj) ->
@@ -44,7 +46,7 @@ CyberBorg::base_orders = ->
     obj.recruit = 1
     obj.cut = 1
     obj.employ = (name) ->
-      (Truck: 1)[name]
+      (Truck: 0)[name]
     obj
 
   # Build up the initial base as fast a posible

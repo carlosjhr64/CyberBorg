@@ -83,10 +83,6 @@ eventStartLevel = ->
 #    a "structure built" event triggers an eventStructureBuilt call.
 #    eventStructureBuilt is WZ2100 JS API.
 eventStructureBuilt = (structure, droid) ->
-  debug("in eventStructureBuilt")
-  return null
-  # TODO Just stop here for now
-
   cyberBorg.update()
   structure = new WZObject(structure)
   droid = new WZObject(droid)
@@ -106,9 +102,9 @@ eventStructureBuilt = (structure, droid) ->
   if (structure.type is STRUCTURE)
     switch structure.stattype
       when FACTORY
-        groups.named('Factories').list.push(structure)
+        groups.named('Factories').group.push(structure)
       when RESEARCH_LAB
-        groups.named('Labs').list.push(structure)
+        groups.named('Labs').group.push(structure)
       when HQ
         # Because we've overridden rules.js eventStructureBuilt,
         # we need to need to enforce one of the rules in the game.
@@ -121,7 +117,7 @@ eventStructureBuilt = (structure, droid) ->
         min_map_and_design_on structure
 
   # Next see what the groups can execute
-  group_executions(name:'StructureBuilt', structure:structure, droid:droid)
+  group_executions(event:'StructureBuilt', structure:structure, droid:droid)
 
 # This turns on minimap and design
 # Will not be needed when this AI follows standard conventions.
@@ -157,11 +153,11 @@ eventDroidBuilt = (droid, structure) ->
   # If it's a truck, maybe it should go to the nearest job?
   # Well, the style for this AI is to work with groups.
   # So what we'll do is add the new droids to the RESERVE.
-  groups.named('Reseve').list.push(droid)
+  groups.named('Reseve').group.push(droid)
   
   # If a factory just built a droid, it's ready for the next build.
   # Next see what the groups can execute
-  group_executions(name:'DroidBuilt', structure:structure, droid:droid)
+  group_executions(event:'DroidBuilt', structure:structure, droid:droid)
 
 # Player commands...
 # Some useful debuging feedback and could be used for player commands.
@@ -237,7 +233,7 @@ eventResearched = (completed, structure) ->
   # TODO Just stop here for now
 
   structure = new WZObject(structure)
-  group_executions(name:'Researched', structure:structure, research:completed)
+  group_executions(event:'Researched', structure:structure, research:completed)
 
 eventDroidIdle = (droid) ->
   debug("in eventDroidIdle")
@@ -247,7 +243,7 @@ eventDroidIdle = (droid) ->
   droid = new WZObject(droid)
   groups = cyberBorg.groups
 
-  group_executions(name:'DroidIdle', droid:droid)
+  group_executions(event:'DroidIdle', droid:droid)
   # I thinks this all goes away. :))
   #if groups.reserve.group.contains(droid)
   #  # groups that accept idle reserve droids
@@ -322,7 +318,6 @@ group_executions = (event) ->
           orders.revert()
           console("Group #{name} has pending orders.")
           break
-        console("There are #{count} #{name} units
-        working on #{order.function}.")
+        console("There are #{count} #{name} units working on #{order.function}.")
         order = orders.next()
       console "Group #{name} orders complete!" if !order
