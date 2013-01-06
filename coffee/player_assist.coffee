@@ -4,6 +4,13 @@
 # So lets get CyberBorg to help us out.
 cyberBorg = new CyberBorg()
 
+# Define the group names
+BASE      = 'Base'
+RESERVE   = 'Reserve'
+DERRICKS  = 'Derricks'
+SCOUTS    = 'Scouts'
+FACTORIES = 'Factories'
+
 # When Warzone 2100 starts the game, it calls eventStartLevel.
 # eventStarLevel is WZ2100 JS API.
 eventStartLevel = ->
@@ -17,7 +24,7 @@ eventStartLevel = ->
   # Group is a class provided by CyberBorg.
   # The constructor by default picks up all of the player's pieces.
   # We'll put them in a reserve for now.
-  reserve = new Group('Reserve',0)
+  reserve = new Group(RESERVE,0)
   
   # The Reserve group will hold the droids ready to join a group.
   # Other groups can release droids they no longer need
@@ -53,18 +60,18 @@ eventStartLevel = ->
   # The group starts out empty, with [].
   # Also, from the datafile, we give the Base group its orders list.
   # Finally, the base needs the reserve group.
-  base = new Group('Base', 100, [], cyberBorg.base_orders(), reserve.group)
+  base = new Group(BASE, 100, [], cyberBorg.base_orders(), reserve.group)
   groups.push(base)
-  derricks = new Group('Derricks', 90, [], cyberBorg.derricks_orders(resources), reserve.group)
+  derricks = new Group(DERRICKS, 90, [], cyberBorg.derricks_orders(resources), reserve.group)
   groups.push(derricks)
-  scouts = new Group('Scouts', 80, [], cyberBorg.scouts_orders(resources), reserve.group)
+  scouts = new Group(SCOUTS, 80, [], cyberBorg.scouts_orders(resources), reserve.group)
   groups.push(scouts)
   
   # Structures are also considered units the AI can order.
   # Let's have a factory group... etc.  At this time,
   # the concept of a reserve does not look useful for structures, but
   # that could change.  Reserve just defaults to empty, [],
-  factories = new Group('Factories', 20, [], cyberBorg.factory_orders())
+  factories = new Group(FACTORIES, 20, [], cyberBorg.factory_orders())
   groups.push(factories)
   labs = new Group('Labs', 19, [], cyberBorg.lab_orders())
   groups.push(labs)
@@ -137,10 +144,6 @@ min_map_and_design_on = (structure) ->
 #  When a droid is built, it triggers a droid built event and
 #  eventDroidBuilt(a WZ2100 JS API) is called.
 eventDroidBuilt = (droid, structure) ->
-  debug("in eventDroidBuilt")
-  return null
-  # TODO Just stop here for now
-
   cyberBorg.update()
   droid = new WZObject(droid)
   structure = new WZObject(structure)
@@ -153,7 +156,7 @@ eventDroidBuilt = (droid, structure) ->
   # If it's a truck, maybe it should go to the nearest job?
   # Well, the style for this AI is to work with groups.
   # So what we'll do is add the new droids to the RESERVE.
-  groups.named('Reseve').group.push(droid)
+  groups.named(RESERVE).group.push(droid)
   
   # If a factory just built a droid, it's ready for the next build.
   # Next see what the groups can execute
@@ -307,7 +310,7 @@ group_executions = (event) ->
     # TODO to delete start
     debug("#{name} has #{orders.length} orders")
     debug(order)
-    continue unless name is 'Base'
+    continue unless name is BASE
     # TODO delete end
     if order
       while order

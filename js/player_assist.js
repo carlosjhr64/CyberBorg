@@ -1,4 +1,4 @@
-var CyberBorg, Group, WZArray, WZObject, cyberBorg, eventChat, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, group_executions, min_map_and_design_on, report,
+var BASE, CyberBorg, DERRICKS, FACTORIES, Group, RESERVE, SCOUTS, WZArray, WZObject, cyberBorg, eventChat, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, group_executions, min_map_and_design_on, report,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -776,22 +776,32 @@ CyberBorg.prototype.scouts_orders = function(derricks) {
 
 cyberBorg = new CyberBorg();
 
+BASE = 'Base';
+
+RESERVE = 'Reserve';
+
+DERRICKS = 'Derricks';
+
+SCOUTS = 'Scouts';
+
+FACTORIES = 'Factories';
+
 eventStartLevel = function() {
   var base, derricks, factories, groups, labs, reserve, resources, scouts;
   console("This is player_assist.js");
-  reserve = new Group('Reserve', 0);
+  reserve = new Group(RESERVE, 0);
   console("We have " + reserve.group.length + " droids available, and  " + (reserve.group.counts(CyberBorg.is_truck)) + " of them are trucks.");
   resources = CyberBorg.get_resources(reserve.group.center());
   console("There are " + resources.length + " resource points.");
   groups = cyberBorg.groups;
   groups.push(reserve);
-  base = new Group('Base', 100, [], cyberBorg.base_orders(), reserve.group);
+  base = new Group(BASE, 100, [], cyberBorg.base_orders(), reserve.group);
   groups.push(base);
-  derricks = new Group('Derricks', 90, [], cyberBorg.derricks_orders(resources), reserve.group);
+  derricks = new Group(DERRICKS, 90, [], cyberBorg.derricks_orders(resources), reserve.group);
   groups.push(derricks);
-  scouts = new Group('Scouts', 80, [], cyberBorg.scouts_orders(resources), reserve.group);
+  scouts = new Group(SCOUTS, 80, [], cyberBorg.scouts_orders(resources), reserve.group);
   groups.push(scouts);
-  factories = new Group('Factories', 20, [], cyberBorg.factory_orders());
+  factories = new Group(FACTORIES, 20, [], cyberBorg.factory_orders());
   groups.push(factories);
   labs = new Group('Labs', 19, [], cyberBorg.lab_orders());
   groups.push(labs);
@@ -839,14 +849,12 @@ min_map_and_design_on = function(structure) {
 
 eventDroidBuilt = function(droid, structure) {
   var groups;
-  debug("in eventDroidBuilt");
-  return null;
   cyberBorg.update();
   droid = new WZObject(droid);
   structure = new WZObject(structure);
   groups = cyberBorg.groups;
   console("Built " + droid.name + ".");
-  groups.named('Reseve').group.push(droid);
+  groups.named(RESERVE).group.push(droid);
   return group_executions({
     event: 'DroidBuilt',
     structure: structure,
@@ -931,7 +939,7 @@ group_executions = function(event) {
     order = orders.next();
     debug("" + name + " has " + orders.length + " orders");
     debug(order);
-    if (name !== 'Base') continue;
+    if (name !== BASE) continue;
     if (order) {
       while (order) {
         debug("" + name + " " + order["function"]);

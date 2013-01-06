@@ -11,4 +11,5 @@ coffee							\
 	coffee/cyberborg.data.lab_orders.coffee		\
 	coffee/cyberborg.data.derricks_orders.coffee	\
 	coffee/cyberborg.data.scouts_orders.coffee	\
+	coffee/cyberborg.events.coffee			\
 	coffee/player_assist.coffee
