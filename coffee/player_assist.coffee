@@ -10,10 +10,22 @@ RESERVE   = 'Reserve'
 DERRICKS  = 'Derricks'
 SCOUTS    = 'Scouts'
 FACTORIES = 'Factories'
+LABS      = 'Labs'
+
+events = (event) ->
+  debug "#{event.name} triggered"
+  cyberBorg.update()
+  switch event.name
+    when 'StartLevel' then startLevel()
+    when 'StructureBuilt' then structureBuilt(event.structure, event.droid)
+    when 'DroidBuilt' then droidBuilt(event.droid, event.structure)
+    else debug("#{event.name} NOT HANDLED!")
+  # Next see what the groups can execute
+  group_executions(event)
 
 # When Warzone 2100 starts the game, it calls eventStartLevel.
 # eventStarLevel is WZ2100 JS API.
-eventStartLevel = ->
+startLevel = () ->
   
   # The game starts...
   # Let's tell the player we're assisting.
@@ -73,7 +85,7 @@ eventStartLevel = ->
   # that could change.  Reserve just defaults to empty, [],
   factories = new Group(FACTORIES, 20, [], cyberBorg.factory_orders())
   groups.push(factories)
-  labs = new Group('Labs', 19, [], cyberBorg.lab_orders())
+  labs = new Group(LABS, 19, [], cyberBorg.lab_orders())
   groups.push(labs)
 
   # This is probably the only time we'll need to sort groups.
@@ -84,17 +96,11 @@ eventStartLevel = ->
   # With only to trucks to start and base group with first dibs,
   # the AI guarantees that the first thing that happens
   # is that the base gets built.
-  group_executions()
 
 #    When base group (or anyone else) builds a structure,
 #    a "structure built" event triggers an eventStructureBuilt call.
 #    eventStructureBuilt is WZ2100 JS API.
-eventStructureBuilt = (structure, droid) ->
-  cyberBorg.update()
-  structure = new WZObject(structure)
-  droid = new WZObject(droid)
-  groups = cyberBorg.groups
-  
+structureBuilt = (structure, droid) ->
   # So every time we build a structure, this function gets called.
   # Let's tell the player what got built.
   # namexy is a my hack on WZ2100's Object, which
@@ -107,11 +113,12 @@ eventStructureBuilt = (structure, droid) ->
   # Anyways, when a factory gets built,
   # we need to get it started building droids.
   if (structure.type is STRUCTURE)
+    groups = cyberBorg.groups
     switch structure.stattype
       when FACTORY
-        groups.named('Factories').group.push(structure)
+        groups.named(FACTORIES).group.push(structure)
       when RESEARCH_LAB
-        groups.named('Labs').group.push(structure)
+        groups.named(LABS).group.push(structure)
       when HQ
         # Because we've overridden rules.js eventStructureBuilt,
         # we need to need to enforce one of the rules in the game.
@@ -121,10 +128,8 @@ eventStructureBuilt = (structure, droid) ->
         # as per rules.js.
         # TODO check if this file is being runned by rules.js first.
         # May be being runned as a stand alone AI.
-        min_map_and_design_on structure
+        min_map_and_design_on(structure)
 
-  # Next see what the groups can execute
-  group_executions(event:'StructureBuilt', structure:structure, droid:droid)
 
 # This turns on minimap and design
 # Will not be needed when this AI follows standard conventions.
@@ -143,12 +148,7 @@ min_map_and_design_on = (structure) ->
 
 #  When a droid is built, it triggers a droid built event and
 #  eventDroidBuilt(a WZ2100 JS API) is called.
-eventDroidBuilt = (droid, structure) ->
-  cyberBorg.update()
-  droid = new WZObject(droid)
-  structure = new WZObject(structure)
-  groups = cyberBorg.groups
-  
+droidBuilt = (droid, structure) ->
   # Tell the player what got built.
   console "Built #{droid.name}."
   
@@ -156,15 +156,11 @@ eventDroidBuilt = (droid, structure) ->
   # If it's a truck, maybe it should go to the nearest job?
   # Well, the style for this AI is to work with groups.
   # So what we'll do is add the new droids to the RESERVE.
-  groups.named(RESERVE).group.push(droid)
-  
-  # If a factory just built a droid, it's ready for the next build.
-  # Next see what the groups can execute
-  group_executions(event:'DroidBuilt', structure:structure, droid:droid)
+  cyberBorg.groups.named(RESERVE).group.push(droid)
 
 # Player commands...
 # Some useful debuging feedback and could be used for player commands.
-eventChat = (sender, to, message) ->
+chat = (sender, to, message) ->
   debug("in eventChat")
   return null
   # TODO Just stop here for now
@@ -230,7 +226,7 @@ report = (who) ->
 # which can be found from the ruins of a demolished facility.
 # So we need to check that in fact
 # the technology came from an active structure.
-eventResearched = (completed, structure) ->
+researched = (completed, structure) ->
   debug("in eventResearched")
   return null
   # TODO Just stop here for now
@@ -238,7 +234,7 @@ eventResearched = (completed, structure) ->
   structure = new WZObject(structure)
   group_executions(event:'Researched', structure:structure, research:completed)
 
-eventDroidIdle = (droid) ->
+droidIdle = (droid) ->
   debug("in eventDroidIdle")
   return null
   # TODO Just stop here for now
@@ -304,23 +300,18 @@ group_executions = (event) ->
   groups = cyberBorg.groups
   for group in groups
     name = group.name
+    continue unless name is BASE # TODO delete
     orders = group.orders
     order = orders.next()
-
-    # TODO to delete start
-    debug("#{name} has #{orders.length} orders")
-    debug(order)
-    continue unless name is BASE
-    # TODO delete end
     if order
+      debug("#{name} #{order.function}") # TODO delete
       while order
-        debug("#{name} #{order.function}") # TODO :-??
         executers = group.execute(order)
         count = executers.length
         if count is 0
           orders.revert()
           console("Group #{name} has pending orders.")
           break
-        console("There are #{count} #{name} units working on #{order.function}.")
+        console("There are #{count} #{name} units working on #{order.structure or order.function}.")
         order = orders.next()
       console "Group #{name} orders complete!" if !order

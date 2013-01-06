@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, FACTORIES, Group, RESERVE, SCOUTS, WZArray, WZObject, cyberBorg, eventChat, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, group_executions, min_map_and_design_on, report,
+var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, WZArray, WZObject, chat, cyberBorg, droidBuilt, droidIdle, eventDroidBuilt, eventStartLevel, eventStructureBuilt, events, group_executions, min_map_and_design_on, report, researched, startLevel, structureBuilt,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -774,6 +774,173 @@ CyberBorg.prototype.scouts_orders = function(derricks) {
   return orders;
 };
 
+/*
+eventAttacked = (victim, attacker) ->
+  obj =
+    name: 'Attacked'
+    victim: new WZObject(victim)
+    attacker: new WZObject(attacker)
+  events(obj)
+
+eventAttackedUnthrottled = (victim, attacker) ->
+  obj =
+    name: 'Attacked'
+    victim: new WZObject(victim)
+    attacker: new WZObject(attacker)
+  events(obj)
+
+eventBeacon = (x, y, sender, to, message) ->
+  obj =
+    name: 'Beacon'
+    at: x:x, y:y
+    sender: sender
+    to: to
+    message: message
+  events(obj)
+
+eventBeaconRemoved = (sender, to) ->
+  obj =
+    name: 'BeaconReamoved'
+    sender: sender
+    to: to
+  events(obj)
+
+eventChat = (sender,to, message) ->
+  obj =
+    name: 'Chat'
+    sender: sender
+    to: to
+    message: message
+
+eventCheatMode = (entered) ->
+  obj =
+    name: 'CheatMode'
+    entered: entered
+  events(obj)
+
+eventDestroyed = (object) ->
+  obj =
+    name: 'Destroyed'
+    object: new WZObject(object)
+  events(obj)
+*/
+
+eventDroidBuilt = function(droid, structure) {
+  var obj;
+  obj = {
+    name: 'DroidBuilt',
+    droid: new WZObject(droid),
+    structure: new WZObject(structure)
+  };
+  return events(obj);
+};
+
+/*
+
+eventDroidIdle = (droid) ->
+  obj =
+    name: 'DroidIdle'
+    droid: new WZObject(droid)
+  events(obj)
+
+eventGameInit = () ->
+  obj = name: 'GameInit'
+  events(obj)
+
+eventGameLoaded = () ->
+  obj = name: 'GameLoaded'
+  events(obj)
+
+eventGameSaved = () ->
+  obj = name: 'GameSaved'
+  events(obj)
+
+eventGameSaving = () ->
+  obj = name: 'GameSaving'
+  events(obj)
+
+eventGroupLoss = (object, group, size) ->
+  obj =
+    name: 'GroupLoss'
+    object: new WZObject(object)
+    group: group
+    size: size
+  events(obj)
+
+eventLaunchTransporter = () ->
+  obj = name: 'LaunchTransporter'
+  events(obj)
+
+eventMissionTimeout = () ->
+  obj = name: 'MissionTimeout'
+  events(obj)
+
+eventObjectSeen = (sensor, object) ->
+  obj =
+    name: 'ObjectSeen'
+    sensor: new WZObject(sensor)
+    object: new WZObject(object)
+  events(obj)
+
+eventObjectTransfer = () ->
+  obj = name: 'ObjectTransfer'
+  events(obj)
+
+eventPickup = () ->
+  obj = name: 'Pickup'
+  events(obj)
+
+eventReinforcementsArrived = () ->
+  obj = name: 'ReinforcementArrived'
+  events(obj)
+
+eventResearched = (research, structure) ->
+  obj =
+    name: 'Researched'
+    research: research
+    structure: new WZObject(structure)
+  events(obj)
+
+eventSelectionChange = (selected) ->
+  selected = selected.map( (object) -> new WZObject(object) )
+  selected = WZArray.bless(selected)
+  obj =
+    name: 'SelectionChange'
+    selected: selected
+  events(obj)
+*/
+
+eventStartLevel = function() {
+  var obj;
+  obj = {
+    name: 'StartLevel'
+  };
+  return events(obj);
+};
+
+eventStructureBuilt = function(structure, droid) {
+  var obj;
+  obj = {
+    name: 'StructureBuilt',
+    structure: new WZObject(structure),
+    droid: new WZObject(droid)
+  };
+  return events(obj);
+};
+
+/*
+
+eventStructureReady = (structure) ->
+  obj =
+    name: 'StructureReady'
+    structure: new WZObject(structure)
+  events(obj)
+
+eventVideoDone = () ->
+  obj = name: 'VideoDone'
+  events(obj)
+*/
+
 cyberBorg = new CyberBorg();
 
 BASE = 'Base';
@@ -786,7 +953,28 @@ SCOUTS = 'Scouts';
 
 FACTORIES = 'Factories';
 
-eventStartLevel = function() {
+LABS = 'Labs';
+
+events = function(event) {
+  debug("" + event.name + " triggered");
+  cyberBorg.update();
+  switch (event.name) {
+    case 'StartLevel':
+      startLevel();
+      break;
+    case 'StructureBuilt':
+      structureBuilt(event.structure, event.droid);
+      break;
+    case 'DroidBuilt':
+      droidBuilt(event.droid, event.structure);
+      break;
+    default:
+      debug("" + event.name + " NOT HANDLED!");
+  }
+  return group_executions(event);
+};
+
+startLevel = function() {
   var base, derricks, factories, groups, labs, reserve, resources, scouts;
   console("This is player_assist.js");
   reserve = new Group(RESERVE, 0);
@@ -803,38 +991,27 @@ eventStartLevel = function() {
   groups.push(scouts);
   factories = new Group(FACTORIES, 20, [], cyberBorg.factory_orders());
   groups.push(factories);
-  labs = new Group('Labs', 19, [], cyberBorg.lab_orders());
+  labs = new Group(LABS, 19, [], cyberBorg.lab_orders());
   groups.push(labs);
-  groups.sort(function(a, b) {
+  return groups.sort(function(a, b) {
     return b.rank - a.rank;
   });
-  return group_executions();
 };
 
-eventStructureBuilt = function(structure, droid) {
+structureBuilt = function(structure, droid) {
   var groups;
-  cyberBorg.update();
-  structure = new WZObject(structure);
-  droid = new WZObject(droid);
-  groups = cyberBorg.groups;
   console("" + (structure.namexy()) + " Built!");
   if (structure.type === STRUCTURE) {
+    groups = cyberBorg.groups;
     switch (structure.stattype) {
       case FACTORY:
-        groups.named('Factories').group.push(structure);
-        break;
+        return groups.named(FACTORIES).group.push(structure);
       case RESEARCH_LAB:
-        groups.named('Labs').group.push(structure);
-        break;
+        return groups.named(LABS).group.push(structure);
       case HQ:
-        min_map_and_design_on(structure);
+        return min_map_and_design_on(structure);
     }
   }
-  return group_executions({
-    event: 'StructureBuilt',
-    structure: structure,
-    droid: droid
-  });
 };
 
 min_map_and_design_on = function(structure) {
@@ -847,22 +1024,12 @@ min_map_and_design_on = function(structure) {
   }
 };
 
-eventDroidBuilt = function(droid, structure) {
-  var groups;
-  cyberBorg.update();
-  droid = new WZObject(droid);
-  structure = new WZObject(structure);
-  groups = cyberBorg.groups;
+droidBuilt = function(droid, structure) {
   console("Built " + droid.name + ".");
-  groups.named(RESERVE).group.push(droid);
-  return group_executions({
-    event: 'DroidBuilt',
-    structure: structure,
-    droid: droid
-  });
+  return cyberBorg.groups.named(RESERVE).group.push(droid);
 };
 
-eventChat = function(sender, to, message) {
+chat = function(sender, to, message) {
   debug("in eventChat");
   return null;
   cyberBorg.update();
@@ -905,7 +1072,7 @@ report = function(who) {
   if (droids.length) return console("" + (droids.join(', ')) + ".");
 };
 
-eventResearched = function(completed, structure) {
+researched = function(completed, structure) {
   debug("in eventResearched");
   return null;
   structure = new WZObject(structure);
@@ -916,7 +1083,7 @@ eventResearched = function(completed, structure) {
   });
 };
 
-eventDroidIdle = function(droid) {
+droidIdle = function(droid) {
   var groups;
   debug("in eventDroidIdle");
   return null;
@@ -935,14 +1102,12 @@ group_executions = function(event) {
   for (_i = 0, _len = groups.length; _i < _len; _i++) {
     group = groups[_i];
     name = group.name;
+    if (name !== BASE) continue;
     orders = group.orders;
     order = orders.next();
-    debug("" + name + " has " + orders.length + " orders");
-    debug(order);
-    if (name !== BASE) continue;
     if (order) {
+      debug("" + name + " " + order["function"]);
       while (order) {
-        debug("" + name + " " + order["function"]);
         executers = group.execute(order);
         count = executers.length;
         if (count === 0) {
@@ -950,7 +1115,7 @@ group_executions = function(event) {
           console("Group " + name + " has pending orders.");
           break;
         }
-        console("There are " + count + " " + name + " units working on " + order["function"] + ".");
+        console("There are " + count + " " + name + " units working on " + (order.structure || order["function"]) + ".");
         order = orders.next();
       }
       if (!order) {
