@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, WZArray, WZObject, chat, cyberBorg, droidBuilt, droidIdle, eventDroidBuilt, eventStartLevel, eventStructureBuilt, events, group_executions, min_map_and_design_on, report, researched, startLevel, structureBuilt,
+var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, WZArray, WZObject, chat, cyberBorg, droidBuilt, droidIdle, eventDroidBuilt, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -53,52 +53,74 @@ WZObject = (function() {
   };
 
   WZObject.prototype.executes = function(order) {
-    var at, number;
+    var at, number, ok;
+    ok = false;
     number = order.number;
     at = order.at;
     switch (number) {
       case DORDER_ATTACK:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_BUILD:
-        return orderDroidBuild(this, DORDER_BUILD, order.structure, at.x, at.y, order.direction);
+        ok = orderDroidBuild(this, DORDER_BUILD, order.structure, at.x, at.y, order.direction);
+        if (ok) this.order = DORDER_BUILD;
+        break;
       case DORDER_DEMOLISH:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_DISEMBARK:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_EMBARK:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_FIRESUPPORT:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_HELPBUILD:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_HOLD:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_LINEBUILD:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_MOVE:
       case DORDER_SCOUT:
-        return orderDroidLoc(this, number, at.x, at.y);
+        orderDroidLoc(this, number, at.x, at.y);
+        break;
       case DORDER_OBSERVE:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_PATROL:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_REARM:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_RECOVER:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_REPAIR:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_RETREAT:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_RTB:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_RTR:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       case DORDER_STOP:
-        return debug("TODO: need to implement number " + number + ".");
+        debug("TODO: need to implement number " + number + ".");
+        break;
       default:
-        return debug("DEBUG: Order number " + number + " not listed.");
+        debug("DEBUG: Order number " + number + " not listed.");
     }
+    return ok;
   };
 
   return WZObject;
@@ -425,7 +447,7 @@ Group = (function() {
           #  # when I can actually build at "at"???
           #  pos = pickStructLocation(trucks[0], structure, at.x, at.y)
           if pos
-            debug("#{structure}: at is #{at.x},#{at.y} but pos is #{pos.x},#{pos.y}")
+            console("#{structure}: at is #{at.x},#{at.y} but pos is #{pos.x},#{pos.y}")
             i = 0
             while i < trucks.length
               truck = trucks[i]
@@ -447,9 +469,14 @@ Group = (function() {
         if (order.like) reserve = reserve.like(order.like);
         units = units.add(reserve);
       }
-      if (order.constript && units.length < order.conscript) {
-        debug("Order conscript not implemented");
-      }
+      /* TODO don't think we'll use this
+      # Do we need to conscript?
+      if order.constript and units.length < order.conscript
+        console("Order conscript not implemented")
+        # TODO conscript some more units
+        # This one get's complicated b/c it takes droids already employed in other groups.
+        # Should check rank to ensure lower ranks don't take from higher ranks.
+      */
     }
     if (units.length < order.min) return null;
     if (order.at) units.nearest(order.at);
@@ -465,6 +492,7 @@ Group = (function() {
       }
     }
     if (units.length > max) units = units.cap(max);
+    order.help = order.recruit - units.length;
     return units;
   };
 
@@ -475,10 +503,7 @@ Group = (function() {
     if (units) {
       for (_i = 0, _len = units.length; _i < _len; _i++) {
         unit = units[_i];
-        if (unit.executes(order)) {
-          unit.order = order.number;
-          executers.push(unit);
-        }
+        if (unit.executes(order)) executers.push(unit);
       }
     }
     return executers;
@@ -637,13 +662,15 @@ CyberBorg.prototype.base_orders = function() {
     obj.min = 1;
     obj.max = 3;
     obj.recruit = 3;
-    obj.conscript = 1;
     obj.cut = 3;
-    obj.employ = function(name) {
-      return {
-        Truck: 0
-      }[name];
-    };
+    obj.help = 3;
+    /* TODO might not get used
+    obj.conscript = 1 # steal from another group if necessary to execute this order
+    # Employ is just a way to add to a group an idle truck b/4 it gets recruited by another group
+    obj.employ = (name) ->
+      # Group size sought through employment
+      (Truck: 0)[name] # this is undefined unless name is 'Truck'
+    */
     return obj;
   };
   with_one_truck = function(obj) {
@@ -651,11 +678,10 @@ CyberBorg.prototype.base_orders = function() {
     obj.max = 1;
     obj.recruit = 1;
     obj.cut = 1;
-    obj.employ = function(name) {
-      return {
-        Truck: 0
-      }[name];
-    };
+    /* TODO might not get used
+    obj.employ = (name) ->
+      (Truck: 0)[name]
+    */
     return obj;
   };
   phase1 = [with_three_trucks(dorder_build([light_factory, 10, 235])), with_three_trucks(dorder_build([research_facility, 7, 235])), with_three_trucks(dorder_build([command_center, 7, 238])), with_three_trucks(dorder_build([power_generator, 4, 235]))];
@@ -956,7 +982,6 @@ FACTORIES = 'Factories';
 LABS = 'Labs';
 
 events = function(event) {
-  debug("" + event.name + " triggered");
   cyberBorg.update();
   switch (event.name) {
     case 'StartLevel':
@@ -969,7 +994,7 @@ events = function(event) {
       droidBuilt(event.droid, event.structure);
       break;
     default:
-      debug("" + event.name + " NOT HANDLED!");
+      console("" + event.name + " NOT HANDLED!");
   }
   return group_executions(event);
 };
@@ -1015,22 +1040,36 @@ structureBuilt = function(structure, droid) {
 };
 
 min_map_and_design_on = function(structure) {
-  debug("min_map_and_design_on");
-  return null;
-  structure = new WZObject(structure);
   if (structure.player === selectedPlayer && structure.type === STRUCTURE && structure.stattype === HQ) {
     setMiniMap(true);
     return setDesign(true);
   }
 };
 
+helping = function(object) {
+  var group, order, _i, _len, _ref;
+  _ref = cyberBorg.groups;
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    group = _ref[_i];
+    order = group.orders.current();
+    if (order.help && order.help > 0 && order.like.test(object.name) && object.executes(order)) {
+      group.add(object);
+      order.help -= 1;
+      console("" + object.name + " helping " + (order.structure || order["function"]));
+      return true;
+    }
+  }
+  return false;
+};
+
 droidBuilt = function(droid, structure) {
   console("Built " + droid.name + ".");
-  return cyberBorg.groups.named(RESERVE).group.push(droid);
+  cyberBorg.groups.named(RESERVE).group.push(droid);
+  return helping(droid);
 };
 
 chat = function(sender, to, message) {
-  debug("in eventChat");
+  console("in eventChat");
   return null;
   cyberBorg.update();
   if (sender === 0) {
@@ -1047,7 +1086,7 @@ chat = function(sender, to, message) {
 
 report = function(who) {
   var droid, droids, groups, _i, _j, _len, _len2, _ref, _ref2;
-  debug("in report");
+  console("in report");
   return null;
   groups = cyberBorg.groups;
   droids = [];
@@ -1073,7 +1112,7 @@ report = function(who) {
 };
 
 researched = function(completed, structure) {
-  debug("in eventResearched");
+  console("in eventResearched");
   return null;
   structure = new WZObject(structure);
   return group_executions({
@@ -1085,7 +1124,7 @@ researched = function(completed, structure) {
 
 droidIdle = function(droid) {
   var groups;
-  debug("in eventDroidIdle");
+  console("in eventDroidIdle");
   return null;
   droid = new WZObject(droid);
   groups = cyberBorg.groups;
@@ -1106,7 +1145,6 @@ group_executions = function(event) {
     orders = group.orders;
     order = orders.next();
     if (order) {
-      debug("" + name + " " + order["function"]);
       while (order) {
         executers = group.execute(order);
         count = executers.length;

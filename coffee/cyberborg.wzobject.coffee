@@ -18,13 +18,15 @@ class WZObject
   is_weapon: () -> CyberBorg.is_weapon(@)
 
   executes: (order) ->
+    ok = false
     number = order.number
     at = order.at
     switch number
       when DORDER_ATTACK
         debug("TODO: need to implement number #{number}.") # TODO
       when DORDER_BUILD
-        orderDroidBuild(@, DORDER_BUILD, order.structure, at.x, at.y, order.direction)
+        ok = orderDroidBuild(@, DORDER_BUILD, order.structure, at.x, at.y, order.direction)
+        @order = DORDER_BUILD if ok
       #when DORDER_CIRCLE
       #  debug("TODO: need to implement number #{number}.") # TODO
       #when DORDER_COMMANDERSUPPORT
@@ -82,3 +84,4 @@ class WZObject
       #  debug("TODO: need to implement number #{number}.") # TODO
       else
         debug("DEBUG: Order number #{number} not listed.") # TODO
+    return ok

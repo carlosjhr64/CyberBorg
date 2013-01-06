@@ -13,13 +13,12 @@ FACTORIES = 'Factories'
 LABS      = 'Labs'
 
 events = (event) ->
-  debug "#{event.name} triggered"
   cyberBorg.update()
   switch event.name
     when 'StartLevel' then startLevel()
     when 'StructureBuilt' then structureBuilt(event.structure, event.droid)
     when 'DroidBuilt' then droidBuilt(event.droid, event.structure)
-    else debug("#{event.name} NOT HANDLED!")
+    else console("#{event.name} NOT HANDLED!")
   # Next see what the groups can execute
   group_executions(event)
 
@@ -134,17 +133,24 @@ structureBuilt = (structure, droid) ->
 # This turns on minimap and design
 # Will not be needed when this AI follows standard conventions.
 min_map_and_design_on = (structure) ->
-  debug("min_map_and_design_on")
-  return null
-  # TODO Just stop here for now
-
-  structure = new WZObject(structure)
-
   if structure.player is selectedPlayer and
   structure.type is STRUCTURE and
   structure.stattype is HQ
-    setMiniMap true # show minimap
-    setDesign true # permit designs
+    setMiniMap(true) # show minimap
+    setDesign(true) # permit designs
+
+helping = (object) ->
+  for group in cyberBorg.groups
+    order = group.orders.current()
+    if order.help and
+    order.help > 0 and
+    order.like.test(object.name) and
+    object.executes(order)
+      group.add(object)
+      order.help -= 1
+      console("#{object.name} helping #{order.structure or order.function}")
+      return true
+  return false
 
 #  When a droid is built, it triggers a droid built event and
 #  eventDroidBuilt(a WZ2100 JS API) is called.
@@ -157,11 +163,12 @@ droidBuilt = (droid, structure) ->
   # Well, the style for this AI is to work with groups.
   # So what we'll do is add the new droids to the RESERVE.
   cyberBorg.groups.named(RESERVE).group.push(droid)
+  helping(droid)
 
 # Player commands...
-# Some useful debuging feedback and could be used for player commands.
+# Some useful feedback and could be used for player commands.
 chat = (sender, to, message) ->
-  debug("in eventChat")
+  console("in eventChat")
   return null
   # TODO Just stop here for now
 
@@ -174,7 +181,7 @@ chat = (sender, to, message) ->
 
 # Report to player console droids' position...
 report = (who) ->
-  debug("in report")
+  console("in report")
   return null
   # TODO Just stop here for now
 
@@ -227,7 +234,7 @@ report = (who) ->
 # So we need to check that in fact
 # the technology came from an active structure.
 researched = (completed, structure) ->
-  debug("in eventResearched")
+  console("in eventResearched")
   return null
   # TODO Just stop here for now
 
@@ -235,7 +242,7 @@ researched = (completed, structure) ->
   group_executions(event:'Researched', structure:structure, research:completed)
 
 droidIdle = (droid) ->
-  debug("in eventDroidIdle")
+  console("in eventDroidIdle")
   return null
   # TODO Just stop here for now
 
@@ -298,13 +305,13 @@ droidIdle = (droid) ->
 
 group_executions = (event) ->
   groups = cyberBorg.groups
+  # TODO break out at full employment
   for group in groups
     name = group.name
     continue unless name is BASE # TODO delete
     orders = group.orders
     order = orders.next()
     if order
-      debug("#{name} #{order.function}") # TODO delete
       while order
         executers = group.execute(order)
         count = executers.length
@@ -315,3 +322,4 @@ group_executions = (event) ->
         console("There are #{count} #{name} units working on #{order.structure or order.function}.")
         order = orders.next()
       console "Group #{name} orders complete!" if !order
+    #break if reserve.length is 0 # TODO ?

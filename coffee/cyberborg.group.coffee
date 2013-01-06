@@ -100,7 +100,7 @@ class Group
         #  # when I can actually build at "at"???
         #  pos = pickStructLocation(trucks[0], structure, at.x, at.y)
         if pos
-          debug("#{structure}: at is #{at.x},#{at.y} but pos is #{pos.x},#{pos.y}")
+          console("#{structure}: at is #{at.x},#{at.y} but pos is #{pos.x},#{pos.y}")
           i = 0
           while i < trucks.length
             truck = trucks[i]
@@ -127,12 +127,14 @@ class Group
         # Just add reserve for now
         units = units.add(reserve)
 
+      ### TODO don't think we'll use this
       # Do we need to conscript?
       if order.constript and units.length < order.conscript
-        debug("Order conscript not implemented")
+        console("Order conscript not implemented")
         # TODO conscript some more units
         # This one get's complicated b/c it takes droids already employed in other groups.
         # Should check rank to ensure lower ranks don't take from higher ranks.
+      ###
     
     # Check we have the minimum units required for the order.
     # If not, shotcut out of this function.
@@ -154,6 +156,8 @@ class Group
 
     # Let cap the units if more than max
     units = units.cap(max) if units.length > max
+    # Will this order take help?
+    order.help = order.recruit - units.length
     units
 
   execute: (order, units=@units(order)) ->
@@ -161,7 +165,5 @@ class Group
     if units
       for unit in units
         if unit.executes(order)
-          # Unit no longer idle
-          unit.order = order.number
           executers.push(unit)
     return executers
