@@ -17,7 +17,7 @@ class WZObject
   is_truck: () -> CyberBorg.is_truck(@)
   is_weapon: () -> CyberBorg.is_weapon(@)
 
-  executes: (order) ->
+  executes_dorder: (order) ->
     ok = false
     number = order.number
     at = order.at
@@ -25,8 +25,9 @@ class WZObject
       when DORDER_ATTACK
         debug("TODO: need to implement number #{number}.") # TODO
       when DORDER_BUILD
-        ok = orderDroidBuild(@, DORDER_BUILD, order.structure, at.x, at.y, order.direction)
-        @order = DORDER_BUILD if ok
+        if orderDroidBuild(@, DORDER_BUILD, order.structure, at.x, at.y, order.direction)
+          ok = true
+          @order = number
       #when DORDER_CIRCLE
       #  debug("TODO: need to implement number #{number}.") # TODO
       #when DORDER_COMMANDERSUPPORT
@@ -52,7 +53,9 @@ class WZObject
       when DORDER_LINEBUILD
         debug("TODO: need to implement number #{number}.") # TODO
       when DORDER_MOVE, DORDER_SCOUT
-         orderDroidLoc(@, number, at.x, at.y)
+        if orderDroidLoc(@, number, at.x, at.y)
+          ok = true
+          @order = number
       #when DORDER_NONE
       #  debug("TODO: need to implement number #{number}.") # TODO
       when DORDER_OBSERVE
@@ -84,4 +87,15 @@ class WZObject
       #  debug("TODO: need to implement number #{number}.") # TODO
       else
         debug("DEBUG: Order number #{number} not listed.") # TODO
+    return ok
+
+  executes: (order) ->
+    ok = false
+    switch order.function
+      when 'buildDroid'
+        if buildDroid(@, order.name, order.body, order.propulsion, "", order.droid_type, order.turret)
+          ok = true
+          @order_time = gameTime
+      else
+        ok = @executes_dorder(order)
     return ok

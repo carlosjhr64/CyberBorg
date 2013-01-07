@@ -52,7 +52,7 @@ WZObject = (function() {
     return CyberBorg.is_weapon(this);
   };
 
-  WZObject.prototype.executes = function(order) {
+  WZObject.prototype.executes_dorder = function(order) {
     var at, number, ok;
     ok = false;
     number = order.number;
@@ -62,8 +62,10 @@ WZObject = (function() {
         debug("TODO: need to implement number " + number + ".");
         break;
       case DORDER_BUILD:
-        ok = orderDroidBuild(this, DORDER_BUILD, order.structure, at.x, at.y, order.direction);
-        if (ok) this.order = DORDER_BUILD;
+        if (orderDroidBuild(this, DORDER_BUILD, order.structure, at.x, at.y, order.direction)) {
+          ok = true;
+          this.order = number;
+        }
         break;
       case DORDER_DEMOLISH:
         debug("TODO: need to implement number " + number + ".");
@@ -88,7 +90,10 @@ WZObject = (function() {
         break;
       case DORDER_MOVE:
       case DORDER_SCOUT:
-        orderDroidLoc(this, number, at.x, at.y);
+        if (orderDroidLoc(this, number, at.x, at.y)) {
+          ok = true;
+          this.order = number;
+        }
         break;
       case DORDER_OBSERVE:
         debug("TODO: need to implement number " + number + ".");
@@ -119,6 +124,22 @@ WZObject = (function() {
         break;
       default:
         debug("DEBUG: Order number " + number + " not listed.");
+    }
+    return ok;
+  };
+
+  WZObject.prototype.executes = function(order) {
+    var ok;
+    ok = false;
+    switch (order["function"]) {
+      case 'buildDroid':
+        if (buildDroid(this, order.name, order.body, order.propulsion, "", order.droid_type, order.turret)) {
+          ok = true;
+          this.order_time = gameTime;
+        }
+        break;
+      default:
+        ok = this.executes_dorder(order);
     }
     return ok;
   };
@@ -601,7 +622,13 @@ CyberBorg = (function() {
 
   CyberBorg.is_idle = function(object) {
     var not_idle;
-    if (object.type === STRUCTURE) return structureIdle(object);
+    if (object.type === STRUCTURE) {
+      if (object.order_time === gameTime) {
+        return false;
+      } else {
+        return structureIdle(object);
+      }
+    }
     not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH];
     return not_idle.indexOf(object.order) === WZArray.NONE;
   };

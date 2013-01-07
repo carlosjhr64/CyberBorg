@@ -59,8 +59,13 @@ class CyberBorg
 
   @is_idle = (object) ->
     # It's not really a droid  :P
-    return (structureIdle(object))  if object.type is STRUCTURE
-    # It's a droid
+    if object.type is STRUCTURE
+      if object.order_time is gameTime
+        # It got it's orders just now
+        return(false)
+      else
+        return(structureIdle(object))
+    # It's a droid # TODO specifically a truck, will need more cases.
     not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH]
     not_idle.indexOf(object.order) is WZArray.NONE
 
