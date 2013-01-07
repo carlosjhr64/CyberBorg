@@ -12,17 +12,28 @@
 #   research:
 # { name: min: max: number: employ: at: ... }
 CyberBorg::factory_orders = ->
-  # A wheeled viper
-  build = (object) ->
-    object.function = "buildDroid"
-    object
+  # General orders are...
+  build = (obj) ->
+    obj.function = "buildDroid"
+    obj.like = /Factory/
+    obj.limit = 1
+    obj.min = 1
+    obj.max = 1
+    obj.recruit = 1
+    obj.help = 1
+    return obj
+
+  # ...a wheeled viper...
   whb1 = (droid) ->
     droid.body = "Body1REC"; droid.propulsion = "wheeled01"
-    droid
-  # A wheeled truck
+    return droid
+
+  # ...truck
   truck = name: "Truck", turret: "Spade1Mk1", droid_type: DROID_CONSTRUCT
-  # A wheeled machine gunner
+
+  # ...machine gunner
   mg1 = name: "MgWhB1", turret: "MG1Mk1", droid_type: DROID_WEAPON
+
   # The orders are...
   orders = []
   # ... 2 trucks

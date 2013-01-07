@@ -699,9 +699,15 @@ CyberBorg.prototype.base_orders = function() {
 
 CyberBorg.prototype.factory_orders = function() {
   var build, mg1, orders, truck, whb1;
-  build = function(object) {
-    object["function"] = "buildDroid";
-    return object;
+  build = function(obj) {
+    obj["function"] = "buildDroid";
+    obj.like = /Factory/;
+    obj.limit = 1;
+    obj.min = 1;
+    obj.max = 1;
+    obj.recruit = 1;
+    obj.help = 1;
+    return obj;
   };
   whb1 = function(droid) {
     droid.body = "Body1REC";
