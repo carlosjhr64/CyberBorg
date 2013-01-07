@@ -53,17 +53,20 @@ eventDestroyed = (object) ->
 eventDroidBuilt = (droid, structure) ->
   obj =
     name: 'DroidBuilt'
+    # Here, droid is an new game object
     droid: new WZObject(droid)
-    structure: new WZObject(structure)
+    # But structrue is pre-existing
+    structure: cyberBorg.find(structure)
   events(obj)
-
-###
 
 eventDroidIdle = (droid) ->
   obj =
     name: 'DroidIdle'
-    droid: new WZObject(droid)
+    # Here, droid is pre-existing!
+    droid: cyberBorg.find(droid)
   events(obj)
+
+###
 
 eventGameInit = () ->
   obj = name: 'GameInit'
@@ -140,8 +143,10 @@ eventStartLevel = () ->
 eventStructureBuilt = (structure, droid) ->
   obj =
     name: 'StructureBuilt'
+    # Here, structure is new
     structure: new WZObject(structure)
-    droid: new WZObject(droid)
+    # But droid is prexisting!!!
+    droid: cyberBorg.find(droid)
   events(obj)
 
 ###

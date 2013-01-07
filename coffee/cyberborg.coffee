@@ -17,11 +17,20 @@ class CyberBorg
   # Need a way to register groups
   constructor: (@groups=WZArray.bless([])) ->
 
+  ###############
+  ### UPDATES ###
+  ###############
+
   update: () ->
     for group in @groups
-      list = group.list
-      for object in list
+      for object in group.list
         object.update() if object.game_time < gameTime
+
+  find: (target) ->
+    for group in @groups
+      for object in group.list
+        return(object) if object.id is target.id
+    return null
 
   #############
   ### ENUMS ###

@@ -18,6 +18,7 @@ events = (event) ->
     when 'StartLevel' then startLevel()
     when 'StructureBuilt' then structureBuilt(event.structure, event.droid)
     when 'DroidBuilt' then droidBuilt(event.droid, event.structure)
+    when 'DroidIdle' then droidIdle(event.droid)
     else console("#{event.name} NOT HANDLED!")
   # Next see what the groups can execute
   group_executions(event)
@@ -140,13 +141,16 @@ min_map_and_design_on = (structure) ->
     setDesign(true) # permit designs
 
 helping = (object) ->
+  reserve = cyberBorg.groups.named(RESERVE).group
   for group in cyberBorg.groups
     order = group.orders.current()
     if order and
     order.help and order.help > 0 and
     order.like.test(object.name) and
     object.executes(order)
-      group.add(object)
+      # If in reserved, we can add to group, but
+      # otherwise the owning group gets to recall.
+      group.add(object) if reserve.contains(object) # TODO TBD what if group is reserve?
       order.help -= 1
       console("#{object.name} helping #{order.structure or order.function}")
       return true
@@ -242,14 +246,9 @@ researched = (completed, structure) ->
   group_executions(event:'Researched', structure:structure, research:completed)
 
 droidIdle = (droid) ->
-  console("in eventDroidIdle")
-  return null
-  # TODO Just stop here for now
+  # Anything else?  :)
+  helping(droid)
 
-  droid = new WZObject(droid)
-  groups = cyberBorg.groups
-
-  group_executions(event:'DroidIdle', droid:droid)
   # I thinks this all goes away. :))
   #if groups.reserve.group.contains(droid)
   #  # groups that accept idle reserve droids

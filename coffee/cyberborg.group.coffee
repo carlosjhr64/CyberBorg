@@ -15,19 +15,19 @@ class Group
     #    throw new Error("#{@name} order ##{} missing limit:")
 
   add: (droid) ->
-    # Need to enforce the reserve codition
+    # Need to enforce the reserve condition
     if @reserve.contains(droid)
       @reserve.removeObject(droid)
       @group.push(droid)
     else
-      throw new Error("Can't add #{droid.namexy} b/c it's not in reserve.")
+      throw new Error("Can't add #{droid.namexy()} b/c it's not in reserve.")
 
   remove: (droid) ->
     if @group.contains(droid)
       @group.removeObject(droid)
       @reserve.push(droid)
     else
-      throw new Error("Can't remove #{droid.namexy} b/c it's not in group.")
+      throw new Error("Can't remove #{droid.namexy()} b/c it's not in group.")
 
   ###
 
