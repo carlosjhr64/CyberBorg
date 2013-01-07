@@ -142,8 +142,8 @@ min_map_and_design_on = (structure) ->
 helping = (object) ->
   for group in cyberBorg.groups
     order = group.orders.current()
-    if order.help and
-    order.help > 0 and
+    if order and
+    order.help and order.help > 0 and
     order.like.test(object.name) and
     object.executes(order)
       group.add(object)

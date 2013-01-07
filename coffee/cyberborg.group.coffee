@@ -9,6 +9,10 @@ class Group
     if @orders then WZArray.bless(@orders) else @orders = WZArray.bless([])
     # reserve are the units we can draw from.
     if @reserves then WZArray.bless(@reserves) else @reserves = WZArray.bless([])
+    #j# Let's check the orders for errors TODO?
+    #for order in @orders
+    #  unless order.limit and order.limit > 0
+    #    throw new Error("#{@name} order ##{} missing limit:")
 
   add: (droid) ->
     # Need to enforce the reserve codition
@@ -114,28 +118,16 @@ class Group
   ###
 
   units: (order) ->
-    units = @group.idle()
-    units = units.like(order.like) if order.like
+    units = @group.idle().like(order.like)
 
     # Limits the maximum size of group (idle or not)
     if @group.length < order.limit
       # Do we need to recruit?
-      if order.recruit and units.length < order.recruit
+      if units.length < order.recruit
         # Note the reserve is expected to be idle
-        reserve = @reserve
-        reserve = reserve.like(order.like) if order.like
         # Just add reserve for now
-        units = units.add(reserve)
+        units = units.add(@reserve.like(order.like))
 
-      ### TODO don't think we'll use this
-      # Do we need to conscript?
-      if order.constript and units.length < order.conscript
-        console("Order conscript not implemented")
-        # TODO conscript some more units
-        # This one get's complicated b/c it takes droids already employed in other groups.
-        # Should check rank to ensure lower ranks don't take from higher ranks.
-      ###
-    
     # Check we have the minimum units required for the order.
     # If not, shotcut out of this function.
     return null if units.length < order.min
@@ -151,8 +143,7 @@ class Group
       if count <= max
         @add(unit) if not @group.contains(unit)
       else
-        if count > order.cut
-          @remove(unit) if @group.contains(unit)
+        @remove(unit) if @group.contains(unit)
 
     # Let cap the units if more than max
     units = units.cap(max) if units.length > max

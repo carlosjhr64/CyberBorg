@@ -27,12 +27,12 @@ CyberBorg::base_orders = ->
     order
 
   with_three_trucks = (obj) ->
+    # All these are required
     obj.like = /Truck/
     obj.limit = 3 # maximum group size
     obj.min = 1 # it will execute the order only with at least this amount
     obj.max = 3 # it will execute the order with no more than this amount
-    obj.recruit = 3 # it will try to execute with at least this amount but less than max
-    obj.cut = 3 # layoff units above this amout
+    obj.recruit = 3 # recruit from reserve if we have less than this amount
     obj.help = 3 # project will accept help once started
     ### TODO might not get used
     obj.conscript = 1 # steal from another group if necessary to execute this order
@@ -44,10 +44,12 @@ CyberBorg::base_orders = ->
     obj
 
   with_one_truck = (obj) ->
+    obj.like = /Truck/
+    obj.limit = 1 # maximum group size
     obj.min = 1
     obj.max = 1
     obj.recruit = 1
-    obj.cut = 1
+    obj.help = 1 # project will accept help once started :-??
     ### TODO might not get used
     obj.employ = (name) ->
       (Truck: 0)[name]

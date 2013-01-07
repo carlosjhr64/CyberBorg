@@ -460,23 +460,12 @@ Group = (function() {
   */
 
   Group.prototype.units = function(order) {
-    var count, max, reserve, unit, units, _i, _len;
-    units = this.group.idle();
-    if (order.like) units = units.like(order.like);
+    var count, max, unit, units, _i, _len;
+    units = this.group.idle().like(order.like);
     if (this.group.length < order.limit) {
-      if (order.recruit && units.length < order.recruit) {
-        reserve = this.reserve;
-        if (order.like) reserve = reserve.like(order.like);
-        units = units.add(reserve);
+      if (units.length < order.recruit) {
+        units = units.add(this.reserve.like(order.like));
       }
-      /* TODO don't think we'll use this
-      # Do we need to conscript?
-      if order.constript and units.length < order.conscript
-        console("Order conscript not implemented")
-        # TODO conscript some more units
-        # This one get's complicated b/c it takes droids already employed in other groups.
-        # Should check rank to ensure lower ranks don't take from higher ranks.
-      */
     }
     if (units.length < order.min) return null;
     if (order.at) units.nearest(order.at);
@@ -488,7 +477,7 @@ Group = (function() {
       if (count <= max) {
         if (!this.group.contains(unit)) this.add(unit);
       } else {
-        if (count > order.cut) if (this.group.contains(unit)) this.remove(unit);
+        if (this.group.contains(unit)) this.remove(unit);
       }
     }
     if (units.length > max) units = units.cap(max);
@@ -662,7 +651,6 @@ CyberBorg.prototype.base_orders = function() {
     obj.min = 1;
     obj.max = 3;
     obj.recruit = 3;
-    obj.cut = 3;
     obj.help = 3;
     /* TODO might not get used
     obj.conscript = 1 # steal from another group if necessary to execute this order
@@ -674,10 +662,12 @@ CyberBorg.prototype.base_orders = function() {
     return obj;
   };
   with_one_truck = function(obj) {
+    obj.like = /Truck/;
+    obj.limit = 1;
     obj.min = 1;
     obj.max = 1;
     obj.recruit = 1;
-    obj.cut = 1;
+    obj.help = 1;
     /* TODO might not get used
     obj.employ = (name) ->
       (Truck: 0)[name]
@@ -1052,7 +1042,7 @@ helping = function(object) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     group = _ref[_i];
     order = group.orders.current();
-    if (order.help && order.help > 0 && order.like.test(object.name) && object.executes(order)) {
+    if (order && order.help && order.help > 0 && order.like.test(object.name) && object.executes(order)) {
       group.add(object);
       order.help -= 1;
       console("" + object.name + " helping " + (order.structure || order["function"]));
