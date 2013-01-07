@@ -1060,7 +1060,7 @@ startLevel = function() {
   groups.push(derricks);
   scouts = new Group(SCOUTS, 80, [], cyberBorg.scouts_orders(resources), reserve.group);
   groups.push(scouts);
-  factories = new Group(FACTORIES, 20, [], cyberBorg.factory_orders());
+  factories = new Group(FACTORIES, 20, [], cyberBorg.factory_orders(), reserve.group);
   groups.push(factories);
   labs = new Group(LABS, 19, [], cyberBorg.lab_orders());
   groups.push(labs);
@@ -1180,7 +1180,7 @@ group_executions = function(event) {
   for (_i = 0, _len = groups.length; _i < _len; _i++) {
     group = groups[_i];
     name = group.name;
-    if (name !== BASE) continue;
+    if ((name === FACTORIES) || (name === BASE)) continue;
     orders = group.orders;
     order = orders.next();
     if (order) {
@@ -1192,7 +1192,7 @@ group_executions = function(event) {
           console("Group " + name + " has pending orders.");
           break;
         }
-        console("There are " + count + " " + name + " units working on " + (order.structure || order["function"]) + ".");
+        console("There are " + count + " " + name + " units working on " + (order.name || order.structure || order["function"]) + ".");
         order = orders.next();
       }
       if (!order) {

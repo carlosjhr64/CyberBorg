@@ -83,7 +83,8 @@ startLevel = () ->
   # Let's have a factory group... etc.  At this time,
   # the concept of a reserve does not look useful for structures, but
   # that could change.  Reserve just defaults to empty, [],
-  factories = new Group(FACTORIES, 20, [], cyberBorg.factory_orders())
+  # OK, we do use reserve as we are using the same abstractions as droids...
+  factories = new Group(FACTORIES, 20, [], cyberBorg.factory_orders(), reserve.group)
   groups.push(factories)
   labs = new Group(LABS, 19, [], cyberBorg.lab_orders())
   groups.push(labs)
@@ -140,6 +141,7 @@ min_map_and_design_on = (structure) ->
     setMiniMap(true) # show minimap
     setDesign(true) # permit designs
 
+# This is unit initiative?
 helping = (object) ->
   reserve = cyberBorg.groups.named(RESERVE).group
   for group in cyberBorg.groups
@@ -305,9 +307,10 @@ droidIdle = (droid) ->
 group_executions = (event) ->
   groups = cyberBorg.groups
   # TODO break out at full employment
+  #break if reserve.length is 0 # TODO ?
   for group in groups
     name = group.name
-    continue unless name is BASE # TODO delete
+    continue if (name is FACTORIES) or (name is BASE)
     orders = group.orders
     order = orders.next()
     if order
@@ -318,7 +321,6 @@ group_executions = (event) ->
           orders.revert()
           console("Group #{name} has pending orders.")
           break
-        console("There are #{count} #{name} units working on #{order.structure or order.function}.")
+        console("There are #{count} #{name} units working on #{order.name or order.structure or order.function}.")
         order = orders.next()
       console "Group #{name} orders complete!" if !order
-    #break if reserve.length is 0 # TODO ?
