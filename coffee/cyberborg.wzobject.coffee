@@ -90,12 +90,10 @@ class WZObject
     return ok
 
   executes: (order) ->
-    ok = false
-    switch order.function
+    ok = switch order.function
       when 'buildDroid'
-        if buildDroid(@, order.name, order.body, order.propulsion, "", order.droid_type, order.turret)
-          ok = true
-          @order_time = gameTime
-      else
-        ok = @executes_dorder(order)
+        buildDroid(@, order.name, order.body, order.propulsion, "", order.droid_type, order.turret)
+      when 'pursueResearch' then pursueResearch(@, order.research)
+      else @executes_dorder(order)
+    @order_time = gameTime if ok
     return ok

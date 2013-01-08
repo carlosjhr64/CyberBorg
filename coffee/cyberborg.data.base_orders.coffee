@@ -66,14 +66,14 @@ CyberBorg::base_orders = ->
     
   # Just have one truck max out the base with research and power.
   phase2 = [
-    with_one_truck dorder_build [research_facility,  4, 238]
-    with_one_truck dorder_build [power_generator,    4, 241]
-    with_one_truck dorder_build [research_facility,  7, 241]
-    with_one_truck dorder_build [power_generator,   10, 241]
-    with_one_truck dorder_build [research_facility, 13, 241]
-    with_one_truck dorder_build [power_generator,   13, 244]
-    with_one_truck dorder_build [research_facility, 10, 244]
-    with_one_truck dorder_build [power_generator,    7, 244]
+    with_one_truck dorder_build [power_generator,   4, 238]
+    with_one_truck dorder_build [research_facility, 4, 241]
+    with_one_truck dorder_build [power_generator,   7, 241]
+    with_one_truck dorder_build [research_facility, 10, 241]
+    with_one_truck dorder_build [power_generator,   13, 241]
+    with_one_truck dorder_build [research_facility, 13, 244]
+    with_one_truck dorder_build [power_generator,   10, 244]
+    with_one_truck dorder_build [research_facility,  7, 244]
   ]
 
   # Join the phases

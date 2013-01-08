@@ -119,12 +119,16 @@ eventReinforcementsArrived = () ->
   obj = name: 'ReinforcementArrived'
   events(obj)
 
+###
+
 eventResearched = (research, structure) ->
   obj =
     name: 'Researched'
     research: research
-    structure: new WZObject(structure)
+    structure: cyberBorg.find(structure)
   events(obj)
+
+###
 
 eventSelectionChange = (selected) ->
   selected = selected.map( (object) -> new WZObject(object) )

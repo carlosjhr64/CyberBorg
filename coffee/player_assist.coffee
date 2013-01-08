@@ -19,6 +19,7 @@ events = (event) ->
     when 'StructureBuilt' then structureBuilt(event.structure, event.droid)
     when 'DroidBuilt' then droidBuilt(event.droid, event.structure)
     when 'DroidIdle' then droidIdle(event.droid)
+    when 'Researched' then researched(event.research, event.structure)
     else console("#{event.name} NOT HANDLED!")
   # Next see what the groups can execute
   group_executions(event)
@@ -86,7 +87,7 @@ startLevel = () ->
   # OK, we do use reserve as we are using the same abstractions as droids...
   factories = new Group(FACTORIES, 20, [], cyberBorg.factory_orders(), reserve.group)
   groups.push(factories)
-  labs = new Group(LABS, 19, [], cyberBorg.lab_orders())
+  labs = new Group(LABS, 19, [], cyberBorg.lab_orders(), reserve.group)
   groups.push(labs)
 
   # This is probably the only time we'll need to sort groups.
@@ -116,20 +117,17 @@ structureBuilt = (structure, droid) ->
   if (structure.type is STRUCTURE)
     groups = cyberBorg.groups
     switch structure.stattype
-      when FACTORY
-        groups.named(FACTORIES).group.push(structure)
-      when RESEARCH_LAB
-        groups.named(LABS).group.push(structure)
-      when HQ
-        # Because we've overridden rules.js eventStructureBuilt,
-        # we need to need to enforce one of the rules in the game.
-        # Unfortunately, rules.js is the human player's file.
-        # We are in it's name space.
-        # min_map_and_design_on turns on mini-map and design when HQ is built,
-        # as per rules.js.
-        # TODO check if this file is being runned by rules.js first.
-        # May be being runned as a stand alone AI.
-        min_map_and_design_on(structure)
+      when FACTORY then groups.named(FACTORIES).group.push(structure)
+      when RESEARCH_LAB then groups.named(LABS).group.push(structure)
+      when HQ then min_map_and_design_on(structure)
+      # Because we've overridden rules.js eventStructureBuilt,
+      # we need to need to enforce one of the rules in the game.
+      # Unfortunately, rules.js is the human player's file.
+      # We are in it's name space.
+      # min_map_and_design_on turns on mini-map and design when HQ is built,
+      # as per rules.js.
+      # TODO check if this file is being runned by rules.js first.
+      # May be being runned as a stand alone AI.
 
 
 # This turns on minimap and design
@@ -239,13 +237,9 @@ report = (who) ->
 # which can be found from the ruins of a demolished facility.
 # So we need to check that in fact
 # the technology came from an active structure.
-researched = (completed, structure) ->
-  console("in eventResearched")
-  return null
-  # TODO Just stop here for now
-
-  structure = new WZObject(structure)
-  group_executions(event:'Researched', structure:structure, research:completed)
+researched = (research, structure) ->
+  console("Researched #{research}")
+  # Anything to do here???
 
 droidIdle = (droid) ->
   # Anything else?  :)
@@ -310,7 +304,7 @@ group_executions = (event) ->
   #break if reserve.length is 0 # TODO ?
   for group in groups
     name = group.name
-    continue if (name is FACTORIES) or (name is BASE)
+    continue unless (name is FACTORIES) or (name is BASE) or (name is LABS)
     orders = group.orders
     order = orders.next()
     if order

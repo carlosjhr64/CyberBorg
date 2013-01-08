@@ -12,16 +12,28 @@
 #   research:
 # { name: min: max: number: employ: at: ... }
 CyberBorg::lab_orders = ->
+  # General orders are...
+  pursue = (research) ->
+    obj = research: research
+    obj.function = "pursueResearch"
+    obj.like = /Research Facility/
+    obj.limit = 1
+    obj.min = 1
+    obj.max = 1
+    obj.recruit = 1
+    obj.help = 1
+    return obj
+
   [
-    'R-Wpn-MG1Mk1'		# Machine Gun Turret
-    'R-Struc-PowerModuleMk1'	# Power Module
-    'R-Defense-Tower01'
-    'R-Wpn-MG3Mk1'		# Heavy Machine Gun
-    'R-Struc-RepairFacility'	# Repair Facility
-    'R-Defense-WallTower02'	# Ligh Cannon Hardpoint
-    'R-Defense-AASite-QuadMg1'	# AA
-    'R-Vehicle-Body04'		# Bug Body
-    'R-Struc-VTOLFactory'	# Vtol Factory
-    'R-Vehicle-Prop-VTOL'	# Vtol
-    'R-Wpn-Bomb01'		# Vtol Bomb
-  ].map( (name)-> name:name, research:name )
+    pursue 'R-Wpn-MG1Mk1'		# Machine Gun Turret
+    pursue 'R-Struc-PowerModuleMk1'	# Power Module
+    pursue 'R-Defense-Tower01'
+    pursue 'R-Wpn-MG3Mk1'		# Heavy Machine Gun
+    pursue 'R-Struc-RepairFacility'	# Repair Facility
+    pursue 'R-Defense-WallTower02'	# Ligh Cannon Hardpoint
+    pursue 'R-Defense-AASite-QuadMg1'	# AA
+    pursue 'R-Vehicle-Body04'		# Bug Body
+    pursue 'R-Struc-VTOLFactory'	# Vtol Factory
+    pursue 'pursue R-Vehicle-Prop-VTOL'	# Vtol
+    pursue 'R-Wpn-Bomb01'		# Vtol Bomb
+  ]

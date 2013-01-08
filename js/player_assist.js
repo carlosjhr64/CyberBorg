@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, WZArray, WZObject, chat, cyberBorg, droidBuilt, droidIdle, eventDroidBuilt, eventDroidIdle, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt,
+var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, WZArray, WZObject, chat, cyberBorg, droidBuilt, droidIdle, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -130,17 +130,17 @@ WZObject = (function() {
 
   WZObject.prototype.executes = function(order) {
     var ok;
-    ok = false;
-    switch (order["function"]) {
-      case 'buildDroid':
-        if (buildDroid(this, order.name, order.body, order.propulsion, "", order.droid_type, order.turret)) {
-          ok = true;
-          this.order_time = gameTime;
-        }
-        break;
-      default:
-        ok = this.executes_dorder(order);
-    }
+    ok = (function() {
+      switch (order["function"]) {
+        case 'buildDroid':
+          return buildDroid(this, order.name, order.body, order.propulsion, "", order.droid_type, order.turret);
+        case 'pursueResearch':
+          return pursueResearch(this, order.research);
+        default:
+          return this.executes_dorder(order);
+      }
+    }).call(this);
+    if (ok) this.order_time = gameTime;
     return ok;
   };
 
@@ -719,7 +719,7 @@ CyberBorg.prototype.base_orders = function() {
     return obj;
   };
   phase1 = [with_three_trucks(dorder_build([light_factory, 10, 235])), with_three_trucks(dorder_build([research_facility, 7, 235])), with_three_trucks(dorder_build([command_center, 7, 238])), with_three_trucks(dorder_build([power_generator, 4, 235]))];
-  phase2 = [with_one_truck(dorder_build([research_facility, 4, 238])), with_one_truck(dorder_build([power_generator, 4, 241])), with_one_truck(dorder_build([research_facility, 7, 241])), with_one_truck(dorder_build([power_generator, 10, 241])), with_one_truck(dorder_build([research_facility, 13, 241])), with_one_truck(dorder_build([power_generator, 13, 244])), with_one_truck(dorder_build([research_facility, 10, 244])), with_one_truck(dorder_build([power_generator, 7, 244]))];
+  phase2 = [with_one_truck(dorder_build([power_generator, 4, 238])), with_one_truck(dorder_build([research_facility, 4, 241])), with_one_truck(dorder_build([power_generator, 7, 241])), with_one_truck(dorder_build([research_facility, 10, 241])), with_one_truck(dorder_build([power_generator, 13, 241])), with_one_truck(dorder_build([research_facility, 13, 244])), with_one_truck(dorder_build([power_generator, 10, 244])), with_one_truck(dorder_build([research_facility, 7, 244]))];
   orders = phase1.concat(phase2);
   return WZArray.bless(orders);
 };
@@ -762,12 +762,22 @@ CyberBorg.prototype.factory_orders = function() {
 };
 
 CyberBorg.prototype.lab_orders = function() {
-  return ['R-Wpn-MG1Mk1', 'R-Struc-PowerModuleMk1', 'R-Defense-Tower01', 'R-Wpn-MG3Mk1', 'R-Struc-RepairFacility', 'R-Defense-WallTower02', 'R-Defense-AASite-QuadMg1', 'R-Vehicle-Body04', 'R-Struc-VTOLFactory', 'R-Vehicle-Prop-VTOL', 'R-Wpn-Bomb01'].map(function(name) {
-    return {
-      name: name,
-      research: name
+  var pursue;
+  pursue = function(research) {
+    var obj;
+    obj = {
+      research: research
     };
-  });
+    obj["function"] = "pursueResearch";
+    obj.like = /Research Facility/;
+    obj.limit = 1;
+    obj.min = 1;
+    obj.max = 1;
+    obj.recruit = 1;
+    obj.help = 1;
+    return obj;
+  };
+  return [pursue('R-Wpn-MG1Mk1'), pursue('R-Struc-PowerModuleMk1'), pursue('R-Defense-Tower01'), pursue('R-Wpn-MG3Mk1'), pursue('R-Struc-RepairFacility'), pursue('R-Defense-WallTower02'), pursue('R-Defense-AASite-QuadMg1'), pursue('R-Vehicle-Body04'), pursue('R-Struc-VTOLFactory'), pursue('pursue R-Vehicle-Prop-VTOL'), pursue('R-Wpn-Bomb01')];
 };
 
 CyberBorg.prototype.derricks_orders = function(derricks) {
@@ -962,13 +972,19 @@ eventPickup = () ->
 eventReinforcementsArrived = () ->
   obj = name: 'ReinforcementArrived'
   events(obj)
+*/
 
-eventResearched = (research, structure) ->
-  obj =
-    name: 'Researched'
-    research: research
-    structure: new WZObject(structure)
-  events(obj)
+eventResearched = function(research, structure) {
+  var obj;
+  obj = {
+    name: 'Researched',
+    research: research,
+    structure: cyberBorg.find(structure)
+  };
+  return events(obj);
+};
+
+/*
 
 eventSelectionChange = (selected) ->
   selected = selected.map( (object) -> new WZObject(object) )
@@ -1039,6 +1055,9 @@ events = function(event) {
     case 'DroidIdle':
       droidIdle(event.droid);
       break;
+    case 'Researched':
+      researched(event.research, event.structure);
+      break;
     default:
       console("" + event.name + " NOT HANDLED!");
   }
@@ -1062,7 +1081,7 @@ startLevel = function() {
   groups.push(scouts);
   factories = new Group(FACTORIES, 20, [], cyberBorg.factory_orders(), reserve.group);
   groups.push(factories);
-  labs = new Group(LABS, 19, [], cyberBorg.lab_orders());
+  labs = new Group(LABS, 19, [], cyberBorg.lab_orders(), reserve.group);
   groups.push(labs);
   return groups.sort(function(a, b) {
     return b.rank - a.rank;
@@ -1158,15 +1177,8 @@ report = function(who) {
   if (droids.length) return console("" + (droids.join(', ')) + ".");
 };
 
-researched = function(completed, structure) {
-  console("in eventResearched");
-  return null;
-  structure = new WZObject(structure);
-  return group_executions({
-    event: 'Researched',
-    structure: structure,
-    research: completed
-  });
+researched = function(research, structure) {
+  return console("Researched " + research);
 };
 
 droidIdle = function(droid) {
@@ -1180,7 +1192,7 @@ group_executions = function(event) {
   for (_i = 0, _len = groups.length; _i < _len; _i++) {
     group = groups[_i];
     name = group.name;
-    if ((name === FACTORIES) || (name === BASE)) continue;
+    if (!((name === FACTORIES) || (name === BASE) || (name === LABS))) continue;
     orders = group.orders;
     order = orders.next();
     if (order) {
