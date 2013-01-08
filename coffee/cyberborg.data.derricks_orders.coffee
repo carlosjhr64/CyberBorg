@@ -20,6 +20,8 @@ CyberBorg::derricks_orders = (derricks) ->
     min: n
     max: x
     number: DORDER_BUILD
+    power: 0
+    cost: 0
     employ: (name) ->
       ('Truck': et)[name]
 

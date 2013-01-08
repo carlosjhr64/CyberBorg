@@ -18,6 +18,7 @@ CyberBorg::scouts_orders = (derricks) ->
   p = (n,x,em) ->
     min: n
     max: x
+    power: 0
     number: DORDER_SCOUT
     employ: (name) ->
       ('MgWhB1': em)[name]

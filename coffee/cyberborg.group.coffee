@@ -151,10 +151,15 @@ class Group
     order.help = order.recruit - units.length
     units
 
-  execute: (order, units=@units(order)) ->
+  execute: (order) ->
     executers = [] # Going to return the units executing order.
+    units = @units(order)
     if units
-      for unit in units
-        if unit.executes(order)
-          executers.push(unit)
+      if cyberBorg.power > order.power
+        for unit in units
+          if unit.executes(order)
+            executers.push(unit)
+      else
+        @remove(unit) for unit in units
+    cyberBorg.power = cyberBorg.power - order.cost if executers.length > 0
     return executers

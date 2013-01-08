@@ -5,6 +5,8 @@
 #   max:       maximum allowed number of units to execute order.
 #   employ:    (unit_name)-> amount of the unit the group will to employ.
 #   at:        preferred location.
+#   power:     minimum power b/4 starting
+#   cost:      the power cost of the order
 #   structure:
 #   body:
 #   propulsion:
@@ -22,6 +24,8 @@ CyberBorg::base_orders = ->
     order =
       function: 'orderDroidBuild'
       number: DORDER_BUILD
+      power: 100
+      cost: 100
       structure: arr[0]
       at: x: arr[1], y: arr[2]
     order

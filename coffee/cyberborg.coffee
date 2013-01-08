@@ -15,13 +15,17 @@ class CyberBorg
   ###################
 
   # Need a way to register groups
-  constructor: (@groups=WZArray.bless([])) ->
+  constructor: () ->
+    @groups = WZArray.bless([])
+    @power = 0
 
   ###############
   ### UPDATES ###
   ###############
 
   update: () ->
+    @power = playerPower()
+    debug(@power)
     for group in @groups
       for object in group.list
         object.update() if object.game_time < gameTime

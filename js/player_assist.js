@@ -514,16 +514,24 @@ Group = (function() {
     return units;
   };
 
-  Group.prototype.execute = function(order, units) {
-    var executers, unit, _i, _len;
-    if (units == null) units = this.units(order);
+  Group.prototype.execute = function(order) {
+    var executers, unit, units, _i, _j, _len, _len2;
     executers = [];
+    units = this.units(order);
     if (units) {
-      for (_i = 0, _len = units.length; _i < _len; _i++) {
-        unit = units[_i];
-        if (unit.executes(order)) executers.push(unit);
+      if (cyberBorg.power > order.power) {
+        for (_i = 0, _len = units.length; _i < _len; _i++) {
+          unit = units[_i];
+          if (unit.executes(order)) executers.push(unit);
+        }
+      } else {
+        for (_j = 0, _len2 = units.length; _j < _len2; _j++) {
+          unit = units[_j];
+          this.remove(unit);
+        }
       }
     }
+    if (executers.length > 0) cyberBorg.power = cyberBorg.power - order.cost;
     return executers;
   };
 
@@ -547,8 +555,9 @@ CyberBorg = (function() {
   /* CONSTRUCTOR
   */
 
-  function CyberBorg(groups) {
-    this.groups = groups != null ? groups : WZArray.bless([]);
+  function CyberBorg() {
+    this.groups = WZArray.bless([]);
+    this.power = 0;
   }
 
   /* UPDATES
@@ -556,6 +565,8 @@ CyberBorg = (function() {
 
   CyberBorg.prototype.update = function() {
     var group, object, _i, _len, _ref, _results;
+    this.power = playerPower();
+    debug(this.power);
     _ref = this.groups;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -689,6 +700,8 @@ CyberBorg.prototype.base_orders = function() {
     order = {
       "function": 'orderDroidBuild',
       number: DORDER_BUILD,
+      power: 100,
+      cost: 100,
       structure: arr[0],
       at: {
         x: arr[1],
@@ -737,6 +750,8 @@ CyberBorg.prototype.factory_orders = function() {
   build = function(obj) {
     obj["function"] = "buildDroid";
     obj.like = /Factory/;
+    obj.power = 400;
+    obj.cost = 50;
     obj.limit = 1;
     obj.min = 1;
     obj.max = 1;
@@ -760,7 +775,7 @@ CyberBorg.prototype.factory_orders = function() {
     droid_type: DROID_WEAPON
   };
   orders = [];
-  2..times(function() {
+  1..times(function() {
     return orders.push(build(whb1(truck)));
   });
   12..times(function() {
@@ -778,6 +793,8 @@ CyberBorg.prototype.lab_orders = function() {
     };
     obj["function"] = "pursueResearch";
     obj.like = /Research Facility/;
+    obj.power = 550;
+    obj.cost = 100;
     obj.limit = 1;
     obj.min = 1;
     obj.max = 1;
@@ -797,6 +814,8 @@ CyberBorg.prototype.derricks_orders = function(derricks) {
       min: n,
       max: x,
       number: DORDER_BUILD,
+      power: 0,
+      cost: 0,
       employ: function(name) {
         return {
           'Truck': et
@@ -830,6 +849,7 @@ CyberBorg.prototype.scouts_orders = function(derricks) {
     return {
       min: n,
       max: x,
+      power: 0,
       number: DORDER_SCOUT,
       employ: function(name) {
         return {

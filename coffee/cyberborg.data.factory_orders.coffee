@@ -10,12 +10,15 @@
 #   propulsion:
 #   turret:
 #   research:
+#   power:      minimum amount of power needed b/4 start construction
 # { name: min: max: number: employ: at: ... }
 CyberBorg::factory_orders = ->
   # General orders are...
   build = (obj) ->
     obj.function = "buildDroid"
     obj.like = /Factory/
+    obj.power = 400
+    obj.cost = 50
     obj.limit = 1
     obj.min = 1
     obj.max = 1
@@ -36,8 +39,8 @@ CyberBorg::factory_orders = ->
 
   # The orders are...
   orders = []
-  # ... 2 trucks
-  (2).times -> orders.push(build whb1(truck))
+  # ... 1 truck
+  (1).times -> orders.push(build whb1(truck))
   # ... 12 machine gunners
   (12).times -> orders.push(build whb1(mg1))
   WZArray.bless(orders)
