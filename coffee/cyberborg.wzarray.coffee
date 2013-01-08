@@ -149,9 +149,11 @@ class WZArray
   ### STORES ###
   ##############
 
+  ### Does not look like we'll need this after all
   # is WZ2100
   is: {}
 
   # of  WZ2100
   of: (object) -> @is[object.id]
+  ###
 

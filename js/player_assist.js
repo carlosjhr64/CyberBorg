@@ -135,7 +135,13 @@ WZObject = (function() {
         case 'buildDroid':
           return buildDroid(this, order.name, order.body, order.propulsion, "", order.droid_type, order.turret);
         case 'pursueResearch':
-          return pursueResearch(this, order.research);
+          if (pursueResearch(this, order.research)) {
+            this.researching = order.research;
+            return true;
+          } else {
+            return false;
+          }
+          break;
         default:
           return this.executes_dorder(order);
       }
@@ -339,11 +345,13 @@ WZArray = (function() {
   /* STORES
   */
 
-  WZArray.prototype.is = {};
-
-  WZArray.prototype.of = function(object) {
-    return this.is[object.id];
-  };
+  /* Does not look like we'll need this after all
+  # is WZ2100
+  is: {}
+  
+  # of  WZ2100
+  of: (object) -> @is[object.id]
+  */
 
   return WZArray;
 
@@ -1177,8 +1185,16 @@ report = function(who) {
   if (droids.length) return console("" + (droids.join(', ')) + ".");
 };
 
-researched = function(research, structure) {
-  return console("Researched " + research);
+researched = function(completed, structure) {
+  var research;
+  completed = completed.name;
+  research = structure.researching;
+  if (research !== completed) {
+    return structure.executes({
+      "function": 'pursueResearch',
+      research: research
+    });
+  }
 };
 
 droidIdle = function(droid) {

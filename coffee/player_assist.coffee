@@ -237,9 +237,10 @@ report = (who) ->
 # which can be found from the ruins of a demolished facility.
 # So we need to check that in fact
 # the technology came from an active structure.
-researched = (research, structure) ->
-  console("Researched #{research}")
-  # Anything to do here???
+researched = (completed, structure) ->
+  completed = completed.name # just interested in the name
+  research = structure.researching
+  structure.executes({function:'pursueResearch', research:research}) unless research is completed
 
 droidIdle = (droid) ->
   # Anything else?  :)

@@ -93,7 +93,12 @@ class WZObject
     ok = switch order.function
       when 'buildDroid'
         buildDroid(@, order.name, order.body, order.propulsion, "", order.droid_type, order.turret)
-      when 'pursueResearch' then pursueResearch(@, order.research)
+      when 'pursueResearch'
+        if pursueResearch(@, order.research)
+          @researching = order.research
+          true
+        else
+          false
       else @executes_dorder(order)
     @order_time = gameTime if ok
     return ok
