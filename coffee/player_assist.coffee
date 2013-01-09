@@ -30,7 +30,6 @@ startLevel = () ->
   
   # The game starts...
   # Let's tell the player we're assisting.
-  trace "This is player_assist.js"
   
   # Usually the game starts out with some number of trucks,
   # or droids in general.  Let's see what we have.
@@ -47,7 +46,6 @@ startLevel = () ->
   # Thus it may show some initiative, just as
   # individual droids may show some initiative.
   # Let's tell the user how many units we have to start.
-  trace "We have #{reserve.group.length} droids available, and
   #{reserve.group.counts(CyberBorg.is_truck)} of them are trucks."
   
   # cyberBorg can list all the resources available on the map and
@@ -56,7 +54,6 @@ startLevel = () ->
   resources = CyberBorg.get_resources(reserve.group.center())
   
   # So let's tell the player how many resource points there are.
-  trace "There are #{resources.length} resource points."
   
   # We'll create many groups besides the Reserve, and
   # we'll list them in cyberBorg.groups.
@@ -107,7 +104,6 @@ structureBuilt = (structure, droid) ->
   # Let's tell the player what got built.
   # namexy is a my hack on WZ2100's Object, which
   # returns the name and position of the game piece.
-  trace "#{structure.namexy()} Built!"
 
   # So the first thing that get built is a Factory.
   # It's just how this AI plays the game.
@@ -152,7 +148,6 @@ helping = (object) ->
       # otherwise the owning group gets to recall.
       group.add(object) if reserve.contains(object) # TODO TBD what if group is reserve?
       order.help -= 1
-      trace("#{object.name} helping #{order.structure or order.function}")
       return true
   return false
 
@@ -160,7 +155,6 @@ helping = (object) ->
 #  eventDroidBuilt(a WZ2100 JS API) is called.
 droidBuilt = (droid, structure) ->
   # Tell the player what got built.
-  trace "Built #{droid.name}."
   
   # Now what with the new droid?
   # If it's a truck, maybe it should go to the nearest job?
@@ -172,7 +166,6 @@ droidBuilt = (droid, structure) ->
 # Player commands...
 # Some useful feedback and could be used for player commands.
 chat = (sender, to, message) ->
-  trace("in eventChat")
   return null
   # TODO Just stop here for now
 
@@ -181,11 +174,9 @@ chat = (sender, to, message) ->
     switch message
       when 'report base' then report('base')
       when 'report reserve' then report('reserve')
-      else trace("What?")
+      else console("What?")
 
-# Report to player trace droids' position...
 report = (who) ->
-  trace("in report")
   return null
   # TODO Just stop here for now
 
@@ -196,8 +187,7 @@ report = (who) ->
       droids.push(droid.namexy()) for droid in groups.base.group
     when 'reserve'
       droids.push(droid.namexy()) for droid in groups.reserve.group
-    else trace("What???")
-  trace("#{droids.join(', ')}.") if droids.length
+    else console("What???")
 
 # The second structure that this AI builds is a research facility.
 # When that happens, research_group gets called from eventStructureBuilt.
@@ -211,24 +201,21 @@ report = (who) ->
 #  orders = cyberBorg.groups.research.orders
 #  # orders.of(structure) is the order previously given
 #  # to the structure to pursue.
-#  # orders.next(structure) gives the next order for the structure.
+#  # orders.next(structure <-not doing this anymore) gives the next order for the structure.
 #  # It may be that the structure was not already pursuing a research,
 #  # so it's either or.
-#  order = orders.of(structure) or orders.next(structure)
+#  order = orders.of(structure) or orders.next(structure <- not  doing this )
 #  # we need to know what the structure just got done researching, if anything.
 #  if completed
-#    trace "#{structure.namexy()}
 #    pursuing #{order} got done with #{completed.name}."
 #    # If we've reached the technology sought, then get the next order.
-#    order = orders.next(structure) if order == completed.name
+#    order = orders.next(structure <- not  doing this ) if order == completed.name
 #    # Eventually, we run out of orders, so we need to check.
 #  if order
 #    # So let the player know what we're researching, and
 #    # order the facilty to pursue it.
-#    trace("#{structure.namexy()} is doing #{order}.")
 #    pursueResearch(structure, order)
 #  else
-#    trace('Research orders complete?')
 
 # Every time a research facility is done researching a technology,
 # a research event is triggered, and eventResearched is called.
@@ -249,15 +236,12 @@ droidIdle = (droid) ->
   # I thinks this all goes away. :))
   #if groups.reserve.group.contains(droid)
   #  # groups that accept idle reserve droids
-  #  trace("Idle droid applies...")
   #  groups.base.applying(droid) or
   #  groups.derricks_trucks.applying(droid) or
   #  groups.derricks_weapons.applying(droid)
   #if groups.derricks_trucks.group.contains(droid)
-  #  trace("Derricks truck reporting for duty!")
   #  derricks_trucks_group()
   #if groups.derricks_weapons.group.contains(droid)
-  #  trace("Derricks weapons reporting for duty!")
   #  derricks_weapons_group()
 
 #derricks_trucks_group = () ->
@@ -271,14 +255,11 @@ droidIdle = (droid) ->
 #    # the structure was not available.  This is bad.
 #    count = builders.length
 #    if count is 0
-#      trace "Derricks group has orders pending."
 #      derricks_trucks.orders.revert()
 #      break
 #    else
-#      trace "There are #{count} droids working on
 #      #{order.structure}(#{order.at.x},#{order.at.y})}."
 #    order = derricks_trucks.orders.next()
-#  trace "Derricks trucks orders complete!" if !order
 #
 #derricks_weapons_group = () ->
 #  groups = cyberBorg.groups
@@ -290,14 +271,11 @@ droidIdle = (droid) ->
 #    # no weapons were found for the job.
 #    count = fighters.length
 #    if count is 0
-#      trace "Derricks weapons group has orders pending."
 #      derricks_weapons.orders.revert()
 #      break
 #    else
-#      trace "There are #{count} weapons working
 #      going to (#{order.at.x},#{order.at.y})}."
 #    order = derricks_weapons.orders.next()
-#  trace "Derricks weapons orders complete!" if !order
 
 group_executions = (event) ->
   groups = cyberBorg.groups
@@ -305,7 +283,8 @@ group_executions = (event) ->
   #break if reserve.length is 0 # TODO ?
   for group in groups
     name = group.name
-    continue unless (name is FACTORIES) or (name is BASE) or (name is LABS)
+    continue unless (name is FACTORIES) or (name is BASE) or (name is LABS) or
+    (name is SCOUTS) or (name is DERRICKS)
     orders = group.orders
     order = orders.next()
     if order
@@ -314,8 +293,5 @@ group_executions = (event) ->
         count = executers.length
         if count is 0
           orders.revert()
-          trace("Group #{name} has pending orders.")
           break
-        trace("There are #{count} #{name} units working on #{order.name or order.structure or order.function}.")
         order = orders.next()
-      trace "Group #{name} orders complete!" if !order

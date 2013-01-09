@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, WZArray, WZObject, chat, cyberBorg, droidBuilt, droidIdle, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt, trace,
+var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, Scouter, WZArray, WZObject, chat, cyberBorg, droidBuilt, droidIdle, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -11,6 +11,47 @@ Number.prototype.times = function(action) {
   }
   return _results;
 };
+
+Scouter = (function() {
+
+  function Scouter() {}
+
+  Scouter.bless = function(array) {
+    var method, name, _ref;
+    if (array.is_scouter) return array;
+    _ref = Scouter.prototype;
+    for (name in _ref) {
+      method = _ref[name];
+      array[name] = method;
+    }
+    array.offset = 0;
+    array.mod = this.length;
+    array.index = -1;
+    array.is_scouter = true;
+    return array;
+  };
+
+  Scouter.prototype.set_current = function() {
+    return this._current = this.offset + (this.index % this.mod);
+  };
+
+  Scouter.prototype._next = function() {
+    this.index += 1;
+    return this.set_current();
+  };
+
+  Scouter.prototype.revert = function() {
+    if (this.index > -1) {
+      this.index -= 1;
+      return this.set_current();
+    } else {
+      return this._current = -1;
+    }
+  };
+
+  return Scouter;
+
+})();
 
 trace = debug;
 
@@ -92,7 +133,8 @@ WZObject = (function() {
         break;
       case DORDER_MOVE:
       case DORDER_SCOUT:
-        if (orderDroidLoc(this, number, at.x, at.y)) {
+        if (droidCanReach(this, at.x, at.y)) {
+          orderDroidLoc(this, number, at.x, at.y);
           ok = true;
           this.order = number;
         }
@@ -322,15 +364,16 @@ WZArray = (function() {
     return this[this._current];
   };
 
-  WZArray.prototype.next = function(gameobj) {
-    var order;
-    if (this._current < this.length) this._current += 1;
-    order = this[this._current];
-    if (gameobj) this.is[gameobj.id] = order;
-    return order;
+  WZArray.prototype._next = function() {
+    if (this._current < this.length) return this._current += 1;
   };
 
-  WZArray.prototype.revert = function(gameobj) {
+  WZArray.prototype.next = function() {
+    this._next();
+    return this[this._current];
+  };
+
+  WZArray.prototype.revert = function() {
     if (this._current > WZArray.INIT) return this._current -= 1;
   };
 
@@ -478,7 +521,6 @@ Group = (function() {
           #  # when I can actually build at "at"???
           #  pos = pickStructLocation(trucks[0], structure, at.x, at.y)
           if pos
-            trace("#{structure}: at is #{at.x},#{at.y} but pos is #{pos.x},#{pos.y}")
             i = 0
             while i < trucks.length
               truck = trucks[i]
@@ -568,7 +610,6 @@ CyberBorg = (function() {
   CyberBorg.prototype.update = function() {
     var group, object, _i, _len, _ref, _results;
     this.power = playerPower();
-    debug(this.power);
     _ref = this.groups;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -650,7 +691,7 @@ CyberBorg = (function() {
         return structureIdle(object);
       }
     }
-    not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH];
+    not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH, DORDER_SCOUT, DORDER_MOVE];
     return not_idle.indexOf(object.order) === WZArray.NONE;
   };
 
@@ -809,75 +850,63 @@ CyberBorg.prototype.lab_orders = function() {
 };
 
 CyberBorg.prototype.derricks_orders = function(derricks) {
-  var derrick, extractor, order, orders, p, p11, _i, _len;
+  var extractor, orders, truck, truck_build;
   extractor = "A0ResourceExtractor";
-  p = function(n, x, et) {
+  truck = /Truck/;
+  truck_build = function(derrick) {
     return {
       "function": 'orderDroidBuild',
-      min: n,
-      max: x,
-      number: DORDER_BUILD,
       power: 0,
       cost: 0,
-      employ: function(name) {
-        return {
-          'Truck': et
-        }[name];
+      like: truck,
+      limit: 5,
+      recruit: 1,
+      min: 1,
+      max: 1,
+      help: 1,
+      number: DORDER_BUILD,
+      structure: extractor,
+      at: {
+        x: derrick.x,
+        y: derrick.y
       }
     };
   };
-  p11 = function() {
-    return p(1, 1, 3);
-  };
-  order = function(str, x, y, p) {
-    p.structure = str;
-    p.at = {
-      x: x,
-      y: y
-    };
-    return p;
-  };
-  orders = [];
-  for (_i = 0, _len = derricks.length; _i < _len; _i++) {
-    derrick = derricks[_i];
-    orders.push(order(extractor, derrick.x, derrick.y, p11()));
-  }
-  return WZArray.bless(orders);
+  orders = WZArray.bless(derricks.map(function(derrick) {
+    return truck_build(derrick);
+  }));
+  Scouter.bless(orders);
+  orders.mod = 12;
+  orders.offset = 0;
+  return orders;
 };
 
 CyberBorg.prototype.scouts_orders = function(derricks) {
-  var derrick, extractor, order, orders, p, p11, _i, _len;
-  extractor = "A0ResourceExtractor";
-  p = function(n, x, em) {
+  var orders, scout;
+  scout = function(derrick) {
     return {
-      min: n,
-      max: x,
+      "function": 'orderDroidLoc',
       power: 0,
+      cost: 0,
+      like: /MgWh/,
+      limit: 12,
+      recruit: 1,
+      min: 1,
+      max: 1,
+      help: 1,
       number: DORDER_SCOUT,
-      employ: function(name) {
-        return {
-          'MgWhB1': em
-        }[name];
+      at: {
+        x: derrick.x,
+        y: derrick.y
       }
     };
   };
-  p11 = function() {
-    return p(1, 1, 9);
-  };
-  order = function(str, x, y, p) {
-    p.structure = str;
-    p.at = {
-      x: x,
-      y: y
-    };
-    return p;
-  };
-  orders = [];
-  for (_i = 0, _len = derricks.length; _i < _len; _i++) {
-    derrick = derricks[_i];
-    orders.push(order(extractor, derrick.x, derrick.y, p11()));
-  }
-  WZArray.bless(orders);
+  orders = WZArray.bless(derricks.map(function(derrick) {
+    return scout(derrick);
+  }));
+  Scouter.bless(orders);
+  orders.mod = 12;
+  orders.offset = 3;
   return orders;
 };
 
@@ -1097,11 +1126,8 @@ events = function(event) {
 
 startLevel = function() {
   var base, derricks, factories, groups, labs, reserve, resources, scouts;
-  trace("This is player_assist.js");
   reserve = new Group(RESERVE, 0);
-  trace("We have " + reserve.group.length + " droids available, and  " + (reserve.group.counts(CyberBorg.is_truck)) + " of them are trucks.");
   resources = CyberBorg.get_resources(reserve.group.center());
-  trace("There are " + resources.length + " resource points.");
   groups = cyberBorg.groups;
   groups.push(reserve);
   base = new Group(BASE, 100, [], cyberBorg.base_orders(), reserve.group);
@@ -1121,7 +1147,6 @@ startLevel = function() {
 
 structureBuilt = function(structure, droid) {
   var groups;
-  trace("" + (structure.namexy()) + " Built!");
   if (structure.type === STRUCTURE) {
     groups = cyberBorg.groups;
     switch (structure.stattype) {
@@ -1152,7 +1177,6 @@ helping = function(object) {
     if (order && order.help && order.help > 0 && order.like.test(object.name) && object.executes(order)) {
       if (reserve.contains(object)) group.add(object);
       order.help -= 1;
-      trace("" + object.name + " helping " + (order.structure || order["function"]));
       return true;
     }
   }
@@ -1160,13 +1184,11 @@ helping = function(object) {
 };
 
 droidBuilt = function(droid, structure) {
-  trace("Built " + droid.name + ".");
   cyberBorg.groups.named(RESERVE).group.push(droid);
   return helping(droid);
 };
 
 chat = function(sender, to, message) {
-  trace("in eventChat");
   return null;
   cyberBorg.update();
   if (sender === 0) {
@@ -1176,36 +1198,38 @@ chat = function(sender, to, message) {
       case 'report reserve':
         return report('reserve');
       default:
-        return trace("What?");
+        return console("What?");
     }
   }
 };
 
 report = function(who) {
-  var droid, droids, groups, _i, _j, _len, _len2, _ref, _ref2;
-  trace("in report");
+  var droid, droids, groups, _i, _j, _len, _len2, _ref, _ref2, _results, _results2;
   return null;
   groups = cyberBorg.groups;
   droids = [];
   switch (who) {
     case 'base':
       _ref = groups.base.group;
+      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         droid = _ref[_i];
-        droids.push(droid.namexy());
+        _results.push(droids.push(droid.namexy()));
       }
+      return _results;
       break;
     case 'reserve':
       _ref2 = groups.reserve.group;
+      _results2 = [];
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         droid = _ref2[_j];
-        droids.push(droid.namexy());
+        _results2.push(droids.push(droid.namexy()));
       }
+      return _results2;
       break;
     default:
-      trace("What???");
+      return console("What???");
   }
-  if (droids.length) return trace("" + (droids.join(', ')) + ".");
 };
 
 researched = function(completed, structure) {
@@ -1231,26 +1255,26 @@ group_executions = function(event) {
   for (_i = 0, _len = groups.length; _i < _len; _i++) {
     group = groups[_i];
     name = group.name;
-    if (!((name === FACTORIES) || (name === BASE) || (name === LABS))) continue;
+    if (!((name === FACTORIES) || (name === BASE) || (name === LABS) || (name === SCOUTS) || (name === DERRICKS))) {
+      continue;
+    }
     orders = group.orders;
     order = orders.next();
     if (order) {
-      while (order) {
-        executers = group.execute(order);
-        count = executers.length;
-        if (count === 0) {
-          orders.revert();
-          trace("Group " + name + " has pending orders.");
-          break;
+      _results.push((function() {
+        var _results2;
+        _results2 = [];
+        while (order) {
+          executers = group.execute(order);
+          count = executers.length;
+          if (count === 0) {
+            orders.revert();
+            break;
+          }
+          _results2.push(order = orders.next());
         }
-        trace("There are " + count + " " + name + " units working on " + (order.name || order.structure || order["function"]) + ".");
-        order = orders.next();
-      }
-      if (!order) {
-        _results.push(trace("Group " + name + " orders complete!"));
-      } else {
-        _results.push(void 0);
-      }
+        return _results2;
+      })());
     } else {
       _results.push(void 0);
     }

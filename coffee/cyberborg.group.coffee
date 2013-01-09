@@ -104,7 +104,6 @@ class Group
         #  # when I can actually build at "at"???
         #  pos = pickStructLocation(trucks[0], structure, at.x, at.y)
         if pos
-          trace("#{structure}: at is #{at.x},#{at.y} but pos is #{pos.x},#{pos.y}")
           i = 0
           while i < trucks.length
             truck = trucks[i]

@@ -53,7 +53,8 @@ class WZObject
       when DORDER_LINEBUILD
         debug("TODO: need to implement number #{number}.") # TODO
       when DORDER_MOVE, DORDER_SCOUT
-        if orderDroidLoc(@, number, at.x, at.y)
+        if droidCanReach(@, at.x, at.y)
+          orderDroidLoc(@, number, at.x, at.y)
           ok = true
           @order = number
       #when DORDER_NONE

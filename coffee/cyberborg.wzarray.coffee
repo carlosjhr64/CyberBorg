@@ -126,14 +126,15 @@ class WZArray
   _current: WZArray.INIT
   current: () -> @[@_current]
 
-  # next WZ2100
-  next: (gameobj) ->
+  _next: () ->
     @_current += 1  if @_current < @.length
-    order = @[@_current]
-    @is[gameobj.id] = order  if gameobj
-    order
 
-  revert: (gameobj) ->
+  # next WZ2100
+  next: () ->
+    @_next()
+    @[@_current]
+
+  revert: () ->
     @_current -= 1  if @_current > WZArray.INIT
 
   named: (name) ->

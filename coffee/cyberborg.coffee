@@ -25,7 +25,6 @@ class CyberBorg
 
   update: () ->
     @power = playerPower()
-    debug(@power)
     for group in @groups
       for object in group.list
         object.update() if object.game_time < gameTime
@@ -70,7 +69,10 @@ class CyberBorg
       else
         return(structureIdle(object))
     # It's a droid # TODO specifically a truck, will need more cases.
-    not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH]
+    not_idle = [
+      DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH
+      DORDER_SCOUT, DORDER_MOVE
+    ]
     not_idle.indexOf(object.order) is WZArray.NONE
 
   @is_resource = (object) ->
@@ -138,7 +140,7 @@ class CyberBorg
 #  if (clss != 'Array'){ droids = [droids]; }
 #  for (var i=0;i<droids.length;i++) {
 #    var droid = droids[i];
-#    if(derrick_moves(droid) == false) { trace(droid.namexy()+" is idle."); }
+#    if(derrick_moves(droid) == false) { xxx(droid.namexy()+" is idle."); }
 #  }
 #}
 #

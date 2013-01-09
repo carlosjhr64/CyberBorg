@@ -12,29 +12,25 @@
 #   research:
 # { name: min: max: number: employ: at: ... }
 CyberBorg::derricks_orders = (derricks) ->
-  # What we're building
   extractor = "A0ResourceExtractor"
-
-  p = (n,x,et) ->
+  truck = /Truck/
+  truck_build = (derrick) ->
     function: 'orderDroidBuild'
-    min: n
-    max: x
-    number: DORDER_BUILD
     power: 0
     cost: 0
-    employ: (name) ->
-      ('Truck': et)[name]
+    like: truck
+    limit: 5
+    recruit: 1
+    min: 1
+    max: 1
+    help: 1
+    number: DORDER_BUILD
+    structure: extractor
+    at: x:derrick.x, y:derrick.y
 
-  # With how many trucks, etc...
-  p11 = -> p(1,1,3)
-
-  # Returning an object
-  order = (str, x, y, p) ->
-    # str, x, y, p = data...
-    p.structure = str
-    p.at = x: x, y: y
-    p
-
-  orders = []
-  orders.push(order(extractor, derrick.x, derrick.y, p11())) for derrick in derricks
-  WZArray.bless(orders)
+  orders = WZArray.bless( derricks.map((derrick)->truck_build(derrick)) )
+  Scouter.bless(orders)
+  # Eight derricks starting from derrick #0
+  orders.mod = 12
+  orders.offset = 0
+  return orders
