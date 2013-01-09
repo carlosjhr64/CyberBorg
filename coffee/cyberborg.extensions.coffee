@@ -6,3 +6,7 @@ Number::times = (action) ->
   while i < this.valueOf()
     action()
     i++
+
+# Alias debug as trace
+# It's a way to differentiat intent
+trace = debug

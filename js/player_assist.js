@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, WZArray, WZObject, chat, cyberBorg, droidBuilt, droidIdle, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt,
+var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, WZArray, WZObject, chat, cyberBorg, droidBuilt, droidIdle, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -11,6 +11,8 @@ Number.prototype.times = function(action) {
   }
   return _results;
 };
+
+trace = debug;
 
 WZObject = (function() {
 
@@ -476,7 +478,7 @@ Group = (function() {
           #  # when I can actually build at "at"???
           #  pos = pickStructLocation(trucks[0], structure, at.x, at.y)
           if pos
-            console("#{structure}: at is #{at.x},#{at.y} but pos is #{pos.x},#{pos.y}")
+            trace("#{structure}: at is #{at.x},#{at.y} but pos is #{pos.x},#{pos.y}")
             i = 0
             while i < trucks.length
               truck = trucks[i]
@@ -700,7 +702,6 @@ CyberBorg.prototype.base_orders = function() {
     order = {
       "function": 'orderDroidBuild',
       number: DORDER_BUILD,
-      power: 100,
       cost: 100,
       structure: arr[0],
       at: {
@@ -712,6 +713,7 @@ CyberBorg.prototype.base_orders = function() {
   };
   with_three_trucks = function(obj) {
     obj.like = /Truck/;
+    obj.power = 100;
     obj.limit = 3;
     obj.min = 1;
     obj.max = 3;
@@ -728,6 +730,7 @@ CyberBorg.prototype.base_orders = function() {
   };
   with_one_truck = function(obj) {
     obj.like = /Truck/;
+    obj.power = 250;
     obj.limit = 1;
     obj.min = 1;
     obj.max = 1;
@@ -750,7 +753,7 @@ CyberBorg.prototype.factory_orders = function() {
   build = function(obj) {
     obj["function"] = "buildDroid";
     obj.like = /Factory/;
-    obj.power = 400;
+    obj.power = 300;
     obj.cost = 50;
     obj.limit = 1;
     obj.min = 1;
@@ -793,7 +796,7 @@ CyberBorg.prototype.lab_orders = function() {
     };
     obj["function"] = "pursueResearch";
     obj.like = /Research Facility/;
-    obj.power = 550;
+    obj.power = 250;
     obj.cost = 100;
     obj.limit = 1;
     obj.min = 1;
@@ -1087,18 +1090,18 @@ events = function(event) {
       researched(event.research, event.structure);
       break;
     default:
-      console("" + event.name + " NOT HANDLED!");
+      debug("" + event.name + " NOT HANDLED!");
   }
   return group_executions(event);
 };
 
 startLevel = function() {
   var base, derricks, factories, groups, labs, reserve, resources, scouts;
-  console("This is player_assist.js");
+  trace("This is player_assist.js");
   reserve = new Group(RESERVE, 0);
-  console("We have " + reserve.group.length + " droids available, and  " + (reserve.group.counts(CyberBorg.is_truck)) + " of them are trucks.");
+  trace("We have " + reserve.group.length + " droids available, and  " + (reserve.group.counts(CyberBorg.is_truck)) + " of them are trucks.");
   resources = CyberBorg.get_resources(reserve.group.center());
-  console("There are " + resources.length + " resource points.");
+  trace("There are " + resources.length + " resource points.");
   groups = cyberBorg.groups;
   groups.push(reserve);
   base = new Group(BASE, 100, [], cyberBorg.base_orders(), reserve.group);
@@ -1118,7 +1121,7 @@ startLevel = function() {
 
 structureBuilt = function(structure, droid) {
   var groups;
-  console("" + (structure.namexy()) + " Built!");
+  trace("" + (structure.namexy()) + " Built!");
   if (structure.type === STRUCTURE) {
     groups = cyberBorg.groups;
     switch (structure.stattype) {
@@ -1149,7 +1152,7 @@ helping = function(object) {
     if (order && order.help && order.help > 0 && order.like.test(object.name) && object.executes(order)) {
       if (reserve.contains(object)) group.add(object);
       order.help -= 1;
-      console("" + object.name + " helping " + (order.structure || order["function"]));
+      trace("" + object.name + " helping " + (order.structure || order["function"]));
       return true;
     }
   }
@@ -1157,13 +1160,13 @@ helping = function(object) {
 };
 
 droidBuilt = function(droid, structure) {
-  console("Built " + droid.name + ".");
+  trace("Built " + droid.name + ".");
   cyberBorg.groups.named(RESERVE).group.push(droid);
   return helping(droid);
 };
 
 chat = function(sender, to, message) {
-  console("in eventChat");
+  trace("in eventChat");
   return null;
   cyberBorg.update();
   if (sender === 0) {
@@ -1173,14 +1176,14 @@ chat = function(sender, to, message) {
       case 'report reserve':
         return report('reserve');
       default:
-        return console("What?");
+        return trace("What?");
     }
   }
 };
 
 report = function(who) {
   var droid, droids, groups, _i, _j, _len, _len2, _ref, _ref2;
-  console("in report");
+  trace("in report");
   return null;
   groups = cyberBorg.groups;
   droids = [];
@@ -1200,9 +1203,9 @@ report = function(who) {
       }
       break;
     default:
-      console("What???");
+      trace("What???");
   }
-  if (droids.length) return console("" + (droids.join(', ')) + ".");
+  if (droids.length) return trace("" + (droids.join(', ')) + ".");
 };
 
 researched = function(completed, structure) {
@@ -1237,14 +1240,14 @@ group_executions = function(event) {
         count = executers.length;
         if (count === 0) {
           orders.revert();
-          console("Group " + name + " has pending orders.");
+          trace("Group " + name + " has pending orders.");
           break;
         }
-        console("There are " + count + " " + name + " units working on " + (order.name || order.structure || order["function"]) + ".");
+        trace("There are " + count + " " + name + " units working on " + (order.name || order.structure || order["function"]) + ".");
         order = orders.next();
       }
       if (!order) {
-        _results.push(console("Group " + name + " orders complete!"));
+        _results.push(trace("Group " + name + " orders complete!"));
       } else {
         _results.push(void 0);
       }

@@ -24,7 +24,6 @@ CyberBorg::base_orders = ->
     order =
       function: 'orderDroidBuild'
       number: DORDER_BUILD
-      power: 100
       cost: 100
       structure: arr[0]
       at: x: arr[1], y: arr[2]
@@ -33,6 +32,7 @@ CyberBorg::base_orders = ->
   with_three_trucks = (obj) ->
     # All these are required
     obj.like = /Truck/
+    obj.power = 100
     obj.limit = 3 # maximum group size
     obj.min = 1 # it will execute the order only with at least this amount
     obj.max = 3 # it will execute the order with no more than this amount
@@ -49,6 +49,7 @@ CyberBorg::base_orders = ->
 
   with_one_truck = (obj) ->
     obj.like = /Truck/
+    obj.power = 250
     obj.limit = 1 # maximum group size
     obj.min = 1
     obj.max = 1

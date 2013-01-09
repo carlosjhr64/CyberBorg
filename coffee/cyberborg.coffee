@@ -138,7 +138,7 @@ class CyberBorg
 #  if (clss != 'Array'){ droids = [droids]; }
 #  for (var i=0;i<droids.length;i++) {
 #    var droid = droids[i];
-#    if(derrick_moves(droid) == false) { console(droid.namexy()+" is idle."); }
+#    if(derrick_moves(droid) == false) { trace(droid.namexy()+" is idle."); }
 #  }
 #}
 #
