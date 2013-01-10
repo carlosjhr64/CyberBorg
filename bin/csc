@@ -1,6 +1,6 @@
 coffee							\
 --join	js/player_assist.js				\
---bare --compile --watch				\
+--bare --compile --watch --lint				\
 	coffee/cyberborg.extensions.coffee		\
 	coffee/cyberborg.wzobject.coffee		\
 	coffee/cyberborg.wzarray.coffee			\
