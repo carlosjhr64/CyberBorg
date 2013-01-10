@@ -512,7 +512,10 @@ Group = (function() {
       i = 0
       while i < factories.length
         # Want factory.build(...)
-        return (factories[i])  if buildDroid(factories[i], order.name, order.body, order.propulsion, "", order.droid_type, order.turret)
+        if buildDroid(factories[i],
+        order.name, order.body, order.propulsion, "",
+        order.droid_type, order.turret)
+          return (factories[i])
         i++
       null
   
@@ -780,13 +783,6 @@ CyberBorg.prototype.base_orders = function() {
     obj.max = 3;
     obj.recruit = 3;
     obj.help = 3;
-    /* TODO might not get used
-    obj.conscript = 1 # steal from another group if necessary to execute this order
-    # Employ is just a way to add to a group an idle truck b/4 it gets recruited by another group
-    obj.employ = (name) ->
-      # Group size sought through employment
-      (Truck: 0)[name] # this is undefined unless name is 'Truck'
-    */
     return obj;
   };
   with_one_truck = function(obj) {
@@ -797,10 +793,6 @@ CyberBorg.prototype.base_orders = function() {
     obj.max = 1;
     obj.recruit = 1;
     obj.help = 1;
-    /* TODO might not get used
-    obj.employ = (name) ->
-      (Truck: 0)[name]
-    */
     return obj;
   };
   phase1 = [with_three_trucks(dorder_build([light_factory, 10, 235])), with_three_trucks(dorder_build([research_facility, 7, 235])), with_three_trucks(dorder_build([command_center, 7, 238])), with_three_trucks(dorder_build([power_generator, 4, 235]))];

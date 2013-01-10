@@ -25,7 +25,8 @@ class WZObject
       when DORDER_ATTACK
         trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_BUILD
-        if orderDroidBuild(@, DORDER_BUILD, order.structure, at.x, at.y, order.direction)
+        if orderDroidBuild(@,
+        DORDER_BUILD, order.structure, at.x, at.y, order.direction)
           ok = true
           @order = number
       #when DORDER_CIRCLE
@@ -93,7 +94,9 @@ class WZObject
   executes: (order) ->
     ok = switch order.function
       when 'buildDroid'
-        buildDroid(@, order.name, order.body, order.propulsion, "", order.droid_type, order.turret)
+        buildDroid(@,
+        order.name, order.body, order.propulsion, "",
+        order.droid_type, order.turret)
       when 'pursueResearch'
         if pursueResearch(@, order.research)
           @researching = order.research

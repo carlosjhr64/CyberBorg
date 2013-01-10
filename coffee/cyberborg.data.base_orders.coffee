@@ -1,6 +1,6 @@
 #   ***Order Attributes***
 #   function:  the function name to call
-#   number:    order number for order functins, like orderDroid(... order.number ...).
+#   number:    order number
 #   min:       minimum number of units required to execute order.
 #   max:       maximum allowed number of units to execute order.
 #   employ:    (unit_name)-> amount of the unit the group will to employ.
@@ -38,13 +38,6 @@ CyberBorg::base_orders = ->
     obj.max = 3 # it will execute the order with no more than this amount
     obj.recruit = 3 # recruit from reserve if we have less than this amount
     obj.help = 3 # project will accept help once started
-    ### TODO might not get used
-    obj.conscript = 1 # steal from another group if necessary to execute this order
-    # Employ is just a way to add to a group an idle truck b/4 it gets recruited by another group
-    obj.employ = (name) ->
-      # Group size sought through employment
-      (Truck: 0)[name] # this is undefined unless name is 'Truck'
-    ###
     obj
 
   with_one_truck = (obj) ->
@@ -55,10 +48,6 @@ CyberBorg::base_orders = ->
     obj.max = 1
     obj.recruit = 1
     obj.help = 1 # project will accept help once started :-??
-    ### TODO might not get used
-    obj.employ = (name) ->
-      (Truck: 0)[name]
-    ###
     obj
 
   # Build up the initial base as fast a posible

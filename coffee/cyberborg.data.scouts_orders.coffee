@@ -1,6 +1,6 @@
 #   ***Order Attributes***
 #   function:  the function name to call
-#   number:    order number for order functins, like orderDroid(... order.number ...).
+#   number:    order number
 #   min:       minimum number of units required to execute order.
 #   max:       maximum allowed number of units to execute order.
 #   employ:    (unit_name)-> amount of the unit the group will to employ.

@@ -8,7 +8,10 @@ class Group
     # orders is a list of things for the group to do
     if @orders then WZArray.bless(@orders) else @orders = WZArray.bless([])
     # reserve are the units we can draw from.
-    if @reserves then WZArray.bless(@reserves) else @reserves = WZArray.bless([])
+    if @reserves
+      WZArray.bless(@reserves)
+    else
+      @reserves = WZArray.bless([])
     #j# Let's check the orders for errors TODO?
     #for order in @orders
     #  unless order.limit and order.limit > 0
@@ -75,7 +78,10 @@ class Group
     i = 0
     while i < factories.length
       # Want factory.build(...)
-      return (factories[i])  if buildDroid(factories[i], order.name, order.body, order.propulsion, "", order.droid_type, order.turret)
+      if buildDroid(factories[i],
+      order.name, order.body, order.propulsion, "",
+      order.droid_type, order.turret)
+        return (factories[i])
       i++
     null
 
