@@ -14,21 +14,27 @@ class CyberBorg
   ### CONSTRUCTOR ###
   ###################
 
-  # Need a way to register groups
   constructor: () ->
+    # Need a way to register groups
     @groups = WZArray.bless([])
+    # Used to keep track of power consumption.
+    # Gets updated in update, below.
     @power = 0
 
   ###############
   ### UPDATES ###
   ###############
 
+  # Updates all game objects, group by group.
   update: () ->
     @power = playerPower()
     for group in @groups
       for object in group.list
         object.update() if object.game_time < gameTime
 
+  # When we get pre-existing game objects from WZ's JS API,
+  # we need to find them in our groups.
+  # Otherwise we end up with duplicates.
   find: (target) ->
     for group in @groups
       for object in group.list
@@ -68,7 +74,7 @@ class CyberBorg
         return(false)
       else
         return(structureIdle(object))
-    # It's a droid # TODO specifically a truck, will need more cases.
+    # It's a droid # TODO may need more cases.
     not_idle = [
       DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH
       DORDER_SCOUT, DORDER_MOVE
@@ -86,7 +92,7 @@ class CyberBorg
   # BEING_BUILT and BUILT.
   # It may be confusing to have a function called being_built
   # when it could in fact be being demolished.
-  #  So the function is named by what it tests and means.
+  # So the function is named by what it tests and means.
   @is_not_built = (structure) -> structure.status != BUILT
 
   ###############
