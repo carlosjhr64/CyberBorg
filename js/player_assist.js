@@ -430,22 +430,13 @@ Group = (function() {
     this.group = group;
     this.orders = orders;
     this.reserve = reserve;
-    if (this.group) {
-      WZArray.bless(this.group);
-    } else {
-      this.group = CyberBorg.enum_droid();
-    }
+    if (!this.group) this.group = CyberBorg.enum_droid();
+    if (!this.group.is_wzarray) WZArray.bless(this.group);
     this.list = this.group;
-    if (this.orders) {
-      WZArray.bless(this.orders);
-    } else {
-      this.orders = WZArray.bless([]);
-    }
-    if (this.reserves) {
-      WZArray.bless(this.reserves);
-    } else {
-      this.reserves = WZArray.bless([]);
-    }
+    if (!this.orders) this.orders = WZArray.bless([]);
+    if (!this.orders.is_wzarray) WZArray.bless(this.orders);
+    if (!this.reserve) this.reserve = WZArray.bless([]);
+    if (!this.reserve.is_wzarray) WZArray.bless(this.reserve);
   }
 
   Group.prototype.add = function(droid) {

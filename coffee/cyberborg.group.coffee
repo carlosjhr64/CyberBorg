@@ -3,15 +3,15 @@ class Group
   constructor: (@name, @rank, @group, @orders, @reserve) ->
     # If we're not given a list of droids,
     # get them from enumDroid (all of the player's pieces).
-    if @group then WZArray.bless(@group) else @group = CyberBorg.enum_droid()
+    @group = CyberBorg.enum_droid() unless @group
+    WZArray.bless(@group) unless @group.is_wzarray
     @list = @group # alias
     # orders is a list of things for the group to do
-    if @orders then WZArray.bless(@orders) else @orders = WZArray.bless([])
+    @orders = WZArray.bless([]) unless @orders
+    WZArray.bless(@orders) unless @orders.is_wzarray
     # reserve are the units we can draw from.
-    if @reserves
-      WZArray.bless(@reserves)
-    else
-      @reserves = WZArray.bless([])
+    @reserve = WZArray.bless([]) unless @reserve
+    WZArray.bless(@reserve) unless @reserve.is_wzarray
     # TODO check the orders for errors?
 
   add: (droid) ->
