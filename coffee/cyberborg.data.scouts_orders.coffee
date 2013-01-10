@@ -29,6 +29,6 @@ CyberBorg::scouts_orders = (derricks) ->
   orders = WZArray.bless( derricks.map((derrick)->scout(derrick)) )
   Scouter.bless(orders)
   # Five derricks starting at derrick #3
-  orders.mod = 12
+  orders.mod = 5
   orders.offset = 3
   return orders

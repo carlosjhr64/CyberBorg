@@ -888,7 +888,7 @@ CyberBorg.prototype.derricks_orders = function(derricks) {
     return truck_build(derrick);
   }));
   Scouter.bless(orders);
-  orders.mod = 12;
+  orders.mod = 8;
   orders.offset = 0;
   return orders;
 };
@@ -917,7 +917,7 @@ CyberBorg.prototype.scouts_orders = function(derricks) {
     return scout(derrick);
   }));
   Scouter.bless(orders);
-  orders.mod = 12;
+  orders.mod = 5;
   orders.offset = 3;
   return orders;
 };
