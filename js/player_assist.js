@@ -911,6 +911,14 @@ CyberBorg.prototype.scouts_orders = function(derricks) {
 };
 
 /*
+ Here I have here listed all of the events documented by
+ the JS API as of 2013-01-09.  The ones not used are commented out.
+ See:
+   https://warzone.atlassian.net/wiki/display/jsapi/API
+ Preliminary data wrapping into either WZArray or WZObject occurs here.
+*/
+
+/*
 eventAttacked = (victim, attacker) ->
   obj =
     name: 'Attacked'
