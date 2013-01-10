@@ -23,71 +23,71 @@ class WZObject
     at = order.at
     switch number
       when DORDER_ATTACK
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_BUILD
         if orderDroidBuild(@, DORDER_BUILD, order.structure, at.x, at.y, order.direction)
           ok = true
           @order = number
       #when DORDER_CIRCLE
-      #  debug("TODO: need to implement number #{number}.") # TODO
+      #  trace("TODO: need to implement number #{number}.") # TODO
       #when DORDER_COMMANDERSUPPORT
-      #  debug("TODO: need to implement number #{number}.") # TODO
+      #  trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_DEMOLISH
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       #when DORDER_DESTRUCT
-      #  debug("TODO: need to implement number #{number}.") # TODO
+      #  trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_DISEMBARK
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       #when DORDER_DROIDREPAIR
-      #  debug("TODO: need to implement number #{number}.") # TODO
+      #  trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_EMBARK
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_FIRESUPPORT
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       #when DORDER_GUARD
-      #  debug("TODO: need to implement number #{number}.") # TODO
+      #  trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_HELPBUILD
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_HOLD
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_LINEBUILD
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_MOVE, DORDER_SCOUT
         if droidCanReach(@, at.x, at.y)
           orderDroidLoc(@, number, at.x, at.y)
           ok = true
           @order = number
       #when DORDER_NONE
-      #  debug("TODO: need to implement number #{number}.") # TODO
+      #  trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_OBSERVE
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_PATROL
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_REARM
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_RECOVER
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       #when DORDER_RECYCLE
-      #  debug("TODO: need to implement number #{number}.") # TODO
+      #  trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_REPAIR
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_RETREAT
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_RTB
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_RTR
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       #when DORDER_RTR_SPECIFIED
-      #  debug("TODO: need to implement number #{number}.") # TODO
-      #  debug("TODO: need to implement number #{number}.") # TODO
+      #  trace("TODO: need to implement number #{number}.") # TODO
+      #  trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_STOP
-        debug("TODO: need to implement number #{number}.") # TODO
+        trace("TODO: need to implement number #{number}.") # TODO
       #when DORDER_TEMP_HOLD
-      #  debug("TODO: need to implement number #{number}.") # TODO
+      #  trace("TODO: need to implement number #{number}.") # TODO
       #when DORDER_UNUSED
-      #  debug("TODO: need to implement number #{number}.") # TODO
+      #  trace("TODO: need to implement number #{number}.") # TODO
       else
-        debug("DEBUG: Order number #{number} not listed.") # TODO
+        trace("DEBUG: Order number #{number} not listed.") # TODO
     return ok
 
   executes: (order) ->

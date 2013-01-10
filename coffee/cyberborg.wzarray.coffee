@@ -1,9 +1,31 @@
+###################
+### ***Array*** ###
+###################
+
+# There are some really common hacks on Array, we'll make'em on Array itself.
+Array::first = ()-> @[0]
+Array::last = ()-> @[@length-1]
+
+#####################
+### ***WZArray*** ###
+#####################
+
+# WZArray adds useful methods to the Array class,
+# many which are specific to the game.
 class WZArray
+  # These constants add meaning and intent to just the number they hold.
+  # The pre-existance index for next/previous.
   @INIT = -1
+  # The no match index of indexOf.
   @NONE = -1
 
+  # Sometimes it's easier to take an existing object and augment.
+  # We'll take an Array and "bless" into it the methods in this class.
   @bless = (array) ->
-    return array if array.is_wzarray
+    if array.is_wzarray
+      # TODO TBD might want to throw an error instead here?
+      debug("Warning: WZArray re'bless'ing")
+      return array
     array[name] = method for name, method of WZArray.prototype
     array.is_wzarray = true
     array
@@ -12,7 +34,9 @@ class WZArray
   ### QUERIES ###
   ###############
 
-  # indexOfObject
+  # indexOfObject takes a game object and returns it index in the array
+  # if it's in the array. Game objects have a unique id which allows for
+  # a quick id check.
   indexOfObject: (object) ->
     id = object.id
     i = 0
@@ -21,7 +45,7 @@ class WZArray
       i++
     WZArray.NONE
 
-  # True if list contains object
+  # True if list contains the game object
   contains: (object) ->
     @indexOfObject(object) > WZArray.NONE
 
@@ -35,39 +59,48 @@ class WZArray
   ### FILTERS ###
   ###############
 
-  # Ensures filtering results in a WZArray
+  # Ensures filtering results in a WZArray.
+  # Rather than override JS's filter,
+  # we use the plural filtes to distinguis the two.
+  # filters stays in WZArray, while filter returns Array.
   filters: (type) -> WZArray.bless(@.filter(type))
 
-  # trucks  WZ2100
+  # Some of these filters below might not be being used, but
+  # why not keep them?
+
+  # trucks in list
   trucks: -> @filters(CyberBorg.is_truck)
 
   weapons: -> @filters(CyberBorg.is_weapon)
 
-  # factories WZ2100
+  # factories in list
   factories: -> @filters(CyberBorg.is_factory)
 
-  # not_built WZ2100
+  # game objects not built (b/c they're being built i.e.) in list.
   not_built: -> @filters(CyberBorg.is_not_built)
 
-  # not_in  WZ2100
+  # game object in list not in the given group.
   not_in: (group) ->
     @filters((object) -> group.group.indexOfObject(object) is WZArray.NONE)
 
-  #  select objects from list in group
+  # select objects from list in group
   in: (group) ->
     @filters((object) -> group.group.indexOfObject(object) > WZArray.NONE)
 
-  # Selects from list objects that are idle in the game
+  # selects from list objects that are idle in list
   idle: -> @filters(CyberBorg.is_idle)
 
+  # select units in the list which name matches the pattern given.
   like: (rgx) -> @filters((object) -> rgx.test(object.name))
 
   #############
   ### EDITS ###
   #############
 
+  # cuts of the list to n objects preserving class.
   cap: (n) -> WZArray.bless(@[0..(n - 1)])
 
+  # concats the array given, blessing the result into the class.
   add: (arr) -> WZArray.bless(@concat(arr))
 
   #############
@@ -92,6 +125,7 @@ class WZArray
       i++
     count
 
+  # Counts the number of game objects named by the given name.
   counts_named: (name) ->
     count = 0
     i = 0
@@ -101,6 +135,7 @@ class WZArray
     count
 
   # Returns the center of the list (group).
+  # Returns {x:x,y:y}
   center: ->
     at =
       x: 0
@@ -119,24 +154,7 @@ class WZArray
   ### ACCESSING ###
   #################
 
-  # first
-  first: -> @[0]
-
-  #  current WZ2100
-  _current: WZArray.INIT
-  current: () -> @[@_current]
-
-  _next: () ->
-    @_current += 1  if @_current < @.length
-
-  # next WZ2100
-  next: () ->
-    @_next()
-    @[@_current]
-
-  revert: () ->
-    @_current -= 1  if @_current > WZArray.INIT
-
+  # Returns the first item with the given name.
   named: (name) ->
     i = 0
     while i < @length
@@ -144,41 +162,58 @@ class WZArray
       i++
     null
 
-  # previous WZ2100 is this needed?
-
   ##############
-  ### STORES ###
+  ### CURSOR ###
   ##############
 
-  ### Does not look like we'll need this after all
-  # is WZ2100
-  is: {}
+  _current: WZArray.INIT
+  current: () -> @[@_current]
 
-  # of  WZ2100
-  of: (object) -> @is[object.id]
-  ###
+  _next: () ->
+    @_current += 1  if @_current < @.length
+    @_current
 
+  next: () -> @[@_next()]
 
+  _previous: () ->
+    @_current -= 1  if @_current > WZArray.INIT
+    @_current
+  # Aliasing _previous.
+  # Can't just pass the ref b/c _previous may be overriden by subclasses.
+  revert: () -> @_previous()
+
+  previous: () -> @[@_previous()]
+
+#####################
+### ***Scouter*** ###
+#####################
+
+# Scouter overrides WZArray's cursor to allow loops within the array.
 class Scouter
   @bless = (array) ->
-    return array if array.is_scouter
+    if array.is_scouter
+      # TODO TBD might want to throw an error instead here?
+      debug("Warning: Scouter re'bless'ing")
+      return array
     array[name] = method for name, method of Scouter.prototype
     array.offset = 0
     array.mod = @length
-    array.index = -1
+    array.index = WZArray.INIT
     array.is_scouter = true
     array
 
-  set_current: () ->
+  _set_current: () ->
+    # Note that the result is returned
     @_current = @offset + (@index % @mod)
 
   _next: () ->
     @index += 1
-    @set_current()
+    @_set_current()
 
-  revert: () ->
+  _previous: () ->
+    # Note that the result is returned
     if @index > -1
       @index -= 1
-      @set_current()
+      @_set_current()
     else
       @_current = -1

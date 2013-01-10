@@ -12,47 +12,6 @@ Number.prototype.times = function(action) {
   return _results;
 };
 
-Scouter = (function() {
-
-  function Scouter() {}
-
-  Scouter.bless = function(array) {
-    var method, name, _ref;
-    if (array.is_scouter) return array;
-    _ref = Scouter.prototype;
-    for (name in _ref) {
-      method = _ref[name];
-      array[name] = method;
-    }
-    array.offset = 0;
-    array.mod = this.length;
-    array.index = -1;
-    array.is_scouter = true;
-    return array;
-  };
-
-  Scouter.prototype.set_current = function() {
-    return this._current = this.offset + (this.index % this.mod);
-  };
-
-  Scouter.prototype._next = function() {
-    this.index += 1;
-    return this.set_current();
-  };
-
-  Scouter.prototype.revert = function() {
-    if (this.index > -1) {
-      this.index -= 1;
-      return this.set_current();
-    } else {
-      return this._current = -1;
-    }
-  };
-
-  return Scouter;
-
-})();
-
 trace = debug;
 
 WZObject = (function() {
@@ -102,7 +61,7 @@ WZObject = (function() {
     at = order.at;
     switch (number) {
       case DORDER_ATTACK:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_BUILD:
         if (orderDroidBuild(this, DORDER_BUILD, order.structure, at.x, at.y, order.direction)) {
@@ -111,25 +70,25 @@ WZObject = (function() {
         }
         break;
       case DORDER_DEMOLISH:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_DISEMBARK:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_EMBARK:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_FIRESUPPORT:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_HELPBUILD:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_HOLD:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_LINEBUILD:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_MOVE:
       case DORDER_SCOUT:
@@ -140,34 +99,34 @@ WZObject = (function() {
         }
         break;
       case DORDER_OBSERVE:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_PATROL:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_REARM:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_RECOVER:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_REPAIR:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_RETREAT:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_RTB:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_RTR:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_STOP:
-        debug("TODO: need to implement number " + number + ".");
+        trace("TODO: need to implement number " + number + ".");
         break;
       default:
-        debug("DEBUG: Order number " + number + " not listed.");
+        trace("DEBUG: Order number " + number + " not listed.");
     }
     return ok;
   };
@@ -198,6 +157,20 @@ WZObject = (function() {
 
 })();
 
+/* ***Array***
+*/
+
+Array.prototype.first = function() {
+  return this[0];
+};
+
+Array.prototype.last = function() {
+  return this[this.length - 1];
+};
+
+/* ***WZArray***
+*/
+
 WZArray = (function() {
 
   function WZArray() {}
@@ -208,7 +181,10 @@ WZArray = (function() {
 
   WZArray.bless = function(array) {
     var method, name, _ref;
-    if (array.is_wzarray) return array;
+    if (array.is_wzarray) {
+      debug("Warning: WZArray re'bless'ing");
+      return array;
+    }
     _ref = WZArray.prototype;
     for (name in _ref) {
       method = _ref[name];
@@ -354,29 +330,6 @@ WZArray = (function() {
   /* ACCESSING
   */
 
-  WZArray.prototype.first = function() {
-    return this[0];
-  };
-
-  WZArray.prototype._current = WZArray.INIT;
-
-  WZArray.prototype.current = function() {
-    return this[this._current];
-  };
-
-  WZArray.prototype._next = function() {
-    if (this._current < this.length) return this._current += 1;
-  };
-
-  WZArray.prototype.next = function() {
-    this._next();
-    return this[this._current];
-  };
-
-  WZArray.prototype.revert = function() {
-    if (this._current > WZArray.INIT) return this._current -= 1;
-  };
-
   WZArray.prototype.named = function(name) {
     var i;
     i = 0;
@@ -387,18 +340,85 @@ WZArray = (function() {
     return null;
   };
 
-  /* STORES
+  /* CURSOR
   */
 
-  /* Does not look like we'll need this after all
-  # is WZ2100
-  is: {}
-  
-  # of  WZ2100
-  of: (object) -> @is[object.id]
-  */
+  WZArray.prototype._current = WZArray.INIT;
+
+  WZArray.prototype.current = function() {
+    return this[this._current];
+  };
+
+  WZArray.prototype._next = function() {
+    if (this._current < this.length) this._current += 1;
+    return this._current;
+  };
+
+  WZArray.prototype.next = function() {
+    return this[this._next()];
+  };
+
+  WZArray.prototype._previous = function() {
+    if (this._current > WZArray.INIT) this._current -= 1;
+    return this._current;
+  };
+
+  WZArray.prototype.revert = function() {
+    return this._previous();
+  };
+
+  WZArray.prototype.previous = function() {
+    return this[this._previous()];
+  };
 
   return WZArray;
+
+})();
+
+/* ***Scouter***
+*/
+
+Scouter = (function() {
+
+  function Scouter() {}
+
+  Scouter.bless = function(array) {
+    var method, name, _ref;
+    if (array.is_scouter) {
+      debug("Warning: Scouter re'bless'ing");
+      return array;
+    }
+    _ref = Scouter.prototype;
+    for (name in _ref) {
+      method = _ref[name];
+      array[name] = method;
+    }
+    array.offset = 0;
+    array.mod = this.length;
+    array.index = WZArray.INIT;
+    array.is_scouter = true;
+    return array;
+  };
+
+  Scouter.prototype._set_current = function() {
+    return this._current = this.offset + (this.index % this.mod);
+  };
+
+  Scouter.prototype._next = function() {
+    this.index += 1;
+    return this._set_current();
+  };
+
+  Scouter.prototype._previous = function() {
+    if (this.index > -1) {
+      this.index -= 1;
+      return this._set_current();
+    } else {
+      return this._current = -1;
+    }
+  };
+
+  return Scouter;
 
 })();
 
