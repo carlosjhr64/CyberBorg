@@ -196,7 +196,7 @@ report = (who) ->
 # and again as first written).  The AI also makes use of
 # WZ2100 JS API's pursueResearch, which allows one to specify
 # the desired technology rather than having to specify
-# each technologyy in it's research path.
+# each technology in it's research path.
 # This requires a bit a management.
 # Every time a research facility is done researching a technology,
 # a Researched event is triggered, and eventResearched is called.
