@@ -116,14 +116,12 @@ structureBuilt = (structure, droid) ->
   # may change and become part of what the AI figures out later).
   # Anyways, when a factory gets built,
   # we need to get it started building droids.
+  # So we push the structure into the RESERVE and
+  # it should get picked up by the FACTORIES group in group_executions (below).
+  cyberBorg.groups.named(RESERVE).group.push(structure)
+  # There may be exceptional catches to be done per structure...
   if (structure.type is STRUCTURE)
-    groups = cyberBorg.groups
     switch structure.stattype
-      # So we push in into the FACTORIES group :-?? breaks symetry here
-      # Fixin....
-      when FACTORY then groups.named(FACTORIES).group.push(structure)
-      when RESEARCH_LAB then groups.named(LABS).group.push(structure)
-      when HQ then min_map_and_design_on(structure)
       # Because we've overridden rules.js eventStructureBuilt,
       # we need to need to enforce one of the rules in the game.
       # Unfortunately, rules.js is the human player's file.
@@ -132,7 +130,7 @@ structureBuilt = (structure, droid) ->
       # as per rules.js.
       # TODO check if this file is being runned by rules.js first.
       # May be being runned as a stand alone AI.
-
+      when HQ then min_map_and_design_on(structure)
 
 # This turns on minimap and design
 # Will not be needed when this AI follows standard conventions.
@@ -142,6 +140,18 @@ min_map_and_design_on = (structure) ->
   structure.stattype is HQ
     setMiniMap(true) # show minimap
     setDesign(true) # permit designs
+
+#  When a droid is built, it triggers a droid built event and
+#  eventDroidBuilt(a WZ2100 JS API) is called.
+droidBuilt = (droid, structure) ->
+  # Tell the player what got built.
+  
+  # Now what with the new droid?
+  # If it's a truck, maybe it should go to the nearest job?
+  # Well, the style for this AI is to work with groups.
+  # So what we'll do is add the new droids to the RESERVE.
+  cyberBorg.groups.named(RESERVE).group.push(droid)
+  helping(droid)
 
 # This is unit initiative?
 helping = (object) ->
@@ -159,18 +169,6 @@ helping = (object) ->
       order.help -= 1
       return true
   return false
-
-#  When a droid is built, it triggers a droid built event and
-#  eventDroidBuilt(a WZ2100 JS API) is called.
-droidBuilt = (droid, structure) ->
-  # Tell the player what got built.
-  
-  # Now what with the new droid?
-  # If it's a truck, maybe it should go to the nearest job?
-  # Well, the style for this AI is to work with groups.
-  # So what we'll do is add the new droids to the RESERVE.
-  cyberBorg.groups.named(RESERVE).group.push(droid)
-  helping(droid)
 
 # Player commands...
 # Some useful feedback and could be used for player commands.

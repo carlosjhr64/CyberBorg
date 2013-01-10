@@ -1146,14 +1146,9 @@ startLevel = function() {
 };
 
 structureBuilt = function(structure, droid) {
-  var groups;
+  cyberBorg.groups.named(RESERVE).group.push(structure);
   if (structure.type === STRUCTURE) {
-    groups = cyberBorg.groups;
     switch (structure.stattype) {
-      case FACTORY:
-        return groups.named(FACTORIES).group.push(structure);
-      case RESEARCH_LAB:
-        return groups.named(LABS).group.push(structure);
       case HQ:
         return min_map_and_design_on(structure);
     }
@@ -1165,6 +1160,11 @@ min_map_and_design_on = function(structure) {
     setMiniMap(true);
     return setDesign(true);
   }
+};
+
+droidBuilt = function(droid, structure) {
+  cyberBorg.groups.named(RESERVE).group.push(droid);
+  return helping(droid);
 };
 
 helping = function(object) {
@@ -1181,11 +1181,6 @@ helping = function(object) {
     }
   }
   return false;
-};
-
-droidBuilt = function(droid, structure) {
-  cyberBorg.groups.named(RESERVE).group.push(droid);
-  return helping(droid);
 };
 
 chat = function(sender, to, message) {
