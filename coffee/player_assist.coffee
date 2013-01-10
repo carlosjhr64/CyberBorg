@@ -224,7 +224,7 @@ droidIdle = (droid) ->
 # This is the work horse of the AI.
 # We iterate through all the groups,
 # higher ranks first,
-# and let the execute orders as they can.
+# and let them execute orders as they can.
 group_executions = (event) ->
   groups = cyberBorg.groups
   # TODO TBD if a lower rank group releases droids, should we restart?
