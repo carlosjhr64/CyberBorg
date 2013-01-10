@@ -729,7 +729,7 @@ CyberBorg.prototype.factory_orders = function() {
     obj.like = /Factory/;
     obj.power = 440;
     obj.cost = 50;
-    obj.limit = 1;
+    obj.limit = 5;
     obj.min = 1;
     obj.max = 1;
     obj.recruit = 1;
@@ -772,7 +772,7 @@ CyberBorg.prototype.lab_orders = function() {
     obj.like = /Research Facility/;
     obj.power = 390;
     obj.cost = 100;
-    obj.limit = 1;
+    obj.limit = 5;
     obj.min = 1;
     obj.max = 1;
     obj.recruit = 1;
@@ -792,7 +792,7 @@ CyberBorg.prototype.derricks_orders = function(derricks) {
       power: 0,
       cost: 0,
       like: truck,
-      limit: 5,
+      limit: 3,
       recruit: 1,
       min: 1,
       max: 1,

@@ -24,7 +24,7 @@ CyberBorg::derricks_orders = (derricks) ->
     power: 0
     cost: 0
     like: truck
-    limit: 5
+    limit: 3
     recruit: 1
     min: 1
     max: 1
