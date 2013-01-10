@@ -24,7 +24,7 @@ class WZArray
   @bless = (array) ->
     if array.is_wzarray
       # TODO TBD might want to throw an error instead here?
-      debug("Warning: WZArray re'bless'ing")
+      trace("Warning: WZArray re'bless'ing")
       return array
     array[name] = method for name, method of WZArray.prototype
     array.is_wzarray = true
@@ -193,7 +193,7 @@ class Scouter
   @bless = (array) ->
     if array.is_scouter
       # TODO TBD might want to throw an error instead here?
-      debug("Warning: Scouter re'bless'ing")
+      trace("Warning: Scouter re'bless'ing")
       return array
     array[name] = method for name, method of Scouter.prototype
     array.offset = 0

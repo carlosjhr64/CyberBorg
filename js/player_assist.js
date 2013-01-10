@@ -182,7 +182,7 @@ WZArray = (function() {
   WZArray.bless = function(array) {
     var method, name, _ref;
     if (array.is_wzarray) {
-      debug("Warning: WZArray re'bless'ing");
+      trace("Warning: WZArray re'bless'ing");
       return array;
     }
     _ref = WZArray.prototype;
@@ -385,7 +385,7 @@ Scouter = (function() {
   Scouter.bless = function(array) {
     var method, name, _ref;
     if (array.is_scouter) {
-      debug("Warning: Scouter re'bless'ing");
+      trace("Warning: Scouter re'bless'ing");
       return array;
     }
     _ref = Scouter.prototype;
@@ -1157,7 +1157,7 @@ events = function(event) {
       chat(event.sender, event.to, event.message);
       break;
     default:
-      debug("" + event.name + " NOT HANDLED!");
+      trace("" + event.name + " NOT HANDLED!");
   }
   return group_executions(event);
 };

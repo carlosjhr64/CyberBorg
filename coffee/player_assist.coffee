@@ -29,7 +29,7 @@ events = (event) ->
     when 'Researched'     then researched(event.research, event.structure)
     when 'Chat'           then chat(event.sender, event.to, event.message)
     # We should catch all possibilities, but in case we missed something...
-    else debug("#{event.name} NOT HANDLED!")
+    else trace("#{event.name} NOT HANDLED!")
   # Next see what orders the groups can execute
   group_executions(event)
 
