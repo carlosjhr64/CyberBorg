@@ -29,12 +29,17 @@ eventBeaconRemoved = (sender, to) ->
     to: to
   events(obj)
 
+###
+
 eventChat = (sender,to, message) ->
   obj =
     name: 'Chat'
     sender: sender
     to: to
     message: message
+  events(obj)
+
+###
 
 eventCheatMode = (entered) ->
   obj =

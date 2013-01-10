@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, Scouter, WZArray, WZObject, chat, cyberBorg, droidBuilt, droidIdle, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt, trace,
+var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, Scouter, WZArray, WZObject, chat, cyberBorg, droidBuilt, droidIdle, eventChat, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -940,13 +940,20 @@ eventBeaconRemoved = (sender, to) ->
     sender: sender
     to: to
   events(obj)
+*/
 
-eventChat = (sender,to, message) ->
-  obj =
-    name: 'Chat'
-    sender: sender
-    to: to
+eventChat = function(sender, to, message) {
+  var obj;
+  obj = {
+    name: 'Chat',
+    sender: sender,
+    to: to,
     message: message
+  };
+  return events(obj);
+};
+
+/*
 
 eventCheatMode = (entered) ->
   obj =
@@ -1118,6 +1125,9 @@ events = function(event) {
     case 'Researched':
       researched(event.research, event.structure);
       break;
+    case 'Chat':
+      chat(event.sender, event.to, event.message);
+      break;
     default:
       debug("" + event.name + " NOT HANDLED!");
   }
@@ -1184,14 +1194,13 @@ helping = function(object) {
 };
 
 chat = function(sender, to, message) {
-  return null;
   cyberBorg.update();
   if (sender === 0) {
     switch (message) {
       case 'report base':
-        return report('base');
+        return report(BASE);
       case 'report reserve':
-        return report('reserve');
+        return report(RESERVE);
       default:
         return console("What?");
     }
@@ -1199,32 +1208,15 @@ chat = function(sender, to, message) {
 };
 
 report = function(who) {
-  var droid, droids, groups, _i, _j, _len, _len2, _ref, _ref2, _results, _results2;
-  return null;
-  groups = cyberBorg.groups;
+  var droid, droids, group, _i, _len, _ref;
+  group = cyberBorg.groups.named(who);
   droids = [];
-  switch (who) {
-    case 'base':
-      _ref = groups.base.group;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        droid = _ref[_i];
-        _results.push(droids.push(droid.namexy()));
-      }
-      return _results;
-      break;
-    case 'reserve':
-      _ref2 = groups.reserve.group;
-      _results2 = [];
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        droid = _ref2[_j];
-        _results2.push(droids.push(droid.namexy()));
-      }
-      return _results2;
-      break;
-    default:
-      return console("What???");
+  _ref = group.list;
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    droid = _ref[_i];
+    droids.push(droid.namexy());
   }
+  if (droids.length) return console(droids.join());
 };
 
 researched = function(completed, structure) {

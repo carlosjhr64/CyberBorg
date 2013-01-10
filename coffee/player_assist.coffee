@@ -27,6 +27,7 @@ events = (event) ->
     when 'DroidBuilt'     then droidBuilt(event.droid, event.structure)
     when 'DroidIdle'      then droidIdle(event.droid)
     when 'Researched'     then researched(event.research, event.structure)
+    when 'Chat'           then chat(event.sender, event.to, event.message)
     # We should catch all possibilities, but in case we missed something...
     else debug("#{event.name} NOT HANDLED!")
   # Next see what orders the groups can execute
@@ -132,7 +133,7 @@ structureBuilt = (structure, droid) ->
       # May be being runned as a stand alone AI.
       when HQ then min_map_and_design_on(structure)
 
-# This turns on minimap and design
+# This turns on minimap and design.
 # Will not be needed when this AI follows standard conventions.
 min_map_and_design_on = (structure) ->
   if structure.player is selectedPlayer and
@@ -143,27 +144,29 @@ min_map_and_design_on = (structure) ->
 
 #  When a droid is built, it triggers a droid built event and
 #  eventDroidBuilt(a WZ2100 JS API) is called.
+#  We're swithed to droidBuilt by events above.
 droidBuilt = (droid, structure) ->
-  # Tell the player what got built.
-  
   # Now what with the new droid?
   # If it's a truck, maybe it should go to the nearest job?
   # Well, the style for this AI is to work with groups.
   # So what we'll do is add the new droids to the RESERVE.
   cyberBorg.groups.named(RESERVE).group.push(droid)
+  # There may be ongoing jobs so let's see what available.
   helping(droid)
 
-# This is unit initiative?
+# helping is called whenever a droid finds itself idle, as
+# when it first gets created.
 helping = (object) ->
   reserve = cyberBorg.groups.named(RESERVE).group
   for group in cyberBorg.groups
     order = group.orders.current()
+    # So for each ongoing job, check if it'll take the droid.
     if order and
     order.help and order.help > 0 and
     order.like.test(object.name) and
     object.executes(order)
-      # If in reserved, we can add to group, but
-      # otherwise the owning group gets to recall.
+      # If droid is in RESERVE, we can add to the working group, but
+      # otherwise the group owning the droid gets to recall.
       group.add(object) if reserve.contains(object)
       # TODO TBD what if group is reserve?
       order.help -= 1
@@ -173,28 +176,20 @@ helping = (object) ->
 # Player commands...
 # Some useful feedback and could be used for player commands.
 chat = (sender, to, message) ->
-  return null
-  # TODO Just stop here for now
-
   cyberBorg.update()
   if sender is 0
     switch message
-      when 'report base' then report('base')
-      when 'report reserve' then report('reserve')
+      when 'report base' then report(BASE)
+      when 'report reserve' then report(RESERVE)
       else console("What?")
 
+# Lists the units in the group by name and position.
+# TODO could add more info like jobs in progress.
 report = (who) ->
-  return null
-  # TODO Just stop here for now
-
-  groups = cyberBorg.groups
+  group = cyberBorg.groups.named(who)
   droids = []
-  switch who
-    when 'base'
-      droids.push(droid.namexy()) for droid in groups.base.group
-    when 'reserve'
-      droids.push(droid.namexy()) for droid in groups.reserve.group
-    else console("What???")
+  droids.push(droid.namexy()) for droid in group.list
+  console(droids.join()) if droids.length
 
 # The second structure that this AI builds is a research facility.
 # When that happens, research_group gets called from eventStructureBuilt.
