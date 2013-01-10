@@ -55,13 +55,23 @@ eventCheatMode = (entered) ->
     entered: entered
   events(obj)
 
+###
+
 eventDestroyed = (object) ->
+  group = null
+  # Might not actually belong to us...
+  if object.player is me and
+  found = cyberBorg.finds(object)
+    group = found.group
+    object = found.object
+    # object is gone.
+    # If not removed here, update later fails.
+    group.list.removeObject(object)
   obj =
     name: 'Destroyed'
-    object: new WZObject(object)
+    object: object
+    group: group
   events(obj)
-
-###
 
 eventDroidBuilt = (droid, structure) ->
   obj =
@@ -73,10 +83,12 @@ eventDroidBuilt = (droid, structure) ->
   events(obj)
 
 eventDroidIdle = (droid) ->
+  found = cyberBorg.finds(droid)
   obj =
     name: 'DroidIdle'
     # Here, droid is pre-existing!
-    droid: cyberBorg.find(droid)
+    droid: found.object
+    group: found.group
   events(obj)
 
 ###
@@ -158,12 +170,14 @@ eventStartLevel = () ->
   events(obj)
 
 eventStructureBuilt = (structure, droid) ->
+  found = cyberBorg.finds(droid)
   obj =
     name: 'StructureBuilt'
     # Here, structure is new
     structure: new WZObject(structure)
     # But droid is prexisting!!!
-    droid: cyberBorg.find(droid)
+    droid: found.object
+    group: found.group
   events(obj)
 
 ###

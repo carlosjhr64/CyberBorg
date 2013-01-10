@@ -41,6 +41,14 @@ class CyberBorg
         return(object) if object.id is target.id
     return null
 
+  # For cases where we want to get both our copy of the object and
+  # the group it's in.
+  finds: (target) ->
+    for group in @groups
+      for object in group.list
+        return({object:object,group:group}) if object.id is target.id
+    return null
+
   #############
   ### ENUMS ###
   #############

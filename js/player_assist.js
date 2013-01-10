@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, Scouter, WZArray, WZObject, chat, cyberBorg, droidBuilt, droidIdle, eventChat, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt, trace,
+var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, Scouter, WZArray, WZObject, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -571,6 +571,25 @@ CyberBorg = (function() {
     return null;
   };
 
+  CyberBorg.prototype.finds = function(target) {
+    var group, object, _i, _j, _len, _len2, _ref, _ref2;
+    _ref = this.groups;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      group = _ref[_i];
+      _ref2 = group.list;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        object = _ref2[_j];
+        if (object.id === target.id) {
+          return {
+            object: object,
+            group: group
+          };
+        }
+      }
+    }
+    return null;
+  };
+
   /* ENUMS
   */
 
@@ -689,7 +708,7 @@ CyberBorg.prototype.base_orders = function() {
   };
   with_one_truck = function(obj) {
     obj.like = /Truck/;
-    obj.power = 250;
+    obj.power = 390;
     obj.limit = 1;
     obj.min = 1;
     obj.max = 1;
@@ -708,7 +727,7 @@ CyberBorg.prototype.factory_orders = function() {
   build = function(obj) {
     obj["function"] = "buildDroid";
     obj.like = /Factory/;
-    obj.power = 300;
+    obj.power = 440;
     obj.cost = 50;
     obj.limit = 1;
     obj.min = 1;
@@ -751,7 +770,7 @@ CyberBorg.prototype.lab_orders = function() {
     };
     obj["function"] = "pursueResearch";
     obj.like = /Research Facility/;
-    obj.power = 250;
+    obj.power = 390;
     obj.cost = 100;
     obj.limit = 1;
     obj.min = 1;
@@ -882,13 +901,23 @@ eventCheatMode = (entered) ->
     name: 'CheatMode'
     entered: entered
   events(obj)
-
-eventDestroyed = (object) ->
-  obj =
-    name: 'Destroyed'
-    object: new WZObject(object)
-  events(obj)
 */
+
+eventDestroyed = function(object) {
+  var found, group, obj;
+  group = null;
+  if (object.player === me && (found = cyberBorg.finds(object))) {
+    group = found.group;
+    object = found.object;
+    group.list.removeObject(object);
+  }
+  obj = {
+    name: 'Destroyed',
+    object: object,
+    group: group
+  };
+  return events(obj);
+};
 
 eventDroidBuilt = function(droid, structure) {
   var obj;
@@ -901,10 +930,12 @@ eventDroidBuilt = function(droid, structure) {
 };
 
 eventDroidIdle = function(droid) {
-  var obj;
+  var found, obj;
+  found = cyberBorg.finds(droid);
   obj = {
     name: 'DroidIdle',
-    droid: cyberBorg.find(droid)
+    droid: found.object,
+    group: found.group
   };
   return events(obj);
 };
@@ -993,11 +1024,13 @@ eventStartLevel = function() {
 };
 
 eventStructureBuilt = function(structure, droid) {
-  var obj;
+  var found, obj;
+  found = cyberBorg.finds(droid);
   obj = {
     name: 'StructureBuilt',
     structure: new WZObject(structure),
-    droid: cyberBorg.find(droid)
+    droid: found.object,
+    group: found.group
   };
   return events(obj);
 };
@@ -1036,16 +1069,19 @@ events = function(event) {
       startLevel();
       break;
     case 'StructureBuilt':
-      structureBuilt(event.structure, event.droid);
+      structureBuilt(event.structure, event.droid, event.group);
       break;
     case 'DroidBuilt':
       droidBuilt(event.droid, event.structure);
       break;
     case 'DroidIdle':
-      droidIdle(event.droid);
+      droidIdle(event.droid, event.group);
       break;
     case 'Researched':
       researched(event.research, event.structure);
+      break;
+    case 'Destroyed':
+      destroyed(event.object, event.group);
       break;
     case 'Chat':
       chat(event.sender, event.to, event.message);
@@ -1077,7 +1113,8 @@ startLevel = function() {
   });
 };
 
-structureBuilt = function(structure, droid) {
+structureBuilt = function(structure, droid, group) {
+  group.remove(droid);
   cyberBorg.groups.named(RESERVE).group.push(structure);
   if (structure.type === STRUCTURE) {
     switch (structure.stattype) {
@@ -1105,6 +1142,7 @@ helping = function(object) {
   _ref = cyberBorg.groups;
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     group = _ref[_i];
+    if (group === reserve) continue;
     order = group.orders.current();
     if (order && order.help && order.help > 0 && order.like.test(object.name) && object.executes(order)) {
       if (reserve.contains(object)) group.add(object);
@@ -1116,13 +1154,14 @@ helping = function(object) {
 };
 
 chat = function(sender, to, message) {
-  cyberBorg.update();
+  var words;
+  words = message.split(/\s+/);
   if (sender === 0) {
-    switch (message) {
-      case 'report base':
-        return report(BASE);
-      case 'report reserve':
-        return report(RESERVE);
+    switch (words[0]) {
+      case 'report':
+        return report(words[1]);
+      case 'reload':
+        return include("multiplay/skirmish/reloads.js");
       default:
         return console("What?");
     }
@@ -1131,14 +1170,21 @@ chat = function(sender, to, message) {
 
 report = function(who) {
   var droid, droids, group, _i, _len, _ref;
-  group = cyberBorg.groups.named(who);
-  droids = [];
-  _ref = group.list;
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    droid = _ref[_i];
-    droids.push(droid.namexy());
+  if (group = cyberBorg.groups.named(who)) {
+    droids = [];
+    _ref = group.list;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      droid = _ref[_i];
+      droids.push(droid.namexy());
+    }
+    if (droids.length) {
+      return console(droids.join());
+    } else {
+      return console("Group empty");
+    }
+  } else {
+    return console("There is not group " + who);
   }
-  if (droids.length) return console(droids.join());
 };
 
 researched = function(completed, structure) {
@@ -1155,7 +1201,8 @@ researched = function(completed, structure) {
   }
 };
 
-droidIdle = function(droid) {
+droidIdle = function(droid, group) {
+  group.remove(droid);
   return helping(droid);
 };
 
@@ -1192,3 +1239,5 @@ group_executions = function(event) {
   }
   return _results;
 };
+
+destroyed = function(object, group) {};

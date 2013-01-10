@@ -23,10 +23,11 @@ events = (event) ->
   cyberBorg.update()
   switch event.name
     when 'StartLevel'     then startLevel()
-    when 'StructureBuilt' then structureBuilt(event.structure, event.droid)
+    when 'StructureBuilt' then structureBuilt(event.structure, event.droid, event.group)
     when 'DroidBuilt'     then droidBuilt(event.droid, event.structure)
-    when 'DroidIdle'      then droidIdle(event.droid)
+    when 'DroidIdle'      then droidIdle(event.droid, event.group)
     when 'Researched'     then researched(event.research, event.structure)
+    when 'Destroyed'      then destroyed(event.object, event.group)
     when 'Chat'           then chat(event.sender, event.to, event.message)
     # We should catch all possibilities, but in case we missed something...
     else trace("#{event.name} NOT HANDLED!")
@@ -111,7 +112,9 @@ startLevel = () ->
 # a "structure built" event triggers an eventStructureBuilt call.
 # eventStructureBuilt is WZ2100 JS API.
 # We're then swithched to structureBuilt, here, from events.
-structureBuilt = (structure, droid) ->
+structureBuilt = (structure, droid, group) ->
+  # The droid is now free... goes to reserve.
+  group.remove(droid)
   # So every time we build a structure, this function gets called.
   # And the first thing that gets built is a Factory (as I first wrote this,
   # may change and become part of what the AI figures out later).
@@ -159,6 +162,8 @@ droidBuilt = (droid, structure) ->
 helping = (object) ->
   reserve = cyberBorg.groups.named(RESERVE).group
   for group in cyberBorg.groups
+    # TODO TBD what if group is reserve?
+    continue if group is reserve
     order = group.orders.current()
     # So for each ongoing job, check if it'll take the droid.
     if order and
@@ -168,7 +173,6 @@ helping = (object) ->
       # If droid is in RESERVE, we can add to the working group, but
       # otherwise the group owning the droid gets to recall.
       group.add(object) if reserve.contains(object)
-      # TODO TBD what if group is reserve?
       order.help -= 1
       return true
   return false
@@ -176,20 +180,23 @@ helping = (object) ->
 # Player commands...
 # Some useful feedback and could be used for player commands.
 chat = (sender, to, message) ->
-  cyberBorg.update()
+  words = message.split(/\s+/)
   if sender is 0
-    switch message
-      when 'report base' then report(BASE)
-      when 'report reserve' then report(RESERVE)
+    switch words[0]
+      when 'report' then report(words[1])
+      # TODO some way to modify tha AI while in play?
+      when 'reload' then include("multiplay/skirmish/reloads.js")
       else console("What?")
 
 # Lists the units in the group by name and position.
 # TODO could add more info like jobs in progress.
 report = (who) ->
-  group = cyberBorg.groups.named(who)
-  droids = []
-  droids.push(droid.namexy()) for droid in group.list
-  console(droids.join()) if droids.length
+  if group = cyberBorg.groups.named(who)
+    droids = []
+    droids.push(droid.namexy()) for droid in group.list
+    if droids.length then console(droids.join())
+    else console("Group empty")
+  else console("There is not group #{who}")
 
 # The second structure that this AI builds is a research facility.
 # This AI may build five research facilities (the standard limit,
@@ -217,7 +224,11 @@ researched = (completed, structure) ->
 # The droid arrives and awaits new orders.
 # Origianally from eventDroidIdle,
 # we're are switched here to droidIdle from events above.
-droidIdle = (droid) ->
+droidIdle = (droid, group) ->
+  # "I quuuiiiit!" says the droid.
+  # "I wanna better job"
+  group.remove(droid)
+  # group not actually used, but might be usefull in the future.
   # Anything else?  :)
   helping(droid)
 
@@ -244,3 +255,8 @@ group_executions = (event) ->
           orders.revert()
           break
         order = orders.next()
+
+destroyed = (object, group) ->
+  # There might me other stuff to do...
+  # The object has been removed the the group already.
+  # We're given object and group as reference.
