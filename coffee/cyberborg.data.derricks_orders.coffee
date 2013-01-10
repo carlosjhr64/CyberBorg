@@ -1,15 +1,20 @@
-#   ***Order Attributes***
-#   function:  the function name to call
-#   number:    order number
-#   min:       minimum number of units required to execute order.
-#   max:       maximum allowed number of units to execute order.
-#   employ:    (unit_name)-> amount of the unit the group will to employ.
-#   at:        preferred location.
-#   structure:
-#   body:
-#   propulsion:
-#   turret:
-#   research:
+# ***Order Attributes***
+# function:  the function name to call (most of the times, order number determines this)
+# number:    order number
+# like:      the unit name pattern
+# power:     minimum power b/4 starting
+# cost:      the power cost of the order
+# limit:     the maximum group size
+# recruit:   the amount of units order tries to get
+# min:       minimum number of units required to execute order.
+# max:       maximum allowed number of units to execute order.
+# help:      the number of helping unit the job is willing to take.
+# at:        preferred location.
+# structure: structure to be built
+# research:  technology to be researched
+# body:
+# propulsion:
+# turret:
 # { name: min: max: number: employ: at: ... }
 CyberBorg::derricks_orders = (derricks) ->
   extractor = "A0ResourceExtractor"
