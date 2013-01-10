@@ -192,100 +192,44 @@ report = (who) ->
   console(droids.join()) if droids.length
 
 # The second structure that this AI builds is a research facility.
-# When that happens, research_group gets called from eventStructureBuilt.
-# This AI builds five research facilities (the standard limit).
-# The AI also makes use of WZ2100 JS API's pursueResearch, which
-# allows one to specify the desired technology rather than
-# having to specify each technologyy in it's research path.
+# This AI may build five research facilities (the standard limit,
+# and again as first written).  The AI also makes use of
+# WZ2100 JS API's pursueResearch, which allows one to specify
+# the desired technology rather than having to specify
+# each technologyy in it's research path.
 # This requires a bit a management.
-#research_group = (structure, completed) ->
-#  structure = new WZObject(structure)
-#  orders = cyberBorg.groups.research.orders
-#  # orders.of(structure) is the order previously given
-#  # to the structure to pursue.
-#  # orders.next(structure <-not doing this anymore)
-#  gives the next order for the structure.
-#  # It may be that the structure was not already pursuing a research,
-#  # so it's either or.
-#  order = orders.of(structure) or orders.next(structure <- not  doing this )
-#  # we need to know what the structure just got done researching, if anything.
-#  if completed
-#    pursuing #{order} got done with #{completed.name}."
-#    # If we've reached the technology sought, then get the next order.
-#    order = orders.next(structure <- not  doing this )
-#       if order == completed.name
-#    # Eventually, we run out of orders, so we need to check.
-#  if order
-#    # So let the player know what we're researching, and
-#    # order the facilty to pursue it.
-#    pursueResearch(structure, order)
-#  else
-
 # Every time a research facility is done researching a technology,
-# a research event is triggered, and eventResearched is called.
+# a Researched event is triggered, and eventResearched is called.
 # eventResearched is WZ2100 JS API.
+# We're switch here to researched from events above.
 # A new research tecnology can be acquired by picking up it's plan,
 # which can be found from the ruins of a demolished facility.
 # So we need to check that in fact
 # the technology came from an active structure.
 researched = (completed, structure) ->
-  completed = completed.name # just interested in the name
-  research = structure.researching
-  unless research is completed
-    structure.executes({function:'pursueResearch', research:research})
+  if structure # did we get the research from a structure?
+    completed = completed.name # just interested in the name
+    research = structure.researching
+    unless research is completed
+      structure.executes({function:'pursueResearch', research:research})
 
+# A DroidIdle event occurs typically at the end of a move command.
+# The droid arrives and awaits new orders.
+# Origianally from eventDroidIdle,
+# we're are switched here to droidIdle from events above.
 droidIdle = (droid) ->
   # Anything else?  :)
   helping(droid)
 
-  # I thinks this all goes away. :))
-  #if groups.reserve.group.contains(droid)
-  #  # groups that accept idle reserve droids
-  #  groups.base.applying(droid) or
-  #  groups.derricks_trucks.applying(droid) or
-  #  groups.derricks_weapons.applying(droid)
-  #if groups.derricks_trucks.group.contains(droid)
-  #  derricks_trucks_group()
-  #if groups.derricks_weapons.group.contains(droid)
-  #  derricks_weapons_group()
-
-#derricks_trucks_group = () ->
-#  groups = cyberBorg.groups
-#  derricks_trucks = groups.derricks_trucks
-#  order = derricks_trucks.orders.next()
-#  while order
-#    builders = derricks_trucks.build(order)
-#    # TODO if count is 0, either
-#    # no trucks were found for the job or
-#    # the structure was not available.  This is bad.
-#    count = builders.length
-#    if count is 0
-#      derricks_trucks.orders.revert()
-#      break
-#    else
-#      #{order.structure}(#{order.at.x},#{order.at.y})}."
-#    order = derricks_trucks.orders.next()
-#
-#derricks_weapons_group = () ->
-#  groups = cyberBorg.groups
-#  derricks_weapons = groups.derricks_weapons
-#  order = derricks_weapons.orders.next()
-#  while order
-#    fighters = derricks_weapons.execute(order)
-#    # TODO if count is 0, then
-#    # no weapons were found for the job.
-#    count = fighters.length
-#    if count is 0
-#      derricks_weapons.orders.revert()
-#      break
-#    else
-#      going to (#{order.at.x},#{order.at.y})}."
-#    order = derricks_weapons.orders.next()
-
+# This is the work horse of the AI.
+# We iterate through all the groups,
+# higher ranks first,
+# and let the execute orders as they can.
 group_executions = (event) ->
   groups = cyberBorg.groups
-  # TODO break out at full employment
-  #break if reserve.length is 0 # TODO ?
+  # TODO TBD if a lower rank group releases droids, should we restart?
+  # Maybe this should be broken up into phases.
+  # A layoff phase followed by an employment phase.
   for group in groups
     name = group.name
     continue unless (name is FACTORIES) or (name is BASE) or (name is LABS) or

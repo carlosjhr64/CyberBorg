@@ -1221,13 +1221,15 @@ report = function(who) {
 
 researched = function(completed, structure) {
   var research;
-  completed = completed.name;
-  research = structure.researching;
-  if (research !== completed) {
-    return structure.executes({
-      "function": 'pursueResearch',
-      research: research
-    });
+  if (structure) {
+    completed = completed.name;
+    research = structure.researching;
+    if (research !== completed) {
+      return structure.executes({
+        "function": 'pursueResearch',
+        research: research
+      });
+    }
   }
 };
 
