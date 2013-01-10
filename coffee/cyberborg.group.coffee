@@ -12,10 +12,7 @@ class Group
       WZArray.bless(@reserves)
     else
       @reserves = WZArray.bless([])
-    #j# Let's check the orders for errors TODO?
-    #for order in @orders
-    #  unless order.limit and order.limit > 0
-    #    throw new Error("#{@name} order ##{} missing limit:")
+    # TODO check the orders for errors?
 
   add: (droid) ->
     # Need to enforce the reserve condition
@@ -31,96 +28,6 @@ class Group
       @reserve.push(droid)
     else
       throw new Error("Can't remove #{droid.namexy()} b/c it's not in group.")
-
-  ###
-
-  # We have a droid applying for base group.
-  # Returns true if droid gets employed.
-  # This allows a chain of employment applications.
-  applying: (droid) ->
-    # See if we're employing
-    name = droid.name
-    # Group may be just about to start
-    order = @orders.current() or @orders.first()
-    employ = order.employ(name)
-    return false if not employ or @group.counts_named(name) >= employ
-    # OK, you're in!
-    # TODO should help right away
-    @add(droid)
-    true
-
-  recruit: (n, type, at) ->
-    recruits = @reserve
-    # NOTE: recruits won't be this.reserve if filtered!
-    recruits = recruits.filters(type)  if type
-    recruits.nearest at  if at
-    i = 0
-    while i < n
-      break  unless recruits[0]
-      droid = recruits.shift()
-      @add(droid)
-      i++
-
-  cut: (n, type, at) ->
-    cuts = @group
-    # NOTE: cuts won't be this.group if filtered!
-    cuts = cuts.filters(type)  if type
-    cuts.nearest at  if at
-    i = 0
-    while i < n
-      droid = cuts.pop()
-      break  unless droid
-      @remove(droid)
-      i++
-
-  buildDroid: (order) ->
-    factories = @group.factories().idle()
-    i = 0
-    while i < factories.length
-      # Want factory.build(...)
-      if buildDroid(factories[i],
-      order.name, order.body, order.propulsion, "",
-      order.droid_type, order.turret)
-        return (factories[i])
-      i++
-    null
-
-  build: (order) -> #PREDICATE!  TODO this method goes away!
-    builders = [] # going to return the number of builders
-    structure = order.structure
-    if isStructureAvailable(structure)
-      at = order.at # where to build the structure
-      # Get available trucks
-      trucks = @group.trucks().idle()
-      count = trucks.length
-      if count < order.min
-        @recruit(order.min - count, CyberBorg.is_truck, at)
-        # Note that reserve trucks should always be idle for this to work.
-        trucks = @group.trucks().idle()
-      else
-        if count > order.max
-          @cut(count - order.min, CyberBorg.is_truck, at)
-          trucks = @group.trucks().idle()
-      if trucks.length > 0
-        trucks.nearest(at) # sort by distance
-        # assume nearest one can do
-        pos = at
-        #if structure != "A0ResourceExtractor"
-        #  # TODO DEBUG why is pickStructLocation not giving me "at" back?
-        #  # when I can actually build at "at"???
-        #  pos = pickStructLocation(trucks[0], structure, at.x, at.y)
-        if pos
-          i = 0
-          while i < trucks.length
-            truck = trucks[i]
-            if truck.execute(order)
-              # TODO this should be better abstracted, use order.order
-              truck.order = DORDER_BUILD
-              builders.push(truck)
-            i++
-    builders
-
-  ###
 
   units: (order) ->
     units = @group.idle().like(order.like)
@@ -150,7 +57,7 @@ class Group
       else
         @remove(unit) if @group.contains(unit)
 
-    # Let cap the units if more than max
+    # Let's cap the units if more than max
     units = units.cap(max) if units.length > max
     # Will this order take help?
     order.help = order.recruit - units.length
