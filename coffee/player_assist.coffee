@@ -14,9 +14,6 @@ SCOUTS    = 'Scouts'	# will scout and guard the area
 FACTORIES = 'Factories'	# builds droids
 LABS      = 'Labs'	# research facilities
 
-# Probably same as DORDER_NONE which is currently not available here.
-IS_IDLE   = 0
-
 # Refactoring in this AI showed that it made sense to have a single
 # event function pass an object describing the event.
 # The original JS API event functions are found in cyberborg.events.coffee.

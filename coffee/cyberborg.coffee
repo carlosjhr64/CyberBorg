@@ -9,6 +9,7 @@ class CyberBorg
   @SOUTH = 180
   @WEST = 270
   @ALL_PLAYERS = -1
+  @IS_IDLE = -1
 
   ###################
   ### CONSTRUCTOR ###

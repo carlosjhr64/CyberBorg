@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, FACTORIES, Group, IS_IDLE, LABS, RESERVE, SCOUTS, Scouter, WZArray, WZObject, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt, trace,
+var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, Scouter, WZArray, WZObject, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -502,7 +502,7 @@ Group = (function() {
     if (this.group.contains(droid)) {
       this.group.removeObject(droid);
       this.reserve.push(droid);
-      return droid.order = IS_IDLE;
+      return droid.order = CyberBorg.IS_IDLE;
     } else {
       throw new Error("Can't remove " + (droid.namexy()) + " b/c it's not in group.");
     }
@@ -571,6 +571,8 @@ CyberBorg = (function() {
   CyberBorg.WEST = 270;
 
   CyberBorg.ALL_PLAYERS = -1;
+
+  CyberBorg.IS_IDLE = -1;
 
   /* CONSTRUCTOR
   */
@@ -1139,8 +1141,6 @@ SCOUTS = 'Scouts';
 FACTORIES = 'Factories';
 
 LABS = 'Labs';
-
-IS_IDLE = 0;
 
 events = function(event) {
   cyberBorg.update();
