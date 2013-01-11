@@ -552,7 +552,7 @@ Group = (function() {
       }
     }
     if (executers.length > 0) cyberBorg.power = cyberBorg.power - order.cost;
-    return executers;
+    return executers.length;
   };
 
   return Group;
@@ -1288,7 +1288,7 @@ droidIdle = function(droid, group) {
 };
 
 group_executions = function(event) {
-  var count, executers, group, groups, name, order, orders, _i, _len, _results;
+  var group, groups, name, order, orders, _i, _len, _results;
   groups = cyberBorg.groups;
   _results = [];
   for (_i = 0, _len = groups.length; _i < _len; _i++) {
@@ -1298,25 +1298,19 @@ group_executions = function(event) {
       continue;
     }
     orders = group.orders;
-    order = orders.next();
-    if (order) {
-      _results.push((function() {
-        var _results2;
-        _results2 = [];
-        while (order) {
-          executers = group.execute(order);
-          count = executers.length;
-          if (count === 0) {
-            orders.revert();
-            break;
-          }
-          _results2.push(order = orders.next());
+    _results.push((function() {
+      var _results2;
+      _results2 = [];
+      while (order = orders.next()) {
+        if (!group.execute(order)) {
+          orders.revert();
+          break;
+        } else {
+          _results2.push(void 0);
         }
-        return _results2;
-      })());
-    } else {
-      _results.push(void 0);
-    }
+      }
+      return _results2;
+    })());
   }
   return _results;
 };

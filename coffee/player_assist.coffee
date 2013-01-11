@@ -250,17 +250,12 @@ group_executions = (event) ->
     continue unless (name is FACTORIES) or (name is BASE) or (name is LABS) or
     (name is SCOUTS) or (name is DERRICKS)
     orders = group.orders
-    order = orders.next()
-    if order
-      while order
-        executers = group.execute(order)
-        count = executers.length
-        if count is 0
-          orders.revert()
-          break
-        order = orders.next()
+    while order = orders.next()
+      unless group.execute(order)
+        orders.revert()
+        break
 
 destroyed = (object, group) ->
   # There might me other stuff to do...
-  # The object has been removed the the group already.
+  # The object has been removed from the group already.
   # We're given object and group as reference.

@@ -75,4 +75,4 @@ class Group
       else
         @remove(unit) for unit in units
     cyberBorg.power = cyberBorg.power - order.cost if executers.length > 0
-    return executers
+    return executers.length
