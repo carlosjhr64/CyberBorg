@@ -1,5 +1,5 @@
 # ***Order Attributes***
-# function:  the function name to call (most of the times, order number determines this)
+# function:  the function name to call (order number often determines this)
 # number:    order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting

@@ -1,5 +1,5 @@
 # ***Order Attributes***
-# function:  the function name to call (most of the times, order number determines this)
+# function:  the function name to call (order number often determines this)
 # number:    order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
@@ -9,7 +9,7 @@
 # min:       minimum number of units required to execute order.
 # max:       maximum allowed number of units to execute order.
 # help:      the number of helping unit the job is willing to take.
-# at:        preferred location.
+# at:        preferred location (and direction).
 # structure: structure to be built
 # research:  technology to be researched
 # body:

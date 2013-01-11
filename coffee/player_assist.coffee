@@ -23,7 +23,8 @@ events = (event) ->
   cyberBorg.update()
   switch event.name
     when 'StartLevel'     then startLevel()
-    when 'StructureBuilt' then structureBuilt(event.structure, event.droid, event.group)
+    when 'StructureBuilt'
+      structureBuilt(event.structure, event.droid, event.group)
     when 'DroidBuilt'     then droidBuilt(event.droid, event.structure)
     when 'DroidIdle'      then droidIdle(event.droid, event.group)
     when 'Researched'     then researched(event.research, event.structure)

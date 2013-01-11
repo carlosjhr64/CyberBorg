@@ -54,8 +54,42 @@ WZObject = (function() {
     return CyberBorg.is_weapon(this);
   };
 
+  WZObject.prototype.move_to = function(at, number) {
+    if (number == null) number = DORDER_MOVE;
+    if (droidCanReach(this, at.x, at.y)) {
+      orderDroidLoc(this, number, at.x, at.y);
+      this.order = number;
+      return true;
+    }
+    return false;
+  };
+
+  WZObject.prototype.repair_structure = function(built) {
+    if (built.health < 99) {
+      if (orderDroidObj(this, DORDER_REPAIR, built)) {
+        this.order = DORDER_REPAIR;
+        return true;
+      }
+    } else {
+      return this.move_to(built);
+    }
+  };
+
+  WZObject.prototype.maintain_structure = function(structure, at) {
+    var built;
+    if (built = cyberBorg.structure_at(at)) {
+      return this.repair_structure(built);
+    } else {
+      if (orderDroidBuild(this, DORDER_BUILD, structure, at.x, at.y, at.direction)) {
+        this.order = DORDER_BUILD;
+        return true;
+      }
+    }
+    return false;
+  };
+
   WZObject.prototype.executes_dorder = function(order) {
-    var at, number, ok, pos, structure, _ref, _ref2;
+    var at, number, ok;
     ok = false;
     number = order.number;
     at = order.at;
@@ -64,27 +98,7 @@ WZObject = (function() {
         trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_BUILD:
-        if (structure = cyberBorg.structure_at(at)) {
-          if (structure.health < 100) {
-            if (orderDroidObj(this, DORDER_REPAIR, structure)) {
-              ok = true;
-              this.order = DORDER_REPAIR;
-            }
-          } else {
-            pos = (_ref = CyberBorg.get_free_spots(at)) != null ? _ref.shuffle().first() : void 0;
-            if (!pos) pos = at;
-            if (droidCanReach(this, pos.x, pos.y)) {
-              orderDroidLoc(this, DORDER_MOVE, pos.x, pos.y);
-              ok = true;
-              this.order = DORDER_MOVE;
-            }
-          }
-        } else {
-          if (orderDroidBuild(this, DORDER_BUILD, order.structure, at.x, at.y, order.direction)) {
-            ok = true;
-            this.order = number;
-          }
-        }
+        ok = this.maintain_structure(order.structure, at);
         break;
       case DORDER_DEMOLISH:
         trace("TODO: need to implement number " + number + ".");
@@ -109,13 +123,7 @@ WZObject = (function() {
         break;
       case DORDER_MOVE:
       case DORDER_SCOUT:
-        pos = (_ref2 = CyberBorg.get_free_spots(at)) != null ? _ref2.shuffle().first() : void 0;
-        if (!pos) pos = at;
-        if (droidCanReach(this, pos.x, pos.y)) {
-          orderDroidLoc(this, number, at.x, at.y);
-          ok = true;
-          this.order = number;
-        }
+        ok = this.move_to(at, number);
         break;
       case DORDER_OBSERVE:
         trace("TODO: need to implement number " + number + ".");

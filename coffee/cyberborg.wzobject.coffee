@@ -17,6 +17,32 @@ class WZObject
   is_truck: () -> CyberBorg.is_truck(@)
   is_weapon: () -> CyberBorg.is_weapon(@)
 
+  move_to: (at, number=DORDER_MOVE) ->
+    if droidCanReach(@, at.x, at.y)
+      orderDroidLoc(@, number, at.x, at.y)
+      @order = number
+      return true
+    return false
+
+  repair_structure: (built) ->
+    if built.health < 99 #%
+      if orderDroidObj(@, DORDER_REPAIR, built)
+        @order = DORDER_REPAIR
+        return true
+    else
+      return @move_to(built)
+
+  maintain_structure: (structure, at) ->
+    # Let's try to be a bit smarter....
+    if built = cyberBorg.structure_at(at)
+      return @repair_structure(built)
+    else
+      if orderDroidBuild(@,
+      DORDER_BUILD, structure, at.x, at.y, at.direction)
+        @order = DORDER_BUILD
+        return true
+    return false
+
   executes_dorder: (order) ->
     ok = false
     number = order.number
@@ -25,26 +51,7 @@ class WZObject
       when DORDER_ATTACK
         trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_BUILD
-        # Let's try to be a bit smarter....
-        if structure = cyberBorg.structure_at(at)
-          if structure.health < 100 #%
-            if orderDroidObj(@, DORDER_REPAIR, structure)
-              ok = true
-              @order = DORDER_REPAIR
-          else
-            # Job done!  :P
-            # Let's just go to the site.
-            pos = CyberBorg.get_free_spots(at)?.shuffle().first()
-            pos = at unless pos
-            if droidCanReach(@, pos.x, pos.y)
-              orderDroidLoc(@, DORDER_MOVE, pos.x, pos.y)
-              ok = true
-              @order = DORDER_MOVE
-        else
-          if orderDroidBuild(@,
-          DORDER_BUILD, order.structure, at.x, at.y, order.direction)
-            ok = true
-            @order = number
+        ok = @maintain_structure(order.structure, at)
       #when DORDER_CIRCLE
       #  trace("TODO: need to implement number #{number}.") # TODO
       #when DORDER_COMMANDERSUPPORT
@@ -70,12 +77,7 @@ class WZObject
       when DORDER_LINEBUILD
         trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_MOVE, DORDER_SCOUT
-        pos = CyberBorg.get_free_spots(at)?.shuffle().first()
-        pos = at unless pos
-        if droidCanReach(@, pos.x, pos.y)
-          orderDroidLoc(@, number, at.x, at.y)
-          ok = true
-          @order = number
+        ok = @move_to(at, number)
       #when DORDER_NONE
       #  trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_OBSERVE
