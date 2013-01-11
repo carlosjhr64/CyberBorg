@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, Scouter, WZArray, WZObject, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt, trace,
+var BASE, CyberBorg, DERRICKS, FACTORIES, Group, IS_IDLE, LABS, RESERVE, SCOUTS, Scouter, WZArray, WZObject, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -32,7 +32,15 @@ WZObject = (function() {
   };
 
   WZObject.prototype.update = function() {
-    return this.copy(objFromId(this));
+    var obj;
+    obj = objFromId(this);
+    this.x = obj.x;
+    this.y = obj.y;
+    this.z = obj.x;
+    this.selected = obj.selected;
+    this.health = obj.health;
+    this.experience = obj.experience;
+    return this.order = obj.order;
   };
 
   WZObject.prototype.namexy = function() {
@@ -153,7 +161,7 @@ WZObject = (function() {
         trace("TODO: need to implement number " + number + ".");
         break;
       default:
-        trace("DEBUG: Order number " + number + " not listed.");
+        trace("Order number " + number + " not listed.");
     }
     return ok;
   };
@@ -493,7 +501,8 @@ Group = (function() {
   Group.prototype.remove = function(droid) {
     if (this.group.contains(droid)) {
       this.group.removeObject(droid);
-      return this.reserve.push(droid);
+      this.reserve.push(droid);
+      return droid.order = IS_IDLE;
     } else {
       throw new Error("Can't remove " + (droid.namexy()) + " b/c it's not in group.");
     }
@@ -987,11 +996,13 @@ eventDestroyed = function(object) {
 };
 
 eventDroidBuilt = function(droid, structure) {
-  var obj;
+  var found, obj;
+  found = cyberBorg.finds(structure);
   obj = {
     name: 'DroidBuilt',
     droid: new WZObject(droid),
-    structure: cyberBorg.find(structure)
+    structure: found.object,
+    group: found.group
   };
   return events(obj);
 };
@@ -1129,6 +1140,8 @@ FACTORIES = 'Factories';
 
 LABS = 'Labs';
 
+IS_IDLE = 0;
+
 events = function(event) {
   cyberBorg.update();
   switch (event.name) {
@@ -1139,7 +1152,7 @@ events = function(event) {
       structureBuilt(event.structure, event.droid, event.group);
       break;
     case 'DroidBuilt':
-      droidBuilt(event.droid, event.structure);
+      droidBuilt(event.droid, event.structure, event.group);
       break;
     case 'DroidIdle':
       droidIdle(event.droid, event.group);
@@ -1198,7 +1211,8 @@ min_map_and_design_on = function(structure) {
   }
 };
 
-droidBuilt = function(droid, structure) {
+droidBuilt = function(droid, structure, group) {
+  if (structure) group.remove(structure);
   cyberBorg.groups.named(RESERVE).group.push(droid);
   return helping(droid);
 };

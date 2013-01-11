@@ -26,6 +26,7 @@ class Group
     if @group.contains(droid)
       @group.removeObject(droid)
       @reserve.push(droid)
+      droid.order = IS_IDLE
     else
       throw new Error("Can't remove #{droid.namexy()} b/c it's not in group.")
 

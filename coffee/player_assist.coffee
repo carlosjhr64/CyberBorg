@@ -14,6 +14,9 @@ SCOUTS    = 'Scouts'	# will scout and guard the area
 FACTORIES = 'Factories'	# builds droids
 LABS      = 'Labs'	# research facilities
 
+# Probably same as DORDER_NONE which is currently not available here.
+IS_IDLE   = 0
+
 # Refactoring in this AI showed that it made sense to have a single
 # event function pass an object describing the event.
 # The original JS API event functions are found in cyberborg.events.coffee.
@@ -25,7 +28,8 @@ events = (event) ->
     when 'StartLevel'     then startLevel()
     when 'StructureBuilt'
       structureBuilt(event.structure, event.droid, event.group)
-    when 'DroidBuilt'     then droidBuilt(event.droid, event.structure)
+    when 'DroidBuilt'
+      droidBuilt(event.droid, event.structure, event.group)
     when 'DroidIdle'      then droidIdle(event.droid, event.group)
     when 'Researched'     then researched(event.research, event.structure)
     when 'Destroyed'      then destroyed(event.object, event.group)
@@ -149,7 +153,9 @@ min_map_and_design_on = (structure) ->
 #  When a droid is built, it triggers a droid built event and
 #  eventDroidBuilt(a WZ2100 JS API) is called.
 #  We're swithed to droidBuilt by events above.
-droidBuilt = (droid, structure) ->
+droidBuilt = (droid, structure, group) ->
+  # Structure free
+  group.remove(structure) if structure
   # Now what with the new droid?
   # If it's a truck, maybe it should go to the nearest job?
   # Well, the style for this AI is to work with groups.

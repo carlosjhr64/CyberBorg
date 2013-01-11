@@ -7,8 +7,18 @@ class WZObject
     @game_time = gameTime
     @[key] = object[key] for key of object
 
-  # TODO only needs to update volatile data :-??
-  update: () -> @copy(objFromId(@))
+  update: () ->
+    obj = objFromId(@)
+    @x = obj.x
+    @y = obj.y
+    @z = obj.x
+    @selected = obj.selected
+    @health = obj.health
+    @experience = obj.experience
+    # TODO we should be able to maintain status and modules
+    # @status = obj.status
+    # @modules = obj.modules
+    @order = obj.order # TODO we're going to maintain this
 
   namexy: () -> "#{@name}(#{@x},#{@y})"
 
@@ -108,7 +118,7 @@ class WZObject
       #when DORDER_UNUSED
       #  trace("TODO: need to implement number #{number}.") # TODO
       else
-        trace("DEBUG: Order number #{number} not listed.") # TODO
+        trace("Order number #{number} not listed.") # TODO
     return ok
 
   executes: (order) ->

@@ -74,12 +74,14 @@ eventDestroyed = (object) ->
   events(obj)
 
 eventDroidBuilt = (droid, structure) ->
+  found = cyberBorg.finds(structure)
   obj =
     name: 'DroidBuilt'
     # Here, droid is an new game object
     droid: new WZObject(droid)
     # But structrue is pre-existing
-    structure: cyberBorg.find(structure)
+    structure: found.object
+    group: found.group
   events(obj)
 
 eventDroidIdle = (droid) ->

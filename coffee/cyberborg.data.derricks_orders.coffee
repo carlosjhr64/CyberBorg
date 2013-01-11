@@ -12,6 +12,7 @@
 # at:        preferred location.
 # structure: structure to be built
 # research:  technology to be researched
+# name:      name of droid built (model name, need not be unique)
 # body:
 # propulsion:
 # turret:
