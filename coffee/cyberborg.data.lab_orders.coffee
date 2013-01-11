@@ -40,7 +40,7 @@ CyberBorg::lab_orders = ->
     pursue 'R-Defense-WallTower02'	# Ligh Cannon Hardpoint
     pursue 'R-Defense-AASite-QuadMg1'	# AA
     pursue 'R-Vehicle-Body04'		# Bug Body
+    pursue 'R-Vehicle-Prop-VTOL'	# Vtol
     pursue 'R-Struc-VTOLFactory'	# Vtol Factory
-    pursue 'pursue R-Vehicle-Prop-VTOL'	# Vtol
     pursue 'R-Wpn-Bomb01'		# Vtol Bomb
   ]

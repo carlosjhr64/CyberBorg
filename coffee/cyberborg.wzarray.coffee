@@ -5,6 +5,7 @@
 # There are some really common hacks on Array, we'll make'em on Array itself.
 Array::first = ()-> @[0]
 Array::last = ()-> @[@length-1]
+Array::shuffle = -> @sort -> 0.5 - Math.random()
 
 #####################
 ### ***WZArray*** ###
@@ -149,6 +150,11 @@ class WZArray
     at.x = at.x / n
     at.y = at.y / n
     at
+
+  collision: (at) ->
+    for object in @
+      return true if object.x is at.x and object.y is at.y
+    false
 
   #################
   ### ACCESSING ###

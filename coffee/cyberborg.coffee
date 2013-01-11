@@ -32,22 +32,28 @@ class CyberBorg
       for object in group.list
         object.update() if object.game_time < gameTime
 
+  for_all: (test_of) ->
+    for group in @groups
+      for object in group.list
+        return({object:object,group:group}) if test_of(object)
+    return null
+
   # When we get pre-existing game objects from WZ's JS API,
   # we need to find them in our groups.
   # Otherwise we end up with duplicates.
-  find: (target) ->
-    for group in @groups
-      for object in group.list
-        return(object) if object.id is target.id
-    return null
+  find: (target) -> @for_all((object) -> object.id is target.id)?.object
 
   # For cases where we want to get both our copy of the object and
   # the group it's in.
-  finds: (target) ->
-    for group in @groups
-      for object in group.list
-        return({object:object,group:group}) if object.id is target.id
-    return null
+  finds: (target) -> @for_all((object)->  object.id is target.id)
+
+  structure_at: (at) ->
+    @for_all(
+      (object) ->
+        object.x is at.x and
+        object.y is at.y and
+        object.type is STRUCTURE
+    )?.object
 
   #############
   ### ENUMS ###
@@ -84,7 +90,9 @@ class CyberBorg
         return(structureIdle(object))
     # It's a droid # TODO may need more cases.
     not_idle = [
-      DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH
+      DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD
+      DORDER_DEMOLISH
+      DORDER_REPAIR
       DORDER_SCOUT, DORDER_MOVE
     ]
     not_idle.indexOf(object.order) is WZArray.NONE
@@ -124,3 +132,14 @@ class CyberBorg
 
   @get_my_trucks = (at) -> # TODO out of group style?
     CyberBorg.enum_droid(me, DROID_CONSTRUCT)
+
+  @get_free_spots = (at,n=1) ->
+    x = at.x
+    y = at.y
+    list = WZArray.bless(enumArea(x-n, y-n, x+n, y+n, ALL_PLAYERS, false))
+    positions = []
+    for i in [-n..n]
+      for j in [-n..n]
+        pos = {x:(x+i),y:(y+j)}
+        positions.push(pos) unless list.collision(pos)
+    positions

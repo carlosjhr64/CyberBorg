@@ -55,7 +55,7 @@ WZObject = (function() {
   };
 
   WZObject.prototype.executes_dorder = function(order) {
-    var at, number, ok;
+    var at, number, ok, pos, structure, _ref, _ref2;
     ok = false;
     number = order.number;
     at = order.at;
@@ -64,9 +64,26 @@ WZObject = (function() {
         trace("TODO: need to implement number " + number + ".");
         break;
       case DORDER_BUILD:
-        if (orderDroidBuild(this, DORDER_BUILD, order.structure, at.x, at.y, order.direction)) {
-          ok = true;
-          this.order = number;
+        if (structure = cyberBorg.structure_at(at)) {
+          if (structure.health < 100) {
+            if (orderDroidObj(this, DORDER_REPAIR, structure)) {
+              ok = true;
+              this.order = DORDER_REPAIR;
+            }
+          } else {
+            pos = (_ref = CyberBorg.get_free_spots(at)) != null ? _ref.shuffle().first() : void 0;
+            if (!pos) pos = at;
+            if (droidCanReach(this, pos.x, pos.y)) {
+              orderDroidLoc(this, DORDER_MOVE, pos.x, pos.y);
+              ok = true;
+              this.order = DORDER_MOVE;
+            }
+          }
+        } else {
+          if (orderDroidBuild(this, DORDER_BUILD, order.structure, at.x, at.y, order.direction)) {
+            ok = true;
+            this.order = number;
+          }
         }
         break;
       case DORDER_DEMOLISH:
@@ -92,7 +109,9 @@ WZObject = (function() {
         break;
       case DORDER_MOVE:
       case DORDER_SCOUT:
-        if (droidCanReach(this, at.x, at.y)) {
+        pos = (_ref2 = CyberBorg.get_free_spots(at)) != null ? _ref2.shuffle().first() : void 0;
+        if (!pos) pos = at;
+        if (droidCanReach(this, pos.x, pos.y)) {
           orderDroidLoc(this, number, at.x, at.y);
           ok = true;
           this.order = number;
@@ -166,6 +185,12 @@ Array.prototype.first = function() {
 
 Array.prototype.last = function() {
   return this[this.length - 1];
+};
+
+Array.prototype.shuffle = function() {
+  return this.sort(function() {
+    return 0.5 - Math.random();
+  });
 };
 
 /* ***WZArray***
@@ -325,6 +350,15 @@ WZArray = (function() {
     at.x = at.x / n;
     at.y = at.y / n;
     return at;
+  };
+
+  WZArray.prototype.collision = function(at) {
+    var object, _i, _len;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      object = this[_i];
+      if (object.x === at.x && object.y === at.y) return true;
+    }
+    return false;
   };
 
   /* ACCESSING
@@ -557,7 +591,7 @@ CyberBorg = (function() {
     return _results;
   };
 
-  CyberBorg.prototype.find = function(target) {
+  CyberBorg.prototype.for_all = function(test_of) {
     var group, object, _i, _j, _len, _len2, _ref, _ref2;
     _ref = this.groups;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -565,21 +599,7 @@ CyberBorg = (function() {
       _ref2 = group.list;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         object = _ref2[_j];
-        if (object.id === target.id) return object;
-      }
-    }
-    return null;
-  };
-
-  CyberBorg.prototype.finds = function(target) {
-    var group, object, _i, _j, _len, _len2, _ref, _ref2;
-    _ref = this.groups;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      group = _ref[_i];
-      _ref2 = group.list;
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        object = _ref2[_j];
-        if (object.id === target.id) {
+        if (test_of(object)) {
           return {
             object: object,
             group: group
@@ -588,6 +608,26 @@ CyberBorg = (function() {
       }
     }
     return null;
+  };
+
+  CyberBorg.prototype.find = function(target) {
+    var _ref;
+    return (_ref = this.for_all(function(object) {
+      return object.id === target.id;
+    })) != null ? _ref.object : void 0;
+  };
+
+  CyberBorg.prototype.finds = function(target) {
+    return this.for_all(function(object) {
+      return object.id === target.id;
+    });
+  };
+
+  CyberBorg.prototype.structure_at = function(at) {
+    var _ref;
+    return (_ref = this.for_all(function(object) {
+      return object.x === at.x && object.y === at.y && object.type === STRUCTURE;
+    })) != null ? _ref.object : void 0;
   };
 
   /* ENUMS
@@ -635,7 +675,7 @@ CyberBorg = (function() {
         return structureIdle(object);
       }
     }
-    not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH, DORDER_SCOUT, DORDER_MOVE];
+    not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH, DORDER_REPAIR, DORDER_SCOUT, DORDER_MOVE];
     return not_idle.indexOf(object.order) === WZArray.NONE;
   };
 
@@ -670,6 +710,25 @@ CyberBorg = (function() {
 
   CyberBorg.get_my_trucks = function(at) {
     return CyberBorg.enum_droid(me, DROID_CONSTRUCT);
+  };
+
+  CyberBorg.get_free_spots = function(at, n) {
+    var i, j, list, pos, positions, x, y;
+    if (n == null) n = 1;
+    x = at.x;
+    y = at.y;
+    list = WZArray.bless(enumArea(x - n, y - n, x + n, y + n, ALL_PLAYERS, false));
+    positions = [];
+    for (i = -n; -n <= n ? i <= n : i >= n; -n <= n ? i++ : i--) {
+      for (j = -n; -n <= n ? j <= n : j >= n; -n <= n ? j++ : j--) {
+        pos = {
+          x: x + i,
+          y: y + j
+        };
+        if (!list.collision(pos)) positions.push(pos);
+      }
+    }
+    return positions;
   };
 
   return CyberBorg;
@@ -779,7 +838,7 @@ CyberBorg.prototype.lab_orders = function() {
     obj.help = 1;
     return obj;
   };
-  return [pursue('R-Wpn-MG1Mk1'), pursue('R-Struc-PowerModuleMk1'), pursue('R-Defense-Tower01'), pursue('R-Wpn-MG3Mk1'), pursue('R-Struc-RepairFacility'), pursue('R-Defense-WallTower02'), pursue('R-Defense-AASite-QuadMg1'), pursue('R-Vehicle-Body04'), pursue('R-Struc-VTOLFactory'), pursue('pursue R-Vehicle-Prop-VTOL'), pursue('R-Wpn-Bomb01')];
+  return [pursue('R-Wpn-MG1Mk1'), pursue('R-Struc-PowerModuleMk1'), pursue('R-Defense-Tower01'), pursue('R-Wpn-MG3Mk1'), pursue('R-Struc-RepairFacility'), pursue('R-Defense-WallTower02'), pursue('R-Defense-AASite-QuadMg1'), pursue('R-Vehicle-Body04'), pursue('R-Vehicle-Prop-VTOL'), pursue('R-Struc-VTOLFactory'), pursue('R-Wpn-Bomb01')];
 };
 
 CyberBorg.prototype.derricks_orders = function(derricks) {
