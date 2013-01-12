@@ -12,7 +12,9 @@ Number.prototype.times = function(action) {
   return _results;
 };
 
-trace = debug;
+trace = function(message) {
+  if (CyberBorg.TRACE) return debug(message);
+};
 
 WZObject = (function() {
 
@@ -589,6 +591,8 @@ CyberBorg = (function() {
   CyberBorg.ALL_PLAYERS = -1;
 
   CyberBorg.IS_IDLE = -1;
+
+  CyberBorg.TRACE = false;
 
   /* CLASS VARIABLES
   */
@@ -1304,6 +1308,9 @@ chat = function(sender, to, message) {
         return report(words[1]);
       case 'reload':
         return include("multiplay/skirmish/reloads.js");
+      case 'trace':
+        CyberBorg.TRACE = !CyberBorg.TRACE;
+        return console("TRACE is " + CyberBorg.TRACE);
       default:
         return console("What?");
     }
@@ -1384,21 +1391,21 @@ bug_report = function(label, droid, event) {
   var at, oid, order, _ref;
   order = null;
   oid = droid.oid;
-  debug("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id);
-  debug("\t\tevent:" + event.name + "\torder:" + droid.order + "\toid:" + oid);
+  trace("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id);
+  trace("\t\tevent:" + event.name + "\torder:" + droid.order + "\toid:" + oid);
   if (oid) {
     order = cyberBorg.get_order(oid);
     if (order) {
-      debug("\t\tfunction:" + order["function"] + "\tnumber:" + order.number);
-      if (order.structure) debug("\t\tstructure:" + order.structure);
-      if (at = order.at) debug("\t\tat:(" + at.x + "," + at.y + ")");
-      if (droid.order === 0) debug("\t\tBUG: Quitter.");
+      trace("\t\tfunction:" + order["function"] + "\tnumber:" + order.number);
+      if (order.structure) trace("\t\tstructure:" + order.structure);
+      if (at = order.at) trace("\t\tat:(" + at.x + "," + at.y + ")");
+      if (droid.order === 0) trace("\t\tBUG: Quitter.");
     } else {
-      debug("\t\tBUG: Order on oid does not exist.");
+      trace("\t\tBUG: Order on oid does not exist.");
     }
   }
   if (event.name === "Destroyed") {
-    debug("\t\t" + ((_ref = event.group) != null ? _ref.name : void 0) + "'s " + (event.object.namexy()) + " was destroyed.");
+    trace("\t\t" + ((_ref = event.group) != null ? _ref.name : void 0) + "'s " + (event.object.namexy()) + " was destroyed.");
   }
   return order;
 };
@@ -1424,12 +1431,12 @@ gotchas = function(event) {
     if (event.name === "Destroyed" && event.object.name === "Oil Derrick") {
       if (order && order["function"] === 'orderDroidBuild' && order.structure === 'A0ResourceExtractor') {
         if (droid.executes(order)) {
-          debug("\tRe-issued order");
+          trace("\tRe-issued order");
         } else {
-          debug("\tOh! The Humanity!!!");
+          trace("\tOh! The Humanity!!!");
         }
       }
     }
   }
-  if (nwl) return debug("");
+  if (nwl) return trace("");
 };

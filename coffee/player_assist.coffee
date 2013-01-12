@@ -192,6 +192,10 @@ chat = (sender, to, message) ->
       when 'report' then report(words[1])
       # TODO some way to modify tha AI while in play?
       when 'reload' then include("multiplay/skirmish/reloads.js")
+      # Toggle tracing
+      when 'trace'
+        CyberBorg.TRACE = !CyberBorg.TRACE
+        console("TRACE is #{CyberBorg.TRACE}")
       else console("What?")
 
 # Lists the units in the group by name and position.
@@ -265,22 +269,22 @@ group_executions = (event) ->
 bug_report = (label,droid,event) ->
   order = null
   oid = droid.oid
-  debug "#{label}:\t#{droid.namexy()}\tid:#{droid.id}"
-  debug "\t\tevent:#{event.name}\torder:#{droid.order}\toid:#{oid}"
+  trace "#{label}:\t#{droid.namexy()}\tid:#{droid.id}"
+  trace "\t\tevent:#{event.name}\torder:#{droid.order}\toid:#{oid}"
   if oid
     order = cyberBorg.get_order(oid)
     if order
-      debug "\t\tfunction:#{order.function}\tnumber:#{order.number}"
+      trace "\t\tfunction:#{order.function}\tnumber:#{order.number}"
       if order.structure
-        debug "\t\tstructure:#{order.structure}"
+        trace "\t\tstructure:#{order.structure}"
       if at = order.at
-        debug "\t\tat:(#{at.x},#{at.y})"
+        trace "\t\tat:(#{at.x},#{at.y})"
       if droid.order is 0
-        debug "\t\tBUG: Quitter."
+        trace "\t\tBUG: Quitter."
     else
-      debug "\t\tBUG: Order on oid does not exist."
+      trace "\t\tBUG: Order on oid does not exist."
   if event.name is "Destroyed"
-    debug "\t\t#{event.group?.name}'s #{event.object.namexy()} was destroyed."
+    trace "\t\t#{event.group?.name}'s #{event.object.namexy()} was destroyed."
   return order
 
 # Let's find problems and fix'em
@@ -297,7 +301,7 @@ gotchas = (event) ->
       if order and order.function is 'orderDroidBuild' and
       order.structure is 'A0ResourceExtractor'
         if droid.executes(order)
-          debug("\tRe-issued order")
+          trace("\tRe-issued order")
         else
-          debug("\tOh! The Humanity!!!")
-  debug("") if nwl
+          trace("\tOh! The Humanity!!!")
+  trace("") if nwl

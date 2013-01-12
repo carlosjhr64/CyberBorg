@@ -10,6 +10,7 @@ class CyberBorg
   @WEST = 270
   @ALL_PLAYERS = -1
   @IS_IDLE = -1
+  @TRACE = false
 
   #######################
   ### CLASS VARIABLES ###

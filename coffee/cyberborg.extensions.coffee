@@ -9,4 +9,5 @@ Number::times = (action) ->
 
 # Alias debug as trace
 # It's a way to differentiat intent
-trace = debug
+trace = (message) ->
+  debug(message) if CyberBorg.TRACE
