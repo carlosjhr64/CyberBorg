@@ -194,8 +194,9 @@ chat = (sender, to, message) ->
       when 'reload' then include("multiplay/skirmish/reloads.js")
       # Toggle tracing
       when 'trace'
+        trace("Tracing off.") if CyberBorg.TRACE
         CyberBorg.TRACE = !CyberBorg.TRACE
-        console("TRACE is #{CyberBorg.TRACE}")
+        trace("Tracing on.") if CyberBorg.TRACE
       else console("What?")
 
 # Lists the units in the group by name and position.
@@ -269,8 +270,9 @@ group_executions = (event) ->
 bug_report = (label,droid,event) ->
   order = null
   oid = droid.oid
-  trace "#{label}:\t#{droid.namexy()}\tid:#{droid.id}"
-  trace "\t\tevent:#{event.name}\torder:#{droid.order}\toid:#{oid}"
+  trace "#{label}:\t#{droid.namexy()}\tid:#{droid.id}\tevent:#{event.name}"
+  number = droid.order
+  trace "\t\toid:#{oid}\torder number:#{number} => #{CyberBorg.ORDER_MAP[number]}"
   if oid
     order = cyberBorg.get_order(oid)
     if order
@@ -279,7 +281,7 @@ bug_report = (label,droid,event) ->
         trace "\t\tstructure:#{order.structure}"
       if at = order.at
         trace "\t\tat:(#{at.x},#{at.y})"
-      if droid.order is 0
+      if number is 0
         trace "\t\tBUG: Quitter."
     else
       trace "\t\tBUG: Order on oid does not exist."

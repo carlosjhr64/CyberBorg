@@ -592,10 +592,12 @@ CyberBorg = (function() {
 
   CyberBorg.IS_IDLE = -1;
 
-  CyberBorg.TRACE = false;
+  CyberBorg.ORDER_MAP = ['DORDER_NONE', 'DORDER_STOP', 'DORDER_MOVE', 'DORDER_ATTACK', 'DORDER_BUILD', 'DORDER_HELPBUILD', 'DORDER_LINEBUILD', 'DORDER_DEMOLISH', 'DORDER_REPAIR', 'DORDER_OBSERVE', 'DORDER_FIRESUPPORT', 'DORDER_RETREAT', 'DORDER_DESTRUCT', 'DORDER_RTB', 'DORDER_RTR', 'DORDER_RUN', 'DORDER_EMBARK', 'DORDER_DISEMBARK', 'DORDER_ATTACKTARGET', 'DORDER_COMMANDERSUPPORT', 'DORDER_BUILDMODULE', 'DORDER_RECYCLE', 'DORDER_TRANSPORTOUT', 'DORDER_TRANSPORTIN', 'DORDER_TRANSPORTRETURN', 'DORDER_GUARD', 'DORDER_DROIDREPAIR', 'DORDER_RESTORE', 'DORDER_SCOUT', 'DORDER_RUNBURN', 'DORDER_UNUSED', 'DORDER_PATROL', 'DORDER_REARM', 'DORDER_RECOVER', 'DORDER_LEAVEMAP', 'DORDER_RTR_SPECIFIED', 'DORDER_CIRCLE', 'DORDER_HOLD'];
 
   /* CLASS VARIABLES
   */
+
+  CyberBorg.TRACE = false;
 
   CyberBorg.OID = 0;
 
@@ -1309,8 +1311,10 @@ chat = function(sender, to, message) {
       case 'reload':
         return include("multiplay/skirmish/reloads.js");
       case 'trace':
+        if (CyberBorg.TRACE) trace("Tracing off.");
         CyberBorg.TRACE = !CyberBorg.TRACE;
-        return console("TRACE is " + CyberBorg.TRACE);
+        if (CyberBorg.TRACE) return trace("Tracing on.");
+        break;
       default:
         return console("What?");
     }
@@ -1388,18 +1392,19 @@ group_executions = function(event) {
 };
 
 bug_report = function(label, droid, event) {
-  var at, oid, order, _ref;
+  var at, number, oid, order, _ref;
   order = null;
   oid = droid.oid;
-  trace("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id);
-  trace("\t\tevent:" + event.name + "\torder:" + droid.order + "\toid:" + oid);
+  trace("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\tevent:" + event.name);
+  number = droid.order;
+  trace("\t\toid:" + oid + "\torder number:" + number + " => " + CyberBorg.ORDER_MAP[number]);
   if (oid) {
     order = cyberBorg.get_order(oid);
     if (order) {
       trace("\t\tfunction:" + order["function"] + "\tnumber:" + order.number);
       if (order.structure) trace("\t\tstructure:" + order.structure);
       if (at = order.at) trace("\t\tat:(" + at.x + "," + at.y + ")");
-      if (droid.order === 0) trace("\t\tBUG: Quitter.");
+      if (number === 0) trace("\t\tBUG: Quitter.");
     } else {
       trace("\t\tBUG: Order on oid does not exist.");
     }
