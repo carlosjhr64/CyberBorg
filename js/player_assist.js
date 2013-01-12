@@ -524,14 +524,15 @@ Group = (function() {
   };
 
   Group.prototype.layoffs = function(oid, reset) {
-    var unit, _i, _len, _ref;
+    var order, unit, _i, _len, _ref;
     if (reset == null) reset = null;
     _ref = this.group.in_oid(oid);
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       unit = _ref[_i];
       this.remove(unit);
+      unit.oid = reset;
     }
-    return this.orders.get_order(oid).oid = reset;
+    if (order = this.orders.get_order(oid)) return order.oid = reset;
   };
 
   Group.prototype.units = function(order) {
@@ -842,7 +843,7 @@ CyberBorg.prototype.base_orders = function() {
 };
 
 CyberBorg.prototype.factory_orders = function() {
-  var build, mg1, orders, truck, whb1;
+  var build, mg1, orders, truck, turret, whb1;
   build = function(obj) {
     obj["function"] = "buildDroid";
     obj.like = /Factory/;
@@ -864,9 +865,10 @@ CyberBorg.prototype.factory_orders = function() {
     turret: "Spade1Mk1",
     droid_type: DROID_CONSTRUCT
   };
+  turret = ["MG3Mk1", "MG2Mk1", "MG1Mk1"];
   mg1 = {
     name: "MgWhB1",
-    turret: "MG1Mk1",
+    turret: turret,
     droid_type: DROID_WEAPON
   };
   orders = [];
@@ -1233,7 +1235,7 @@ startLevel = function() {
 };
 
 structureBuilt = function(structure, droid, group) {
-  group.layoffs(droid.oid);
+  if (droid != null ? droid.oid : void 0) group.layoffs(droid.oid);
   cyberBorg.groups.named(RESERVE).group.push(structure);
   if (structure.type === STRUCTURE) {
     switch (structure.stattype) {
@@ -1251,7 +1253,7 @@ min_map_and_design_on = function(structure) {
 };
 
 droidBuilt = function(droid, structure, group) {
-  group.layoffs(structure.oid);
+  if (structure != null ? structure.oid : void 0) group.layoffs(structure.oid);
   cyberBorg.groups.named(RESERVE).group.push(droid);
   return helping(droid);
 };
@@ -1326,7 +1328,7 @@ researched = function(completed, structure, group) {
 };
 
 droidIdle = function(droid, group) {
-  group.layoffs(droid.oid);
+  if (droid.oid) group.layoffs(droid.oid);
   return helping(droid);
 };
 

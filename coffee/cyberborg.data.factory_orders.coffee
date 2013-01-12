@@ -37,7 +37,8 @@ CyberBorg::factory_orders = ->
   truck = name: "Truck", turret: "Spade1Mk1", droid_type: DROID_CONSTRUCT
 
   # ...machine gunner
-  mg1 = name: "MgWhB1", turret: "MG1Mk1", droid_type: DROID_WEAPON
+  turret = ["MG3Mk1", "MG2Mk1", "MG1Mk1"]
+  mg1 = name: "MgWhB1", turret: turret, droid_type: DROID_WEAPON
 
   # The orders are...
   orders = []

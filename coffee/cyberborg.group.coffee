@@ -31,8 +31,11 @@ class Group
       throw new Error("Can't remove #{droid.namexy()} b/c it's not in group.")
 
   layoffs: (oid, reset=null) ->
-    @remove(unit) for unit in @group.in_oid(oid)
-    @orders.get_order(oid).oid = reset # order completed
+    for unit in @group.in_oid(oid)
+      @remove(unit)
+      unit.oid = reset # droid laidoff
+    if order = @orders.get_order(oid) 
+      order.oid = reset # order completed
 
   units: (order) ->
     min = order.min
