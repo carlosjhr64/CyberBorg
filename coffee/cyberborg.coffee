@@ -43,6 +43,13 @@ class CyberBorg
   ### GETS ###
   ############
 
+  for_all: (test_of) ->
+    list = []
+    for group in @groups
+      for object in group.list
+        list.push(object) if test_of(object)
+    return WZArray.bless(list)
+
   for_one: (test_of) ->
     for group in @groups
       for object in group.list

@@ -40,6 +40,8 @@ events = (event) ->
     else trace("#{event.name} NOT HANDLED!")
   # Next see what orders the groups can execute
   group_executions(event)
+  # Next, due to bugs either in this script or in the game...
+  gotchas(event)
 
 # When Warzone 2100 starts the game, it calls eventStartLevel.
 # eventStarLevel is WZ2100 JS API.
@@ -236,6 +238,11 @@ droidIdle = (droid, group) ->
   # Anything else?  :)
   helping(droid)
 
+destroyed = (object, group) ->
+  # There might be other stuff to do...
+  # The object has been removed from the group already.
+  # We're given object and group as reference.
+
 # This is the work horse of the AI.
 # We iterate through all the groups,
 # higher ranks first,
@@ -255,7 +262,23 @@ group_executions = (event) ->
         orders.revert()
         break
 
-destroyed = (object, group) ->
-  # There might me other stuff to do...
-  # The object has been removed from the group already.
-  # We're given object and group as reference.
+bug_report = (label,droid) ->
+  oid = droid.oid
+  debug "#{label}: id:#{droid.id} #{droid.namexy()} order:#{droid.order} oid:#{oid}"
+  if oid
+    order = cyberBorg.get_order(oid)
+    if order
+      debug "   function:#{order.function} structure:#{order.structure} number:#{order.number}"
+      if at = order.at
+        debug "   at:(#{at.x},#{at.y})"
+      if droid.order is 0
+        debug "   BUG: Quitter."
+    else
+      debug "   BUG: Order on oid does not exist."
+
+# Let's find problems and fix'em
+gotchas = (event) ->
+  for droid in cyberBorg.for_all((object) -> object.selected)
+    bug_report("Selected", droid)
+  for droid in cyberBorg.for_all((object) -> object.order is 0)
+    bug_report("Idle", droid)

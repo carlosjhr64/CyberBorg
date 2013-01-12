@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, Scouter, WZArray, WZObject, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt, trace,
+var BASE, CyberBorg, DERRICKS, FACTORIES, Group, LABS, RESERVE, SCOUTS, Scouter, WZArray, WZObject, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotchas, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -634,6 +634,21 @@ CyberBorg = (function() {
   /* GETS
   */
 
+  CyberBorg.prototype.for_all = function(test_of) {
+    var group, list, object, _i, _j, _len, _len2, _ref, _ref2;
+    list = [];
+    _ref = this.groups;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      group = _ref[_i];
+      _ref2 = group.list;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        object = _ref2[_j];
+        if (test_of(object)) list.push(object);
+      }
+    }
+    return WZArray.bless(list);
+  };
+
   CyberBorg.prototype.for_one = function(test_of) {
     var group, object, _i, _j, _len, _len2, _ref, _ref2;
     _ref = this.groups;
@@ -1210,7 +1225,8 @@ events = function(event) {
     default:
       trace("" + event.name + " NOT HANDLED!");
   }
-  return group_executions(event);
+  group_executions(event);
+  return gotchas(event);
 };
 
 startLevel = function() {
@@ -1332,6 +1348,8 @@ droidIdle = function(droid, group) {
   return helping(droid);
 };
 
+destroyed = function(object, group) {};
+
 group_executions = function(event) {
   var group, groups, name, order, orders, _i, _len, _results;
   groups = cyberBorg.groups;
@@ -1360,4 +1378,38 @@ group_executions = function(event) {
   return _results;
 };
 
-destroyed = function(object, group) {};
+bug_report = function(label, droid) {
+  var at, oid, order;
+  oid = droid.oid;
+  debug("" + label + ": id:" + droid.id + " " + (droid.namexy()) + " order:" + droid.order + " oid:" + oid);
+  if (oid) {
+    order = cyberBorg.get_order(oid);
+    if (order) {
+      debug("   function:" + order["function"] + " structure:" + order.structure + " number:" + order.number);
+      if (at = order.at) debug("   at:(" + at.x + "," + at.y + ")");
+      if (droid.order === 0) return debug("   BUG: Quitter.");
+    } else {
+      return debug("   BUG: Order on oid does not exist.");
+    }
+  }
+};
+
+gotchas = function(event) {
+  var droid, _i, _j, _len, _len2, _ref, _ref2, _results;
+  _ref = cyberBorg.for_all(function(object) {
+    return object.selected;
+  });
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    droid = _ref[_i];
+    bug_report("Selected", droid);
+  }
+  _ref2 = cyberBorg.for_all(function(object) {
+    return object.order === 0;
+  });
+  _results = [];
+  for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+    droid = _ref2[_j];
+    _results.push(bug_report("Idle", droid));
+  }
+  return _results;
+};
