@@ -30,49 +30,45 @@ class Group
     else
       throw new Error("Can't remove #{droid.namexy()} b/c it's not in group.")
 
+  layoffs: (oid, reset=null) ->
+    @remove(unit) for unit in @group.in_oid(oid)
+    @orders.get_order(oid).oid = reset # order completed
+
   units: (order) ->
-    units = @group.idle().like(order.like)
+    min = order.min
+    limit = order.limit
+    size = @group.length
 
-    # Limits the maximum size of group (idle or not)
-    if @group.length < order.limit
-      # Do we need to recruit?
-      if units.length < order.recruit
-        # Note the reserve is expected to be idle
-        # Just add reserve for now
-        units = units.add(@reserve.like(order.like))
+    # Check the group limit
+    return null if size + min > limit
 
+    units = @reserve.like(order.like)
     # Check we have the minimum units required for the order.
-    # If not, shotcut out of this function.
-    return null if units.length < order.min
+    # If not, shortcut out of this function.
+    return null if units.length < min
 
     # Sort by distance to site if given at.
     units.nearest(order.at) if order.at
 
-    # Select units in and out of the group
     max = order.max
-    count = 0
-    for unit in units
-      count += 1
-      if count <= max
-        @add(unit) if not @group.contains(unit)
-      else
-        @remove(unit) if @group.contains(unit)
+    if size + max > limit
+      max = limit - size
 
     # Let's cap the units if more than max
     units = units.cap(max) if units.length > max
-    # Will this order take help?
-    order.help = order.recruit - units.length
-    units
+
+    return units
 
   execute: (order) ->
-    executers = [] # Going to return the units executing order.
-    units = @units(order)
-    if units
-      if cyberBorg.power > order.power
-        for unit in units
-          if unit.executes(order)
-            executers.push(unit)
-      else
-        @remove(unit) for unit in units
-    cyberBorg.power = cyberBorg.power - order.cost if executers.length > 0
-    return executers.length
+    count = 0
+    if cyberBorg.power > order.power and units = @units(order)
+      oid = CyberBorg.oid() # A unique order id.
+      for unit in units
+        if unit.executes(order)
+          unit.oid = oid
+          @add(unit)
+          count += 1
+      if count
+        order.oid = oid
+        cyberBorg.power -= order.cost
+    return count

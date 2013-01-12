@@ -88,6 +88,8 @@ class WZArray
   in: (group) ->
     @filters((object) -> group.group.indexOfObject(object) > WZArray.NONE)
 
+  in_oid: (oid) -> @filters((object) -> object.oid is oid)
+
   # selects from list objects that are idle in list
   idle: -> @filters(CyberBorg.is_idle)
 
@@ -127,13 +129,10 @@ class WZArray
     count
 
   # Counts the number of game objects named by the given name.
-  counts_named: (name) ->
-    count = 0
-    i = 0
-    while i < @length
-      count += 1 if @[i].name == name
-      i++
-    count
+  counts_named: (name) -> @counts((obj) -> obj.name == name)
+
+  # Count the number of game object with the given oid
+  counts_in_oid: (oid) -> @counts((obj) -> obj.oid == oid)
 
   # Returns the center of the list (group).
   # Returns {x:x,y:y}
@@ -162,11 +161,14 @@ class WZArray
 
   # Returns the first item with the given name.
   named: (name) ->
-    i = 0
-    while i < @length
-      return(@[i]) if @[i].name == name
-      i++
+    for object in @
+      return object if object.name is name
     null
+
+  get_order: (oid) ->
+    for order in @
+      return order if order.oid is oid
+    return null
 
   ##############
   ### CURSOR ###

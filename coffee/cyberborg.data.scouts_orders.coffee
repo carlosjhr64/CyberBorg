@@ -5,7 +5,6 @@
 # power:     minimum power b/4 starting
 # cost:      the power cost of the order
 # limit:     the maximum group size
-# recruit:   the amount of units order tries to get
 # min:       minimum number of units required to execute order.
 # max:       maximum allowed number of units to execute order.
 # help:      the number of helping unit the job is willing to take.
@@ -24,7 +23,6 @@ CyberBorg::scouts_orders = (derricks) ->
     cost: 0
     like: /MgWh/
     limit: 12
-    recruit: 1
     min: 1
     max: 1
     help: 1

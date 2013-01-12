@@ -149,10 +149,12 @@ eventReinforcementsArrived = () ->
 ###
 
 eventResearched = (research, structure) ->
+  found = cyberBorg.finds(structure)
   obj =
     name: 'Researched'
     research: research
-    structure: cyberBorg.find(structure)
+    structure: found?.object
+    group: found?.group
   events(obj)
 
 ###

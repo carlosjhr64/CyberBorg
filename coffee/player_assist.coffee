@@ -22,15 +22,20 @@ LABS      = 'Labs'	# research facilities
 events = (event) ->
   cyberBorg.update()
   switch event.name
-    when 'StartLevel'     then startLevel()
+    when 'StartLevel'
+      startLevel()
     when 'StructureBuilt'
       structureBuilt(event.structure, event.droid, event.group)
     when 'DroidBuilt'
       droidBuilt(event.droid, event.structure, event.group)
-    when 'DroidIdle'      then droidIdle(event.droid, event.group)
-    when 'Researched'     then researched(event.research, event.structure)
-    when 'Destroyed'      then destroyed(event.object, event.group)
-    when 'Chat'           then chat(event.sender, event.to, event.message)
+    when 'DroidIdle'
+      droidIdle(event.droid, event.group)
+    when 'Researched'
+      researched(event.research, event.structure, event.group)
+    when 'Destroyed'
+      destroyed(event.object, event.group)
+    when 'Chat'
+      chat(event.sender, event.to, event.message)
     # We should catch all possibilities, but in case we missed something...
     else trace("#{event.name} NOT HANDLED!")
   # Next see what orders the groups can execute
@@ -116,7 +121,7 @@ startLevel = () ->
 # We're then swithched to structureBuilt, here, from events.
 structureBuilt = (structure, droid, group) ->
   # The droid is now free... goes to reserve.
-  group.remove(droid)
+  group.layoffs(droid.oid)
   # So every time we build a structure, this function gets called.
   # And the first thing that gets built is a Factory (as I first wrote this,
   # may change and become part of what the AI figures out later).
@@ -152,7 +157,7 @@ min_map_and_design_on = (structure) ->
 #  We're swithed to droidBuilt by events above.
 droidBuilt = (droid, structure, group) ->
   # Structure free
-  group.remove(structure) if structure
+  group.layoffs(structure.oid)
   # Now what with the new droid?
   # If it's a truck, maybe it should go to the nearest job?
   # Well, the style for this AI is to work with groups.
@@ -164,21 +169,16 @@ droidBuilt = (droid, structure, group) ->
 # helping is called whenever a droid finds itself idle, as
 # when it first gets created.
 helping = (object) ->
-  reserve = cyberBorg.groups.named(RESERVE).group
   for group in cyberBorg.groups
-    # TODO TBD what if group is reserve?
-    continue if group is reserve
     order = group.orders.current()
+    oid = order?.oid
     # So for each ongoing job, check if it'll take the droid.
-    if order and
-    order.help and order.help > 0 and
-    order.like.test(object.name) and
-    object.executes(order)
-      # If droid is in RESERVE, we can add to the working group, but
-      # otherwise the group owning the droid gets to recall.
-      group.add(object) if reserve.contains(object)
-      order.help -= 1
-      return true
+    if oid and (help_wanted = order.help) and order.like.test(object.name)
+      employed = group.list.counts_in_oid(oid)
+      if employed < help_wanted and object.executes(order)
+        object.oid = oid
+        group.add(object)
+        return true
   return false
 
 # Player commands...
@@ -217,11 +217,13 @@ report = (who) ->
 # which can be found from the ruins of a demolished facility.
 # So we need to check that in fact
 # the technology came from an active structure.
-researched = (completed, structure) ->
+researched = (completed, structure, group) ->
   if structure # did we get the research from a structure?
     completed = completed.name # just interested in the name
     research = structure.researching
-    unless research is completed
+    if research is completed
+      group.layoffs(structure.oid)
+    else
       structure.executes({function:'pursueResearch', research:research})
 
 # A DroidIdle event occurs typically at the end of a move command.
@@ -229,10 +231,8 @@ researched = (completed, structure) ->
 # Origianally from eventDroidIdle,
 # we're are switched here to droidIdle from events above.
 droidIdle = (droid, group) ->
-  # "I quuuiiiit!" says the droid.
-  # "I wanna better job"
-  group.remove(droid)
-  # group not actually used, but might be usefull in the future.
+  # "You WUT???  No, I quuuiiiit!" says the droid.
+  group.layoffs(droid.oid)
   # Anything else?  :)
   helping(droid)
 

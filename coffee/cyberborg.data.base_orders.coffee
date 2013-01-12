@@ -5,16 +5,16 @@
 # power:     minimum power b/4 starting
 # cost:      the power cost of the order
 # limit:     the maximum group size
-# recruit:   the amount of units order tries to get
 # min:       minimum number of units required to execute order.
 # max:       maximum allowed number of units to execute order.
-# help:      the number of helping unit the job is willing to take.
+# help:      the number of helping units the job is willing to take.
 # at:        preferred location (and direction).
 # structure: structure to be built
 # research:  technology to be researched
 # body:
 # propulsion:
 # turret:
+# oid:       the order id is set at the time the order is given
 # { name: min: max: number: employ: at: ... }
 CyberBorg::base_orders = ->
   # What we're building
@@ -30,6 +30,7 @@ CyberBorg::base_orders = ->
       cost: 100
       structure: arr[0]
       at: x: arr[1], y: arr[2]
+      oid: null # set at the time order is given
     order
 
   with_three_trucks = (obj) ->
@@ -39,7 +40,6 @@ CyberBorg::base_orders = ->
     obj.limit = 3 # maximum group size
     obj.min = 1 # it will execute the order only with at least this amount
     obj.max = 3 # it will execute the order with no more than this amount
-    obj.recruit = 3 # recruit from reserve if we have less than this amount
     obj.help = 3 # project will accept help once started
     obj
 
@@ -49,7 +49,6 @@ CyberBorg::base_orders = ->
     obj.limit = 1 # maximum group size
     obj.min = 1
     obj.max = 1
-    obj.recruit = 1
     obj.help = 1 # project will accept help once started :-??
     obj
 

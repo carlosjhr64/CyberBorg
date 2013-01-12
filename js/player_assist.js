@@ -295,6 +295,12 @@ WZArray = (function() {
     });
   };
 
+  WZArray.prototype.in_oid = function(oid) {
+    return this.filters(function(object) {
+      return object.oid === oid;
+    });
+  };
+
   WZArray.prototype.idle = function() {
     return this.filters(CyberBorg.is_idle);
   };
@@ -340,14 +346,15 @@ WZArray = (function() {
   };
 
   WZArray.prototype.counts_named = function(name) {
-    var count, i;
-    count = 0;
-    i = 0;
-    while (i < this.length) {
-      if (this[i].name === name) count += 1;
-      i++;
-    }
-    return count;
+    return this.counts(function(obj) {
+      return obj.name === name;
+    });
+  };
+
+  WZArray.prototype.counts_in_oid = function(oid) {
+    return this.counts(function(obj) {
+      return obj.oid === oid;
+    });
   };
 
   WZArray.prototype.center = function() {
@@ -381,11 +388,19 @@ WZArray = (function() {
   */
 
   WZArray.prototype.named = function(name) {
-    var i;
-    i = 0;
-    while (i < this.length) {
-      if (this[i].name === name) return this[i];
-      i++;
+    var object, _i, _len;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      object = this[_i];
+      if (object.name === name) return object;
+    }
+    return null;
+  };
+
+  WZArray.prototype.get_order = function(oid) {
+    var order, _i, _len;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      order = this[_i];
+      if (order.oid === oid) return order;
     }
     return null;
   };
@@ -508,51 +523,51 @@ Group = (function() {
     }
   };
 
-  Group.prototype.units = function(order) {
-    var count, max, unit, units, _i, _len;
-    units = this.group.idle().like(order.like);
-    if (this.group.length < order.limit) {
-      if (units.length < order.recruit) {
-        units = units.add(this.reserve.like(order.like));
-      }
+  Group.prototype.layoffs = function(oid, reset) {
+    var unit, _i, _len, _ref;
+    if (reset == null) reset = null;
+    _ref = this.group.in_oid(oid);
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      unit = _ref[_i];
+      this.remove(unit);
     }
-    if (units.length < order.min) return null;
+    return this.orders.get_order(oid).oid = reset;
+  };
+
+  Group.prototype.units = function(order) {
+    var limit, max, min, size, units;
+    min = order.min;
+    limit = order.limit;
+    size = this.group.length;
+    if (size + min > limit) return null;
+    units = this.reserve.like(order.like);
+    if (units.length < min) return null;
     if (order.at) units.nearest(order.at);
     max = order.max;
-    count = 0;
-    for (_i = 0, _len = units.length; _i < _len; _i++) {
-      unit = units[_i];
-      count += 1;
-      if (count <= max) {
-        if (!this.group.contains(unit)) this.add(unit);
-      } else {
-        if (this.group.contains(unit)) this.remove(unit);
-      }
-    }
+    if (size + max > limit) max = limit - size;
     if (units.length > max) units = units.cap(max);
-    order.help = order.recruit - units.length;
     return units;
   };
 
   Group.prototype.execute = function(order) {
-    var executers, unit, units, _i, _j, _len, _len2;
-    executers = [];
-    units = this.units(order);
-    if (units) {
-      if (cyberBorg.power > order.power) {
-        for (_i = 0, _len = units.length; _i < _len; _i++) {
-          unit = units[_i];
-          if (unit.executes(order)) executers.push(unit);
-        }
-      } else {
-        for (_j = 0, _len2 = units.length; _j < _len2; _j++) {
-          unit = units[_j];
-          this.remove(unit);
+    var count, oid, unit, units, _i, _len;
+    count = 0;
+    if (cyberBorg.power > order.power && (units = this.units(order))) {
+      oid = CyberBorg.oid();
+      for (_i = 0, _len = units.length; _i < _len; _i++) {
+        unit = units[_i];
+        if (unit.executes(order)) {
+          unit.oid = oid;
+          this.add(unit);
+          count += 1;
         }
       }
+      if (count) {
+        order.oid = oid;
+        cyberBorg.power -= order.cost;
+      }
     }
-    if (executers.length > 0) cyberBorg.power = cyberBorg.power - order.cost;
-    return executers.length;
+    return count;
   };
 
   return Group;
@@ -573,6 +588,11 @@ CyberBorg = (function() {
   CyberBorg.ALL_PLAYERS = -1;
 
   CyberBorg.IS_IDLE = -1;
+
+  /* CLASS VARIABLES
+  */
+
+  CyberBorg.OID = 0;
 
   /* CONSTRUCTOR
   */
@@ -610,7 +630,10 @@ CyberBorg = (function() {
     return _results;
   };
 
-  CyberBorg.prototype.for_all = function(test_of) {
+  /* GETS
+  */
+
+  CyberBorg.prototype.for_one = function(test_of) {
     var group, object, _i, _j, _len, _len2, _ref, _ref2;
     _ref = this.groups;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -631,22 +654,37 @@ CyberBorg = (function() {
 
   CyberBorg.prototype.find = function(target) {
     var _ref;
-    return (_ref = this.for_all(function(object) {
+    return (_ref = this.for_one(function(object) {
       return object.id === target.id;
     })) != null ? _ref.object : void 0;
   };
 
   CyberBorg.prototype.finds = function(target) {
-    return this.for_all(function(object) {
+    return this.for_one(function(object) {
       return object.id === target.id;
     });
   };
 
   CyberBorg.prototype.structure_at = function(at) {
-    var _ref;
-    return (_ref = this.for_all(function(object) {
+    var found, _ref;
+    found = function(object) {
       return object.x === at.x && object.y === at.y && object.type === STRUCTURE;
-    })) != null ? _ref.object : void 0;
+    };
+    return (_ref = this.for_one(found)) != null ? _ref.object : void 0;
+  };
+
+  CyberBorg.prototype.get_order = function(oid) {
+    var group, order, _i, _j, _len, _len2, _ref, _ref2;
+    _ref = this.groups;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      group = _ref[_i];
+      _ref2 = group.orders;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        order = _ref2[_j];
+        if (order.oid === oid) return order;
+      }
+    }
+    return null;
   };
 
   /* ENUMS
@@ -750,6 +788,10 @@ CyberBorg = (function() {
     return positions;
   };
 
+  CyberBorg.oid = function() {
+    return CyberBorg.OID += 1;
+  };
+
   return CyberBorg;
 
 })();
@@ -770,7 +812,8 @@ CyberBorg.prototype.base_orders = function() {
       at: {
         x: arr[1],
         y: arr[2]
-      }
+      },
+      oid: null
     };
     return order;
   };
@@ -780,7 +823,6 @@ CyberBorg.prototype.base_orders = function() {
     obj.limit = 3;
     obj.min = 1;
     obj.max = 3;
-    obj.recruit = 3;
     obj.help = 3;
     return obj;
   };
@@ -790,7 +832,6 @@ CyberBorg.prototype.base_orders = function() {
     obj.limit = 1;
     obj.min = 1;
     obj.max = 1;
-    obj.recruit = 1;
     obj.help = 1;
     return obj;
   };
@@ -810,7 +851,6 @@ CyberBorg.prototype.factory_orders = function() {
     obj.limit = 5;
     obj.min = 1;
     obj.max = 1;
-    obj.recruit = 1;
     obj.help = 1;
     return obj;
   };
@@ -853,7 +893,6 @@ CyberBorg.prototype.lab_orders = function() {
     obj.limit = 5;
     obj.min = 1;
     obj.max = 1;
-    obj.recruit = 1;
     obj.help = 1;
     return obj;
   };
@@ -871,7 +910,6 @@ CyberBorg.prototype.derricks_orders = function(derricks) {
       cost: 0,
       like: truck,
       limit: 3,
-      recruit: 1,
       min: 1,
       max: 1,
       help: 1,
@@ -901,7 +939,6 @@ CyberBorg.prototype.scouts_orders = function(derricks) {
       cost: 0,
       like: /MgWh/,
       limit: 12,
-      recruit: 1,
       min: 1,
       max: 1,
       help: 1,
@@ -1075,11 +1112,13 @@ eventReinforcementsArrived = () ->
 */
 
 eventResearched = function(research, structure) {
-  var obj;
+  var found, obj;
+  found = cyberBorg.finds(structure);
   obj = {
     name: 'Researched',
     research: research,
-    structure: cyberBorg.find(structure)
+    structure: found != null ? found.object : void 0,
+    group: found != null ? found.group : void 0
   };
   return events(obj);
 };
@@ -1158,7 +1197,7 @@ events = function(event) {
       droidIdle(event.droid, event.group);
       break;
     case 'Researched':
-      researched(event.research, event.structure);
+      researched(event.research, event.structure, event.group);
       break;
     case 'Destroyed':
       destroyed(event.object, event.group);
@@ -1194,7 +1233,7 @@ startLevel = function() {
 };
 
 structureBuilt = function(structure, droid, group) {
-  group.remove(droid);
+  group.layoffs(droid.oid);
   cyberBorg.groups.named(RESERVE).group.push(structure);
   if (structure.type === STRUCTURE) {
     switch (structure.stattype) {
@@ -1212,23 +1251,25 @@ min_map_and_design_on = function(structure) {
 };
 
 droidBuilt = function(droid, structure, group) {
-  if (structure) group.remove(structure);
+  group.layoffs(structure.oid);
   cyberBorg.groups.named(RESERVE).group.push(droid);
   return helping(droid);
 };
 
 helping = function(object) {
-  var group, order, reserve, _i, _len, _ref;
-  reserve = cyberBorg.groups.named(RESERVE).group;
+  var employed, group, help_wanted, oid, order, _i, _len, _ref;
   _ref = cyberBorg.groups;
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     group = _ref[_i];
-    if (group === reserve) continue;
     order = group.orders.current();
-    if (order && order.help && order.help > 0 && order.like.test(object.name) && object.executes(order)) {
-      if (reserve.contains(object)) group.add(object);
-      order.help -= 1;
-      return true;
+    oid = order != null ? order.oid : void 0;
+    if (oid && (help_wanted = order.help) && order.like.test(object.name)) {
+      employed = group.list.counts_in_oid(oid);
+      if (employed < help_wanted && object.executes(order)) {
+        object.oid = oid;
+        group.add(object);
+        return true;
+      }
     }
   }
   return false;
@@ -1268,12 +1309,14 @@ report = function(who) {
   }
 };
 
-researched = function(completed, structure) {
+researched = function(completed, structure, group) {
   var research;
   if (structure) {
     completed = completed.name;
     research = structure.researching;
-    if (research !== completed) {
+    if (research === completed) {
+      return group.layoffs(structure.oid);
+    } else {
       return structure.executes({
         "function": 'pursueResearch',
         research: research
@@ -1283,7 +1326,7 @@ researched = function(completed, structure) {
 };
 
 droidIdle = function(droid, group) {
-  group.remove(droid);
+  group.layoffs(droid.oid);
   return helping(droid);
 };
 

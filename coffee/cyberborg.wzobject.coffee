@@ -15,10 +15,10 @@ class WZObject
     @selected = obj.selected
     @health = obj.health
     @experience = obj.experience
+    @order = obj.order # TODO try not to rely on this
     # TODO we should be able to maintain status and modules
     # @status = obj.status
     # @modules = obj.modules
-    @order = obj.order # TODO we're going to maintain this
 
   namexy: () -> "#{@name}(#{@x},#{@y})"
 

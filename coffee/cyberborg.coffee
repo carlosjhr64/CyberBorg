@@ -11,6 +11,12 @@ class CyberBorg
   @ALL_PLAYERS = -1
   @IS_IDLE = -1
 
+  #######################
+  ### CLASS VARIABLES ###
+  #######################
+
+  @OID = 0
+
   ###################
   ### CONSTRUCTOR ###
   ###################
@@ -33,7 +39,11 @@ class CyberBorg
       for object in group.list
         object.update() if object.game_time < gameTime
 
-  for_all: (test_of) ->
+  ############
+  ### GETS ###
+  ############
+
+  for_one: (test_of) ->
     for group in @groups
       for object in group.list
         return({object:object,group:group}) if test_of(object)
@@ -42,19 +52,25 @@ class CyberBorg
   # When we get pre-existing game objects from WZ's JS API,
   # we need to find them in our groups.
   # Otherwise we end up with duplicates.
-  find: (target) -> @for_all((object) -> object.id is target.id)?.object
+  find: (target) -> @for_one((object) -> object.id is target.id)?.object
 
   # For cases where we want to get both our copy of the object and
   # the group it's in.
-  finds: (target) -> @for_all((object)->  object.id is target.id)
+  finds: (target) -> @for_one((object)->  object.id is target.id)
 
   structure_at: (at) ->
-    @for_all(
-      (object) ->
-        object.x is at.x and
-        object.y is at.y and
-        object.type is STRUCTURE
-    )?.object
+    found = (object) ->
+      object.x is at.x and
+      object.y is at.y and
+      object.type is STRUCTURE
+    @for_one(found)?.object
+
+  # Returns the first order found with the given oid
+  get_order: (oid) ->
+    for group in @groups
+      for order in group.orders
+        return order if order.oid is oid
+    return null
 
   #############
   ### ENUMS ###
@@ -144,3 +160,5 @@ class CyberBorg
         pos = {x:(x+i),y:(y+j)}
         positions.push(pos) unless list.collision(pos)
     positions
+
+  @oid = () -> CyberBorg.OID += 1
