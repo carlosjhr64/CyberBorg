@@ -1042,6 +1042,8 @@ eventDestroyed = function(object) {
     group = found.group;
     object = found.object;
     group.list.removeObject(object);
+  } else {
+    object = new WZObject(object);
   }
   obj = {
     name: 'Destroyed',
@@ -1378,38 +1380,56 @@ group_executions = function(event) {
   return _results;
 };
 
-bug_report = function(label, droid) {
-  var at, oid, order;
+bug_report = function(label, droid, event) {
+  var at, oid, order, _ref;
+  order = null;
   oid = droid.oid;
-  debug("" + label + ": id:" + droid.id + " " + (droid.namexy()) + " order:" + droid.order + " oid:" + oid);
+  debug("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id);
+  debug("\t\tevent:" + event.name + "\torder:" + droid.order + "\toid:" + oid);
   if (oid) {
     order = cyberBorg.get_order(oid);
     if (order) {
-      debug("   function:" + order["function"] + " structure:" + order.structure + " number:" + order.number);
-      if (at = order.at) debug("   at:(" + at.x + "," + at.y + ")");
-      if (droid.order === 0) return debug("   BUG: Quitter.");
+      debug("\t\tfunction:" + order["function"] + "\tnumber:" + order.number);
+      if (order.structure) debug("\t\tstructure:" + order.structure);
+      if (at = order.at) debug("\t\tat:(" + at.x + "," + at.y + ")");
+      if (droid.order === 0) debug("\t\tBUG: Quitter.");
     } else {
-      return debug("   BUG: Order on oid does not exist.");
+      debug("\t\tBUG: Order on oid does not exist.");
     }
   }
+  if (event.name === "Destroyed") {
+    debug("\t\t" + ((_ref = event.group) != null ? _ref.name : void 0) + "'s " + (event.object.namexy()) + " was destroyed.");
+  }
+  return order;
 };
 
 gotchas = function(event) {
-  var droid, _i, _j, _len, _len2, _ref, _ref2, _results;
+  var droid, nwl, order, _i, _j, _len, _len2, _ref, _ref2;
+  nwl = false;
   _ref = cyberBorg.for_all(function(object) {
     return object.selected;
   });
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
-    bug_report("Selected", droid);
+    nwl = true;
+    bug_report("Selected", droid, event);
   }
   _ref2 = cyberBorg.for_all(function(object) {
     return object.order === 0;
   });
-  _results = [];
   for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
     droid = _ref2[_j];
-    _results.push(bug_report("Idle", droid));
+    nwl = true;
+    order = bug_report("Idle", droid, event);
+    if (event.name === "Destroyed" && event.object.name === "Oil Derrick") {
+      if (order && order["function"] === 'orderDroidBuild' && order.structure === 'A0ResourceExtractor') {
+        if (droid.executes(order)) {
+          debug("\tRe-issued order");
+        } else {
+          debug("\tOh! The Humanity!!!");
+        }
+      }
+    }
   }
-  return _results;
+  if (nwl) return debug("");
 };

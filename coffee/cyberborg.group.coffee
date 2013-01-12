@@ -34,7 +34,7 @@ class Group
     for unit in @group.in_oid(oid)
       @remove(unit)
       unit.oid = reset # droid laidoff
-    if order = @orders.get_order(oid) 
+    if order = @orders.get_order(oid)
       order.oid = reset # order completed
 
   units: (order) ->

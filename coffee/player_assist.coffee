@@ -262,23 +262,42 @@ group_executions = (event) ->
         orders.revert()
         break
 
-bug_report = (label,droid) ->
+bug_report = (label,droid,event) ->
+  order = null
   oid = droid.oid
-  debug "#{label}: id:#{droid.id} #{droid.namexy()} order:#{droid.order} oid:#{oid}"
+  debug "#{label}:\t#{droid.namexy()}\tid:#{droid.id}"
+  debug "\t\tevent:#{event.name}\torder:#{droid.order}\toid:#{oid}"
   if oid
     order = cyberBorg.get_order(oid)
     if order
-      debug "   function:#{order.function} structure:#{order.structure} number:#{order.number}"
+      debug "\t\tfunction:#{order.function}\tnumber:#{order.number}"
+      if order.structure
+        debug "\t\tstructure:#{order.structure}"
       if at = order.at
-        debug "   at:(#{at.x},#{at.y})"
+        debug "\t\tat:(#{at.x},#{at.y})"
       if droid.order is 0
-        debug "   BUG: Quitter."
+        debug "\t\tBUG: Quitter."
     else
-      debug "   BUG: Order on oid does not exist."
+      debug "\t\tBUG: Order on oid does not exist."
+  if event.name is "Destroyed"
+    debug "\t\t#{event.group?.name}'s #{event.object.namexy()} was destroyed."
+  return order
 
 # Let's find problems and fix'em
 gotchas = (event) ->
+  nwl = false
   for droid in cyberBorg.for_all((object) -> object.selected)
-    bug_report("Selected", droid)
+    nwl = true
+    bug_report("Selected", droid, event)
   for droid in cyberBorg.for_all((object) -> object.order is 0)
-    bug_report("Idle", droid)
+    nwl = true
+    order = bug_report("Idle", droid, event)
+    # OK, let's circumvent the game bugs...
+    if event.name is "Destroyed" and event.object.name is "Oil Derrick"
+      if order and order.function is 'orderDroidBuild' and
+      order.structure is 'A0ResourceExtractor'
+        if droid.executes(order)
+          debug("\tRe-issued order")
+        else
+          debug("\tOh! The Humanity!!!")
+  debug("") if nwl

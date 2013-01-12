@@ -67,6 +67,8 @@ eventDestroyed = (object) ->
     # object is gone.
     # If not removed here, update later fails.
     group.list.removeObject(object)
+  else
+    object = new WZObject(object)
   obj =
     name: 'Destroyed'
     object: object
