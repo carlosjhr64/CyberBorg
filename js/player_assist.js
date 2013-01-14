@@ -67,119 +67,60 @@ WZObject = (function() {
     if (number == null) number = DORDER_MOVE;
     if (droidCanReach(this, at.x, at.y)) {
       orderDroidLoc(this, number, at.x, at.y);
-      this.order = number;
       return true;
     }
     return false;
   };
 
   WZObject.prototype.repair_structure = function(built) {
-    if (built.health < 99) {
-      if (orderDroidObj(this, DORDER_REPAIR, built)) {
-        this.order = DORDER_REPAIR;
-        return true;
-      }
-    } else {
-      return this.move_to(built);
-    }
+    if (built.health < 99) return orderDroidObj(this, DORDER_REPAIR, built);
+    return this.move_to(built);
   };
 
   WZObject.prototype.build_structure = function(structure, at) {
-    if (orderDroidBuild(this, DORDER_BUILD, structure, at.x, at.y, at.direction)) {
-      this.order = DORDER_BUILD;
+    return orderDroidBuild(this, DORDER_BUILD, structure, at.x, at.y, at.direction);
+  };
+
+  WZObject.prototype.maintain_structure = function(structure, at) {
+    var built;
+    if (built = cyberBorg.structure_at(at)) return this.repair_structure(built);
+    return this.build_structure(structure, at);
+  };
+
+  WZObject.prototype.pursue_research = function(research) {
+    if (pursueResearch(this, research)) {
+      this.researching = research;
       return true;
     }
     return false;
   };
 
-  WZObject.prototype.maintain_structure = function(structure, at) {
-    var built;
-    if (built = cyberBorg.structure_at(at)) {
-      return this.repair_structure(built);
-    } else {
-      return this.build_structure(structure, at);
-    }
-    return false;
+  WZObject.prototype.build_droid = function(order) {
+    return buildDroid(this, order.name, order.body, order.propulsion, "", order.droid_type, order.turret);
   };
 
   WZObject.prototype.executes = function(order) {
     var at, number, ok;
-    ok = false;
     number = order.number;
     at = order.at;
-    switch (number) {
-      case DORDER_MAINTAIN:
-        ok = this.maintain_structure(order.structure, at);
-        break;
-      case FORDER_MANUFACTURE:
-        ok = buildDroid(this, order.name, order.body, order.propulsion, "", order.droid_type, order.turret);
-        break;
-      case LORDER_RESEARCH:
-        if (ok = pursueResearch(this, order.research)) {
-          this.researching = order.research;
-        }
-        break;
-      case DORDER_ATTACK:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_BUILD:
-        ok = this.build_structure(order.structure, at);
-        break;
-      case DORDER_DEMOLISH:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_DISEMBARK:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_EMBARK:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_FIRESUPPORT:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_HELPBUILD:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_HOLD:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_LINEBUILD:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_MOVE:
-      case DORDER_SCOUT:
-        ok = this.move_to(at, number);
-        break;
-      case DORDER_OBSERVE:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_PATROL:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_REARM:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_RECOVER:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_REPAIR:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_RETREAT:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_RTB:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_RTR:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      case DORDER_STOP:
-        trace("TODO: need to implement number " + number + ".");
-        break;
-      default:
-        trace("Order number " + number + " not listed.");
-    }
+    ok = (function() {
+      switch (number) {
+        case DORDER_MAINTAIN:
+          return this.maintain_structure(order.structure, at);
+        case FORDER_MANUFACTURE:
+          return this.build_droid(order);
+        case LORDER_RESEARCH:
+          return this.pursue_research(order.research);
+        case DORDER_BUILD:
+          return this.build_structure(order.structure, at);
+        case DORDER_MOVE:
+        case DORDER_SCOUT:
+          return this.move_to(at, number);
+        default:
+          trace("" + CyberBorg.ORDER_MAP[number] + ", #" + number + ", un-implemented.");
+          return false;
+      }
+    }).call(this);
     if (ok) {
       this.order = order.number;
       this.order_time = gameTime;
