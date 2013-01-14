@@ -1,0 +1,4 @@
+coffee							\
+--join	js/reloads.js					\
+--bare --compile --watch --lint				\
+	coffee/reloads.coffee

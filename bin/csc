@@ -12,4 +12,5 @@ coffee							\
 	coffee/cyberborg.data.derricks_orders.coffee	\
 	coffee/cyberborg.data.scouts_orders.coffee	\
 	coffee/cyberborg.events.coffee			\
+	coffee/reloads.coffee				\
 	coffee/player_assist.coffee
