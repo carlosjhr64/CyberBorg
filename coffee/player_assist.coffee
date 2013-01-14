@@ -228,10 +228,12 @@ researched = (completed, structure, group) ->
   if structure # did we get the research from a structure?
     completed = completed.name # just interested in the name
     research = structure.researching
+    oid = structure.oid
     if research is completed
-      group.layoffs(structure.oid)
+      group.layoffs(oid)
     else
-      structure.executes({function:'pursueResearch', research:research})
+      # TODO Why not just have order in the object along side oid?
+      structure.executes(cyberBorg.get_order(oid))
 
 # A DroidIdle event occurs typically at the end of a move command.
 # The droid arrives and awaits new orders.

@@ -12,51 +12,67 @@ class CyberBorg
   @IS_IDLE = -1
 
   @ORDER_MAP = [
-    'DORDER_NONE'
-    'DORDER_STOP'
-    'DORDER_MOVE'
-    'DORDER_ATTACK'
-    'DORDER_BUILD'
-    'DORDER_HELPBUILD'
-    'DORDER_LINEBUILD'
-    'DORDER_DEMOLISH'
-    'DORDER_REPAIR'
-    'DORDER_OBSERVE'
-    'DORDER_FIRESUPPORT'
-    'DORDER_RETREAT'
-    'DORDER_DESTRUCT'
-    'DORDER_RTB'
-    'DORDER_RTR'
-    'DORDER_RUN'
-    'DORDER_EMBARK'
-    'DORDER_DISEMBARK'
-    'DORDER_ATTACKTARGET'
-    'DORDER_COMMANDERSUPPORT'
-    'DORDER_BUILDMODULE'
-    'DORDER_RECYCLE'
-    'DORDER_TRANSPORTOUT'
-    'DORDER_TRANSPORTIN'
-    'DORDER_TRANSPORTRETURN'
-    'DORDER_GUARD'
-    'DORDER_DROIDREPAIR'
-    'DORDER_RESTORE'
-    'DORDER_SCOUT'
-    'DORDER_RUNBURN'
-    'DORDER_UNUSED'
-    'DORDER_PATROL'
-    'DORDER_REARM'
-    'DORDER_RECOVER'
-    'DORDER_LEAVEMAP'
-    'DORDER_RTR_SPECIFIED'
-    'DORDER_CIRCLE'
-    'DORDER_HOLD'
+    'DORDER_NONE'		# 0
+    'DORDER_STOP'		# 1
+    'DORDER_MOVE'		# 2
+    'DORDER_ATTACK'		# 3
+    'DORDER_BUILD'		# 4
+    'DORDER_HELPBUILD'		# 5
+    'DORDER_LINEBUILD'		# 6
+    'DORDER_DEMOLISH'		# 7
+    'DORDER_REPAIR'		# 8
+    'DORDER_OBSERVE'		# 9
+    'DORDER_FIRESUPPORT'	# 10
+    'DORDER_RETREAT'		# 11
+    'DORDER_DESTRUCT'		# 12
+    'DORDER_RTB'		# 13
+    'DORDER_RTR'		# 14
+    'DORDER_RUN'		# 15
+    'DORDER_EMBARK'		# 16
+    'DORDER_DISEMBARK'		# 17
+    'DORDER_ATTACKTARGET'	# 18
+    'DORDER_COMMANDERSUPPORT'	# 19
+    'DORDER_BUILDMODULE'	# 20
+    'DORDER_RECYCLE'		# 21
+    'DORDER_TRANSPORTOUT'	# 22
+    'DORDER_TRANSPORTIN'	# 23
+    'DORDER_TRANSPORTRETURN'	# 24
+    'DORDER_GUARD'		# 25
+    'DORDER_DROIDREPAIR'	# 26
+    'DORDER_RESTORE'		# 27
+    'DORDER_SCOUT'		# 28
+    'DORDER_RUNBURN'		# 29
+    'DORDER_UNUSED'		# 30
+    'DORDER_PATROL'		# 31
+    'DORDER_REARM'		# 32
+    'DORDER_RECOVER'		# 33
+    'DORDER_LEAVEMAP'		# 34
+    'DORDER_RTR_SPECIFIED'	# 35
+    'DORDER_CIRCLE'		# 36 :-??
+    'DORDER_HOLD'		# 37 :-??
+    null			# 38
+    null			# 39
+    'DORDER_CIRCLE'		# 40 :-??
+    # ME STUFF
+    null			# 41
+    null			# 42
+    null			# 43
+    null			# 44
+    null			# 45
+    null			# 46
+    null			# 47
+    null			# 48
+    null			# 49
+    'DORDER_MAINTAIN'		# 50
+    'FORDER_MANUFACTURE'	# 51
+    'LORDER_RESEARCH'		# 52
   ]
 
   #######################
   ### CLASS VARIABLES ###
   #######################
 
-  @TRACE = false
+  @TRACE = true # TODO set to false when done debuging
   @OID = 0
 
   ###################
@@ -211,3 +227,7 @@ class CyberBorg
     positions
 
   @oid = () -> CyberBorg.OID += 1
+
+DORDER_MAINTAIN    = CyberBorg.ORDER_MAP.indexOf('DORDER_MAINTAIN')
+FORDER_MANUFACTURE = CyberBorg.ORDER_MAP.indexOf('FORDER_MANUFACTURE')
+LORDER_RESEARCH    = CyberBorg.ORDER_MAP.indexOf('LORDER_RESEARCH')

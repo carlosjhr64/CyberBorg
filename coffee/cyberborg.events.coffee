@@ -58,22 +58,26 @@ eventCheatMode = (entered) ->
 ###
 
 eventDestroyed = (object) ->
-  group = null
-  # Might not actually belong to us...
-  if object.player is me and
-  found = cyberBorg.finds(object)
-    group = found.group
-    object = found.object
-    # object is gone.
-    # If not removed here, update later fails.
-    group.list.removeObject(object)
-  else
-    object = new WZObject(object)
-  obj =
-    name: 'Destroyed'
-    object: object
-    group: group
-  events(obj)
+  # At this time for the AI,
+  # The destruction of an Oil Resource is of no consequence.
+  # This might change.
+  unless object.name is 'Oil Resource'
+    group = null
+    # Might not actually belong to us...
+    if object.player is me and
+    found = cyberBorg.finds(object)
+      group = found.group
+      object = found.object
+      # object is gone.
+      # If not removed here, update later fails.
+      group.list.removeObject(object)
+    else
+      object = new WZObject(object)
+    obj =
+      name: 'Destroyed'
+      object: object
+      group: group
+    events(obj)
 
 eventDroidBuilt = (droid, structure) ->
   found = cyberBorg.finds(structure)

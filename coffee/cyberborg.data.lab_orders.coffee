@@ -20,6 +20,7 @@ CyberBorg::lab_orders = ->
   pursue = (research) ->
     obj = research: research
     obj.function = "pursueResearch"
+    obj.number = LORDER_RESEARCH
     obj.like = /Research Facility/
     obj.power = 390
     obj.cost = 100

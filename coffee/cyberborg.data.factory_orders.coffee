@@ -19,6 +19,7 @@ CyberBorg::factory_orders = ->
   # General orders are...
   build = (obj) ->
     obj.function = "buildDroid"
+    obj.number = FORDER_MANUFACTURE
     obj.like = /Factory/
     obj.power = 440
     obj.cost = 50

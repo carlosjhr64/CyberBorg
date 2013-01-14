@@ -11,11 +11,15 @@ class WZObject
     obj = objFromId(@)
     @x = obj.x
     @y = obj.y
-    @z = obj.x
+    # TODO z currently not used
+    #@z = obj.x
     @selected = obj.selected
     @health = obj.health
-    @experience = obj.experience
-    @order = obj.order # TODO try not to rely on this
+    # TODO experience currently not used.
+    # @experience = obj.experience
+    # TODO try not to rely on order updates
+    order_number = obj.order
+    @order = order_number if order_number?
     # TODO we should be able to maintain status and modules
     # @status = obj.status
     # @modules = obj.modules
@@ -42,26 +46,41 @@ class WZObject
     else
       return @move_to(built)
 
+  # TODO @order setting delegated elsewhere
+  build_structure: (structure, at) ->
+    if orderDroidBuild(@,
+    DORDER_BUILD, structure, at.x, at.y, at.direction)
+      @order = DORDER_BUILD
+      return true
+    return false
+
   maintain_structure: (structure, at) ->
     # Let's try to be a bit smarter....
     if built = cyberBorg.structure_at(at)
       return @repair_structure(built)
     else
-      if orderDroidBuild(@,
-      DORDER_BUILD, structure, at.x, at.y, at.direction)
-        @order = DORDER_BUILD
-        return true
+      return @build_structure(structure, at)
     return false
 
-  executes_dorder: (order) ->
+  executes: (order) ->
     ok = false
     number = order.number
     at = order.at
     switch number
+      # ME STUFF
+      when DORDER_MAINTAIN
+        ok = @maintain_structure(order.structure, at)
+      when FORDER_MANUFACTURE
+        ok = buildDroid(@, order.name, order.body, order.propulsion, "",
+        order.droid_type, order.turret)
+      when LORDER_RESEARCH
+        if ok = pursueResearch(@, order.research)
+          @researching = order.research
+      # STANDARD WZ JS
       when DORDER_ATTACK
         trace("TODO: need to implement number #{number}.") # TODO
       when DORDER_BUILD
-        ok = @maintain_structure(order.structure, at)
+        ok = @build_structure(order.structure, at)
       #when DORDER_CIRCLE
       #  trace("TODO: need to implement number #{number}.") # TODO
       #when DORDER_COMMANDERSUPPORT
@@ -119,20 +138,7 @@ class WZObject
       #  trace("TODO: need to implement number #{number}.") # TODO
       else
         trace("Order number #{number} not listed.") # TODO
-    return ok
-
-  executes: (order) ->
-    ok = switch order.function
-      when 'buildDroid'
-        buildDroid(@,
-        order.name, order.body, order.propulsion, "",
-        order.droid_type, order.turret)
-      when 'pursueResearch'
-        if pursueResearch(@, order.research)
-          @researching = order.research
-          true
-        else
-          false
-      else @executes_dorder(order)
-    @order_time = gameTime if ok
+    if ok
+      @order = order.number
+      @order_time = gameTime
     return ok
