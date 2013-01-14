@@ -2,21 +2,22 @@
 # The bug report.
 bug_report = (label,droid,event) ->
   order = null
-  number = droid.order
+  dorder = droid.order
   trace "#{label}:\t#{droid.namexy()}\tid:#{droid.id}\tevent:#{event.name}"
-  trace "\t\torder number:#{number} => #{CyberBorg.ORDER_MAP[number]}"
+  trace "\t\torder number:#{dorder} => #{dorder.order_map()}"
   if oid = droid.oid
     order = cyberBorg.get_order(oid)
     if order
-      trace "\t\tfunction:#{order.function}\tnumber:#{order.number}\toid:#{oid}"
+      number = order.number
+      trace "\t\t#{number.order_map()}\t##{number}\toid:#{oid}"
       if order.structure
         trace "\t\tstructure:#{order.structure}"
       if at = order.at
         trace "\t\tat:(#{at.x},#{at.y})"
-      if number is 0
+      if dorder is 0
         trace "\t\tBUG: Quitter."
       else
-        trace "\t\tBUG: Order changed." unless number is order.number
+        trace "\t\tBUG: Order changed." unless dorder is order.number
     else
       trace "\t\tBUG: Order on oid #{oid} does not exist."
   if event.name is "Destroyed"
@@ -27,7 +28,8 @@ bug_report = (label,droid,event) ->
 gotcha_working = (droid, order) ->
   centreView(droid.x, droid.y) if CyberBorg.TRACE
   if droid.executes(order)
-    trace("\tRe-issued #{order.function} to #{droid.name}.")
+    number = order.number
+    trace("\tRe-issued #{number.order_map()}, ##{number}, to #{droid.name}.")
   else
     trace("\t#{droid.name} is a lazy bum!")
 
@@ -49,7 +51,7 @@ gotcha_idle = (event) ->
     if order and
     event.name is "Destroyed" and
     event.object.name is "Oil Derrick" and
-    order.function is 'orderDroidBuild' and
+    droid.name is 'Truck' and
     order.structure is 'A0ResourceExtractor'
       gotcha_working(droid, order)
   return count

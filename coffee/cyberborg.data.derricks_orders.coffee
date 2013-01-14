@@ -1,5 +1,4 @@
 # ***Order Attributes***
-# function:  the function name to call (order number often determines this)
 # number:    order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
@@ -20,7 +19,6 @@ CyberBorg::derricks_orders = (derricks) ->
   extractor = "A0ResourceExtractor"
   truck = /Truck/
   truck_build = (derrick) ->
-    function: 'orderDroidBuild'
     power: 0
     cost: 0
     like: truck

@@ -1,5 +1,4 @@
 # ***Order Attributes***
-# function:  the function name to call (order number often determines this)
 # number:    order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
@@ -18,7 +17,6 @@
 CyberBorg::factory_orders = ->
   # General orders are...
   build = (obj) ->
-    obj.function = "buildDroid"
     obj.number = FORDER_MANUFACTURE
     obj.like = /Factory/
     obj.power = 440

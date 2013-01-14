@@ -1,5 +1,4 @@
 # ***Order Attributes***
-# function:  the function name to call (order number often determines this)
 # number:    order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
@@ -18,7 +17,6 @@
 CyberBorg::scouts_orders = (derricks) ->
 
   scout = (derrick) ->
-    function: 'orderDroidLoc'
     power: 0
     cost: 0
     like: /MgWh/

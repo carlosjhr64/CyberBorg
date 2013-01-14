@@ -1,5 +1,4 @@
 # ***Order Attributes***
-# function:  the function name to call (order number often determines this)
 # number:    order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
@@ -25,7 +24,6 @@ CyberBorg::base_orders = ->
 
   dorder_build = (arr) ->
     order =
-      function: 'orderDroidBuild'
       number: DORDER_BUILD
       cost: 100
       structure: arr[0]

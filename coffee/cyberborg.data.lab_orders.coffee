@@ -1,5 +1,4 @@
 # ***Order Attributes***
-# function:  the function name to call (order number often determines this)
 # number:    order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
@@ -19,7 +18,6 @@ CyberBorg::lab_orders = ->
   # General orders are...
   pursue = (research) ->
     obj = research: research
-    obj.function = "pursueResearch"
     obj.number = LORDER_RESEARCH
     obj.like = /Research Facility/
     obj.power = 390

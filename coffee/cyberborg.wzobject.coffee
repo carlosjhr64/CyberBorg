@@ -134,7 +134,7 @@ class WZObject
       #when DORDER_UNUSED
       #  trace("TODO: need to implement number #{number}.") # TODO
       else
-        trace("#{CyberBorg.ORDER_MAP[number]}, ##{number}, un-implemented.")
+        trace("#{number.order_map()}, ##{number}, un-implemented.")
         false
     # If the unit was able to take the order...
     if ok

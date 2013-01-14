@@ -1,21 +1,22 @@
 var bug_report, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas;
 
 bug_report = function(label, droid, event) {
-  var at, number, oid, order, _ref;
+  var at, dorder, number, oid, order, _ref;
   order = null;
-  number = droid.order;
+  dorder = droid.order;
   trace("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\tevent:" + event.name);
-  trace("\t\torder number:" + number + " => " + CyberBorg.ORDER_MAP[number]);
+  trace("\t\torder number:" + dorder + " => " + (dorder.order_map()));
   if (oid = droid.oid) {
     order = cyberBorg.get_order(oid);
     if (order) {
-      trace("\t\tfunction:" + order["function"] + "\tnumber:" + order.number + "\toid:" + oid);
+      number = order.number;
+      trace("\t\t" + (number.order_map()) + "\t#" + number + "\toid:" + oid);
       if (order.structure) trace("\t\tstructure:" + order.structure);
       if (at = order.at) trace("\t\tat:(" + at.x + "," + at.y + ")");
-      if (number === 0) {
+      if (dorder === 0) {
         trace("\t\tBUG: Quitter.");
       } else {
-        if (number !== order.number) trace("\t\tBUG: Order changed.");
+        if (dorder !== order.number) trace("\t\tBUG: Order changed.");
       }
     } else {
       trace("\t\tBUG: Order on oid " + oid + " does not exist.");
@@ -28,9 +29,11 @@ bug_report = function(label, droid, event) {
 };
 
 gotcha_working = function(droid, order) {
+  var number;
   if (CyberBorg.TRACE) centreView(droid.x, droid.y);
   if (droid.executes(order)) {
-    return trace("\tRe-issued " + order["function"] + " to " + droid.name + ".");
+    number = order.number;
+    return trace("\tRe-issued " + (number.order_map()) + ", #" + number + ", to " + droid.name + ".");
   } else {
     return trace("\t" + droid.name + " is a lazy bum!");
   }
@@ -60,7 +63,7 @@ gotcha_idle = function(event) {
     droid = _ref[_i];
     count += 1;
     order = bug_report("Idle", droid, event);
-    if (order && event.name === "Destroyed" && event.object.name === "Oil Derrick" && order["function"] === 'orderDroidBuild' && order.structure === 'A0ResourceExtractor') {
+    if (order && event.name === "Destroyed" && event.object.name === "Oil Derrick" && droid.name === 'Truck' && order.structure === 'A0ResourceExtractor') {
       gotcha_working(droid, order);
     }
   }

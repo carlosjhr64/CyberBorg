@@ -7,6 +7,8 @@ Number::times = (action) ->
     action()
     i++
 
+Number::order_map = () -> CyberBorg.ORDER_MAP[@]
+
 # Alias debug as trace
 # It's a way to differentiat intent
 trace = (message) ->
