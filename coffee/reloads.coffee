@@ -23,7 +23,6 @@ bug_report = (label,droid,event) ->
 
 gotchas = (event) ->
   nwl = false
-  ###
   for droid in cyberBorg.for_all((object) -> object.selected)
     nwl = true
     bug_report("Selected", droid, event)
@@ -38,13 +37,12 @@ gotchas = (event) ->
           trace("\tRe-issued derrick build order")
         else
           trace("\tOh! The Humanity!!!")
-  ###
   # Find droids under orders which are guarding instead
   for droid in cyberBorg.for_all((object) -> object.oid and object.order is 25 )
     nwl = true
     order = bug_report("Guarding", droid, event)
     if order?.number is 28
-      cameraSlice(droid.x, droid.y)
+      cameraSlide(droid.x, droid.y)
       if droid.executes(order)
         trace("\tRe-issued scout move order")
       else

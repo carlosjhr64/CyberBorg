@@ -26,33 +26,42 @@ bug_report = function(label, droid, event) {
 };
 
 gotchas = function(event) {
-  var droid, nwl, order, _i, _len, _ref;
+  var droid, nwl, order, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
   nwl = false;
-  /*
-    for droid in cyberBorg.for_all((object) -> object.selected)
-      nwl = true
-      bug_report("Selected", droid, event)
-    for droid in cyberBorg.for_all((object) -> object.order is 0)
-      nwl = true
-      order = bug_report("Idle", droid, event)
-      # OK, let's circumvent the game bugs...
-      if event.name is "Destroyed" and event.object.name is "Oil Derrick"
-        if order and order.function is 'orderDroidBuild' and
-        order.structure is 'A0ResourceExtractor'
-          if droid.executes(order)
-            trace("\tRe-issued derrick build order")
-          else
-            trace("\tOh! The Humanity!!!")
-  */
   _ref = cyberBorg.for_all(function(object) {
-    return object.oid && object.order === 25;
+    return object.selected;
   });
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     nwl = true;
+    bug_report("Selected", droid, event);
+  }
+  _ref2 = cyberBorg.for_all(function(object) {
+    return object.order === 0;
+  });
+  for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+    droid = _ref2[_j];
+    nwl = true;
+    order = bug_report("Idle", droid, event);
+    if (event.name === "Destroyed" && event.object.name === "Oil Derrick") {
+      if (order && order["function"] === 'orderDroidBuild' && order.structure === 'A0ResourceExtractor') {
+        if (droid.executes(order)) {
+          trace("\tRe-issued derrick build order");
+        } else {
+          trace("\tOh! The Humanity!!!");
+        }
+      }
+    }
+  }
+  _ref3 = cyberBorg.for_all(function(object) {
+    return object.oid && object.order === 25;
+  });
+  for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+    droid = _ref3[_k];
+    nwl = true;
     order = bug_report("Guarding", droid, event);
     if ((order != null ? order.number : void 0) === 28) {
-      cameraSlice(droid.x, droid.y);
+      cameraSlide(droid.x, droid.y);
       if (droid.executes(order)) {
         trace("\tRe-issued scout move order");
       } else {
