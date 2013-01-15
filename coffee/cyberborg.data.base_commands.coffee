@@ -13,7 +13,7 @@
 # body:
 # propulsion:
 # turret:
-# oid:       the command id is set at the time the command is given TODO cid
+# cid:       the command id is set at the time the command is given TODO cid
 # { name: min: max: number: employ: at: ... }
 CyberBorg::base_commands = ->
   # What we're building
@@ -28,7 +28,7 @@ CyberBorg::base_commands = ->
       cost: 100
       structure: arr[0]
       at: x: arr[1], y: arr[2]
-      oid: null # set at the time command is given
+      cid: null # set at the time command is given
     command
 
   with_three_trucks = (obj) ->

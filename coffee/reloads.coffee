@@ -5,11 +5,11 @@ bug_report = (label,droid,event) ->
   dorder = droid.order
   trace "#{label}:\t#{droid.namexy()}\tid:#{droid.id}\tevent:#{event.name}"
   trace "\t\torder number:#{dorder} => #{dorder.order_map()}"
-  if oid = droid.oid
-    command = cyberBorg.get_command(oid)
+  if cid = droid.cid
+    command = cyberBorg.get_command(cid)
     if command
       number = command.number
-      trace "\t\t#{number.order_map()}\t##{number}\toid:#{oid}"
+      trace "\t\t#{number.order_map()}\t##{number}\tcid:#{cid}"
       if command.structure
         trace "\t\tstructure:#{command.structure}"
       if at = command.at
@@ -19,7 +19,7 @@ bug_report = (label,droid,event) ->
       else
         trace "\t\tBUG: Order changed." unless dorder is command.number
     else
-      trace "\t\tBUG: Order on oid #{oid} does not exist."
+      trace "\t\tBUG: Order on cid #{cid} does not exist."
   if event.name is "Destroyed"
     trace "\t\t#{event.group?.name}'s #{event.object.namexy()} was destroyed."
   return command
@@ -60,8 +60,8 @@ gotcha_idle = (event) ->
 gotcha_rogue = (event) ->
   count = 0
   rogue = (object) ->
-    if oid = object.oid
-      return true unless object.order is cyberBorg.get_command(oid)?.number
+    if cid = object.cid
+      return true unless object.order is cyberBorg.get_command(cid)?.number
     return false
   for droid in cyberBorg.for_all((object) -> rogue(object))
     count += 1

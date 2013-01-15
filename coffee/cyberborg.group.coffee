@@ -30,12 +30,12 @@ class Group
     else
       throw new Error("Can't remove #{droid.namexy()} b/c it's not in group.")
 
-  layoffs: (oid, reset=null) ->
-    for unit in @group.in_oid(oid)
+  layoffs: (cid, reset=null) ->
+    for unit in @group.in_cid(cid)
       @remove(unit)
-      unit.oid = reset # droid laidoff
-    if command = @commands.get_command(oid)
-      command.oid = reset # command completed
+      unit.cid = reset # droid laidoff
+    if command = @commands.get_command(cid)
+      command.cid = reset # command completed
 
   units: (command) ->
     min = command.min
@@ -65,13 +65,13 @@ class Group
   execute: (command) ->
     count = 0
     if cyberBorg.power > command.power and units = @units(command)
-      oid = CyberBorg.oid() # A unique command id.
+      cid = CyberBorg.cid() # A unique command id.
       for unit in units
         if unit.executes(command)
-          unit.oid = oid
+          unit.cid = cid
           @add(unit)
           count += 1
       if count
-        command.oid = oid
+        command.cid = cid
         cyberBorg.power -= command.cost
     return count

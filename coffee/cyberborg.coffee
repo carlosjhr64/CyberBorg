@@ -73,7 +73,7 @@ class CyberBorg
   #######################
 
   @TRACE = true # TODO set to false when done debuging
-  @OID = 0
+  @CID = 0
 
   ###################
   ### CONSTRUCTOR ###
@@ -130,11 +130,11 @@ class CyberBorg
       object.type is STRUCTURE
     @for_one(found)?.object
 
-  # Returns the first command found with the given oid
-  get_command: (oid) ->
+  # Returns the first command found with the given cid
+  get_command: (cid) ->
     for group in @groups
       for command in group.commands
-        return command if command.oid is oid
+        return command if command.cid is cid
     return null
 
   #############
@@ -227,7 +227,7 @@ class CyberBorg
         positions.push(pos) unless list.collision(pos)
     positions
 
-  @oid = () -> CyberBorg.OID += 1
+  @cid = () -> CyberBorg.CID += 1
 
 DORDER_MAINTAIN    = CyberBorg.ORDER_MAP.indexOf('DORDER_MAINTAIN')
 FORDER_MANUFACTURE = CyberBorg.ORDER_MAP.indexOf('FORDER_MANUFACTURE')
