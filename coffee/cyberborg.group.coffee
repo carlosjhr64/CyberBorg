@@ -23,6 +23,7 @@ class Group
       throw new Error("Can't add #{droid.namexy()} b/c it's not in reserve.")
 
   remove: (droid) ->
+    # Need to enforce the group to reserve condition
     if @group.contains(droid)
       @group.removeObject(droid)
       @reserve.push(droid)

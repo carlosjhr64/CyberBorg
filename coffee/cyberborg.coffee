@@ -1,4 +1,4 @@
-# CyberBorg will help package data and prodide utilities
+# CyberBorg will help package data and provide utilities
 class CyberBorg
   #################
   ### CONSTANTS ###
@@ -229,6 +229,8 @@ class CyberBorg
 
   @cid = () -> CyberBorg.CID += 1
 
+# This is to keep with the WZ JS API's way...
+# Globals for ME STUFF order numbers.
 DORDER_MAINTAIN    = CyberBorg.ORDER_MAP.indexOf('DORDER_MAINTAIN')
 FORDER_MANUFACTURE = CyberBorg.ORDER_MAP.indexOf('FORDER_MANUFACTURE')
 LORDER_RESEARCH    = CyberBorg.ORDER_MAP.indexOf('LORDER_RESEARCH')
