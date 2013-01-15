@@ -20,7 +20,7 @@ CyberBorg::lab_commands = ->
     obj = research: research
     obj.order = LORDER_RESEARCH
     obj.like = /Research Facility/
-    obj.power = 390
+    obj.power = 107
     obj.cost = 100
     obj.limit = 5
     obj.min = 1
@@ -29,11 +29,11 @@ CyberBorg::lab_commands = ->
     return obj
 
   [
-    pursue 'R-Wpn-MG1Mk1'		# Machine Gun Turret
+    pursue 'R-Wpn-MG2Mk1'		# Heavy Machine Gun
     pursue 'R-Struc-PowerModuleMk1'	# Power Module
-    pursue 'R-Defense-Tower01'
     pursue 'R-Wpn-MG3Mk1'		# Heavy Machine Gun
     pursue 'R-Struc-RepairFacility'	# Repair Facility
+    pursue 'R-Defense-Tower01'
     pursue 'R-Defense-WallTower02'	# Ligh Cannon Hardpoint
     pursue 'R-Defense-AASite-QuadMg1'	# AA
     pursue 'R-Vehicle-Body04'		# Bug Body

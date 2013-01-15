@@ -72,8 +72,8 @@ class CyberBorg
   ### CLASS VARIABLES ###
   #######################
 
-  @TRACE = true # TODO set to false when done debuging
-  @CID = 0
+  @TRACE = true # TODO set to false when done debuging, Class Varible? :-??
+  @CID = 0 # TODO Class Variable? :-??
 
   ###################
   ### CONSTRUCTOR ###
@@ -85,6 +85,7 @@ class CyberBorg
     # Used to keep track of power consumption.
     # Gets updated in update, below.
     @power = 0
+    @stalled = []
 
   ###############
   ### UPDATES ###

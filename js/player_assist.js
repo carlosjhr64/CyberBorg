@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, RESERVE, SCOUTS, Scouter, WZArray, WZObject, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, group_executions, helping, min_map_and_design_on, report, researched, startLevel, structureBuilt, trace,
+var BASE, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, RESERVE, SCOUTS, Scouter, WZArray, WZObject, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, group_executions, helping, min_map_and_design_on, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -552,6 +552,7 @@ CyberBorg = (function() {
   function CyberBorg() {
     this.groups = WZArray.bless([]);
     this.power = 0;
+    this.stalled = [];
   }
 
   /* UPDATES
@@ -800,7 +801,7 @@ CyberBorg.prototype.base_commands = function() {
   };
   with_one_truck = function(obj) {
     obj.like = /Truck/;
-    obj.power = 390;
+    obj.power = 449;
     obj.limit = 1;
     obj.min = 1;
     obj.max = 1;
@@ -818,7 +819,7 @@ CyberBorg.prototype.factory_commands = function() {
   build = function(obj) {
     obj.order = FORDER_MANUFACTURE;
     obj.like = /Factory/;
-    obj.power = 440;
+    obj.power = 417;
     obj.cost = 50;
     obj.limit = 5;
     obj.min = 1;
@@ -861,7 +862,7 @@ CyberBorg.prototype.lab_commands = function() {
     };
     obj.order = LORDER_RESEARCH;
     obj.like = /Research Facility/;
-    obj.power = 390;
+    obj.power = 107;
     obj.cost = 100;
     obj.limit = 5;
     obj.min = 1;
@@ -869,7 +870,7 @@ CyberBorg.prototype.lab_commands = function() {
     obj.help = 1;
     return obj;
   };
-  return [pursue('R-Wpn-MG1Mk1'), pursue('R-Struc-PowerModuleMk1'), pursue('R-Defense-Tower01'), pursue('R-Wpn-MG3Mk1'), pursue('R-Struc-RepairFacility'), pursue('R-Defense-WallTower02'), pursue('R-Defense-AASite-QuadMg1'), pursue('R-Vehicle-Body04'), pursue('R-Vehicle-Prop-VTOL'), pursue('R-Struc-VTOLFactory'), pursue('R-Wpn-Bomb01')];
+  return [pursue('R-Wpn-MG2Mk1'), pursue('R-Struc-PowerModuleMk1'), pursue('R-Wpn-MG3Mk1'), pursue('R-Struc-RepairFacility'), pursue('R-Defense-Tower01'), pursue('R-Defense-WallTower02'), pursue('R-Defense-AASite-QuadMg1'), pursue('R-Vehicle-Body04'), pursue('R-Vehicle-Prop-VTOL'), pursue('R-Struc-VTOLFactory'), pursue('R-Wpn-Bomb01')];
 };
 
 CyberBorg.prototype.derricks_commands = function(derricks) {
@@ -1142,6 +1143,13 @@ eventVideoDone = () ->
   events(obj)
 */
 
+start_trace = function(event) {
+  trace("Power level: " + cyberBorg.power + " in " + event.name);
+  if (event.structure) trace("\tStructure: " + event.structure.name);
+  if (event.research) trace("\tResearch: " + event.research.name);
+  if (event.droid) return trace("\tDroid: " + event.droid.name);
+};
+
 bug_report = function(label, droid, event) {
   var at, command, corder, dorder, _ref;
   command = null;
@@ -1259,6 +1267,7 @@ LABS = 'Labs';
 
 events = function(event) {
   cyberBorg.update();
+  start_trace(event);
   switch (event.name) {
     case 'StartLevel':
       startLevel();
@@ -1402,7 +1411,7 @@ researched = function(completed, structure, group) {
     if (research === completed) {
       return group.layoffs(command);
     } else {
-      return structure.executes(command);
+      return cyberBorg.stalled.push(structure);
     }
   }
 };
@@ -1414,8 +1423,27 @@ droidIdle = function(droid, group) {
 
 destroyed = function(object, group) {};
 
+stalled_units = function() {
+  var command, stalled, unit;
+  stalled = [];
+  while (unit = cyberBorg.stalled.shift()) {
+    command = unit.command;
+    if (cyberBorg.power > command.power) {
+      if (unit.executes(command)) {
+        cyberBorg.power -= command.cost;
+      } else {
+        throw new Error("" + (structure.namexy()) + " could not pursue " + command.research);
+      }
+    } else {
+      stalled.push(unit);
+    }
+  }
+  return cyberBorg.stalled = stalled;
+};
+
 group_executions = function(event) {
   var command, commands, group, groups, name, _i, _len, _results;
+  stalled_units();
   groups = cyberBorg.groups;
   _results = [];
   for (_i = 0, _len = groups.length; _i < _len; _i++) {

@@ -1,4 +1,11 @@
 # Let's find problems and fix'em.
+
+start_trace = (event) ->
+  trace "Power level: #{cyberBorg.power} in #{event.name}"
+  trace "\tStructure: #{event.structure.name}" if event.structure
+  trace "\tResearch: #{event.research.name}" if event.research
+  trace "\tDroid: #{event.droid.name}" if event.droid
+
 # The bug report.
 bug_report = (label,droid,event) ->
   command = null

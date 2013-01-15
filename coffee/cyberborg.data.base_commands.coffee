@@ -43,7 +43,7 @@ CyberBorg::base_commands = ->
 
   with_one_truck = (obj) ->
     obj.like = /Truck/
-    obj.power = 390
+    obj.power = 449
     obj.limit = 1 # maximum group size
     obj.min = 1
     obj.max = 1

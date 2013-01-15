@@ -21,6 +21,8 @@ LABS      = 'Labs'	# research facilities
 # function here.
 events = (event) ->
   cyberBorg.update()
+  start_trace(event)
+
   switch event.name
     when 'StartLevel'
       startLevel()
@@ -232,7 +234,8 @@ researched = (completed, structure, group) ->
     if research is completed
       group.layoffs(command)
     else
-      structure.executes(command)
+      # assume stalled...
+      cyberBorg.stalled.push(structure)
 
 # A DroidIdle event occurs typically at the end of a move command.
 # The droid arrives and awaits new commands.
@@ -249,11 +252,28 @@ destroyed = (object, group) ->
   # The object has been removed from the group already.
   # We're given object and group as reference.
 
+# Right now, only research labs are expected in the list
+stalled_units = () ->
+  stalled = []
+  while unit = cyberBorg.stalled.shift()
+    command = unit.command
+    if cyberBorg.power > command.power
+      if unit.executes(command)
+        cyberBorg.power -= command.cost
+      else
+        # Unexpected error... why would this ever happen?
+        throw new Error("#{structure.namexy()} could not pursue #{command.research}")
+    else
+      # push unit into stalled list
+      stalled.push(unit)
+  cyberBorg.stalled = stalled
+
 # This is the work horse of the AI.
 # We iterate through all the groups,
 # higher ranks first,
 # and let them execute commands as they can.
 group_executions = (event) ->
+  stalled_units() # have any stalled unit try to excute their command.
   groups = cyberBorg.groups
   # TODO TBD if a lower rank group releases droids, should we restart?
   # Maybe this should be broken up into phases.

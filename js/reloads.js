@@ -1,4 +1,11 @@
-var bug_report, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas;
+var bug_report, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, start_trace;
+
+start_trace = function(event) {
+  trace("Power level: " + cyberBorg.power + " in " + event.name);
+  if (event.structure) trace("\tStructure: " + event.structure.name);
+  if (event.research) trace("\tResearch: " + event.research.name);
+  if (event.droid) return trace("\tDroid: " + event.droid.name);
+};
 
 bug_report = function(label, droid, event) {
   var at, command, corder, dorder, _ref;
