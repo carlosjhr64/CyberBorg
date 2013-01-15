@@ -165,9 +165,9 @@ class WZArray
       return object if object.name is name
     null
 
-  get_order: (oid) ->
-    for order in @
-      return order if order.oid is oid
+  get_command: (oid) ->
+    for command in @
+      return command if command.oid is oid
     return null
 
   ##############

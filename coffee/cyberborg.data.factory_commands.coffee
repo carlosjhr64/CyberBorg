@@ -2,10 +2,10 @@
 # number:    order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
-# cost:      the power cost of the order
+# cost:      the power cost of the command
 # limit:     the maximum group size
-# min:       minimum number of units required to execute order.
-# max:       maximum allowed number of units to execute order.
+# min:       minimum number of units required to execute command.
+# max:       maximum allowed number of units to execute command.
 # help:      the number of helping unit the job is willing to take.
 # at:        preferred location.
 # structure: structure to be built
@@ -14,8 +14,8 @@
 # propulsion:
 # turret:
 # { name: min: max: number: employ: at: ... }
-CyberBorg::factory_orders = ->
-  # General orders are...
+CyberBorg::factory_commands = ->
+  # General commands are...
   build = (obj) ->
     obj.number = FORDER_MANUFACTURE
     obj.like = /Factory/
@@ -39,10 +39,10 @@ CyberBorg::factory_orders = ->
   turret = ["MG3Mk1", "MG2Mk1", "MG1Mk1"]
   mg1 = name: "MgWhB1", turret: turret, droid_type: DROID_WEAPON
 
-  # The orders are...
-  orders = []
+  # The commands are...
+  commands = []
   # ... 1 truck
-  (1).times -> orders.push(build whb1(truck))
+  (1).times -> commands.push(build whb1(truck))
   # ... 12 machine gunners
-  (12).times -> orders.push(build whb1(mg1))
-  WZArray.bless(orders)
+  (12).times -> commands.push(build whb1(mg1))
+  WZArray.bless(commands)

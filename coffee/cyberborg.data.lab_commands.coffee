@@ -2,10 +2,10 @@
 # number:    order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
-# cost:      the power cost of the order
+# cost:      the power cost of the command
 # limit:     the maximum group size
-# min:       minimum number of units required to execute order.
-# max:       maximum allowed number of units to execute order.
+# min:       minimum number of units required to execute command.
+# max:       maximum allowed number of units to execute command.
 # help:      the number of helping unit the job is willing to take.
 # at:        preferred location.
 # structure: structure to be built
@@ -14,8 +14,8 @@
 # propulsion:
 # turret:
 # { name: min: max: number: employ: at: ... }
-CyberBorg::lab_orders = ->
-  # General orders are...
+CyberBorg::lab_commands = ->
+  # General commands are...
   pursue = (research) ->
     obj = research: research
     obj.number = LORDER_RESEARCH

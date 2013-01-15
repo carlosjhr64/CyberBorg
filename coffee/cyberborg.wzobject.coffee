@@ -58,24 +58,24 @@ class WZObject
       return true
     false
 
-  build_droid: (order) ->
-    buildDroid(@, order.name, order.body, order.propulsion, "",
-    order.droid_type, order.turret)
+  build_droid: (command) ->
+    buildDroid(@, command.name, command.body, command.propulsion, "",
+    command.droid_type, command.turret)
 
-  executes: (order) ->
-    number = order.number
-    at = order.at
+  executes: (command) ->
+    number = command.number
+    at = command.at
     ok = switch number
       # ME STUFF
       when DORDER_MAINTAIN
-        @maintain_structure(order.structure, at)
+        @maintain_structure(command.structure, at)
       when FORDER_MANUFACTURE
-        @build_droid(order)
+        @build_droid(command)
       when LORDER_RESEARCH
-        @pursue_research(order.research)
+        @pursue_research(command.research)
       # STANDARD WZ JS
       when DORDER_BUILD
-        @build_structure(order.structure, at)
+        @build_structure(command.structure, at)
       when DORDER_MOVE, DORDER_SCOUT
         @move_to(at, number)
       #when DORDER_ATTACK
@@ -136,8 +136,8 @@ class WZObject
       else
         trace("#{number.order_map()}, ##{number}, un-implemented.")
         false
-    # If the unit was able to take the order...
+    # If the unit was able to take the command...
     if ok
-      @order = order.number
-      @order_time = gameTime
+      @order = command.number
+      @command_time = gameTime
     return ok

@@ -130,11 +130,11 @@ class CyberBorg
       object.type is STRUCTURE
     @for_one(found)?.object
 
-  # Returns the first order found with the given oid
-  get_order: (oid) ->
+  # Returns the first command found with the given oid
+  get_command: (oid) ->
     for group in @groups
-      for order in group.orders
-        return order if order.oid is oid
+      for command in group.commands
+        return command if command.oid is oid
     return null
 
   #############
@@ -162,11 +162,12 @@ class CyberBorg
   @is_factory = (structure) ->
     structure.stattype is FACTORY
 
+  # TODO will this ever be relevant again?
   @is_idle = (object) ->
     # It's not really a droid  :P
     if object.type is STRUCTURE
-      if object.order_time is gameTime
-        # It got it's orders just now
+      if object.command_time is gameTime
+        # It got it's command just now
         return(false)
       else
         return(structureIdle(object))

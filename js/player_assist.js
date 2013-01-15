@@ -99,24 +99,24 @@ WZObject = (function() {
     return false;
   };
 
-  WZObject.prototype.build_droid = function(order) {
-    return buildDroid(this, order.name, order.body, order.propulsion, "", order.droid_type, order.turret);
+  WZObject.prototype.build_droid = function(command) {
+    return buildDroid(this, command.name, command.body, command.propulsion, "", command.droid_type, command.turret);
   };
 
-  WZObject.prototype.executes = function(order) {
+  WZObject.prototype.executes = function(command) {
     var at, number, ok;
-    number = order.number;
-    at = order.at;
+    number = command.number;
+    at = command.at;
     ok = (function() {
       switch (number) {
         case DORDER_MAINTAIN:
-          return this.maintain_structure(order.structure, at);
+          return this.maintain_structure(command.structure, at);
         case FORDER_MANUFACTURE:
-          return this.build_droid(order);
+          return this.build_droid(command);
         case LORDER_RESEARCH:
-          return this.pursue_research(order.research);
+          return this.pursue_research(command.research);
         case DORDER_BUILD:
-          return this.build_structure(order.structure, at);
+          return this.build_structure(command.structure, at);
         case DORDER_MOVE:
         case DORDER_SCOUT:
           return this.move_to(at, number);
@@ -126,8 +126,8 @@ WZObject = (function() {
       }
     }).call(this);
     if (ok) {
-      this.order = order.number;
-      this.order_time = gameTime;
+      this.order = command.number;
+      this.command_time = gameTime;
     }
     return ok;
   };
@@ -340,11 +340,11 @@ WZArray = (function() {
     return null;
   };
 
-  WZArray.prototype.get_order = function(oid) {
-    var order, _i, _len;
+  WZArray.prototype.get_command = function(oid) {
+    var command, _i, _len;
     for (_i = 0, _len = this.length; _i < _len; _i++) {
-      order = this[_i];
-      if (order.oid === oid) return order;
+      command = this[_i];
+      if (command.oid === oid) return command;
     }
     return null;
   };
@@ -433,17 +433,17 @@ Scouter = (function() {
 
 Group = (function() {
 
-  function Group(name, rank, group, orders, reserve) {
+  function Group(name, rank, group, commands, reserve) {
     this.name = name;
     this.rank = rank;
     this.group = group;
-    this.orders = orders;
+    this.commands = commands;
     this.reserve = reserve;
     if (!this.group) this.group = CyberBorg.enum_droid();
     if (!this.group.is_wzarray) WZArray.bless(this.group);
     this.list = this.group;
-    if (!this.orders) this.orders = WZArray.bless([]);
-    if (!this.orders.is_wzarray) WZArray.bless(this.orders);
+    if (!this.commands) this.commands = WZArray.bless([]);
+    if (!this.commands.is_wzarray) WZArray.bless(this.commands);
     if (!this.reserve) this.reserve = WZArray.bless([]);
     if (!this.reserve.is_wzarray) WZArray.bless(this.reserve);
   }
@@ -468,7 +468,7 @@ Group = (function() {
   };
 
   Group.prototype.layoffs = function(oid, reset) {
-    var order, unit, _i, _len, _ref;
+    var command, unit, _i, _len, _ref;
     if (reset == null) reset = null;
     _ref = this.group.in_oid(oid);
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -476,40 +476,40 @@ Group = (function() {
       this.remove(unit);
       unit.oid = reset;
     }
-    if (order = this.orders.get_order(oid)) return order.oid = reset;
+    if (command = this.commands.get_command(oid)) return command.oid = reset;
   };
 
-  Group.prototype.units = function(order) {
+  Group.prototype.units = function(command) {
     var limit, max, min, size, units;
-    min = order.min;
-    limit = order.limit;
+    min = command.min;
+    limit = command.limit;
     size = this.group.length;
     if (size + min > limit) return null;
-    units = this.reserve.like(order.like);
+    units = this.reserve.like(command.like);
     if (units.length < min) return null;
-    if (order.at) units.nearest(order.at);
-    max = order.max;
+    if (command.at) units.nearest(command.at);
+    max = command.max;
     if (size + max > limit) max = limit - size;
     if (units.length > max) units = units.cap(max);
     return units;
   };
 
-  Group.prototype.execute = function(order) {
+  Group.prototype.execute = function(command) {
     var count, oid, unit, units, _i, _len;
     count = 0;
-    if (cyberBorg.power > order.power && (units = this.units(order))) {
+    if (cyberBorg.power > command.power && (units = this.units(command))) {
       oid = CyberBorg.oid();
       for (_i = 0, _len = units.length; _i < _len; _i++) {
         unit = units[_i];
-        if (unit.executes(order)) {
+        if (unit.executes(command)) {
           unit.oid = oid;
           this.add(unit);
           count += 1;
         }
       }
       if (count) {
-        order.oid = oid;
-        cyberBorg.power -= order.cost;
+        command.oid = oid;
+        cyberBorg.power -= command.cost;
       }
     }
     return count;
@@ -637,15 +637,15 @@ CyberBorg = (function() {
     return (_ref = this.for_one(found)) != null ? _ref.object : void 0;
   };
 
-  CyberBorg.prototype.get_order = function(oid) {
-    var group, order, _i, _j, _len, _len2, _ref, _ref2;
+  CyberBorg.prototype.get_command = function(oid) {
+    var command, group, _i, _j, _len, _len2, _ref, _ref2;
     _ref = this.groups;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       group = _ref[_i];
-      _ref2 = group.orders;
+      _ref2 = group.commands;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        order = _ref2[_j];
-        if (order.oid === oid) return order;
+        command = _ref2[_j];
+        if (command.oid === oid) return command;
       }
     }
     return null;
@@ -690,7 +690,7 @@ CyberBorg = (function() {
   CyberBorg.is_idle = function(object) {
     var not_idle;
     if (object.type === STRUCTURE) {
-      if (object.order_time === gameTime) {
+      if (object.command_time === gameTime) {
         return false;
       } else {
         return structureIdle(object);
@@ -766,15 +766,15 @@ FORDER_MANUFACTURE = CyberBorg.ORDER_MAP.indexOf('FORDER_MANUFACTURE');
 
 LORDER_RESEARCH = CyberBorg.ORDER_MAP.indexOf('LORDER_RESEARCH');
 
-CyberBorg.prototype.base_orders = function() {
-  var command_center, dorder_build, light_factory, orders, phase1, phase2, power_generator, research_facility, with_one_truck, with_three_trucks;
+CyberBorg.prototype.base_commands = function() {
+  var command_center, commands, dorder_build, light_factory, phase1, phase2, power_generator, research_facility, with_one_truck, with_three_trucks;
   light_factory = "A0LightFactory";
   command_center = "A0CommandCentre";
   research_facility = "A0ResearchFacility";
   power_generator = "A0PowerGenerator";
   dorder_build = function(arr) {
-    var order;
-    order = {
+    var command;
+    command = {
       number: DORDER_BUILD,
       cost: 100,
       structure: arr[0],
@@ -784,7 +784,7 @@ CyberBorg.prototype.base_orders = function() {
       },
       oid: null
     };
-    return order;
+    return command;
   };
   with_three_trucks = function(obj) {
     obj.like = /Truck/;
@@ -806,12 +806,12 @@ CyberBorg.prototype.base_orders = function() {
   };
   phase1 = [with_three_trucks(dorder_build([light_factory, 10, 235])), with_three_trucks(dorder_build([research_facility, 7, 235])), with_three_trucks(dorder_build([command_center, 7, 238])), with_three_trucks(dorder_build([power_generator, 4, 235]))];
   phase2 = [with_one_truck(dorder_build([power_generator, 4, 238])), with_one_truck(dorder_build([research_facility, 4, 241])), with_one_truck(dorder_build([power_generator, 7, 241])), with_one_truck(dorder_build([research_facility, 10, 241])), with_one_truck(dorder_build([power_generator, 13, 241])), with_one_truck(dorder_build([research_facility, 13, 244])), with_one_truck(dorder_build([power_generator, 10, 244])), with_one_truck(dorder_build([research_facility, 7, 244]))];
-  orders = phase1.concat(phase2);
-  return WZArray.bless(orders);
+  commands = phase1.concat(phase2);
+  return WZArray.bless(commands);
 };
 
-CyberBorg.prototype.factory_orders = function() {
-  var build, mg1, orders, truck, turret, whb1;
+CyberBorg.prototype.factory_commands = function() {
+  var build, commands, mg1, truck, turret, whb1;
   build = function(obj) {
     obj.number = FORDER_MANUFACTURE;
     obj.like = /Factory/;
@@ -839,17 +839,17 @@ CyberBorg.prototype.factory_orders = function() {
     turret: turret,
     droid_type: DROID_WEAPON
   };
-  orders = [];
+  commands = [];
   1..times(function() {
-    return orders.push(build(whb1(truck)));
+    return commands.push(build(whb1(truck)));
   });
   12..times(function() {
-    return orders.push(build(whb1(mg1)));
+    return commands.push(build(whb1(mg1)));
   });
-  return WZArray.bless(orders);
+  return WZArray.bless(commands);
 };
 
-CyberBorg.prototype.lab_orders = function() {
+CyberBorg.prototype.lab_commands = function() {
   var pursue;
   pursue = function(research) {
     var obj;
@@ -869,8 +869,8 @@ CyberBorg.prototype.lab_orders = function() {
   return [pursue('R-Wpn-MG1Mk1'), pursue('R-Struc-PowerModuleMk1'), pursue('R-Defense-Tower01'), pursue('R-Wpn-MG3Mk1'), pursue('R-Struc-RepairFacility'), pursue('R-Defense-WallTower02'), pursue('R-Defense-AASite-QuadMg1'), pursue('R-Vehicle-Body04'), pursue('R-Vehicle-Prop-VTOL'), pursue('R-Struc-VTOLFactory'), pursue('R-Wpn-Bomb01')];
 };
 
-CyberBorg.prototype.derricks_orders = function(derricks) {
-  var extractor, orders, truck, truck_build;
+CyberBorg.prototype.derricks_commands = function(derricks) {
+  var commands, extractor, truck, truck_build;
   extractor = "A0ResourceExtractor";
   truck = /Truck/;
   truck_build = function(derrick) {
@@ -890,17 +890,17 @@ CyberBorg.prototype.derricks_orders = function(derricks) {
       }
     };
   };
-  orders = WZArray.bless(derricks.map(function(derrick) {
+  commands = WZArray.bless(derricks.map(function(derrick) {
     return truck_build(derrick);
   }));
-  Scouter.bless(orders);
-  orders.mod = 8;
-  orders.offset = 0;
-  return orders;
+  Scouter.bless(commands);
+  commands.mod = 8;
+  commands.offset = 0;
+  return commands;
 };
 
-CyberBorg.prototype.scouts_orders = function(derricks) {
-  var orders, scout;
+CyberBorg.prototype.scouts_commands = function(derricks) {
+  var commands, scout;
   scout = function(derrick) {
     return {
       power: 0,
@@ -917,13 +917,13 @@ CyberBorg.prototype.scouts_orders = function(derricks) {
       }
     };
   };
-  orders = WZArray.bless(derricks.map(function(derrick) {
+  commands = WZArray.bless(derricks.map(function(derrick) {
     return scout(derrick);
   }));
-  Scouter.bless(orders);
-  orders.mod = 5;
-  orders.offset = 3;
-  return orders;
+  Scouter.bless(commands);
+  commands.mod = 5;
+  commands.offset = 3;
+  return commands;
 };
 
 /*
@@ -1140,22 +1140,22 @@ eventVideoDone = () ->
 */
 
 bug_report = function(label, droid, event) {
-  var at, dorder, number, oid, order, _ref;
-  order = null;
+  var at, command, dorder, number, oid, _ref;
+  command = null;
   dorder = droid.order;
   trace("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\tevent:" + event.name);
   trace("\t\torder number:" + dorder + " => " + (dorder.order_map()));
   if (oid = droid.oid) {
-    order = cyberBorg.get_order(oid);
-    if (order) {
-      number = order.number;
+    command = cyberBorg.get_command(oid);
+    if (command) {
+      number = command.number;
       trace("\t\t" + (number.order_map()) + "\t#" + number + "\toid:" + oid);
-      if (order.structure) trace("\t\tstructure:" + order.structure);
-      if (at = order.at) trace("\t\tat:(" + at.x + "," + at.y + ")");
+      if (command.structure) trace("\t\tstructure:" + command.structure);
+      if (at = command.at) trace("\t\tat:(" + at.x + "," + at.y + ")");
       if (dorder === 0) {
         trace("\t\tBUG: Quitter.");
       } else {
-        if (dorder !== order.number) trace("\t\tBUG: Order changed.");
+        if (dorder !== command.number) trace("\t\tBUG: Order changed.");
       }
     } else {
       trace("\t\tBUG: Order on oid " + oid + " does not exist.");
@@ -1164,14 +1164,14 @@ bug_report = function(label, droid, event) {
   if (event.name === "Destroyed") {
     trace("\t\t" + ((_ref = event.group) != null ? _ref.name : void 0) + "'s " + (event.object.namexy()) + " was destroyed.");
   }
-  return order;
+  return command;
 };
 
-gotcha_working = function(droid, order) {
+gotcha_working = function(droid, command) {
   var number;
   if (CyberBorg.TRACE) centreView(droid.x, droid.y);
-  if (droid.executes(order)) {
-    number = order.number;
+  if (droid.executes(command)) {
+    number = command.number;
     return trace("\tRe-issued " + (number.order_map()) + ", #" + number + ", to " + droid.name + ".");
   } else {
     return trace("\t" + droid.name + " is a lazy bum!");
@@ -1193,7 +1193,7 @@ gotcha_selected = function(event) {
 };
 
 gotcha_idle = function(event) {
-  var count, droid, order, _i, _len, _ref;
+  var command, count, droid, _i, _len, _ref;
   count = 0;
   _ref = cyberBorg.for_all(function(object) {
     return object.order === 0;
@@ -1201,21 +1201,21 @@ gotcha_idle = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    order = bug_report("Idle", droid, event);
-    if (order && event.name === "Destroyed" && event.object.name === "Oil Derrick" && droid.name === 'Truck' && order.structure === 'A0ResourceExtractor') {
-      gotcha_working(droid, order);
+    command = bug_report("Idle", droid, event);
+    if (command && event.name === "Destroyed" && event.object.name === "Oil Derrick" && droid.name === 'Truck' && command.structure === 'A0ResourceExtractor') {
+      gotcha_working(droid, command);
     }
   }
   return count;
 };
 
 gotcha_rogue = function(event) {
-  var count, droid, order, rogue, _i, _len, _ref;
+  var command, count, droid, rogue, _i, _len, _ref;
   count = 0;
   rogue = function(object) {
     var oid, _ref;
     if (oid = object.oid) {
-      if (object.order !== ((_ref = cyberBorg.get_order(oid)) != null ? _ref.number : void 0)) {
+      if (object.order !== ((_ref = cyberBorg.get_command(oid)) != null ? _ref.number : void 0)) {
         return true;
       }
     }
@@ -1227,10 +1227,10 @@ gotcha_rogue = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    order = bug_report("Rogue", droid, event);
-    if ((order != null ? order.number : void 0) === 28) {
+    command = bug_report("Rogue", droid, event);
+    if ((command != null ? command.number : void 0) === 28) {
       if (CyberBorg.TRACE) centreView(droid.x, droid.y);
-      gotcha_working(droid, order);
+      gotcha_working(droid, command);
     }
   }
   return count;
@@ -1301,15 +1301,15 @@ startLevel = function() {
   resources = CyberBorg.get_resources(reserve.group.center());
   groups = cyberBorg.groups;
   groups.push(reserve);
-  base = new Group(BASE, 100, [], cyberBorg.base_orders(), reserve.group);
+  base = new Group(BASE, 100, [], cyberBorg.base_commands(), reserve.group);
   groups.push(base);
-  derricks = new Group(DERRICKS, 90, [], cyberBorg.derricks_orders(resources), reserve.group);
+  derricks = new Group(DERRICKS, 90, [], cyberBorg.derricks_commands(resources), reserve.group);
   groups.push(derricks);
-  scouts = new Group(SCOUTS, 80, [], cyberBorg.scouts_orders(resources), reserve.group);
+  scouts = new Group(SCOUTS, 80, [], cyberBorg.scouts_commands(resources), reserve.group);
   groups.push(scouts);
-  factories = new Group(FACTORIES, 20, [], cyberBorg.factory_orders(), reserve.group);
+  factories = new Group(FACTORIES, 20, [], cyberBorg.factory_commands(), reserve.group);
   groups.push(factories);
-  labs = new Group(LABS, 19, [], cyberBorg.lab_orders(), reserve.group);
+  labs = new Group(LABS, 19, [], cyberBorg.lab_commands(), reserve.group);
   groups.push(labs);
   return groups.sort(function(a, b) {
     return b.rank - a.rank;
@@ -1341,15 +1341,15 @@ droidBuilt = function(droid, structure, group) {
 };
 
 helping = function(object) {
-  var employed, group, help_wanted, oid, order, _i, _len, _ref;
+  var command, employed, group, help_wanted, oid, _i, _len, _ref;
   _ref = cyberBorg.groups;
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     group = _ref[_i];
-    order = group.orders.current();
-    oid = order != null ? order.oid : void 0;
-    if (oid && (help_wanted = order.help) && order.like.test(object.name)) {
+    command = group.commands.current();
+    oid = command != null ? command.oid : void 0;
+    if (oid && (help_wanted = command.help) && command.like.test(object.name)) {
       employed = group.list.counts_in_oid(oid);
-      if (employed < help_wanted && object.executes(order)) {
+      if (employed < help_wanted && object.executes(command)) {
         object.oid = oid;
         group.add(object);
         return true;
@@ -1407,7 +1407,7 @@ researched = function(completed, structure, group) {
     if (research === completed) {
       return group.layoffs(oid);
     } else {
-      return structure.executes(cyberBorg.get_order(oid));
+      return structure.executes(cyberBorg.get_command(oid));
     }
   }
 };
@@ -1420,7 +1420,7 @@ droidIdle = function(droid, group) {
 destroyed = function(object, group) {};
 
 group_executions = function(event) {
-  var group, groups, name, order, orders, _i, _len, _results;
+  var command, commands, group, groups, name, _i, _len, _results;
   groups = cyberBorg.groups;
   _results = [];
   for (_i = 0, _len = groups.length; _i < _len; _i++) {
@@ -1429,13 +1429,13 @@ group_executions = function(event) {
     if (!((name === FACTORIES) || (name === BASE) || (name === LABS) || (name === SCOUTS) || (name === DERRICKS))) {
       continue;
     }
-    orders = group.orders;
+    commands = group.commands;
     _results.push((function() {
       var _results2;
       _results2 = [];
-      while (order = orders.next()) {
-        if (!group.execute(order)) {
-          orders.revert();
+      while (command = commands.next()) {
+        if (!group.execute(command)) {
+          commands.revert();
           break;
         } else {
           _results2.push(void 0);

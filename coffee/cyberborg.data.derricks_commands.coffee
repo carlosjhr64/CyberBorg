@@ -2,10 +2,10 @@
 # number:    order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
-# cost:      the power cost of the order
+# cost:      the power cost of the command
 # limit:     the maximum group size
-# min:       minimum number of units required to execute order.
-# max:       maximum allowed number of units to execute order.
+# min:       minimum number of units required to execute command.
+# max:       maximum allowed number of units to execute command.
 # help:      the number of helping unit the job is willing to take.
 # at:        preferred location.
 # structure: structure to be built
@@ -15,7 +15,7 @@
 # propulsion:
 # turret:
 # { name: min: max: number: employ: at: ... }
-CyberBorg::derricks_orders = (derricks) ->
+CyberBorg::derricks_commands = (derricks) ->
   extractor = "A0ResourceExtractor"
   truck = /Truck/
   truck_build = (derrick) ->
@@ -30,9 +30,9 @@ CyberBorg::derricks_orders = (derricks) ->
     structure: extractor
     at: x:derrick.x, y:derrick.y
 
-  orders = WZArray.bless( derricks.map((derrick)->truck_build(derrick)) )
-  Scouter.bless(orders)
+  commands = WZArray.bless( derricks.map((derrick)->truck_build(derrick)) )
+  Scouter.bless(commands)
   # Eight derricks starting from derrick #0
-  orders.mod = 8
-  orders.offset = 0
-  return orders
+  commands.mod = 8
+  commands.offset = 0
+  return commands

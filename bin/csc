@@ -6,11 +6,11 @@ coffee							\
 	coffee/cyberborg.wzarray.coffee			\
 	coffee/cyberborg.group.coffee			\
 	coffee/cyberborg.coffee				\
-	coffee/cyberborg.data.base_orders.coffee	\
-	coffee/cyberborg.data.factory_orders.coffee	\
-	coffee/cyberborg.data.lab_orders.coffee		\
-	coffee/cyberborg.data.derricks_orders.coffee	\
-	coffee/cyberborg.data.scouts_orders.coffee	\
+	coffee/cyberborg.data.base_commands.coffee	\
+	coffee/cyberborg.data.factory_commands.coffee	\
+	coffee/cyberborg.data.lab_commands.coffee	\
+	coffee/cyberborg.data.derricks_commands.coffee	\
+	coffee/cyberborg.data.scouts_commands.coffee	\
 	coffee/cyberborg.events.coffee			\
 	coffee/reloads.coffee				\
 	coffee/player_assist.coffee

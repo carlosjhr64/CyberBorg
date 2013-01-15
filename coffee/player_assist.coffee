@@ -38,7 +38,7 @@ events = (event) ->
       chat(event.sender, event.to, event.message)
     # We should catch all possibilities, but in case we missed something...
     else trace("#{event.name} NOT HANDLED!")
-  # Next see what orders the groups can execute
+  # Next see what commands the groups can execute
   group_executions(event)
   # Next, due to bugs either in this script or in the game...
   gotchas(event)
@@ -65,7 +65,7 @@ startLevel = () ->
   # Other groups can release droids they no longer need
   # into the reserve, and draw droids they need from the reserve.
   # The reserve may anticipate the needs of other groups and
-  # order droids around to where they may be likely needed.
+  # command droids around to where they may be likely needed.
   # Thus it may show some initiative, just as
   # individual droids may show some initiative.
   
@@ -79,33 +79,33 @@ startLevel = () ->
   groups = cyberBorg.groups
   groups.push(reserve)
   
-  # For this AI, we won't order individual droids directly.
-  # All orders will be given to groups, which
+  # For this AI, we won't command individual droids directly.
+  # All commands will be given to groups, which
   # will then be relayed down to an individual droid.
   # The Base group will be responsible for building the base.
   # The group starts out empty, with [].
-  # Also, from a datafile, we give the Base group its orders list.
-  # The datafile defined the function that returns the group's orders.
-  # For example, cyberBorg.base_orders in the case of BASE group.
+  # Also, from a datafile, we give the Base group its commands list.
+  # The datafile defined the function that returns the group's commands.
+  # For example, cyberBorg.base_commands in the case of BASE group.
   # Finally, the base needs the reserve group.
   base = new Group(BASE, 100, [],
-  cyberBorg.base_orders(), reserve.group)
+  cyberBorg.base_commands(), reserve.group)
   groups.push(base)
   derricks = new Group(DERRICKS, 90, [],
-  cyberBorg.derricks_orders(resources), reserve.group)
+  cyberBorg.derricks_commands(resources), reserve.group)
   groups.push(derricks)
   scouts = new Group(SCOUTS, 80, [],
-  cyberBorg.scouts_orders(resources), reserve.group)
+  cyberBorg.scouts_commands(resources), reserve.group)
   groups.push(scouts)
   
-  # Structures are also considered units the AI can order.
+  # Structures are also considered units the AI can command.
   # Let's have a factory group... etc.
   # So do use reserve for structure units, just as we do for droids...
   factories = new Group(FACTORIES, 20, [],
-  cyberBorg.factory_orders(), reserve.group)
+  cyberBorg.factory_commands(), reserve.group)
   groups.push(factories)
   labs = new Group(LABS, 19, [],
-  cyberBorg.lab_orders(), reserve.group)
+  cyberBorg.lab_commands(), reserve.group)
   groups.push(labs)
 
   # This is probably the only time we'll need to sort groups.
@@ -172,12 +172,12 @@ droidBuilt = (droid, structure, group) ->
 # when it first gets created.
 helping = (object) ->
   for group in cyberBorg.groups
-    order = group.orders.current()
-    oid = order?.oid
+    command = group.commands.current()
+    oid = command?.oid
     # So for each ongoing job, check if it'll take the droid.
-    if oid and (help_wanted = order.help) and order.like.test(object.name)
+    if oid and (help_wanted = command.help) and command.like.test(object.name)
       employed = group.list.counts_in_oid(oid)
-      if employed < help_wanted and object.executes(order)
+      if employed < help_wanted and object.executes(command)
         object.oid = oid
         group.add(object)
         return true
@@ -232,11 +232,11 @@ researched = (completed, structure, group) ->
     if research is completed
       group.layoffs(oid)
     else
-      # TODO Why not just have order in the object along side oid?
-      structure.executes(cyberBorg.get_order(oid))
+      # TODO Why not just have command in the object along side oid?
+      structure.executes(cyberBorg.get_command(oid))
 
 # A DroidIdle event occurs typically at the end of a move command.
-# The droid arrives and awaits new orders.
+# The droid arrives and awaits new commands.
 # Origianally from eventDroidIdle,
 # we're are switched here to droidIdle from events above.
 droidIdle = (droid, group) ->
@@ -253,7 +253,7 @@ destroyed = (object, group) ->
 # This is the work horse of the AI.
 # We iterate through all the groups,
 # higher ranks first,
-# and let them execute orders as they can.
+# and let them execute commands as they can.
 group_executions = (event) ->
   groups = cyberBorg.groups
   # TODO TBD if a lower rank group releases droids, should we restart?
@@ -263,8 +263,8 @@ group_executions = (event) ->
     name = group.name
     continue unless (name is FACTORIES) or (name is BASE) or (name is LABS) or
     (name is SCOUTS) or (name is DERRICKS)
-    orders = group.orders
-    while order = orders.next()
-      unless group.execute(order)
-        orders.revert()
+    commands = group.commands
+    while command = commands.next()
+      unless group.execute(command)
+        commands.revert()
         break

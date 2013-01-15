@@ -2,10 +2,10 @@
 # number:    order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
-# cost:      the power cost of the order
+# cost:      the power cost of the command
 # limit:     the maximum group size
-# min:       minimum number of units required to execute order.
-# max:       maximum allowed number of units to execute order.
+# min:       minimum number of units required to execute command.
+# max:       maximum allowed number of units to execute command.
 # help:      the number of helping units the job is willing to take.
 # at:        preferred location (and direction).
 # structure: structure to be built
@@ -13,9 +13,9 @@
 # body:
 # propulsion:
 # turret:
-# oid:       the order id is set at the time the order is given
+# oid:       the command id is set at the time the command is given TODO cid
 # { name: min: max: number: employ: at: ... }
-CyberBorg::base_orders = ->
+CyberBorg::base_commands = ->
   # What we're building
   light_factory     = "A0LightFactory"
   command_center    = "A0CommandCentre"
@@ -23,21 +23,21 @@ CyberBorg::base_orders = ->
   power_generator   = "A0PowerGenerator"
 
   dorder_build = (arr) ->
-    order =
+    command =
       number: DORDER_BUILD
       cost: 100
       structure: arr[0]
       at: x: arr[1], y: arr[2]
-      oid: null # set at the time order is given
-    order
+      oid: null # set at the time command is given
+    command
 
   with_three_trucks = (obj) ->
     # All these are required
     obj.like = /Truck/
     obj.power = 100
     obj.limit = 3 # maximum group size
-    obj.min = 1 # it will execute the order only with at least this amount
-    obj.max = 3 # it will execute the order with no more than this amount
+    obj.min = 1 # it will execute the command only with at least this amount
+    obj.max = 3 # it will execute the command with no more than this amount
     obj.help = 3 # project will accept help once started
     obj
 
@@ -71,6 +71,6 @@ CyberBorg::base_orders = ->
   ]
 
   # Join the phases
-  orders = phase1.concat(phase2)
+  commands = phase1.concat(phase2)
   # Convert the list to wzarray
-  WZArray.bless(orders)
+  WZArray.bless(commands)

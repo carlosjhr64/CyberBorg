@@ -1,22 +1,22 @@
 var bug_report, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas;
 
 bug_report = function(label, droid, event) {
-  var at, dorder, number, oid, order, _ref;
-  order = null;
+  var at, command, dorder, number, oid, _ref;
+  command = null;
   dorder = droid.order;
   trace("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\tevent:" + event.name);
   trace("\t\torder number:" + dorder + " => " + (dorder.order_map()));
   if (oid = droid.oid) {
-    order = cyberBorg.get_order(oid);
-    if (order) {
-      number = order.number;
+    command = cyberBorg.get_command(oid);
+    if (command) {
+      number = command.number;
       trace("\t\t" + (number.order_map()) + "\t#" + number + "\toid:" + oid);
-      if (order.structure) trace("\t\tstructure:" + order.structure);
-      if (at = order.at) trace("\t\tat:(" + at.x + "," + at.y + ")");
+      if (command.structure) trace("\t\tstructure:" + command.structure);
+      if (at = command.at) trace("\t\tat:(" + at.x + "," + at.y + ")");
       if (dorder === 0) {
         trace("\t\tBUG: Quitter.");
       } else {
-        if (dorder !== order.number) trace("\t\tBUG: Order changed.");
+        if (dorder !== command.number) trace("\t\tBUG: Order changed.");
       }
     } else {
       trace("\t\tBUG: Order on oid " + oid + " does not exist.");
@@ -25,14 +25,14 @@ bug_report = function(label, droid, event) {
   if (event.name === "Destroyed") {
     trace("\t\t" + ((_ref = event.group) != null ? _ref.name : void 0) + "'s " + (event.object.namexy()) + " was destroyed.");
   }
-  return order;
+  return command;
 };
 
-gotcha_working = function(droid, order) {
+gotcha_working = function(droid, command) {
   var number;
   if (CyberBorg.TRACE) centreView(droid.x, droid.y);
-  if (droid.executes(order)) {
-    number = order.number;
+  if (droid.executes(command)) {
+    number = command.number;
     return trace("\tRe-issued " + (number.order_map()) + ", #" + number + ", to " + droid.name + ".");
   } else {
     return trace("\t" + droid.name + " is a lazy bum!");
@@ -54,7 +54,7 @@ gotcha_selected = function(event) {
 };
 
 gotcha_idle = function(event) {
-  var count, droid, order, _i, _len, _ref;
+  var command, count, droid, _i, _len, _ref;
   count = 0;
   _ref = cyberBorg.for_all(function(object) {
     return object.order === 0;
@@ -62,21 +62,21 @@ gotcha_idle = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    order = bug_report("Idle", droid, event);
-    if (order && event.name === "Destroyed" && event.object.name === "Oil Derrick" && droid.name === 'Truck' && order.structure === 'A0ResourceExtractor') {
-      gotcha_working(droid, order);
+    command = bug_report("Idle", droid, event);
+    if (command && event.name === "Destroyed" && event.object.name === "Oil Derrick" && droid.name === 'Truck' && command.structure === 'A0ResourceExtractor') {
+      gotcha_working(droid, command);
     }
   }
   return count;
 };
 
 gotcha_rogue = function(event) {
-  var count, droid, order, rogue, _i, _len, _ref;
+  var command, count, droid, rogue, _i, _len, _ref;
   count = 0;
   rogue = function(object) {
     var oid, _ref;
     if (oid = object.oid) {
-      if (object.order !== ((_ref = cyberBorg.get_order(oid)) != null ? _ref.number : void 0)) {
+      if (object.order !== ((_ref = cyberBorg.get_command(oid)) != null ? _ref.number : void 0)) {
         return true;
       }
     }
@@ -88,10 +88,10 @@ gotcha_rogue = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    order = bug_report("Rogue", droid, event);
-    if ((order != null ? order.number : void 0) === 28) {
+    command = bug_report("Rogue", droid, event);
+    if ((command != null ? command.number : void 0) === 28) {
       if (CyberBorg.TRACE) centreView(droid.x, droid.y);
-      gotcha_working(droid, order);
+      gotcha_working(droid, command);
     }
   }
   return count;
