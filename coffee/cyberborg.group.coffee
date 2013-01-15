@@ -30,12 +30,13 @@ class Group
     else
       throw new Error("Can't remove #{droid.namexy()} b/c it's not in group.")
 
-  layoffs: (cid, reset=null) ->
-    for unit in @group.in_cid(cid)
+  layoffs: (command, reset=null) ->
+    # Ensure the AI's process...
+    throw new Error("Command without cid") unless command.cid
+    for unit in @group.in_cid(command.cid)
       @remove(unit)
       unit.command = reset # droid laidoff
-    if command = @commands.get_command(cid)
-      command.cid = reset # command completed
+    command.cid = reset # command completed
 
   units: (command) ->
     min = command.min

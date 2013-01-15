@@ -469,16 +469,17 @@ Group = (function() {
     }
   };
 
-  Group.prototype.layoffs = function(cid, reset) {
-    var command, unit, _i, _len, _ref;
+  Group.prototype.layoffs = function(command, reset) {
+    var unit, _i, _len, _ref;
     if (reset == null) reset = null;
-    _ref = this.group.in_cid(cid);
+    if (!command.cid) throw new Error("Command without cid");
+    _ref = this.group.in_cid(command.cid);
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       unit = _ref[_i];
       this.remove(unit);
       unit.command = reset;
     }
-    if (command = this.commands.get_command(cid)) return command.cid = reset;
+    return command.cid = reset;
   };
 
   Group.prototype.units = function(command) {
@@ -1309,7 +1310,7 @@ startLevel = function() {
 };
 
 structureBuilt = function(structure, droid, group) {
-  if (droid.command) group.layoffs(droid.command.cid);
+  if (droid.command) group.layoffs(droid.command);
   cyberBorg.groups.named(RESERVE).group.push(structure);
   if (structure.type === STRUCTURE) {
     switch (structure.stattype) {
@@ -1328,7 +1329,7 @@ min_map_and_design_on = function(structure) {
 
 droidBuilt = function(droid, structure, group) {
   if (structure != null ? structure.command : void 0) {
-    group.layoffs(structure.command.cid);
+    group.layoffs(structure.command);
   }
   cyberBorg.groups.named(RESERVE).group.push(droid);
   return helping(droid);
@@ -1399,7 +1400,7 @@ researched = function(completed, structure, group) {
     research = structure.researching;
     command = structure.command;
     if (research === completed) {
-      return group.layoffs(command.cid);
+      return group.layoffs(command);
     } else {
       return structure.executes(command);
     }
@@ -1407,7 +1408,7 @@ researched = function(completed, structure, group) {
 };
 
 droidIdle = function(droid, group) {
-  if (droid.command) group.layoffs(droid.command.cid);
+  if (droid.command) group.layoffs(droid.command);
   return helping(droid);
 };
 

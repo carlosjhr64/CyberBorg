@@ -123,7 +123,7 @@ startLevel = () ->
 # We're then swithched to structureBuilt, here, from events.
 structureBuilt = (structure, droid, group) ->
   # The droid is now free... goes to reserve.
-  group.layoffs(droid.command.cid) if droid.command
+  group.layoffs(droid.command) if droid.command
   # So every time we build a structure, this function gets called.
   # And the first thing that gets built is a Factory (as I first wrote this,
   # may change and become part of what the AI figures out later).
@@ -159,7 +159,7 @@ min_map_and_design_on = (structure) ->
 #  We're swithed to droidBuilt by events above.
 droidBuilt = (droid, structure, group) ->
   # Structure free
-  group.layoffs(structure.command.cid) if structure?.command
+  group.layoffs(structure.command) if structure?.command
   # Now what with the new droid?
   # If it's a truck, maybe it should go to the nearest job?
   # Well, the style for this AI is to work with groups.
@@ -230,7 +230,7 @@ researched = (completed, structure, group) ->
     research = structure.researching
     command = structure.command
     if research is completed
-      group.layoffs(command.cid)
+      group.layoffs(command)
     else
       structure.executes(command)
 
@@ -240,7 +240,7 @@ researched = (completed, structure, group) ->
 # we're are switched here to droidIdle from events above.
 droidIdle = (droid, group) ->
   # "You WUT???  No, I quuuiiiit!" says the droid.
-  group.layoffs(droid.command.cid) if droid.command
+  group.layoffs(droid.command) if droid.command
   # Anything else?  :)
   helping(droid)
 
