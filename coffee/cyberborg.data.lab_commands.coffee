@@ -1,5 +1,5 @@
 # ***Order Attributes***
-# number:    order number
+# order:     order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
 # cost:      the power cost of the command
@@ -13,12 +13,12 @@
 # body:
 # propulsion:
 # turret:
-# { name: min: max: number: employ: at: ... }
+# { name: min: max: order: employ: at: ... }
 CyberBorg::lab_commands = ->
   # General commands are...
   pursue = (research) ->
     obj = research: research
-    obj.number = LORDER_RESEARCH
+    obj.order = LORDER_RESEARCH
     obj.like = /Research Facility/
     obj.power = 390
     obj.cost = 100

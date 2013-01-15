@@ -1,5 +1,5 @@
 # ***Order Attributes***
-# number:    order number
+# order:     order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
 # cost:      the power cost of the command
@@ -13,7 +13,7 @@
 # body:
 # propulsion:
 # turret:
-# { name: min: max: number: employ: at: ... }
+# { name: min: max: order: employ: at: ... }
 CyberBorg::scouts_commands = (derricks) ->
 
   scout = (derrick) ->
@@ -24,7 +24,7 @@ CyberBorg::scouts_commands = (derricks) ->
     min: 1
     max: 1
     help: 1
-    number: DORDER_SCOUT
+    order: DORDER_SCOUT
     at: x:derrick.x, y:derrick.y
 
   commands = WZArray.bless( derricks.map((derrick)->scout(derrick)) )

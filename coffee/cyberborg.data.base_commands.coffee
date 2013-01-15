@@ -1,5 +1,5 @@
 # ***Order Attributes***
-# number:    order number
+# order:     order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
 # cost:      the power cost of the command
@@ -14,7 +14,7 @@
 # propulsion:
 # turret:
 # cid:       the command id is set at the time the command is given.
-# { name: min: max: number: employ: at: ... }
+# { name: min: max: order: employ: at: ... }
 CyberBorg::base_commands = ->
   # What we're building
   light_factory     = "A0LightFactory"
@@ -24,7 +24,7 @@ CyberBorg::base_commands = ->
 
   dorder_build = (arr) ->
     command =
-      number: DORDER_BUILD
+      order: DORDER_BUILD
       cost: 100
       structure: arr[0]
       at: x: arr[1], y: arr[2]

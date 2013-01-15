@@ -1,5 +1,5 @@
 # ***Order Attributes***
-# number:    order number
+# order:     order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
 # cost:      the power cost of the command
@@ -13,11 +13,11 @@
 # body:
 # propulsion:
 # turret:
-# { name: min: max: number: employ: at: ... }
+# { name: min: max: order: employ: at: ... }
 CyberBorg::factory_commands = ->
   # General commands are...
   build = (obj) ->
-    obj.number = FORDER_MANUFACTURE
+    obj.order = FORDER_MANUFACTURE
     obj.like = /Factory/
     obj.power = 440
     obj.cost = 50

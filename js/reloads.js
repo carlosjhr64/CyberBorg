@@ -1,20 +1,20 @@
 var bug_report, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas;
 
 bug_report = function(label, droid, event) {
-  var at, command, dorder, number, _ref;
+  var at, command, corder, dorder, _ref;
   command = null;
   dorder = droid.order;
   trace("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\tevent:" + event.name);
-  trace("\t\torder number:" + dorder + " => " + (dorder.order_map()));
+  trace("\t\torder:" + dorder + " => " + (dorder.order_map()));
   if (command = droid.command) {
-    number = command.number;
-    trace("\t\t" + (number.order_map()) + "\t#" + number + "\tcid:" + command.cid);
+    corder = command.order;
+    trace("\t\t" + (corder.order_map()) + "\t#" + corder + "\tcid:" + command.cid);
     if (command.structure) trace("\t\tstructure:" + command.structure);
     if (at = command.at) trace("\t\tat:(" + at.x + "," + at.y + ")");
     if (dorder === 0) {
       trace("\t\tBUG: Quitter.");
     } else {
-      if (dorder !== command.number) trace("\t\tBUG: Order changed.");
+      if (dorder !== corder) trace("\t\tBUG: Order changed.");
     }
   }
   if (event.name === "Destroyed") {
@@ -24,11 +24,11 @@ bug_report = function(label, droid, event) {
 };
 
 gotcha_working = function(droid, command) {
-  var number;
+  var order;
   if (CyberBorg.TRACE) centreView(droid.x, droid.y);
   if (droid.executes(command)) {
-    number = command.number;
-    return trace("\tRe-issued " + (number.order_map()) + ", #" + number + ", to " + droid.name + ".");
+    order = command.order;
+    return trace("\tRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".");
   } else {
     return trace("\t" + droid.name + " is a lazy bum!");
   }
@@ -69,7 +69,7 @@ gotcha_rogue = function(event) {
   var command, count, droid, rogue, _i, _len, _ref;
   count = 0;
   rogue = function(object) {
-    if (object.command) if (object.order !== object.command.number) return true;
+    if (object.command) if (object.order !== object.command.order) return true;
     return false;
   };
   _ref = cyberBorg.for_all(function(object) {
@@ -79,7 +79,7 @@ gotcha_rogue = function(event) {
     droid = _ref[_i];
     count += 1;
     command = bug_report("Rogue", droid, event);
-    if ((command != null ? command.number : void 0) === 28) {
+    if ((command != null ? command.order : void 0) === 28) {
       if (CyberBorg.TRACE) centreView(droid.x, droid.y);
       gotcha_working(droid, command);
     }

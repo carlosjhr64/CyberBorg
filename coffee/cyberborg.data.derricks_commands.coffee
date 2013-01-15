@@ -1,5 +1,5 @@
 # ***Order Attributes***
-# number:    order number
+# order:     order number
 # like:      the unit name pattern
 # power:     minimum power b/4 starting
 # cost:      the power cost of the command
@@ -14,7 +14,7 @@
 # body:
 # propulsion:
 # turret:
-# { name: min: max: number: employ: at: ... }
+# { name: min: max: order: employ: at: ... }
 CyberBorg::derricks_commands = (derricks) ->
   extractor = "A0ResourceExtractor"
   truck = /Truck/
@@ -26,7 +26,7 @@ CyberBorg::derricks_commands = (derricks) ->
     min: 1
     max: 1
     help: 1
-    number: DORDER_BUILD
+    order: DORDER_BUILD
     structure: extractor
     at: x:derrick.x, y:derrick.y
 

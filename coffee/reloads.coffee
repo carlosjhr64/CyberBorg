@@ -4,10 +4,10 @@ bug_report = (label,droid,event) ->
   command = null
   dorder = droid.order
   trace "#{label}:\t#{droid.namexy()}\tid:#{droid.id}\tevent:#{event.name}"
-  trace "\t\torder number:#{dorder} => #{dorder.order_map()}"
+  trace "\t\torder:#{dorder} => #{dorder.order_map()}"
   if command = droid.command
-    number = command.number
-    trace "\t\t#{number.order_map()}\t##{number}\tcid:#{command.cid}"
+    corder = command.order
+    trace "\t\t#{corder.order_map()}\t##{corder}\tcid:#{command.cid}"
     if command.structure
       trace "\t\tstructure:#{command.structure}"
     if at = command.at
@@ -15,7 +15,7 @@ bug_report = (label,droid,event) ->
     if dorder is 0
       trace "\t\tBUG: Quitter."
     else
-      trace "\t\tBUG: Order changed." unless dorder is command.number
+      trace "\t\tBUG: Order changed." unless dorder is corder
   if event.name is "Destroyed"
     trace "\t\t#{event.group?.name}'s #{event.object.namexy()} was destroyed."
   return command
@@ -24,8 +24,8 @@ bug_report = (label,droid,event) ->
 gotcha_working = (droid, command) ->
   centreView(droid.x, droid.y) if CyberBorg.TRACE
   if droid.executes(command)
-    number = command.number
-    trace("\tRe-issued #{number.order_map()}, ##{number}, to #{droid.name}.")
+    order = command.order
+    trace("\tRe-issued #{order.order_map()}, ##{order}, to #{droid.name}.")
   else
     trace("\t#{droid.name} is a lazy bum!")
 
@@ -57,12 +57,12 @@ gotcha_rogue = (event) ->
   count = 0
   rogue = (object) ->
     if object.command
-      return true unless object.order is object.command.number
+      return true unless object.order is object.command.order
     return false
   for droid in cyberBorg.for_all((object) -> rogue(object))
     count += 1
     command = bug_report("Rogue", droid, event)
-    if command?.number is 28
+    if command?.order is 28
       centreView(droid.x, droid.y) if CyberBorg.TRACE
       gotcha_working(droid, command)
   return count
