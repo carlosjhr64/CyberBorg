@@ -123,7 +123,7 @@ startLevel = () ->
 # We're then swithched to structureBuilt, here, from events.
 structureBuilt = (structure, droid, group) ->
   # The droid is now free... goes to reserve.
-  group.layoffs(droid.cid) if droid?.cid
+  group.layoffs(droid.command.cid) if droid.command
   # So every time we build a structure, this function gets called.
   # And the first thing that gets built is a Factory (as I first wrote this,
   # may change and become part of what the AI figures out later).
@@ -159,7 +159,7 @@ min_map_and_design_on = (structure) ->
 #  We're swithed to droidBuilt by events above.
 droidBuilt = (droid, structure, group) ->
   # Structure free
-  group.layoffs(structure.cid) if structure?.cid
+  group.layoffs(structure.command.cid) if structure?.command
   # Now what with the new droid?
   # If it's a truck, maybe it should go to the nearest job?
   # Well, the style for this AI is to work with groups.
@@ -170,16 +170,16 @@ droidBuilt = (droid, structure, group) ->
 
 # helping is called whenever a droid finds itself idle, as
 # when it first gets created.
-helping = (object) ->
+helping = (unit) ->
   for group in cyberBorg.groups
     command = group.commands.current()
     cid = command?.cid
     # So for each ongoing job, check if it'll take the droid.
-    if cid and (help_wanted = command.help) and command.like.test(object.name)
+    if cid and (help_wanted = command.help) and command.like.test(unit.name)
       employed = group.list.counts_in_cid(cid)
-      if employed < help_wanted and object.executes(command)
-        object.cid = cid
-        group.add(object)
+      if employed < help_wanted and unit.executes(command)
+        unit.command = command
+        group.add(unit)
         return true
   return false
 
@@ -228,12 +228,11 @@ researched = (completed, structure, group) ->
   if structure # did we get the research from a structure?
     completed = completed.name # just interested in the name
     research = structure.researching
-    cid = structure.cid
+    command = structure.command
     if research is completed
-      group.layoffs(cid)
+      group.layoffs(command.cid)
     else
-      # TODO Why not just have command in the object along side cid?
-      structure.executes(cyberBorg.get_command(cid))
+      structure.executes(command)
 
 # A DroidIdle event occurs typically at the end of a move command.
 # The droid arrives and awaits new commands.
@@ -241,7 +240,7 @@ researched = (completed, structure, group) ->
 # we're are switched here to droidIdle from events above.
 droidIdle = (droid, group) ->
   # "You WUT???  No, I quuuiiiit!" says the droid.
-  group.layoffs(droid.cid) if droid.cid
+  group.layoffs(droid.command.cid) if droid.command
   # Anything else?  :)
   helping(droid)
 

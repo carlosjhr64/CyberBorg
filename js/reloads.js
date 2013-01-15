@@ -1,25 +1,20 @@
 var bug_report, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas;
 
 bug_report = function(label, droid, event) {
-  var at, cid, command, dorder, number, _ref;
+  var at, command, dorder, number, _ref;
   command = null;
   dorder = droid.order;
   trace("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\tevent:" + event.name);
   trace("\t\torder number:" + dorder + " => " + (dorder.order_map()));
-  if (cid = droid.cid) {
-    command = cyberBorg.get_command(cid);
-    if (command) {
-      number = command.number;
-      trace("\t\t" + (number.order_map()) + "\t#" + number + "\tcid:" + cid);
-      if (command.structure) trace("\t\tstructure:" + command.structure);
-      if (at = command.at) trace("\t\tat:(" + at.x + "," + at.y + ")");
-      if (dorder === 0) {
-        trace("\t\tBUG: Quitter.");
-      } else {
-        if (dorder !== command.number) trace("\t\tBUG: Order changed.");
-      }
+  if (command = droid.command) {
+    number = command.number;
+    trace("\t\t" + (number.order_map()) + "\t#" + number + "\tcid:" + command.cid);
+    if (command.structure) trace("\t\tstructure:" + command.structure);
+    if (at = command.at) trace("\t\tat:(" + at.x + "," + at.y + ")");
+    if (dorder === 0) {
+      trace("\t\tBUG: Quitter.");
     } else {
-      trace("\t\tBUG: Order on cid " + cid + " does not exist.");
+      if (dorder !== command.number) trace("\t\tBUG: Order changed.");
     }
   }
   if (event.name === "Destroyed") {
@@ -74,12 +69,7 @@ gotcha_rogue = function(event) {
   var command, count, droid, rogue, _i, _len, _ref;
   count = 0;
   rogue = function(object) {
-    var cid, _ref;
-    if (cid = object.cid) {
-      if (object.order !== ((_ref = cyberBorg.get_command(cid)) != null ? _ref.number : void 0)) {
-        return true;
-      }
-    }
+    if (object.command) if (object.order !== object.command.number) return true;
     return false;
   };
   _ref = cyberBorg.for_all(function(object) {

@@ -13,7 +13,7 @@
 # body:
 # propulsion:
 # turret:
-# cid:       the command id is set at the time the command is given TODO cid
+# cid:       the command id is set at the time the command is given.
 # { name: min: max: number: employ: at: ... }
 CyberBorg::base_commands = ->
   # What we're building

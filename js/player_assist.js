@@ -241,7 +241,8 @@ WZArray = (function() {
 
   WZArray.prototype.in_cid = function(cid) {
     return this.filters(function(object) {
-      return object.cid === cid;
+      var _ref;
+      return ((_ref = object.command) != null ? _ref.cid : void 0) === cid;
     });
   };
 
@@ -297,7 +298,8 @@ WZArray = (function() {
 
   WZArray.prototype.counts_in_cid = function(cid) {
     return this.counts(function(obj) {
-      return obj.cid === cid;
+      var _ref;
+      return ((_ref = obj.command) != null ? _ref.cid : void 0) === cid;
     });
   };
 
@@ -474,7 +476,7 @@ Group = (function() {
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       unit = _ref[_i];
       this.remove(unit);
-      unit.cid = reset;
+      unit.command = reset;
     }
     if (command = this.commands.get_command(cid)) return command.cid = reset;
   };
@@ -502,7 +504,7 @@ Group = (function() {
       for (_i = 0, _len = units.length; _i < _len; _i++) {
         unit = units[_i];
         if (unit.executes(command)) {
-          unit.cid = cid;
+          unit.command = command;
           this.add(unit);
           count += 1;
         }
@@ -1140,25 +1142,20 @@ eventVideoDone = () ->
 */
 
 bug_report = function(label, droid, event) {
-  var at, cid, command, dorder, number, _ref;
+  var at, command, dorder, number, _ref;
   command = null;
   dorder = droid.order;
   trace("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\tevent:" + event.name);
   trace("\t\torder number:" + dorder + " => " + (dorder.order_map()));
-  if (cid = droid.cid) {
-    command = cyberBorg.get_command(cid);
-    if (command) {
-      number = command.number;
-      trace("\t\t" + (number.order_map()) + "\t#" + number + "\tcid:" + cid);
-      if (command.structure) trace("\t\tstructure:" + command.structure);
-      if (at = command.at) trace("\t\tat:(" + at.x + "," + at.y + ")");
-      if (dorder === 0) {
-        trace("\t\tBUG: Quitter.");
-      } else {
-        if (dorder !== command.number) trace("\t\tBUG: Order changed.");
-      }
+  if (command = droid.command) {
+    number = command.number;
+    trace("\t\t" + (number.order_map()) + "\t#" + number + "\tcid:" + command.cid);
+    if (command.structure) trace("\t\tstructure:" + command.structure);
+    if (at = command.at) trace("\t\tat:(" + at.x + "," + at.y + ")");
+    if (dorder === 0) {
+      trace("\t\tBUG: Quitter.");
     } else {
-      trace("\t\tBUG: Order on cid " + cid + " does not exist.");
+      if (dorder !== command.number) trace("\t\tBUG: Order changed.");
     }
   }
   if (event.name === "Destroyed") {
@@ -1213,12 +1210,7 @@ gotcha_rogue = function(event) {
   var command, count, droid, rogue, _i, _len, _ref;
   count = 0;
   rogue = function(object) {
-    var cid, _ref;
-    if (cid = object.cid) {
-      if (object.order !== ((_ref = cyberBorg.get_command(cid)) != null ? _ref.number : void 0)) {
-        return true;
-      }
-    }
+    if (object.command) if (object.order !== object.command.number) return true;
     return false;
   };
   _ref = cyberBorg.for_all(function(object) {
@@ -1317,7 +1309,7 @@ startLevel = function() {
 };
 
 structureBuilt = function(structure, droid, group) {
-  if (droid != null ? droid.cid : void 0) group.layoffs(droid.cid);
+  if (droid.command) group.layoffs(droid.command.cid);
   cyberBorg.groups.named(RESERVE).group.push(structure);
   if (structure.type === STRUCTURE) {
     switch (structure.stattype) {
@@ -1335,23 +1327,25 @@ min_map_and_design_on = function(structure) {
 };
 
 droidBuilt = function(droid, structure, group) {
-  if (structure != null ? structure.cid : void 0) group.layoffs(structure.cid);
+  if (structure != null ? structure.command : void 0) {
+    group.layoffs(structure.command.cid);
+  }
   cyberBorg.groups.named(RESERVE).group.push(droid);
   return helping(droid);
 };
 
-helping = function(object) {
+helping = function(unit) {
   var cid, command, employed, group, help_wanted, _i, _len, _ref;
   _ref = cyberBorg.groups;
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     group = _ref[_i];
     command = group.commands.current();
     cid = command != null ? command.cid : void 0;
-    if (cid && (help_wanted = command.help) && command.like.test(object.name)) {
+    if (cid && (help_wanted = command.help) && command.like.test(unit.name)) {
       employed = group.list.counts_in_cid(cid);
-      if (employed < help_wanted && object.executes(command)) {
-        object.cid = cid;
-        group.add(object);
+      if (employed < help_wanted && unit.executes(command)) {
+        unit.command = command;
+        group.add(unit);
         return true;
       }
     }
@@ -1399,21 +1393,21 @@ report = function(who) {
 };
 
 researched = function(completed, structure, group) {
-  var cid, research;
+  var command, research;
   if (structure) {
     completed = completed.name;
     research = structure.researching;
-    cid = structure.cid;
+    command = structure.command;
     if (research === completed) {
-      return group.layoffs(cid);
+      return group.layoffs(command.cid);
     } else {
-      return structure.executes(cyberBorg.get_command(cid));
+      return structure.executes(command);
     }
   }
 };
 
 droidIdle = function(droid, group) {
-  if (droid.cid) group.layoffs(droid.cid);
+  if (droid.command) group.layoffs(droid.command.cid);
   return helping(droid);
 };
 

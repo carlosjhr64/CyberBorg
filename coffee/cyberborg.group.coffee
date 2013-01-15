@@ -33,7 +33,7 @@ class Group
   layoffs: (cid, reset=null) ->
     for unit in @group.in_cid(cid)
       @remove(unit)
-      unit.cid = reset # droid laidoff
+      unit.command = reset # droid laidoff
     if command = @commands.get_command(cid)
       command.cid = reset # command completed
 
@@ -68,7 +68,7 @@ class Group
       cid = CyberBorg.cid() # A unique command id.
       for unit in units
         if unit.executes(command)
-          unit.cid = cid
+          unit.command = command
           @add(unit)
           count += 1
       if count
