@@ -24,7 +24,7 @@ CyberBorg::base_commands = ->
 
   dorder_build = (arr) ->
     command =
-      order: DORDER_BUILD
+      order: DORDER_MAINTAIN
       cost: 100
       structure: arr[0]
       at: x: arr[1], y: arr[2]
@@ -34,7 +34,7 @@ CyberBorg::base_commands = ->
   with_three_trucks = (obj) ->
     # All these are required
     obj.like = /Truck/
-    obj.power = 100
+    obj.power = 0 # Just do it!
     obj.limit = 3 # maximum group size
     obj.min = 1 # it will execute the command only with at least this amount
     obj.max = 3 # it will execute the command with no more than this amount
@@ -43,7 +43,7 @@ CyberBorg::base_commands = ->
 
   with_one_truck = (obj) ->
     obj.like = /Truck/
-    obj.power = 449
+    obj.power = 429
     obj.limit = 1 # maximum group size
     obj.min = 1
     obj.max = 1

@@ -779,7 +779,7 @@ CyberBorg.prototype.base_commands = function() {
   dorder_build = function(arr) {
     var command;
     command = {
-      order: DORDER_BUILD,
+      order: DORDER_MAINTAIN,
       cost: 100,
       structure: arr[0],
       at: {
@@ -792,7 +792,7 @@ CyberBorg.prototype.base_commands = function() {
   };
   with_three_trucks = function(obj) {
     obj.like = /Truck/;
-    obj.power = 100;
+    obj.power = 0;
     obj.limit = 3;
     obj.min = 1;
     obj.max = 3;
@@ -801,7 +801,7 @@ CyberBorg.prototype.base_commands = function() {
   };
   with_one_truck = function(obj) {
     obj.like = /Truck/;
-    obj.power = 449;
+    obj.power = 429;
     obj.limit = 1;
     obj.min = 1;
     obj.max = 1;
@@ -819,7 +819,7 @@ CyberBorg.prototype.factory_commands = function() {
   build = function(obj) {
     obj.order = FORDER_MANUFACTURE;
     obj.like = /Factory/;
-    obj.power = 417;
+    obj.power = 441;
     obj.cost = 50;
     obj.limit = 5;
     obj.min = 1;
@@ -862,7 +862,7 @@ CyberBorg.prototype.lab_commands = function() {
     };
     obj.order = LORDER_RESEARCH;
     obj.like = /Research Facility/;
-    obj.power = 107;
+    obj.power = 388;
     obj.cost = 100;
     obj.limit = 5;
     obj.min = 1;
@@ -886,7 +886,7 @@ CyberBorg.prototype.derricks_commands = function(derricks) {
       min: 1,
       max: 1,
       help: 1,
-      order: DORDER_BUILD,
+      order: DORDER_MAINTAIN,
       structure: extractor,
       at: {
         x: derrick.x,

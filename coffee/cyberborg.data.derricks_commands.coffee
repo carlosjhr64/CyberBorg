@@ -26,7 +26,7 @@ CyberBorg::derricks_commands = (derricks) ->
     min: 1
     max: 1
     help: 1
-    order: DORDER_BUILD
+    order: DORDER_MAINTAIN
     structure: extractor
     at: x:derrick.x, y:derrick.y
 
