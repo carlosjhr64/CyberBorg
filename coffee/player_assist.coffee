@@ -137,6 +137,8 @@ structureBuilt = (structure, droid, group) ->
       # TODO check if this file is being runned by rules.js first.
       # May be being runned as a stand alone AI.
       when HQ then min_map_and_design_on(structure)
+  # There may be ongoing jobs so let's see what available.
+  helping(droid)
 
 # This turns on minimap and design.
 # Will not be needed when this AI follows standard conventions.
@@ -248,10 +250,12 @@ stalled_units = () ->
   stalled = []
   while unit = cyberBorg.stalled.shift()
     command = unit.command
+    # regardless of the command's execution, we  deduct from power
+    # the command's cost to make subsequent commands aware of
+    # the actual power available to them.
+    cyberBorg.power -= command.cost
     if cyberBorg.power > command.power
-      if unit.executes(command)
-        cyberBorg.power -= command.cost
-      else
+      unless unit.executes(command)
         # Unexpected error... why would this ever happen?
         throw new Error(
           "#{structure.namexy()} could not pursue #{command.research}"
@@ -266,7 +270,6 @@ stalled_units = () ->
 # higher ranks first,
 # and let them execute commands as they can.
 group_executions = (event) ->
-  stalled_units() # have any stalled unit try to excute their command.
   groups = cyberBorg.groups
   # TODO TBD if a lower rank group releases droids, should we restart?
   # Maybe this should be broken up into phases.
@@ -280,3 +283,5 @@ group_executions = (event) ->
       unless group.execute(command)
         commands.revert()
         break
+  # For now, stalled units will be consider of lowest rank...
+  stalled_units() # have any stalled unit try to excute their command.

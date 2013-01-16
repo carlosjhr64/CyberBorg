@@ -20,7 +20,7 @@ CyberBorg::derricks_commands = (derricks) ->
   truck = /Truck/
   truck_build = (derrick) ->
     power: 0
-    cost: 0
+    cost: 100
     like: truck
     limit: 3
     min: 1

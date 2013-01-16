@@ -1,10 +1,17 @@
 var bug_report, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, start_trace;
 
 start_trace = function(event) {
+  var droid, research, structure;
   trace("Power level: " + cyberBorg.power + " in " + event.name);
-  if (event.structure) trace("\tStructure: " + event.structure.name);
-  if (event.research) trace("\tResearch: " + event.research.name);
-  if (event.droid) return trace("\tDroid: " + event.droid.name);
+  if (structure = event.structure) {
+    trace("\tStructure: " + structure.name + "\tCost: " + structure.cost);
+  }
+  if (research = event.research) {
+    trace("\tResearch: " + event.research.name + "\tCost: " + research.power);
+  }
+  if (droid = event.droid) {
+    return trace("\tDroid: " + droid.name + "\tCost: " + droid.cost);
+  }
 };
 
 bug_report = function(label, droid, event) {

@@ -2,9 +2,12 @@
 
 start_trace = (event) ->
   trace "Power level: #{cyberBorg.power} in #{event.name}"
-  trace "\tStructure: #{event.structure.name}" if event.structure
-  trace "\tResearch: #{event.research.name}" if event.research
-  trace "\tDroid: #{event.droid.name}" if event.droid
+  if structure = event.structure
+    trace "\tStructure: #{structure.name}\tCost: #{structure.cost}"
+  if research = event.research
+    trace "\tResearch: #{event.research.name}\tCost: #{research.power}"
+  if droid = event.droid
+    trace "\tDroid: #{droid.name}\tCost: #{droid.cost}"
 
 # The bug report.
 bug_report = (label,droid,event) ->

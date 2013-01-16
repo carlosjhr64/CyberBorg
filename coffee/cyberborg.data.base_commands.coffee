@@ -22,55 +22,86 @@ CyberBorg::base_commands = ->
   research_facility = "A0ResearchFacility"
   power_generator   = "A0PowerGenerator"
 
-  dorder_build = (arr) ->
+  # We need to reserve power to ensure the initial base build...
+  savings = 500
+  # Structures costs about 100
+  costs = 100
+  build = (arr) ->
+    cost = costs
+    if savings > costs
+      cost = savings
+      savings -= costs
     command =
       order: DORDER_MAINTAIN
-      cost: 100
+      cost: cost
       structure: arr[0]
       at: x: arr[1], y: arr[2]
       cid: null # set at the time command is given
     command
+  builds = build # alias
 
-  with_three_trucks = (obj) ->
-    # All these are required
+  trucks = (obj) ->
     obj.like = /Truck/
-    obj.power = 0 # Just do it!
+    obj
+  truck = trucks # alias
+
+  three = (obj) ->
     obj.limit = 3 # maximum group size
     obj.min = 1 # it will execute the command only with at least this amount
     obj.max = 3 # it will execute the command with no more than this amount
-    obj.help = 3 # project will accept help once started
+    obj.help = 0
     obj
 
-  with_one_truck = (obj) ->
-    obj.like = /Truck/
-    obj.power = 429
+  two = (obj) ->
+    obj.limit = 2 # maximum group size
+    obj.min = 1
+    obj.max = 2
+    obj.help = 0
+    obj
+
+  one = (obj) ->
     obj.limit = 1 # maximum group size
     obj.min = 1
     obj.max = 1
-    obj.help = 1 # project will accept help once started :-??
+    obj.help = 0
     obj
 
-  # Build up the initial base as fast a posible
-  phase1 = [
-    with_three_trucks dorder_build [light_factory,    10, 235]
-    with_three_trucks dorder_build [research_facility, 7, 235]
-    with_three_trucks dorder_build [command_center,    7, 238]
-    with_three_trucks dorder_build [power_generator,   4, 235]
-  ]
-    
-  # Just have one truck max out the base with research and power.
-  phase2 = [
-    with_one_truck dorder_build [power_generator,   4, 238]
-    with_one_truck dorder_build [research_facility, 4, 241]
-    with_one_truck dorder_build [power_generator,   7, 241]
-    with_one_truck dorder_build [research_facility, 10, 241]
-    with_one_truck dorder_build [power_generator,   13, 241]
-    with_one_truck dorder_build [research_facility, 13, 244]
-    with_one_truck dorder_build [power_generator,   10, 244]
-    with_one_truck dorder_build [research_facility,  7, 244]
+  immediately = (obj) ->
+    obj.power = 0
+    obj
+
+  on_budget  = (obj) ->
+    obj.power = costs
+    # basically we enlist more help after the project starts
+    obj
+
+  on_leisure = (obj) ->
+    obj.power = 3*costs
+    obj
+
+  with_help = (obj) ->
+    obj.help = 3
+    obj
+  
+
+
+  commands = [
+    # Build up the initial base as fast a posible
+    with_help immediately three trucks build [light_factory,    10, 235]
+    with_help immediately three trucks build [research_facility, 7, 235]
+    with_help immediately three trucks build [command_center,    7, 238]
+    # Transitioning...
+    immediately two truck builds [power_generator,   4, 235]
+    on_budget one truck builds [power_generator,   4, 238]
+    # Just have one truck max out the base with research and power.
+    on_leisure one truck builds [research_facility, 4, 241]
+    on_leisure one truck builds [power_generator,   7, 241]
+    on_leisure one truck builds [research_facility, 10, 241]
+    on_leisure one truck builds [power_generator,   13, 241]
+    on_leisure one truck builds [research_facility, 13, 244]
+    on_leisure one truck builds [power_generator,   10, 244]
+    on_leisure one truck builds [research_facility,  7, 244]
   ]
 
-  # Join the phases
-  commands = phase1.concat(phase2)
   # Convert the list to wzarray
   WZArray.bless(commands)

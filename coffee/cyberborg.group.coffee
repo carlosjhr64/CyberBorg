@@ -58,19 +58,19 @@ class Group
 
   execute: (command) ->
     count = 0
-    if cyberBorg.power > command.power and units = @units(command)
+    # If the power requirement is zero, just go ahead...
+    if ((command.power is 0) or (cyberBorg.power > command.power)) and
+    units = @units(command)
       cid = CyberBorg.cid() # A unique command id.
       for unit in units
         if unit.executes(command)
           unit.command = command
           @add(unit)
           count += 1
-      if count
-        command.cid = cid
-        # TODO:
-        # Even if the command was not executed,
-        # maybe we should do still this,
-        # to let the lower ranks know
-        # we want to save for this....
-        cyberBorg.power -= command.cost
+      command.cid = cid if count
+    # We regardless deduct the command cost from available power b/c
+    # we want to make the lower ranks aware of the power
+    # actually available for them... that we're saving toward this
+    # command's goals.
+    cyberBorg.power -= command.cost
     return count

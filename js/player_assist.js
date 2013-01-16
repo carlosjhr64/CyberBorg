@@ -520,7 +520,7 @@ Group = (function() {
   Group.prototype.execute = function(command) {
     var cid, count, unit, units, _i, _len;
     count = 0;
-    if (cyberBorg.power > command.power && (units = this.units(command))) {
+    if (((command.power === 0) || (cyberBorg.power > command.power)) && (units = this.units(command))) {
       cid = CyberBorg.cid();
       for (_i = 0, _len = units.length; _i < _len; _i++) {
         unit = units[_i];
@@ -530,11 +530,9 @@ Group = (function() {
           count += 1;
         }
       }
-      if (count) {
-        command.cid = cid;
-        cyberBorg.power -= command.cost;
-      }
+      if (count) command.cid = cid;
     }
+    cyberBorg.power -= command.cost;
     return count;
   };
 
@@ -792,16 +790,23 @@ FORDER_MANUFACTURE = CyberBorg.ORDER_MAP.indexOf('FORDER_MANUFACTURE');
 LORDER_RESEARCH = CyberBorg.ORDER_MAP.indexOf('LORDER_RESEARCH');
 
 CyberBorg.prototype.base_commands = function() {
-  var command_center, commands, dorder_build, light_factory, phase1, phase2, power_generator, research_facility, with_one_truck, with_three_trucks;
+  var build, builds, command_center, commands, costs, immediately, light_factory, on_budget, on_leisure, one, power_generator, research_facility, savings, three, truck, trucks, two, with_help;
   light_factory = "A0LightFactory";
   command_center = "A0CommandCentre";
   research_facility = "A0ResearchFacility";
   power_generator = "A0PowerGenerator";
-  dorder_build = function(arr) {
-    var command;
+  savings = 500;
+  costs = 100;
+  build = function(arr) {
+    var command, cost;
+    cost = costs;
+    if (savings > costs) {
+      cost = savings;
+      savings -= costs;
+    }
     command = {
       order: DORDER_MAINTAIN,
-      cost: 100,
+      cost: cost,
       structure: arr[0],
       at: {
         x: arr[1],
@@ -811,27 +816,50 @@ CyberBorg.prototype.base_commands = function() {
     };
     return command;
   };
-  with_three_trucks = function(obj) {
+  builds = build;
+  trucks = function(obj) {
     obj.like = /Truck/;
-    obj.power = 0;
+    return obj;
+  };
+  truck = trucks;
+  three = function(obj) {
     obj.limit = 3;
     obj.min = 1;
     obj.max = 3;
-    obj.help = 3;
+    obj.help = 0;
     return obj;
   };
-  with_one_truck = function(obj) {
-    obj.like = /Truck/;
-    obj.power = 429;
+  two = function(obj) {
+    obj.limit = 2;
+    obj.min = 1;
+    obj.max = 2;
+    obj.help = 0;
+    return obj;
+  };
+  one = function(obj) {
     obj.limit = 1;
     obj.min = 1;
     obj.max = 1;
-    obj.help = 1;
+    obj.help = 0;
     return obj;
   };
-  phase1 = [with_three_trucks(dorder_build([light_factory, 10, 235])), with_three_trucks(dorder_build([research_facility, 7, 235])), with_three_trucks(dorder_build([command_center, 7, 238])), with_three_trucks(dorder_build([power_generator, 4, 235]))];
-  phase2 = [with_one_truck(dorder_build([power_generator, 4, 238])), with_one_truck(dorder_build([research_facility, 4, 241])), with_one_truck(dorder_build([power_generator, 7, 241])), with_one_truck(dorder_build([research_facility, 10, 241])), with_one_truck(dorder_build([power_generator, 13, 241])), with_one_truck(dorder_build([research_facility, 13, 244])), with_one_truck(dorder_build([power_generator, 10, 244])), with_one_truck(dorder_build([research_facility, 7, 244]))];
-  commands = phase1.concat(phase2);
+  immediately = function(obj) {
+    obj.power = 0;
+    return obj;
+  };
+  on_budget = function(obj) {
+    obj.power = costs;
+    return obj;
+  };
+  on_leisure = function(obj) {
+    obj.power = 3 * costs;
+    return obj;
+  };
+  with_help = function(obj) {
+    obj.help = 3;
+    return obj;
+  };
+  commands = [with_help(immediately(three(trucks(build([light_factory, 10, 235]))))), with_help(immediately(three(trucks(build([research_facility, 7, 235]))))), with_help(immediately(three(trucks(build([command_center, 7, 238]))))), immediately(two(truck(builds([power_generator, 4, 235])))), on_budget(one(truck(builds([power_generator, 4, 238])))), on_leisure(one(truck(builds([research_facility, 4, 241])))), on_leisure(one(truck(builds([power_generator, 7, 241])))), on_leisure(one(truck(builds([research_facility, 10, 241])))), on_leisure(one(truck(builds([power_generator, 13, 241])))), on_leisure(one(truck(builds([research_facility, 13, 244])))), on_leisure(one(truck(builds([power_generator, 10, 244])))), on_leisure(one(truck(builds([research_facility, 7, 244]))))];
   return WZArray.bless(commands);
 };
 
@@ -840,8 +868,8 @@ CyberBorg.prototype.factory_commands = function() {
   build = function(obj) {
     obj.order = FORDER_MANUFACTURE;
     obj.like = /Factory/;
-    obj.power = 441;
-    obj.cost = 50;
+    obj.power = 62;
+    obj.cost = 62;
     obj.limit = 5;
     obj.min = 1;
     obj.max = 1;
@@ -883,7 +911,7 @@ CyberBorg.prototype.lab_commands = function() {
     };
     obj.order = LORDER_RESEARCH;
     obj.like = /Research Facility/;
-    obj.power = 388;
+    obj.power = 100;
     obj.cost = 100;
     obj.limit = 5;
     obj.min = 1;
@@ -891,7 +919,7 @@ CyberBorg.prototype.lab_commands = function() {
     obj.help = 1;
     return obj;
   };
-  return [pursue('R-Wpn-MG2Mk1'), pursue('R-Struc-PowerModuleMk1'), pursue('R-Wpn-MG3Mk1'), pursue('R-Struc-RepairFacility'), pursue('R-Defense-Tower01'), pursue('R-Defense-WallTower02'), pursue('R-Defense-AASite-QuadMg1'), pursue('R-Vehicle-Body04'), pursue('R-Vehicle-Prop-VTOL'), pursue('R-Struc-VTOLFactory'), pursue('R-Wpn-Bomb01')];
+  return [pursue('R-Wpn-MG1Mk1'), pursue('R-Wpn-MG2Mk1'), pursue('R-Struc-PowerModuleMk1'), pursue('R-Wpn-MG3Mk1'), pursue('R-Struc-RepairFacility'), pursue('R-Defense-Tower01'), pursue('R-Defense-WallTower02'), pursue('R-Defense-AASite-QuadMg1'), pursue('R-Vehicle-Body04'), pursue('R-Vehicle-Prop-VTOL'), pursue('R-Struc-VTOLFactory'), pursue('R-Wpn-Bomb01')];
 };
 
 CyberBorg.prototype.derricks_commands = function(derricks) {
@@ -901,7 +929,7 @@ CyberBorg.prototype.derricks_commands = function(derricks) {
   truck_build = function(derrick) {
     return {
       power: 0,
-      cost: 0,
+      cost: 100,
       like: truck,
       limit: 3,
       min: 1,
@@ -1165,10 +1193,17 @@ eventVideoDone = () ->
 */
 
 start_trace = function(event) {
+  var droid, research, structure;
   trace("Power level: " + cyberBorg.power + " in " + event.name);
-  if (event.structure) trace("\tStructure: " + event.structure.name);
-  if (event.research) trace("\tResearch: " + event.research.name);
-  if (event.droid) return trace("\tDroid: " + event.droid.name);
+  if (structure = event.structure) {
+    trace("\tStructure: " + structure.name + "\tCost: " + structure.cost);
+  }
+  if (research = event.research) {
+    trace("\tResearch: " + event.research.name + "\tCost: " + research.power);
+  }
+  if (droid = event.droid) {
+    return trace("\tDroid: " + droid.name + "\tCost: " + droid.cost);
+  }
 };
 
 bug_report = function(label, droid, event) {
@@ -1342,9 +1377,10 @@ structureBuilt = function(structure, droid, group) {
   if (structure.type === STRUCTURE) {
     switch (structure.stattype) {
       case HQ:
-        return min_map_and_design_on(structure);
+        min_map_and_design_on(structure);
     }
   }
+  return helping(droid);
 };
 
 min_map_and_design_on = function(structure) {
@@ -1446,10 +1482,9 @@ stalled_units = function() {
   stalled = [];
   while (unit = cyberBorg.stalled.shift()) {
     command = unit.command;
+    cyberBorg.power -= command.cost;
     if (cyberBorg.power > command.power) {
-      if (unit.executes(command)) {
-        cyberBorg.power -= command.cost;
-      } else {
+      if (!unit.executes(command)) {
         throw new Error("" + (structure.namexy()) + " could not pursue " + command.research);
       }
     } else {
@@ -1460,10 +1495,8 @@ stalled_units = function() {
 };
 
 group_executions = function(event) {
-  var command, commands, group, groups, name, _i, _len, _results;
-  stalled_units();
+  var command, commands, group, groups, name, _i, _len;
   groups = cyberBorg.groups;
-  _results = [];
   for (_i = 0, _len = groups.length; _i < _len; _i++) {
     group = groups[_i];
     name = group.name;
@@ -1471,19 +1504,12 @@ group_executions = function(event) {
       continue;
     }
     commands = group.commands;
-    _results.push((function() {
-      var _results2;
-      _results2 = [];
-      while (command = commands.next()) {
-        if (!group.execute(command)) {
-          commands.revert();
-          break;
-        } else {
-          _results2.push(void 0);
-        }
+    while (command = commands.next()) {
+      if (!group.execute(command)) {
+        commands.revert();
+        break;
       }
-      return _results2;
-    })());
+    }
   }
-  return _results;
+  return stalled_units();
 };
