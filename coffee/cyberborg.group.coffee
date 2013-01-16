@@ -67,5 +67,10 @@ class Group
           count += 1
       if count
         command.cid = cid
+        # TODO:
+        # Even if the command was not executed,
+        # maybe we should do still this,
+        # to let the lower ranks know
+        # we want to save for this....
         cyberBorg.power -= command.cost
     return count

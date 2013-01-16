@@ -30,6 +30,8 @@ WZObject = (function() {
   WZObject.prototype.copy = function(object) {
     var key, _results;
     this.game_time = gameTime;
+    this.corder = CyberBorg.IS_IDLE;
+    this.dorder = CyberBorg.IS_IDLE;
     _results = [];
     for (key in object) {
       _results.push(this[key] = object[key]);
@@ -71,18 +73,30 @@ WZObject = (function() {
     if (order == null) order = DORDER_MOVE;
     if (droidCanReach(this, at.x, at.y)) {
       orderDroidLoc(this, order, at.x, at.y);
+      this.order = order;
       return true;
     }
     return false;
   };
 
   WZObject.prototype.repair_structure = function(built) {
-    if (built.health < 99) return orderDroidObj(this, DORDER_REPAIR, built);
+    if (built.health < 99) {
+      if (orderDroidObj(this, DORDER_REPAIR, built)) {
+        this.order = DORDER_REPAIR;
+        return true;
+      } else {
+        return false;
+      }
+    }
     return this.move_to(built);
   };
 
   WZObject.prototype.build_structure = function(structure, at) {
-    return orderDroidBuild(this, DORDER_BUILD, structure, at.x, at.y, at.direction);
+    if (orderDroidBuild(this, DORDER_BUILD, structure, at.x, at.y, at.direction)) {
+      this.order = DORDER_BUILD;
+      return true;
+    }
+    return false;
   };
 
   WZObject.prototype.maintain_structure = function(structure, at) {
@@ -94,13 +108,18 @@ WZObject = (function() {
   WZObject.prototype.pursue_research = function(research) {
     if (pursueResearch(this, research)) {
       this.researching = research;
+      this.order = LORDER_RESEARCH;
       return true;
     }
     return false;
   };
 
   WZObject.prototype.build_droid = function(command) {
-    return buildDroid(this, command.name, command.body, command.propulsion, "", command.droid_type, command.turret);
+    if (buildDroid(this, command.name, command.body, command.propulsion, "", command.droid_type, command.turret)) {
+      this.order = FORDER_MANUFACTURE;
+      return true;
+    }
+    return false;
   };
 
   WZObject.prototype.executes = function(command) {
@@ -126,7 +145,8 @@ WZObject = (function() {
       }
     }).call(this);
     if (ok) {
-      this.order = command.order;
+      this.corder = command.order;
+      this.dorder = this.order;
       this.command_time = gameTime;
     }
     return ok;
@@ -1220,7 +1240,7 @@ gotcha_rogue = function(event) {
   var command, count, droid, rogue, _i, _len, _ref;
   count = 0;
   rogue = function(object) {
-    if (object.command) if (object.order !== object.command.order) return true;
+    if (object.command) if (object.order !== object.dorder) return true;
     return false;
   };
   _ref = cyberBorg.for_all(function(object) {

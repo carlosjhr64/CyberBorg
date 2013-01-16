@@ -64,7 +64,7 @@ gotcha_rogue = (event) ->
   count = 0
   rogue = (object) ->
     if object.command
-      return true unless object.order is object.command.order
+      return true unless object.order is object.dorder
     return false
   for droid in cyberBorg.for_all((object) -> rogue(object))
     count += 1

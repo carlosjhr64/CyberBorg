@@ -76,7 +76,7 @@ gotcha_rogue = function(event) {
   var command, count, droid, rogue, _i, _len, _ref;
   count = 0;
   rogue = function(object) {
-    if (object.command) if (object.order !== object.command.order) return true;
+    if (object.command) if (object.order !== object.dorder) return true;
     return false;
   };
   _ref = cyberBorg.for_all(function(object) {
