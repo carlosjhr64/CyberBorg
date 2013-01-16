@@ -85,7 +85,10 @@ class CyberBorg
     # Used to keep track of power consumption.
     # Gets updated in update, below.
     @power = 0
+    # Stalled units waiting for enough power to continue their command
     @stalled = []
+    # Quick access to reseve list
+    @reserve = null
 
   ###############
   ### UPDATES ###

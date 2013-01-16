@@ -8,7 +8,6 @@ cyberBorg = new CyberBorg()
 # these are a convenience...
 # Define the group names
 BASE      = 'Base'	# will build the base
-RESERVE   = 'Reserve'	# are the free units
 DERRICKS  = 'Derricks'	# will build derricks
 SCOUTS    = 'Scouts'	# will scout and guard the area
 FACTORIES = 'Factories'	# builds droids
@@ -40,6 +39,7 @@ events = (event) ->
       chat(event.sender, event.to, event.message)
     # We should catch all possibilities, but in case we missed something...
     else trace("#{event.name} NOT HANDLED!")
+
   # Next see what commands the groups can execute
   group_executions(event)
   # Next, due to bugs either in this script or in the game...
@@ -50,64 +50,55 @@ events = (event) ->
 # StartLevel event is then switched here by events above.
 startLevel = () ->
   # The game starts...
-  
+ 
   # Usually the game starts out with some number of trucks,
   # or droids in general.  Let's see what we have.
-  # Group is a class provided by CyberBorg.
-  # The constructor by default picks up all of the player's pieces.
+  # CyberBorg.enum_droid returns the units we currently have.
   # We'll put them in a reserve for now.
-  # So the group name is RESERVE, and it'll have the lowest rank
-  # among the groups, 0.
-  # Rank is used to determine which group gets to pick units first.
-  # Rank number will allow us to sort the groups by priority.
-  # Groups with higher priority get first dibs on any action.
-  reserve = new Group(RESERVE,0)
-  
-  # The Reserve group will hold the droids ready to join a group.
-  # Other groups can release droids they no longer need
-  # into the reserve, and draw droids they need from the reserve.
-  # The reserve may anticipate the needs of other groups and
-  # command droids around to where they may be likely needed.
-  # Thus it may show some initiative, just as
-  # individual droids may show some initiative.
-  
+  cyberBorg.reserve = reserve = CyberBorg.enum_droid()
+
   # cyberBorg can list all the resources available on the map and
   # sort them according to distance from where we are.
   # It will provide the AI a guide to our territorial expansion.
-  resources = CyberBorg.get_resources(reserve.group.center())
-  
-  # We'll create many groups besides the Reserve, and
+  resources = CyberBorg.get_resources(reserve.center())
+
+  # We'll create many groups besides the reserve, and
   # we'll keep them in cyberBorg.groups.
   groups = cyberBorg.groups
-  groups.push(reserve)
-  
+
   # For this AI, we won't command individual droids directly.
   # All commands will be given to groups, which
   # will then be relayed down to an individual droid.
+  # Group is a class provided by CyberBorg.
+  # Rank is used to determine which group gets to pick units first.
+  # Rank number will allow us to sort the groups by priority.
+  # Groups with higher priority get first dibs on any action.
+  # Groups can release droids they no longer need
+  # into the reserve, and draw droids they need from the reserve.
   # The Base group will be responsible for building the base.
   # The group starts out empty, with [].
   # Also, from a datafile, we give the Base group its commands list.
-  # The datafile defined the function that returns the group's commands.
+  # The datafile defines the function that returns the group's commands.
   # For example, cyberBorg.base_commands in the case of BASE group.
-  # Finally, the base needs the reserve group.
+  # Finally, the base needs the reserve list.
   base = new Group(BASE, 100, [],
-  cyberBorg.base_commands(), reserve.group)
+  cyberBorg.base_commands(), reserve)
   groups.push(base)
   derricks = new Group(DERRICKS, 90, [],
-  cyberBorg.derricks_commands(resources), reserve.group)
+  cyberBorg.derricks_commands(resources), reserve)
   groups.push(derricks)
   scouts = new Group(SCOUTS, 80, [],
-  cyberBorg.scouts_commands(resources), reserve.group)
+  cyberBorg.scouts_commands(resources), reserve)
   groups.push(scouts)
   
   # Structures are also considered units the AI can command.
   # Let's have a factory group... etc.
   # So do use reserve for structure units, just as we do for droids...
   factories = new Group(FACTORIES, 20, [],
-  cyberBorg.factory_commands(), reserve.group)
+  cyberBorg.factory_commands(), reserve)
   groups.push(factories)
   labs = new Group(LABS, 19, [],
-  cyberBorg.lab_commands(), reserve.group)
+  cyberBorg.lab_commands(), reserve)
   groups.push(labs)
 
   # This is probably the only time we'll need to sort groups.
@@ -133,7 +124,7 @@ structureBuilt = (structure, droid, group) ->
   # we need to get it started building droids.
   # So we push the structure into the RESERVE and
   # it should get picked up by the FACTORIES group in group_executions (below).
-  cyberBorg.groups.named(RESERVE).group.push(structure)
+  cyberBorg.reserve.push(structure)
   # There may be exceptional catches to be done per structure...
   if (structure.type is STRUCTURE)
     switch structure.stattype
@@ -166,7 +157,7 @@ droidBuilt = (droid, structure, group) ->
   # If it's a truck, maybe it should go to the nearest job?
   # Well, the style for this AI is to work with groups.
   # So what we'll do is add the new droids to the RESERVE.
-  cyberBorg.groups.named(RESERVE).group.push(droid)
+  cyberBorg.reserve.push(droid)
   # There may be ongoing jobs so let's see what available.
   helping(droid)
 
@@ -262,7 +253,9 @@ stalled_units = () ->
         cyberBorg.power -= command.cost
       else
         # Unexpected error... why would this ever happen?
-        throw new Error("#{structure.namexy()} could not pursue #{command.research}")
+        throw new Error(
+          "#{structure.namexy()} could not pursue #{command.research}"
+        )
     else
       # push unit into stalled list
       stalled.push(unit)

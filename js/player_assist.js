@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, RESERVE, SCOUTS, Scouter, WZArray, WZObject, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, group_executions, helping, min_map_and_design_on, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
+var BASE, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, SCOUTS, Scouter, WZArray, WZObject, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, group_executions, helping, min_map_and_design_on, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -436,18 +436,18 @@ Scouter = (function() {
 Group = (function() {
 
   function Group(name, rank, group, commands, reserve) {
+    var list, _i, _len, _ref;
     this.name = name;
     this.rank = rank;
-    this.group = group;
-    this.commands = commands;
-    this.reserve = reserve;
-    if (!this.group) this.group = CyberBorg.enum_droid();
-    if (!this.group.is_wzarray) WZArray.bless(this.group);
+    this.group = group != null ? group : [];
+    this.commands = commands != null ? commands : [];
+    this.reserve = reserve != null ? reserve : [];
+    _ref = [this.group, this.commands, this.reserve];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      list = _ref[_i];
+      if (!list.is_wzarray) WZArray.bless(list);
+    }
     this.list = this.group;
-    if (!this.commands) this.commands = WZArray.bless([]);
-    if (!this.commands.is_wzarray) WZArray.bless(this.commands);
-    if (!this.reserve) this.reserve = WZArray.bless([]);
-    if (!this.reserve.is_wzarray) WZArray.bless(this.reserve);
   }
 
   Group.prototype.add = function(droid) {
@@ -553,6 +553,7 @@ CyberBorg = (function() {
     this.groups = WZArray.bless([]);
     this.power = 0;
     this.stalled = [];
+    this.reserve = null;
   }
 
   /* UPDATES
@@ -1255,8 +1256,6 @@ cyberBorg = new CyberBorg();
 
 BASE = 'Base';
 
-RESERVE = 'Reserve';
-
 DERRICKS = 'Derricks';
 
 SCOUTS = 'Scouts';
@@ -1299,19 +1298,18 @@ events = function(event) {
 
 startLevel = function() {
   var base, derricks, factories, groups, labs, reserve, resources, scouts;
-  reserve = new Group(RESERVE, 0);
-  resources = CyberBorg.get_resources(reserve.group.center());
+  cyberBorg.reserve = reserve = CyberBorg.enum_droid();
+  resources = CyberBorg.get_resources(reserve.center());
   groups = cyberBorg.groups;
-  groups.push(reserve);
-  base = new Group(BASE, 100, [], cyberBorg.base_commands(), reserve.group);
+  base = new Group(BASE, 100, [], cyberBorg.base_commands(), reserve);
   groups.push(base);
-  derricks = new Group(DERRICKS, 90, [], cyberBorg.derricks_commands(resources), reserve.group);
+  derricks = new Group(DERRICKS, 90, [], cyberBorg.derricks_commands(resources), reserve);
   groups.push(derricks);
-  scouts = new Group(SCOUTS, 80, [], cyberBorg.scouts_commands(resources), reserve.group);
+  scouts = new Group(SCOUTS, 80, [], cyberBorg.scouts_commands(resources), reserve);
   groups.push(scouts);
-  factories = new Group(FACTORIES, 20, [], cyberBorg.factory_commands(), reserve.group);
+  factories = new Group(FACTORIES, 20, [], cyberBorg.factory_commands(), reserve);
   groups.push(factories);
-  labs = new Group(LABS, 19, [], cyberBorg.lab_commands(), reserve.group);
+  labs = new Group(LABS, 19, [], cyberBorg.lab_commands(), reserve);
   groups.push(labs);
   return groups.sort(function(a, b) {
     return b.rank - a.rank;
@@ -1320,7 +1318,7 @@ startLevel = function() {
 
 structureBuilt = function(structure, droid, group) {
   if (droid.command) group.layoffs(droid.command);
-  cyberBorg.groups.named(RESERVE).group.push(structure);
+  cyberBorg.reserve.push(structure);
   if (structure.type === STRUCTURE) {
     switch (structure.stattype) {
       case HQ:
@@ -1340,7 +1338,7 @@ droidBuilt = function(droid, structure, group) {
   if (structure != null ? structure.command : void 0) {
     group.layoffs(structure.command);
   }
-  cyberBorg.groups.named(RESERVE).group.push(droid);
+  cyberBorg.reserve.push(droid);
   return helping(droid);
 };
 
