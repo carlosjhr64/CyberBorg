@@ -45,4 +45,6 @@ CyberBorg::factory_commands = ->
   (1).times -> commands.push(build whb1(truck))
   # ... 12 machine gunners
   (12).times -> commands.push(build whb1(mg1))
+  # ... and one more truck.
+  (1).times -> commands.push(build whb1(truck))
   WZArray.bless(commands)

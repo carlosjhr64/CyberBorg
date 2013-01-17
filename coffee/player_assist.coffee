@@ -8,7 +8,6 @@ cyberBorg = new CyberBorg()
 # these are a convenience...
 # Define the group names
 BASE      = 'Base'	# will build the base
-MAINTAINANCE = 'Maintainance' # Will maintain and expand base
 DERRICKS  = 'Derricks'	# will build derricks
 SCOUTS    = 'Scouts'	# will scout and guard the area
 FACTORIES = 'Factories'	# builds droids
@@ -90,10 +89,6 @@ startLevel = () ->
   derricks = new Group(DERRICKS, 90, [],
   cyberBorg.derricks_commands(resources), reserve)
   groups.push(derricks)
-
-  maintainance = new Group(MAINTAINANCE, 80, [],
-  cyberBorg.maintainance_commands(), reserve)
-  groups.push(maintainance)
 
   scouts = new Group(SCOUTS, 70, [],
   cyberBorg.scouts_commands(resources), reserve)
@@ -284,8 +279,6 @@ group_executions = (event) ->
   # A layoff phase followed by an employment phase.
   for group in groups
     name = group.name
-    continue unless (name is FACTORIES) or (name is BASE) or (name is LABS) or
-    (name is SCOUTS) or (name is DERRICKS)
     commands = group.commands
     while command = commands.next()
       unless group.execute(command)

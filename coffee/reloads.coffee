@@ -35,9 +35,9 @@ gotcha_working = (droid, command) ->
   centreView(droid.x, droid.y) if CyberBorg.TRACE
   if droid.executes(command)
     order = command.order
-    trace("\tRe-issued #{order.order_map()}, ##{order}, to #{droid.name}.")
+    trace("\t\033[1;32mRe-issued #{order.order_map()}, ##{order}, to #{droid.name}.\033[0m")
   else
-    trace("\t#{droid.name} is a lazy bum!")
+    trace("\t\033[1;31#{droid.name} is a lazy bum!\033[0m")
 
 # Report selected droids.
 gotcha_selected = (event) ->
@@ -60,6 +60,8 @@ gotcha_idle = (event) ->
     droid.name is 'Truck' and
     command.structure is 'A0ResourceExtractor'
       gotcha_working(droid, command)
+    else
+      trace("\33[1;31mUncaught idle case.\033[0m")
   return count
 
 # Report droids under command which are acting their own...
@@ -67,7 +69,7 @@ gotcha_rogue = (event) ->
   count = 0
   rogue = (object) ->
     if object.command
-      return true unless object.order is object.dorder
+      return true unless object.order and (object.order is object.dorder)
     return false
   for droid in cyberBorg.for_all((object) -> rogue(object))
     count += 1
@@ -75,6 +77,8 @@ gotcha_rogue = (event) ->
     if command?.order is 28
       centreView(droid.x, droid.y) if CyberBorg.TRACE
       gotcha_working(droid, command)
+    else
+      trace("\33[1;31mUncaught rogue case.\033[0m")
   return count
 
 gotchas = (event) ->

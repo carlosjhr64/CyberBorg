@@ -42,9 +42,9 @@ gotcha_working = function(droid, command) {
   if (CyberBorg.TRACE) centreView(droid.x, droid.y);
   if (droid.executes(command)) {
     order = command.order;
-    return trace("\tRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".");
+    return trace("\t\033[1;32mRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".\033[0m");
   } else {
-    return trace("\t" + droid.name + " is a lazy bum!");
+    return trace("\t\033[1;31" + droid.name + " is a lazy bum!\033[0m");
   }
 };
 
@@ -74,6 +74,8 @@ gotcha_idle = function(event) {
     command = bug_report("Idle", droid, event);
     if (command && event.name === "Destroyed" && event.object.name === "Oil Derrick" && droid.name === 'Truck' && command.structure === 'A0ResourceExtractor') {
       gotcha_working(droid, command);
+    } else {
+      trace("\33[1;31mUncaught idle case.\033[0m");
     }
   }
   return count;
@@ -83,7 +85,9 @@ gotcha_rogue = function(event) {
   var command, count, droid, rogue, _i, _len, _ref;
   count = 0;
   rogue = function(object) {
-    if (object.command) if (object.order !== object.dorder) return true;
+    if (object.command) {
+      if (!(object.order && (object.order === object.dorder))) return true;
+    }
     return false;
   };
   _ref = cyberBorg.for_all(function(object) {
@@ -96,6 +100,8 @@ gotcha_rogue = function(event) {
     if ((command != null ? command.order : void 0) === 28) {
       if (CyberBorg.TRACE) centreView(droid.x, droid.y);
       gotcha_working(droid, command);
+    } else {
+      trace("\33[1;31mUncaught rogue case.\033[0m");
     }
   }
   return count;

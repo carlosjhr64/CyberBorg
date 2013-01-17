@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, MAINTAINANCE, SCOUTS, Scouter, WZArray, WZObject, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, group_executions, helping, min_map_and_design_on, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
+var BASE, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, SCOUTS, Scouter, WZArray, WZObject, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, group_executions, helping, min_map_and_design_on, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -951,6 +951,9 @@ CyberBorg.prototype.factory_commands = function() {
   12..times(function() {
     return commands.push(build(whb1(mg1)));
   });
+  1..times(function() {
+    return commands.push(build(whb1(truck)));
+  });
   return WZArray.bless(commands);
 };
 
@@ -1286,9 +1289,9 @@ gotcha_working = function(droid, command) {
   if (CyberBorg.TRACE) centreView(droid.x, droid.y);
   if (droid.executes(command)) {
     order = command.order;
-    return trace("\tRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".");
+    return trace("\t\033[1;32mRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".\033[0m");
   } else {
-    return trace("\t" + droid.name + " is a lazy bum!");
+    return trace("\t\033[1;31" + droid.name + " is a lazy bum!\033[0m");
   }
 };
 
@@ -1318,6 +1321,8 @@ gotcha_idle = function(event) {
     command = bug_report("Idle", droid, event);
     if (command && event.name === "Destroyed" && event.object.name === "Oil Derrick" && droid.name === 'Truck' && command.structure === 'A0ResourceExtractor') {
       gotcha_working(droid, command);
+    } else {
+      trace("\33[1;31mUncaught idle case.\033[0m");
     }
   }
   return count;
@@ -1327,7 +1332,9 @@ gotcha_rogue = function(event) {
   var command, count, droid, rogue, _i, _len, _ref;
   count = 0;
   rogue = function(object) {
-    if (object.command) if (object.order !== object.dorder) return true;
+    if (object.command) {
+      if (!(object.order && (object.order === object.dorder))) return true;
+    }
     return false;
   };
   _ref = cyberBorg.for_all(function(object) {
@@ -1340,6 +1347,8 @@ gotcha_rogue = function(event) {
     if ((command != null ? command.order : void 0) === 28) {
       if (CyberBorg.TRACE) centreView(droid.x, droid.y);
       gotcha_working(droid, command);
+    } else {
+      trace("\33[1;31mUncaught rogue case.\033[0m");
     }
   }
   return count;
@@ -1362,8 +1371,6 @@ gotchas = function(event) {
 cyberBorg = new CyberBorg();
 
 BASE = 'Base';
-
-MAINTAINANCE = 'Maintainance';
 
 DERRICKS = 'Derricks';
 
@@ -1406,7 +1413,7 @@ events = function(event) {
 };
 
 startLevel = function() {
-  var base, derricks, factories, groups, labs, maintainance, reserve, resources, scouts;
+  var base, derricks, factories, groups, labs, reserve, resources, scouts;
   cyberBorg.reserve = reserve = CyberBorg.enum_droid();
   resources = CyberBorg.get_resources(reserve.center());
   groups = cyberBorg.groups;
@@ -1414,8 +1421,6 @@ startLevel = function() {
   groups.push(base);
   derricks = new Group(DERRICKS, 90, [], cyberBorg.derricks_commands(resources), reserve);
   groups.push(derricks);
-  maintainance = new Group(MAINTAINANCE, 80, [], cyberBorg.maintainance_commands(), reserve);
-  groups.push(maintainance);
   scouts = new Group(SCOUTS, 70, [], cyberBorg.scouts_commands(resources), reserve);
   groups.push(scouts);
   factories = new Group(FACTORIES, 20, [], cyberBorg.factory_commands(), reserve);
@@ -1556,9 +1561,6 @@ group_executions = function(event) {
   for (_i = 0, _len = groups.length; _i < _len; _i++) {
     group = groups[_i];
     name = group.name;
-    if (!((name === FACTORIES) || (name === BASE) || (name === LABS) || (name === SCOUTS) || (name === DERRICKS))) {
-      continue;
-    }
     commands = group.commands;
     while (command = commands.next()) {
       if (!group.execute(command)) {
