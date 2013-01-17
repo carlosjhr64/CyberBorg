@@ -805,7 +805,7 @@ FORDER_MANUFACTURE = CyberBorg.ORDER_MAP.indexOf('FORDER_MANUFACTURE');
 LORDER_RESEARCH = CyberBorg.ORDER_MAP.indexOf('LORDER_RESEARCH');
 
 CyberBorg.prototype.base_commands = function() {
-  var build, builds, command_center, commands, costs, immediately, light_factory, on_budget, one, power_generator, research_facility, savings, three, truck, trucks, two, with_help;
+  var build, builds, command_center, commands, costs, immediately, light_factory, on_budget, on_glut, one, power_generator, research_facility, savings, three, truck, trucks, two, with_help;
   light_factory = "A0LightFactory";
   command_center = "A0CommandCentre";
   research_facility = "A0ResearchFacility";
@@ -858,6 +858,10 @@ CyberBorg.prototype.base_commands = function() {
     obj.help = 0;
     return obj;
   };
+  with_help = function(obj) {
+    obj.help = 3;
+    return obj;
+  };
   immediately = function(obj) {
     obj.power = 0;
     return obj;
@@ -866,11 +870,12 @@ CyberBorg.prototype.base_commands = function() {
     obj.power = costs;
     return obj;
   };
-  with_help = function(obj) {
-    obj.help = 3;
+  on_glut = function(obj) {
+    obj.power = 400;
+    obj.cost = 0;
     return obj;
   };
-  commands = [with_help(immediately(three(trucks(build([light_factory, 10, 235]))))), with_help(immediately(three(trucks(build([research_facility, 7, 235]))))), with_help(immediately(three(trucks(build([command_center, 7, 238]))))), immediately(two(truck(builds([power_generator, 4, 235])))), on_budget(one(truck(builds([power_generator, 4, 238]))))];
+  commands = [with_help(immediately(three(trucks(build([light_factory, 10, 235]))))), with_help(immediately(three(trucks(build([research_facility, 7, 235]))))), with_help(immediately(three(trucks(build([command_center, 7, 238]))))), immediately(two(truck(builds([power_generator, 4, 235])))), on_budget(one(truck(builds([power_generator, 4, 238])))), on_glut(one(truck(builds([research_facility, 4, 241])))), on_budget(one(truck(builds([power_generator, 7, 241])))), on_glut(one(truck(builds([research_facility, 10, 241])))), on_budget(one(truck(builds([power_generator, 13, 241])))), on_glut(one(truck(builds([research_facility, 13, 244])))), on_budget(one(truck(builds([power_generator, 10, 244])))), on_glut(one(truck(builds([research_facility, 7, 244]))))];
   return WZArray.bless(commands);
 };
 

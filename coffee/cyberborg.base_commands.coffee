@@ -66,6 +66,10 @@ CyberBorg::base_commands = ->
     obj.help = 0
     obj
 
+  with_help = (obj) ->
+    obj.help = 3
+    obj
+
   immediately = (obj) ->
     obj.power = 0
     obj
@@ -75,10 +79,16 @@ CyberBorg::base_commands = ->
     # basically we enlist more help after the project starts
     obj
 
-  with_help = (obj) ->
-    obj.help = 3
+  # This is a trick...
+  # Wait until there more than enough power, but
+  # don't relay down the power cost.
+  # If we have more than enough, it wont matter anyways
+  # that cost is set to zero.
+  on_glut = (obj) ->
+    obj.power = 400
+    obj.cost = 0
     obj
-  
+
   commands = [
     # Build up the initial base as fast a posible
     with_help immediately three trucks build [light_factory,    10, 235]
@@ -87,6 +97,13 @@ CyberBorg::base_commands = ->
     # Transitioning...
     immediately two truck builds [power_generator,   4, 235]
     on_budget one truck builds [power_generator,   4, 238]
+    on_glut one truck builds [research_facility, 4, 241]
+    on_budget one truck builds [power_generator,   7, 241]
+    on_glut one truck builds [research_facility, 10, 241]
+    on_budget one truck builds [power_generator,   13, 241]
+    on_glut one truck builds [research_facility, 13, 244]
+    on_budget one truck builds [power_generator,   10, 244]
+    on_glut one truck builds [research_facility,  7, 244]
   ]
 
   # Convert the list to wzarray
