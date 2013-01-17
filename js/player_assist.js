@@ -606,14 +606,19 @@ CyberBorg = (function() {
   */
 
   CyberBorg.prototype.for_all = function(test_of) {
-    var group, list, object, _i, _j, _len, _len2, _ref, _ref2;
+    var group, list, object, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
     list = [];
-    _ref = this.groups;
+    _ref = this.reserve;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      group = _ref[_i];
-      _ref2 = group.list;
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        object = _ref2[_j];
+      object = _ref[_i];
+      if (test_of(object)) list.push(object);
+    }
+    _ref2 = this.groups;
+    for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+      group = _ref2[_j];
+      _ref3 = group.list;
+      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+        object = _ref3[_k];
         if (test_of(object)) list.push(object);
       }
     }
@@ -621,13 +626,23 @@ CyberBorg = (function() {
   };
 
   CyberBorg.prototype.for_one = function(test_of) {
-    var group, object, _i, _j, _len, _len2, _ref, _ref2;
-    _ref = this.groups;
+    var group, object, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
+    _ref = this.reserve;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      group = _ref[_i];
-      _ref2 = group.list;
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        object = _ref2[_j];
+      object = _ref[_i];
+      if (test_of(object)) {
+        return {
+          object: object,
+          group: group
+        };
+      }
+    }
+    _ref2 = this.groups;
+    for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+      group = _ref2[_j];
+      _ref3 = group.list;
+      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+        object = _ref3[_k];
         if (test_of(object)) {
           return {
             object: object,
@@ -1244,20 +1259,20 @@ start_trace = function(event) {
 };
 
 bug_report = function(label, droid, event) {
-  var at, command, corder, dorder, _ref;
+  var at, command, corder, order, _ref;
   command = null;
-  dorder = droid.order;
+  order = droid.order;
   trace("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\tevent:" + event.name);
-  trace("\t\torder:" + dorder + " => " + (dorder.order_map()));
+  trace("\t\torder:" + order + " => " + (order.order_map()));
   if (command = droid.command) {
     corder = command.order;
     trace("\t\t" + (corder.order_map()) + "\t#" + corder + "\tcid:" + command.cid);
     if (command.structure) trace("\t\tstructure:" + command.structure);
     if (at = command.at) trace("\t\tat:(" + at.x + "," + at.y + ")");
-    if (dorder === 0) {
+    if (order === 0) {
       trace("\t\tBUG: Quitter.");
     } else {
-      if (dorder !== corder) trace("\t\tBUG: Order changed.");
+      if (order !== droid.dorder) trace("\t\tBUG: Order changed.");
     }
   }
   if (event.name === "Destroyed") {

@@ -15,20 +15,20 @@ start_trace = function(event) {
 };
 
 bug_report = function(label, droid, event) {
-  var at, command, corder, dorder, _ref;
+  var at, command, corder, order, _ref;
   command = null;
-  dorder = droid.order;
+  order = droid.order;
   trace("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\tevent:" + event.name);
-  trace("\t\torder:" + dorder + " => " + (dorder.order_map()));
+  trace("\t\torder:" + order + " => " + (order.order_map()));
   if (command = droid.command) {
     corder = command.order;
     trace("\t\t" + (corder.order_map()) + "\t#" + corder + "\tcid:" + command.cid);
     if (command.structure) trace("\t\tstructure:" + command.structure);
     if (at = command.at) trace("\t\tat:(" + at.x + "," + at.y + ")");
-    if (dorder === 0) {
+    if (order === 0) {
       trace("\t\tBUG: Quitter.");
     } else {
-      if (dorder !== corder) trace("\t\tBUG: Order changed.");
+      if (order !== droid.dorder) trace("\t\tBUG: Order changed.");
     }
   }
   if (event.name === "Destroyed") {

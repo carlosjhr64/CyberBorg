@@ -12,9 +12,9 @@ start_trace = (event) ->
 # The bug report.
 bug_report = (label,droid,event) ->
   command = null
-  dorder = droid.order
+  order = droid.order
   trace "#{label}:\t#{droid.namexy()}\tid:#{droid.id}\tevent:#{event.name}"
-  trace "\t\torder:#{dorder} => #{dorder.order_map()}"
+  trace "\t\torder:#{order} => #{order.order_map()}"
   if command = droid.command
     corder = command.order
     trace "\t\t#{corder.order_map()}\t##{corder}\tcid:#{command.cid}"
@@ -22,10 +22,10 @@ bug_report = (label,droid,event) ->
       trace "\t\tstructure:#{command.structure}"
     if at = command.at
       trace "\t\tat:(#{at.x},#{at.y})"
-    if dorder is 0
+    if order is 0
       trace "\t\tBUG: Quitter."
     else
-      trace "\t\tBUG: Order changed." unless dorder is corder
+      trace "\t\tBUG: Order changed." unless order is droid.dorder
   if event.name is "Destroyed"
     trace "\t\t#{event.group?.name}'s #{event.object.namexy()} was destroyed."
   return command

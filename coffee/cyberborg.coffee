@@ -107,12 +107,16 @@ class CyberBorg
 
   for_all: (test_of) ->
     list = []
+    for object in @reserve
+      list.push(object) if test_of(object)
     for group in @groups
       for object in group.list
         list.push(object) if test_of(object)
     return WZArray.bless(list)
 
   for_one: (test_of) ->
+    for object in @reserve
+      return({object:object,group:group}) if test_of(object)
     for group in @groups
       for object in group.list
         return({object:object,group:group}) if test_of(object)
