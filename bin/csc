@@ -7,7 +7,6 @@ coffee							\
 	coffee/cyberborg.group.coffee			\
 	coffee/cyberborg.coffee				\
 	coffee/cyberborg.base_commands.coffee	\
-	coffee/cyberborg.maintainance_commands.coffee	\
 	coffee/cyberborg.factory_commands.coffee	\
 	coffee/cyberborg.lab_commands.coffee	\
 	coffee/cyberborg.derricks_commands.coffee	\
