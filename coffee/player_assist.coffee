@@ -8,6 +8,7 @@ cyberBorg = new CyberBorg()
 # these are a convenience...
 # Define the group names
 BASE      = 'Base'	# will build the base
+MAINTAINANCE = 'Maintainance' # Will maintain and expand base
 DERRICKS  = 'Derricks'	# will build derricks
 SCOUTS    = 'Scouts'	# will scout and guard the area
 FACTORIES = 'Factories'	# builds droids
@@ -81,13 +82,20 @@ startLevel = () ->
   # The datafile defines the function that returns the group's commands.
   # For example, cyberBorg.base_commands in the case of BASE group.
   # Finally, the base needs the reserve list.
+
   base = new Group(BASE, 100, [],
   cyberBorg.base_commands(), reserve)
   groups.push(base)
+
   derricks = new Group(DERRICKS, 90, [],
   cyberBorg.derricks_commands(resources), reserve)
   groups.push(derricks)
-  scouts = new Group(SCOUTS, 80, [],
+
+  maintainance = new Group(MAINTAINANCE, 80, [],
+  cyberBorg.maintainance_commands(), reserve)
+  groups.push(maintainance)
+
+  scouts = new Group(SCOUTS, 70, [],
   cyberBorg.scouts_commands(resources), reserve)
   groups.push(scouts)
   

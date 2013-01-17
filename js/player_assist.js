@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, SCOUTS, Scouter, WZArray, WZObject, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, group_executions, helping, min_map_and_design_on, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
+var BASE, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, MAINTAINANCE, SCOUTS, Scouter, WZArray, WZObject, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, group_executions, helping, min_map_and_design_on, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -790,7 +790,7 @@ FORDER_MANUFACTURE = CyberBorg.ORDER_MAP.indexOf('FORDER_MANUFACTURE');
 LORDER_RESEARCH = CyberBorg.ORDER_MAP.indexOf('LORDER_RESEARCH');
 
 CyberBorg.prototype.base_commands = function() {
-  var build, builds, command_center, commands, costs, immediately, light_factory, on_budget, on_leisure, one, power_generator, research_facility, savings, three, truck, trucks, two, with_help;
+  var build, builds, command_center, commands, costs, immediately, light_factory, on_budget, one, power_generator, research_facility, savings, three, truck, trucks, two, with_help;
   light_factory = "A0LightFactory";
   command_center = "A0CommandCentre";
   research_facility = "A0ResearchFacility";
@@ -851,15 +851,52 @@ CyberBorg.prototype.base_commands = function() {
     obj.power = costs;
     return obj;
   };
-  on_leisure = function(obj) {
-    obj.power = 3 * costs;
-    return obj;
-  };
   with_help = function(obj) {
     obj.help = 3;
     return obj;
   };
-  commands = [with_help(immediately(three(trucks(build([light_factory, 10, 235]))))), with_help(immediately(three(trucks(build([research_facility, 7, 235]))))), with_help(immediately(three(trucks(build([command_center, 7, 238]))))), immediately(two(truck(builds([power_generator, 4, 235])))), on_budget(one(truck(builds([power_generator, 4, 238])))), on_leisure(one(truck(builds([research_facility, 4, 241])))), on_leisure(one(truck(builds([power_generator, 7, 241])))), on_leisure(one(truck(builds([research_facility, 10, 241])))), on_leisure(one(truck(builds([power_generator, 13, 241])))), on_leisure(one(truck(builds([research_facility, 13, 244])))), on_leisure(one(truck(builds([power_generator, 10, 244])))), on_leisure(one(truck(builds([research_facility, 7, 244]))))];
+  commands = [with_help(immediately(three(trucks(build([light_factory, 10, 235]))))), with_help(immediately(three(trucks(build([research_facility, 7, 235]))))), with_help(immediately(three(trucks(build([command_center, 7, 238]))))), immediately(two(truck(builds([power_generator, 4, 235])))), on_budget(one(truck(builds([power_generator, 4, 238]))))];
+  return WZArray.bless(commands);
+};
+
+CyberBorg.prototype.maintainance_commands = function() {
+  var build, builds, command_center, commands, light_factory, on_budget, one, power_generator, research_facility, truck, trucks;
+  light_factory = "A0LightFactory";
+  command_center = "A0CommandCentre";
+  research_facility = "A0ResearchFacility";
+  power_generator = "A0PowerGenerator";
+  build = function(arr) {
+    var command;
+    command = {
+      order: DORDER_MAINTAIN,
+      cost: 100,
+      structure: arr[0],
+      at: {
+        x: arr[1],
+        y: arr[2]
+      },
+      cid: null
+    };
+    return command;
+  };
+  builds = build;
+  trucks = function(obj) {
+    obj.like = /Truck/;
+    return obj;
+  };
+  truck = trucks;
+  one = function(obj) {
+    obj.limit = 1;
+    obj.min = 1;
+    obj.max = 1;
+    obj.help = 0;
+    return obj;
+  };
+  on_budget = function(obj) {
+    obj.power = 100;
+    return obj;
+  };
+  commands = [on_budget(one(truck(builds([light_factory, 10, 235])))), on_budget(one(truck(builds([research_facility, 7, 235])))), on_budget(one(truck(builds([command_center, 7, 238])))), on_budget(one(truck(builds([power_generator, 4, 235])))), on_budget(one(truck(builds([power_generator, 4, 238])))), on_budget(one(truck(builds([research_facility, 4, 241])))), on_budget(one(truck(builds([power_generator, 7, 241])))), on_budget(one(truck(builds([research_facility, 10, 241])))), on_budget(one(truck(builds([power_generator, 13, 241])))), on_budget(one(truck(builds([research_facility, 13, 244])))), on_budget(one(truck(builds([power_generator, 10, 244])))), on_budget(one(truck(builds([research_facility, 7, 244]))))];
   return WZArray.bless(commands);
 };
 
@@ -904,22 +941,22 @@ CyberBorg.prototype.factory_commands = function() {
 
 CyberBorg.prototype.lab_commands = function() {
   var pursue;
-  pursue = function(research) {
+  pursue = function(research, cost) {
     var obj;
     obj = {
       research: research
     };
     obj.order = LORDER_RESEARCH;
     obj.like = /Research Facility/;
-    obj.power = 100;
-    obj.cost = 100;
+    obj.power = cost;
+    obj.cost = cost;
     obj.limit = 5;
     obj.min = 1;
     obj.max = 1;
     obj.help = 1;
     return obj;
   };
-  return [pursue('R-Wpn-MG1Mk1'), pursue('R-Wpn-MG2Mk1'), pursue('R-Struc-PowerModuleMk1'), pursue('R-Wpn-MG3Mk1'), pursue('R-Struc-RepairFacility'), pursue('R-Defense-Tower01'), pursue('R-Defense-WallTower02'), pursue('R-Defense-AASite-QuadMg1'), pursue('R-Vehicle-Body04'), pursue('R-Vehicle-Prop-VTOL'), pursue('R-Struc-VTOLFactory'), pursue('R-Wpn-Bomb01')];
+  return [pursue('R-Wpn-MG1Mk1', 1), pursue('R-Wpn-MG2Mk1', 37), pursue('R-Struc-PowerModuleMk1', 37), pursue('R-Wpn-MG3Mk1', 75), pursue('R-Struc-RepairFacility', 75), pursue('R-Defense-Tower01', 18), pursue('R-Defense-WallTower02', 75), pursue('R-Defense-AASite-QuadMg1', 112), pursue('R-Vehicle-Body04', 75), pursue('R-Vehicle-Prop-VTOL', 100), pursue('R-Struc-VTOLFactory', 100), pursue('R-Wpn-Bomb01', 100)];
 };
 
 CyberBorg.prototype.derricks_commands = function(derricks) {
@@ -1311,6 +1348,8 @@ cyberBorg = new CyberBorg();
 
 BASE = 'Base';
 
+MAINTAINANCE = 'Maintainance';
+
 DERRICKS = 'Derricks';
 
 SCOUTS = 'Scouts';
@@ -1352,7 +1391,7 @@ events = function(event) {
 };
 
 startLevel = function() {
-  var base, derricks, factories, groups, labs, reserve, resources, scouts;
+  var base, derricks, factories, groups, labs, maintainance, reserve, resources, scouts;
   cyberBorg.reserve = reserve = CyberBorg.enum_droid();
   resources = CyberBorg.get_resources(reserve.center());
   groups = cyberBorg.groups;
@@ -1360,7 +1399,9 @@ startLevel = function() {
   groups.push(base);
   derricks = new Group(DERRICKS, 90, [], cyberBorg.derricks_commands(resources), reserve);
   groups.push(derricks);
-  scouts = new Group(SCOUTS, 80, [], cyberBorg.scouts_commands(resources), reserve);
+  maintainance = new Group(MAINTAINANCE, 80, [], cyberBorg.maintainance_commands(), reserve);
+  groups.push(maintainance);
+  scouts = new Group(SCOUTS, 70, [], cyberBorg.scouts_commands(resources), reserve);
   groups.push(scouts);
   factories = new Group(FACTORIES, 20, [], cyberBorg.factory_commands(), reserve);
   groups.push(factories);
