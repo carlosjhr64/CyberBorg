@@ -139,18 +139,27 @@ structureBuilt = (structure, droid, group) ->
       # as per rules.js.
       # TODO check if this file is being runned by rules.js first.
       # May be being runned as a stand alone AI.
-      when HQ then min_map_and_design_on(structure)
+      when HQ then min_map_and_design(structure, true)
   # There may be ongoing jobs so let's see what available.
   helping(droid)
 
+destroyed = (object, group) ->
+  # There might be other stuff to do...
+  # The object has been removed from the group already.
+  # We're given object and group as reference.
+  if object.type is STRUCTURE
+    switch object.stattype
+      when HQ then min_map_and_design(object, false)
+
 # This turns on minimap and design.
 # Will not be needed when this AI follows standard conventions.
-min_map_and_design_on = (structure) ->
+min_map_and_design = (structure, flag) ->
   if structure.player is selectedPlayer and
   structure.type is STRUCTURE and
   structure.stattype is HQ
-    setMiniMap(true) # show minimap
-    setDesign(true) # permit designs
+    cyberBorg.hq = flag
+    setMiniMap(flag) # show minimap
+    setDesign(flag) # permit designs
 
 #  When a droid is built, it triggers a droid built event and
 #  eventDroidBuilt(a WZ2100 JS API) is called.
@@ -243,11 +252,6 @@ droidIdle = (droid, group) ->
   # Anything else?  :)
   helping(droid)
 
-destroyed = (object, group) ->
-  # There might be other stuff to do...
-  # The object has been removed from the group already.
-  # We're given object and group as reference.
-
 # Right now, only research labs are expected in the list
 stalled_units = () ->
   stalled = []
@@ -279,6 +283,12 @@ group_executions = (event) ->
   # A layoff phase followed by an employment phase.
   for group in groups
     name = group.name
+    # For the sake of fairness to the human player,
+    # this AI is crippled a bit without HQ.
+    # Without HQ, only BASE, FACTORIES, and LABS group
+    # continue the command cycle.
+    continue unless cyberBorg.hq or
+    name is BASE or name is FACTORIES or name is LABS
     commands = group.commands
     while command = commands.next()
       unless group.execute(command)

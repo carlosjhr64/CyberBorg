@@ -70,7 +70,11 @@ class WZObject
     false
 
   build_droid: (command) ->
-    if buildDroid(@, command.name, command.body, command.propulsion, "",
+    # For the sake of fairness to the human player,
+    # this AI is crippled a bit without HQ.
+    # Without HQ, factories can only build trucks.
+    if (cyberBorg.hq or command.name is 'Truck') and
+    buildDroid(@, command.name, command.body, command.propulsion, "",
     command.droid_type, command.turret)
       @order = FORDER_MANUFACTURE
       return true

@@ -89,6 +89,8 @@ class CyberBorg
     @stalled = []
     # Quick access to reseve list
     @reserve = null
+    # Has the headquaters been built?
+    @hq = false
 
   ###############
   ### UPDATES ###
