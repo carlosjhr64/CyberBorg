@@ -4,22 +4,24 @@ start_trace = function(event) {
   var droid, research, structure;
   trace("Power level: " + cyberBorg.power + " in " + event.name);
   if (structure = event.structure) {
-    trace("\tStructure: " + structure.name + "\tCost: " + structure.cost);
+    trace("\tStructure: " + (structure.namexy()) + "\tCost: " + structure.cost);
   }
   if (research = event.research) {
     trace("\tResearch: " + event.research.name + "\tCost: " + research.power);
   }
   if (droid = event.droid) {
-    return trace("\tDroid: " + droid.name + "\tCost: " + droid.cost);
+    return trace("\tDroid: " + (droid.namexy()) + "\tID:" + droid.id + "\tCost: " + droid.cost);
   }
 };
 
 bug_report = function(label, droid, event) {
-  var at, command, corder, order, _ref;
+  var at, command, corder, dorder, order, _ref;
   command = null;
   order = droid.order;
+  dorder = droid.dorder;
   trace("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\tevent:" + event.name);
   trace("\t\torder:" + order + " => " + (order.order_map()));
+  trace("\t\tdorder:" + dorder + " => " + (dorder.order_map()));
   if (command = droid.command) {
     corder = command.order;
     trace("\t\t" + (corder.order_map()) + "\t#" + corder + "\tcid:" + command.cid);
@@ -72,11 +74,7 @@ gotcha_idle = function(event) {
     droid = _ref[_i];
     count += 1;
     command = bug_report("Idle", droid, event);
-    if (command && event.name === "Destroyed" && event.object.name === "Oil Derrick" && droid.name === 'Truck' && command.structure === 'A0ResourceExtractor') {
-      gotcha_working(droid, command);
-    } else {
-      trace("\33[1;31mUncaught idle case.\033[0m");
-    }
+    gotcha_working(droid, command);
   }
   return count;
 };
@@ -86,7 +84,7 @@ gotcha_rogue = function(event) {
   count = 0;
   rogue = function(object) {
     if (object.command) {
-      if (!(object.order && (object.order === object.dorder))) return true;
+      if (!((object.order === 0) || (object.order === object.dorder))) return true;
     }
     return false;
   };

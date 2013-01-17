@@ -3,18 +3,20 @@
 start_trace = (event) ->
   trace "Power level: #{cyberBorg.power} in #{event.name}"
   if structure = event.structure
-    trace "\tStructure: #{structure.name}\tCost: #{structure.cost}"
+    trace "\tStructure: #{structure.namexy()}\tCost: #{structure.cost}"
   if research = event.research
     trace "\tResearch: #{event.research.name}\tCost: #{research.power}"
   if droid = event.droid
-    trace "\tDroid: #{droid.name}\tCost: #{droid.cost}"
+    trace "\tDroid: #{droid.namexy()}\tID:#{droid.id}\tCost: #{droid.cost}"
 
 # The bug report.
 bug_report = (label,droid,event) ->
   command = null
   order = droid.order
+  dorder = droid.dorder
   trace "#{label}:\t#{droid.namexy()}\tid:#{droid.id}\tevent:#{event.name}"
   trace "\t\torder:#{order} => #{order.order_map()}"
+  trace "\t\tdorder:#{dorder} => #{dorder.order_map()}"
   if command = droid.command
     corder = command.order
     trace "\t\t#{corder.order_map()}\t##{corder}\tcid:#{command.cid}"
@@ -54,14 +56,7 @@ gotcha_idle = (event) ->
     count += 1
     command = bug_report("Idle", droid, event)
     # OK, let's circumvent the game bugs...
-    if command and
-    event.name is "Destroyed" and
-    event.object.name is "Oil Derrick" and
-    droid.name is 'Truck' and
-    command.structure is 'A0ResourceExtractor'
-      gotcha_working(droid, command)
-    else
-      trace("\33[1;31mUncaught idle case.\033[0m")
+    gotcha_working(droid, command)
   return count
 
 # Report droids under command which are acting their own...
@@ -69,7 +64,7 @@ gotcha_rogue = (event) ->
   count = 0
   rogue = (object) ->
     if object.command
-      return true unless object.order and (object.order is object.dorder)
+      return true unless (object.order is 0) or (object.order is object.dorder)
     return false
   for droid in cyberBorg.for_all((object) -> rogue(object))
     count += 1
