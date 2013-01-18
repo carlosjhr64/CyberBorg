@@ -6,11 +6,13 @@ Be able to build the base in any area.
 Dericks/Scouts group should push forward once it's
 territory has been secured.
 
+DONE:
+
+2013.01.18
+
 How far can we take the current model until resorting to
 regular programming?
-
-
-DONE:
+	I'm pretty sure command.execute is a catch all.
 
 2013.01.17
 
