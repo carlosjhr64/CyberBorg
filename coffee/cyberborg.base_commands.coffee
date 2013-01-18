@@ -107,10 +107,13 @@ CyberBorg::base_commands = ->
     pass_on_glut none
     on_budget one truck builds [research_facility, 4, 241]
     on_budget one truck builds [power_generator,   7, 241]
+    pass_on_glut none
     on_budget one truck builds [research_facility, 10, 241]
     on_budget one truck builds [power_generator,   13, 241]
+    pass_on_glut none
     on_budget one truck builds [research_facility, 13, 244]
     on_budget one truck builds [power_generator,   10, 244]
+    pass_on_glut none
     on_budget one truck builds [research_facility,  7, 244]
   ]
 
