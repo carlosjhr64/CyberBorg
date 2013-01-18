@@ -96,6 +96,9 @@ class WZObject
         @build_structure(command.structure, at)
       when DORDER_MOVE, DORDER_SCOUT
         @move_to(at, order)
+      when CORDER_PASS
+        @order = CORDER_PASS
+        true
       else
         trace("#{order.order_map()}, ##{order}, un-implemented.")
         false

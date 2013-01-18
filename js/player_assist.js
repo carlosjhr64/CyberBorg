@@ -1,4 +1,4 @@
-var BASE, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, SCOUTS, Scouter, WZArray, WZObject, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, group_executions, helping, min_map_and_design, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
+var BASE, CORDER_PASS, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, SCOUTS, Scouter, WZArray, WZObject, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, group_executions, helping, min_map_and_design, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 Number.prototype.times = function(action) {
@@ -139,6 +139,9 @@ WZObject = (function() {
         case DORDER_MOVE:
         case DORDER_SCOUT:
           return this.move_to(at, order);
+        case CORDER_PASS:
+          this.order = CORDER_PASS;
+          return true;
         default:
           trace("" + (order.order_map()) + ", #" + order + ", un-implemented.");
           return false;
@@ -517,10 +520,10 @@ Group = (function() {
     return units;
   };
 
-  Group.prototype.execute = function(command) {
+  Group.prototype.order_units = function(command) {
     var cid, count, unit, units, _i, _len;
     count = 0;
-    if (((command.power === 0) || (cyberBorg.power > command.power)) && (units = this.units(command))) {
+    if (units = this.units(command)) {
       cid = CyberBorg.cid();
       for (_i = 0, _len = units.length; _i < _len; _i++) {
         unit = units[_i];
@@ -531,6 +534,23 @@ Group = (function() {
         }
       }
       if (count) command.cid = cid;
+    }
+    return count;
+  };
+
+  Group.prototype.execute = function(command) {
+    var count;
+    count = 0;
+    if ((command.power === 0) || (cyberBorg.power > command.power)) {
+      count = this.order_units(command);
+      if (command.execute != null) {
+        try {
+          count = command.execute(this);
+        } catch (error) {
+          trace(error);
+          count = 0;
+        }
+      }
     }
     cyberBorg.power -= command.cost;
     return count;
@@ -555,7 +575,7 @@ CyberBorg = (function() {
 
   CyberBorg.IS_IDLE = -1;
 
-  CyberBorg.ORDER_MAP = ['DORDER_NONE', 'DORDER_STOP', 'DORDER_MOVE', 'DORDER_ATTACK', 'DORDER_BUILD', 'DORDER_HELPBUILD', 'DORDER_LINEBUILD', 'DORDER_DEMOLISH', 'DORDER_REPAIR', 'DORDER_OBSERVE', 'DORDER_FIRESUPPORT', 'DORDER_RETREAT', 'DORDER_DESTRUCT', 'DORDER_RTB', 'DORDER_RTR', 'DORDER_RUN', 'DORDER_EMBARK', 'DORDER_DISEMBARK', 'DORDER_ATTACKTARGET', 'DORDER_COMMANDERSUPPORT', 'DORDER_BUILDMODULE', 'DORDER_RECYCLE', 'DORDER_TRANSPORTOUT', 'DORDER_TRANSPORTIN', 'DORDER_TRANSPORTRETURN', 'DORDER_GUARD', 'DORDER_DROIDREPAIR', 'DORDER_RESTORE', 'DORDER_SCOUT', 'DORDER_RUNBURN', 'DORDER_UNUSED', 'DORDER_PATROL', 'DORDER_REARM', 'DORDER_RECOVER', 'DORDER_LEAVEMAP', 'DORDER_RTR_SPECIFIED', 'DORDER_CIRCLE', 'DORDER_HOLD', null, null, 'DORDER_CIRCLE', null, null, null, null, null, null, null, null, null, 'DORDER_MAINTAIN', 'FORDER_MANUFACTURE', 'LORDER_RESEARCH'];
+  CyberBorg.ORDER_MAP = ['DORDER_NONE', 'DORDER_STOP', 'DORDER_MOVE', 'DORDER_ATTACK', 'DORDER_BUILD', 'DORDER_HELPBUILD', 'DORDER_LINEBUILD', 'DORDER_DEMOLISH', 'DORDER_REPAIR', 'DORDER_OBSERVE', 'DORDER_FIRESUPPORT', 'DORDER_RETREAT', 'DORDER_DESTRUCT', 'DORDER_RTB', 'DORDER_RTR', 'DORDER_RUN', 'DORDER_EMBARK', 'DORDER_DISEMBARK', 'DORDER_ATTACKTARGET', 'DORDER_COMMANDERSUPPORT', 'DORDER_BUILDMODULE', 'DORDER_RECYCLE', 'DORDER_TRANSPORTOUT', 'DORDER_TRANSPORTIN', 'DORDER_TRANSPORTRETURN', 'DORDER_GUARD', 'DORDER_DROIDREPAIR', 'DORDER_RESTORE', 'DORDER_SCOUT', 'DORDER_RUNBURN', 'DORDER_UNUSED', 'DORDER_PATROL', 'DORDER_REARM', 'DORDER_RECOVER', 'DORDER_LEAVEMAP', 'DORDER_RTR_SPECIFIED', 'DORDER_CIRCLE', 'DORDER_HOLD', null, null, 'DORDER_CIRCLE', null, null, null, null, null, null, null, null, null, 'DORDER_MAINTAIN', 'FORDER_MANUFACTURE', 'LORDER_RESEARCH', null, null, null, null, null, null, null, 'CORDER_PASS'];
 
   /* CLASS VARIABLES
   */
@@ -805,8 +825,10 @@ FORDER_MANUFACTURE = CyberBorg.ORDER_MAP.indexOf('FORDER_MANUFACTURE');
 
 LORDER_RESEARCH = CyberBorg.ORDER_MAP.indexOf('LORDER_RESEARCH');
 
+CORDER_PASS = CyberBorg.ORDER_MAP.indexOf('CORDER_PASS');
+
 CyberBorg.prototype.base_commands = function() {
-  var build, builds, command_center, commands, costs, immediately, light_factory, on_budget, on_glut, one, power_generator, research_facility, savings, three, truck, trucks, two, with_help;
+  var build, builds, command_center, commands, costs, immediately, light_factory, none, on_budget, one, pass_on_glut, power_generator, research_facility, savings, three, truck, trucks, two, with_help;
   light_factory = "A0LightFactory";
   command_center = "A0CommandCentre";
   research_facility = "A0ResearchFacility";
@@ -871,12 +893,24 @@ CyberBorg.prototype.base_commands = function() {
     obj.power = costs;
     return obj;
   };
-  on_glut = function(obj) {
+  none = {
+    like: /none/,
+    limit: 0,
+    min: 0,
+    max: 0,
+    help: 0
+  };
+  pass_on_glut = function(obj) {
     obj.power = 400;
     obj.cost = 0;
+    obj.order = CORDER_PASS;
+    obj.execute = function(units) {
+      return 1;
+    };
+    obj.cid = null;
     return obj;
   };
-  commands = [with_help(immediately(three(trucks(build([light_factory, 10, 235]))))), with_help(immediately(three(trucks(build([research_facility, 7, 235]))))), with_help(immediately(three(trucks(build([command_center, 7, 238]))))), immediately(two(truck(builds([power_generator, 4, 235])))), on_budget(one(truck(builds([power_generator, 4, 238])))), on_glut(one(truck(builds([research_facility, 4, 241])))), on_budget(one(truck(builds([power_generator, 7, 241])))), on_glut(one(truck(builds([research_facility, 10, 241])))), on_budget(one(truck(builds([power_generator, 13, 241])))), on_glut(one(truck(builds([research_facility, 13, 244])))), on_budget(one(truck(builds([power_generator, 10, 244])))), on_glut(one(truck(builds([research_facility, 7, 244]))))];
+  commands = [with_help(immediately(three(trucks(build([light_factory, 10, 235]))))), with_help(immediately(three(trucks(build([research_facility, 7, 235]))))), with_help(immediately(three(trucks(build([command_center, 7, 238]))))), immediately(two(truck(builds([power_generator, 4, 235])))), on_budget(one(truck(builds([power_generator, 4, 238])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, 4, 241])))), on_budget(one(truck(builds([power_generator, 7, 241])))), on_budget(one(truck(builds([research_facility, 10, 241])))), on_budget(one(truck(builds([power_generator, 13, 241])))), on_budget(one(truck(builds([research_facility, 13, 244])))), on_budget(one(truck(builds([power_generator, 10, 244])))), on_budget(one(truck(builds([research_facility, 7, 244]))))];
   return WZArray.bless(commands);
 };
 

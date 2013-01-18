@@ -66,6 +66,14 @@ class CyberBorg
     'DORDER_MAINTAIN'		# 50
     'FORDER_MANUFACTURE'	# 51
     'LORDER_RESEARCH'		# 52
+    null			# 53
+    null			# 54
+    null			# 55
+    null			# 56
+    null			# 57
+    null			# 58
+    null			# 59
+    'CORDER_PASS'		# 60
   ]
 
   #######################
@@ -244,3 +252,4 @@ class CyberBorg
 DORDER_MAINTAIN    = CyberBorg.ORDER_MAP.indexOf('DORDER_MAINTAIN')
 FORDER_MANUFACTURE = CyberBorg.ORDER_MAP.indexOf('FORDER_MANUFACTURE')
 LORDER_RESEARCH    = CyberBorg.ORDER_MAP.indexOf('LORDER_RESEARCH')
+CORDER_PASS        = CyberBorg.ORDER_MAP.indexOf('CORDER_PASS')

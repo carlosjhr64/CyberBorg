@@ -56,11 +56,9 @@ class Group
 
     return units
 
-  execute: (command) ->
+  order_units: (command) ->
     count = 0
-    # If the power requirement is zero, just go ahead...
-    if ((command.power is 0) or (cyberBorg.power > command.power)) and
-    units = @units(command)
+    if units = @units(command)
       cid = CyberBorg.cid() # A unique command id.
       for unit in units
         if unit.executes(command)
@@ -68,6 +66,22 @@ class Group
           @add(unit)
           count += 1
       command.cid = cid if count
+    count
+
+  execute: (command) ->
+    count = 0
+    # If the power requirement is zero, just go ahead...
+    if ((command.power is 0) or (cyberBorg.power > command.power))
+      count = @order_units(command)
+      # Does the command have it's own execute?
+      if command.execute?
+        # b/c we now execute volatile code,
+        # we enclose it in a try/catch block.
+        try
+          count = command.execute(@)
+        catch error
+          trace error
+          count = 0
     # We regardless deduct the command cost from available power b/c
     # we want to make the lower ranks aware of the power
     # actually available for them... that we're saving toward this

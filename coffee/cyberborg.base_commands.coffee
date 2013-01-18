@@ -79,14 +79,21 @@ CyberBorg::base_commands = ->
     # basically we enlist more help after the project starts
     obj
 
-  # This is a trick...
-  # Wait until there more than enough power, but
-  # don't relay down the power cost.
-  # If we have more than enough, it wont matter anyways
-  # that cost is set to zero.
-  on_glut = (obj) ->
+  none =
+    like: /none/
+    limit: 0
+    min: 0
+    max: 0
+    help: 0
+
+  pass_on_glut = (obj) ->
     obj.power = 400
     obj.cost = 0
+    obj.order = CORDER_PASS
+    # 1 just means success in this case. Normally,
+    # it would be the number of units that succesfully executed the command.
+    obj.execute = (units) -> 1
+    obj.cid = null
     obj
 
   commands = [
@@ -97,13 +104,14 @@ CyberBorg::base_commands = ->
     # Transitioning...
     immediately two truck builds [power_generator,   4, 235]
     on_budget one truck builds [power_generator,   4, 238]
-    on_glut one truck builds [research_facility, 4, 241]
+    pass_on_glut none
+    on_budget one truck builds [research_facility, 4, 241]
     on_budget one truck builds [power_generator,   7, 241]
-    on_glut one truck builds [research_facility, 10, 241]
+    on_budget one truck builds [research_facility, 10, 241]
     on_budget one truck builds [power_generator,   13, 241]
-    on_glut one truck builds [research_facility, 13, 244]
+    on_budget one truck builds [research_facility, 13, 244]
     on_budget one truck builds [power_generator,   10, 244]
-    on_glut one truck builds [research_facility,  7, 244]
+    on_budget one truck builds [research_facility,  7, 244]
   ]
 
   # Convert the list to wzarray
