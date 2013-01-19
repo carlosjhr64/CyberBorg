@@ -835,7 +835,7 @@ LORDER_RESEARCH = CyberBorg.ORDER_MAP.indexOf('LORDER_RESEARCH');
 CORDER_PASS = CyberBorg.ORDER_MAP.indexOf('CORDER_PASS');
 
 CyberBorg.prototype.base_commands = function() {
-  var build, builds, command_center, commands, costs, immediately, light_factory, none, on_budget, one, pass_on_glut, power_generator, research_facility, savings, three, truck, trucks, two, with_help;
+  var build, builds, command_center, commands, costs, immediately, light_factory, none, on_budget, one, pass_on_glut, power_generator, research_facility, savings, three, truck, trucks, two, with_help, x, y;
   light_factory = "A0LightFactory";
   command_center = "A0CommandCentre";
   research_facility = "A0ResearchFacility";
@@ -917,7 +917,9 @@ CyberBorg.prototype.base_commands = function() {
     obj.cid = null;
     return obj;
   };
-  commands = [with_help(immediately(three(trucks(build([light_factory, 10, 235]))))), with_help(immediately(three(trucks(build([research_facility, 7, 235]))))), with_help(immediately(three(trucks(build([command_center, 7, 238]))))), immediately(two(truck(builds([power_generator, 4, 235])))), on_budget(one(truck(builds([power_generator, 4, 238])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, 4, 241])))), on_budget(one(truck(builds([power_generator, 7, 241])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, 10, 241])))), on_budget(one(truck(builds([power_generator, 13, 241])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, 13, 244])))), on_budget(one(truck(builds([power_generator, 10, 244])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, 7, 244]))))];
+  x = 4;
+  y = 235;
+  commands = [with_help(immediately(three(trucks(build([light_factory, x + 6, y]))))), with_help(immediately(three(trucks(build([research_facility, x + 3, y]))))), with_help(immediately(three(trucks(build([command_center, x + 3, y + 3]))))), immediately(two(truck(builds([power_generator, x, y])))), on_budget(one(truck(builds([power_generator, x, y + 3])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, x, y + 6])))), on_budget(one(truck(builds([power_generator, x + 3, y + 6])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, x + 6, y + 6])))), on_budget(one(truck(builds([power_generator, x + 9, y + 6])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, x + 9, y + 9])))), on_budget(one(truck(builds([power_generator, x + 6, y + 9])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, x + 3, y + 9]))))];
   return WZArray.bless(commands);
 };
 

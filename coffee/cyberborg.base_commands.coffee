@@ -96,25 +96,28 @@ CyberBorg::base_commands = ->
     obj.cid = null
     obj
 
+  # Positions relative to x,y
+  x = 4
+  y = 235
   commands = [
     # Build up the initial base as fast a posible
-    with_help immediately three trucks build [light_factory,    10, 235]
-    with_help immediately three trucks build [research_facility, 7, 235]
-    with_help immediately three trucks build [command_center,    7, 238]
+    with_help immediately three trucks build [light_factory,    x+6, y]
+    with_help immediately three trucks build [research_facility, x+3, y]
+    with_help immediately three trucks build [command_center,    x+3, y+3]
     # Transitioning...
-    immediately two truck builds [power_generator,   4, 235]
-    on_budget one truck builds [power_generator,   4, 238]
+    immediately two truck builds [power_generator,   x, y]
+    on_budget one truck builds [power_generator,   x, y+3]
     pass_on_glut none
-    on_budget one truck builds [research_facility, 4, 241]
-    on_budget one truck builds [power_generator,   7, 241]
+    on_budget one truck builds [research_facility, x, y+6]
+    on_budget one truck builds [power_generator,   x+3, y+6]
     pass_on_glut none
-    on_budget one truck builds [research_facility, 10, 241]
-    on_budget one truck builds [power_generator,   13, 241]
+    on_budget one truck builds [research_facility, x+6, y+6]
+    on_budget one truck builds [power_generator,   x+9, y+6]
     pass_on_glut none
-    on_budget one truck builds [research_facility, 13, 244]
-    on_budget one truck builds [power_generator,   10, 244]
+    on_budget one truck builds [research_facility, x+9, y+9]
+    on_budget one truck builds [power_generator,   x+6, y+9]
     pass_on_glut none
-    on_budget one truck builds [research_facility,  7, 244]
+    on_budget one truck builds [research_facility,  x+3, y+9]
   ]
 
   # Convert the list to wzarray
