@@ -571,8 +571,6 @@ CyberBorg = (function() {
 
   CyberBorg.WEST = 270;
 
-  CyberBorg.ALL_PLAYERS = -1;
-
   CyberBorg.IS_IDLE = -1;
 
   CyberBorg.ORDER_MAP = ['DORDER_NONE', 'DORDER_STOP', 'DORDER_MOVE', 'DORDER_ATTACK', 'DORDER_BUILD', 'DORDER_HELPBUILD', 'DORDER_LINEBUILD', 'DORDER_DEMOLISH', 'DORDER_REPAIR', 'DORDER_OBSERVE', 'DORDER_FIRESUPPORT', 'DORDER_RETREAT', 'DORDER_DESTRUCT', 'DORDER_RTB', 'DORDER_RTR', 'DORDER_RUN', 'DORDER_EMBARK', 'DORDER_DISEMBARK', 'DORDER_ATTACKTARGET', 'DORDER_COMMANDERSUPPORT', 'DORDER_BUILDMODULE', 'DORDER_RECYCLE', 'DORDER_TRANSPORTOUT', 'DORDER_TRANSPORTIN', 'DORDER_TRANSPORTRETURN', 'DORDER_GUARD', 'DORDER_DROIDREPAIR', 'DORDER_RESTORE', 'DORDER_SCOUT', 'DORDER_RUNBURN', 'DORDER_UNUSED', 'DORDER_PATROL', 'DORDER_REARM', 'DORDER_RECOVER', 'DORDER_LEAVEMAP', 'DORDER_RTR_SPECIFIED', 'DORDER_CIRCLE', 'DORDER_HOLD', null, null, 'DORDER_CIRCLE', null, null, null, null, null, null, null, null, null, 'DORDER_MAINTAIN', 'FORDER_MANUFACTURE', 'LORDER_RESEARCH', null, null, null, null, null, null, null, 'CORDER_PASS'];
@@ -794,7 +792,7 @@ CyberBorg = (function() {
   */
 
   CyberBorg.get_resources = function(at) {
-    return CyberBorg.enum_feature(this.ALL_PLAYERS, "OilResource").nearest(at);
+    return CyberBorg.enum_feature(ALL_PLAYERS, "OilResource").nearest(at);
   };
 
   CyberBorg.get_my_trucks = function(at) {

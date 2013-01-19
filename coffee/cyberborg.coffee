@@ -8,7 +8,6 @@ class CyberBorg
   @EAST = 90
   @SOUTH = 180
   @WEST = 270
-  @ALL_PLAYERS = -1
   @IS_IDLE = -1
 
   @ORDER_MAP = [
@@ -233,7 +232,7 @@ class CyberBorg
   ############
 
   @get_resources = (at) ->
-    CyberBorg.enum_feature(@ALL_PLAYERS, "OilResource").nearest(at)
+    CyberBorg.enum_feature(ALL_PLAYERS, "OilResource").nearest(at)
 
   @get_my_trucks = (at) -> # TODO out of group style?
     CyberBorg.enum_droid(me, DROID_CONSTRUCT)
