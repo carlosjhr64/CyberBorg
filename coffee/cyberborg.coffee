@@ -159,6 +159,10 @@ class CyberBorg
   ### ENUMS ###
   #############
 
+  @enum_struct = (params...) ->
+    array = enumStruct(params...).map (object) -> new WZObject(object)
+    WZArray.bless(array)
+
   @enum_feature = (params...) ->
     array = enumFeature(params...).map (object) -> new WZObject(object)
     WZArray.bless(array)

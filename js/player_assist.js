@@ -713,6 +713,15 @@ CyberBorg = (function() {
   /* ENUMS
   */
 
+  CyberBorg.enum_struct = function() {
+    var array, params;
+    params = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    array = enumStruct.apply(null, params).map(function(object) {
+      return new WZObject(object);
+    });
+    return WZArray.bless(array);
+  };
+
   CyberBorg.enum_feature = function() {
     var array, params;
     params = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
