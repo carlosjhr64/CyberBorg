@@ -6,7 +6,7 @@ Warzone 2100 AI.
 WZ2100 people at
   http://wz2100.net/
 have added a javascript API.
-  https://warzone.atlassian.net/wiki/display/jsapi/API
+  https://warzone.atlassian.net/wiki/display/jsapi/Javascript+API
 
 I hate JavaScript.  :))
 But I'm developing my own AI assist in CoffeeScript.
