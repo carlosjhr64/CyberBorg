@@ -1,4 +1,4 @@
-var BASE, CORDER_PASS, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, SCOUTS, Scouter, WZArray, WZObject, blue_alert, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, green_alert, group_executions, helping, min_map_and_design, red_alert, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
+var BASE, CORDER_PASS, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, SCOUTS, Scouter, WZArray, WZObject, blue_alert, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, green_alert, group_executions, helping, red_alert, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 trace = function(message) {
@@ -613,7 +613,7 @@ CyberBorg = (function() {
   /* CLASS VARIABLES
   */
 
-  CyberBorg.TRACE = true;
+  CyberBorg.TRACE = false;
 
   CyberBorg.CID = 0;
 
@@ -634,7 +634,7 @@ CyberBorg = (function() {
 
   CyberBorg.prototype.update = function() {
     var group, object, _i, _len, _ref, _results;
-    this.power = playerPower();
+    this.power = playerPower(me);
     _ref = this.groups;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -1495,7 +1495,7 @@ structureBuilt = function(structure, droid, group) {
   if (structure.type === STRUCTURE) {
     switch (structure.stattype) {
       case HQ:
-        min_map_and_design(structure, true);
+        cyberBorg.hq = true;
     }
   }
   return helping(droid);
@@ -1505,16 +1505,8 @@ destroyed = function(object, group) {
   if (object.type === STRUCTURE) {
     switch (object.stattype) {
       case HQ:
-        return min_map_and_design(object, false);
+        return cyberBorg.hq = false;
     }
-  }
-};
-
-min_map_and_design = function(structure, flag) {
-  if (structure.player === selectedPlayer && structure.type === STRUCTURE && structure.stattype === HQ) {
-    cyberBorg.hq = flag;
-    setMiniMap(flag);
-    return setDesign(flag);
   }
 };
 
@@ -1548,7 +1540,7 @@ helping = function(unit) {
 chat = function(sender, to, message) {
   var words;
   words = message.split(/\s+/);
-  if (sender === 0) {
+  if (sender === me) {
     switch (words[0]) {
       case 'report':
         return report(words[1]);

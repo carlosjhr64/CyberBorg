@@ -1,5 +1,4 @@
 # Let's find problems and fix'em.
-
 start_trace = (event) ->
   trace "Power level: #{cyberBorg.power} in #{event.name}"
   if structure = event.structure

@@ -129,7 +129,7 @@ structureBuilt = (structure, droid, group) ->
   # it should get picked up by the FACTORIES group in group_executions (below).
   cyberBorg.reserve.push(structure)
   # There may be exceptional catches to be done per structure...
-  if (structure.type is STRUCTURE)
+  if structure.type is STRUCTURE
     switch structure.stattype
       # Because we've overridden rules.js eventStructureBuilt,
       # we need to need to enforce one of the rules in the game.
@@ -139,7 +139,7 @@ structureBuilt = (structure, droid, group) ->
       # as per rules.js.
       # TODO check if this file is being runned by rules.js first.
       # May be being runned as a stand alone AI.
-      when HQ then min_map_and_design(structure, true)
+      when HQ then cyberBorg.hq = true
   # There may be ongoing jobs so let's see what available.
   helping(droid)
 
@@ -149,17 +149,7 @@ destroyed = (object, group) ->
   # We're given object and group as reference.
   if object.type is STRUCTURE
     switch object.stattype
-      when HQ then min_map_and_design(object, false)
-
-# This turns on minimap and design.
-# Will not be needed when this AI follows standard conventions.
-min_map_and_design = (structure, flag) ->
-  if structure.player is selectedPlayer and
-  structure.type is STRUCTURE and
-  structure.stattype is HQ
-    cyberBorg.hq = flag
-    setMiniMap(flag) # show minimap
-    setDesign(flag) # permit designs
+      when HQ then cyberBorg.hq = false
 
 #  When a droid is built, it triggers a droid built event and
 #  eventDroidBuilt(a WZ2100 JS API) is called.
@@ -194,7 +184,7 @@ helping = (unit) ->
 # Some useful feedback and could be used for player commands.
 chat = (sender, to, message) ->
   words = message.split(/\s+/)
-  if sender is 0
+  if sender is me
     switch words[0]
       when 'report' then report(words[1])
       # TODO some way to modify tha AI while in play?
@@ -244,7 +234,7 @@ researched = (completed, structure, group) ->
 
 # A DroidIdle event occurs typically at the end of a move command.
 # The droid arrives and awaits new commands.
-# Origianally from eventDroidIdle,
+# Originally from eventDroidIdle,
 # we're are switched here to droidIdle from events above.
 droidIdle = (droid, group) ->
   # "You WUT???  No, I quuuiiiit!" says the droid.

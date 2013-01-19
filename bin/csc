@@ -1,5 +1,5 @@
 coffee							\
---join	js/player_assist.js				\
+--join	cyberborg.js					\
 --bare --compile --watch --lint				\
 	coffee/cyberborg.trace.coffee			\
 	coffee/cyberborg.extensions.coffee		\

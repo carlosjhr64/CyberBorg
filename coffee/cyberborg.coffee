@@ -79,7 +79,7 @@ class CyberBorg
   ### CLASS VARIABLES ###
   #######################
 
-  @TRACE = true # TODO set to false when done debuging, Class Varible? :-??
+  @TRACE = false
   @CID = 0 # TODO Class Variable? :-??
 
   ###################
@@ -106,7 +106,7 @@ class CyberBorg
 
   # Updates all game objects, group by group.
   update: () ->
-    @power = playerPower()
+    @power = playerPower(me)
     for group in @groups
       for object in group.list
         object.update() if object.game_time < gameTime
