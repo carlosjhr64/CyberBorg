@@ -12,3 +12,6 @@ red_alert = (message) ->
 
 green_alert = (message) ->
   trace("\033[1;32m#{message}\033[0m")
+
+blue_alert = (message) ->
+  trace("\033[1;34m#{message}\033[0m")

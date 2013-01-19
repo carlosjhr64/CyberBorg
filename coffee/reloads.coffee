@@ -77,6 +77,9 @@ gotcha_rogue = (event) ->
   return count
 
 gotchas = (event) ->
+  base = cyberBorg.groups.named(BASE).list
+  blue_alert "Base group first and last: " +
+  "#{base.first()?.namexy()}, #{base.last()?.namexy()}."
   counts = count = 0
   for gotcha in [gotcha_selected, gotcha_idle, gotcha_rogue]
     if count = gotcha(event)
