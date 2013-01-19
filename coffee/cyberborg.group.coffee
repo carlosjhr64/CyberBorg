@@ -80,7 +80,7 @@ class Group
         try
           count = command.execute(@)
         catch error
-          trace error
+          red_alert error
           count = 0
     # We regardless deduct the command cost from available power b/c
     # we want to make the lower ranks aware of the power

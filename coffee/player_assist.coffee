@@ -38,7 +38,7 @@ events = (event) ->
     when 'Chat'
       chat(event.sender, event.to, event.message)
     # We should catch all possibilities, but in case we missed something...
-    else trace("#{event.name} NOT HANDLED!")
+    else red_alert("#{event.name} NOT HANDLED!")
 
   # Next see what commands the groups can execute
   group_executions(event)
@@ -201,9 +201,9 @@ chat = (sender, to, message) ->
       when 'reload' then include("multiplay/skirmish/reloads.js")
       # Toggle tracing
       when 'trace'
-        trace("Tracing off.") if CyberBorg.TRACE
+        green_alert("Tracing off.") if CyberBorg.TRACE
         CyberBorg.TRACE = !CyberBorg.TRACE
-        trace("Tracing on.") if CyberBorg.TRACE
+        green_alert("Tracing on.") if CyberBorg.TRACE
       else console("What?")
 
 # Lists the units in the group by name and position.

@@ -37,9 +37,9 @@ gotcha_working = (droid, command) ->
   centreView(droid.x, droid.y) if CyberBorg.TRACE
   if droid.executes(command)
     order = command.order
-    trace("\t\033[1;32mRe-issued #{order.order_map()}, ##{order}, to #{droid.name}.\033[0m")
+    green_alert "\tRe-issued #{order.order_map()}, ##{order}, to #{droid.name}."
   else
-    trace("\t\033[1;31#{droid.name} is a lazy bum!\033[0m")
+    red_alert("\t#{droid.name} is a lazy bum!")
 
 # Report selected droids.
 gotcha_selected = (event) ->
@@ -73,7 +73,7 @@ gotcha_rogue = (event) ->
       centreView(droid.x, droid.y) if CyberBorg.TRACE
       gotcha_working(droid, command)
     else
-      trace("\33[1;31mUncaught rogue case.\033[0m")
+      red_alert("\tUncaught rogue case.")
   return count
 
 gotchas = (event) ->

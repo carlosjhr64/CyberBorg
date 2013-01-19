@@ -44,9 +44,9 @@ gotcha_working = function(droid, command) {
   if (CyberBorg.TRACE) centreView(droid.x, droid.y);
   if (droid.executes(command)) {
     order = command.order;
-    return trace("\t\033[1;32mRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".\033[0m");
+    return green_alert("\tRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".");
   } else {
-    return trace("\t\033[1;31" + droid.name + " is a lazy bum!\033[0m");
+    return red_alert("\t" + droid.name + " is a lazy bum!");
   }
 };
 
@@ -99,7 +99,7 @@ gotcha_rogue = function(event) {
       if (CyberBorg.TRACE) centreView(droid.x, droid.y);
       gotcha_working(droid, command);
     } else {
-      trace("\33[1;31mUncaught rogue case.\033[0m");
+      red_alert("\tUncaught rogue case.");
     }
   }
   return count;

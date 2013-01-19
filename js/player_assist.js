@@ -1,8 +1,16 @@
-var BASE, CORDER_PASS, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, SCOUTS, Scouter, WZArray, WZObject, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, group_executions, helping, min_map_and_design, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
+var BASE, CORDER_PASS, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, SCOUTS, Scouter, WZArray, WZObject, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, green_alert, group_executions, helping, min_map_and_design, red_alert, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 trace = function(message) {
   if (CyberBorg.TRACE) return debug(message);
+};
+
+red_alert = function(message) {
+  return trace("\033[1;31m" + message + "\033[0m");
+};
+
+green_alert = function(message) {
+  return trace("\033[1;32m" + message + "\033[0m");
 };
 
 Number.prototype.times = function(action) {
@@ -100,7 +108,7 @@ WZObject = (function() {
       if (pos) {
         cyberBorg.location(at, pos);
         if (!(pos.x === at.x && pos.y === at.y)) {
-          trace(("Game AI moved build " + structure + " ") + ("from " + at.x + "," + at.y + " to " + pos.x + "," + pos.y));
+          red_alert(("Game AI moved build " + structure + " ") + ("from " + at.x + "," + at.y + " to " + pos.x + "," + pos.y));
         }
       }
     }
@@ -162,7 +170,7 @@ WZObject = (function() {
           this.order = CORDER_PASS;
           return true;
         default:
-          trace("" + (order.order_map()) + ", #" + order + ", un-implemented.");
+          red_alert("" + (order.order_map()) + ", #" + order + ", un-implemented.");
           return false;
       }
     }).call(this);
@@ -209,7 +217,7 @@ WZArray = (function() {
   WZArray.bless = function(array) {
     var method, name, _ref;
     if (array.is_wzarray) {
-      trace("Warning: WZArray re'bless'ing");
+      red_alert("Warning: WZArray re'bless'ing");
       return array;
     }
     _ref = WZArray.prototype;
@@ -438,7 +446,7 @@ Scouter = (function() {
   Scouter.bless = function(array) {
     var method, name, _ref;
     if (array.is_scouter) {
-      trace("Warning: Scouter re'bless'ing");
+      red_alert("Warning: Scouter re'bless'ing");
       return array;
     }
     _ref = Scouter.prototype;
@@ -566,7 +574,7 @@ Group = (function() {
         try {
           count = command.execute(this);
         } catch (error) {
-          trace(error);
+          red_alert(error);
           count = 0;
         }
       }
@@ -1326,9 +1334,9 @@ gotcha_working = function(droid, command) {
   if (CyberBorg.TRACE) centreView(droid.x, droid.y);
   if (droid.executes(command)) {
     order = command.order;
-    return trace("\t\033[1;32mRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".\033[0m");
+    return green_alert("\tRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".");
   } else {
-    return trace("\t\033[1;31" + droid.name + " is a lazy bum!\033[0m");
+    return red_alert("\t" + droid.name + " is a lazy bum!");
   }
 };
 
@@ -1381,7 +1389,7 @@ gotcha_rogue = function(event) {
       if (CyberBorg.TRACE) centreView(droid.x, droid.y);
       gotcha_working(droid, command);
     } else {
-      trace("\33[1;31mUncaught rogue case.\033[0m");
+      red_alert("\tUncaught rogue case.");
     }
   }
   return count;
@@ -1439,7 +1447,7 @@ events = function(event) {
       chat(event.sender, event.to, event.message);
       break;
     default:
-      trace("" + event.name + " NOT HANDLED!");
+      red_alert("" + event.name + " NOT HANDLED!");
   }
   group_executions(event);
   return gotchas(event);
@@ -1531,9 +1539,9 @@ chat = function(sender, to, message) {
       case 'reload':
         return include("multiplay/skirmish/reloads.js");
       case 'trace':
-        if (CyberBorg.TRACE) trace("Tracing off.");
+        if (CyberBorg.TRACE) green_alert("Tracing off.");
         CyberBorg.TRACE = !CyberBorg.TRACE;
-        if (CyberBorg.TRACE) return trace("Tracing on.");
+        if (CyberBorg.TRACE) return green_alert("Tracing on.");
         break;
       default:
         return console("What?");
