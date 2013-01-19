@@ -49,11 +49,30 @@ class WZObject
         return false
     @move_to(built)
 
+  pick_struct_location: (structure, at) ->
+    # If it's a derrick, that position is well defined.
+    # Just give at back in that case.
+    return at if structure is 'A0ResourceExtractor'
+    # We may already have a positon hashed.
+    pos = cyberBorg.location(at)
+    unless pos
+      pos = pickStructLocation(@, structure, at.x, at.y)
+      if pos
+        # Hash the position so as to not have to call pickStructLocation again.
+        cyberBorg.location(at, pos)
+        unless pos.x is at.x and pos.y is at.y
+          # We don't like changes to our AI.
+          # WUT U DO!???
+          trace "Game AI moved build #{structure} "+
+          "from #{at.x},#{at.y} to #{pos.x},#{pos.y}"
+    pos
+
   build_structure: (structure, at) ->
-    if orderDroidBuild(@,
-    DORDER_BUILD, structure, at.x, at.y, at.direction)
-      @order = DORDER_BUILD
-      return true
+    if pos = @pick_struct_location(structure, at)
+      if orderDroidBuild(@,
+      DORDER_BUILD, structure, pos.x, pos.y, at.direction)
+        @order = DORDER_BUILD
+        return true
     false
 
   # Let's try to be a bit smarter....

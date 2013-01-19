@@ -91,10 +91,29 @@ WZObject = (function() {
     return this.move_to(built);
   };
 
+  WZObject.prototype.pick_struct_location = function(structure, at) {
+    var pos;
+    if (structure === 'A0ResourceExtractor') return at;
+    pos = cyberBorg.location(at);
+    if (!pos) {
+      pos = pickStructLocation(this, structure, at.x, at.y);
+      if (pos) {
+        cyberBorg.location(at, pos);
+        if (!(pos.x === at.x && pos.y === at.y)) {
+          trace(("Game AI moved build " + structure + " ") + ("from " + at.x + "," + at.y + " to " + pos.x + "," + pos.y));
+        }
+      }
+    }
+    return pos;
+  };
+
   WZObject.prototype.build_structure = function(structure, at) {
-    if (orderDroidBuild(this, DORDER_BUILD, structure, at.x, at.y, at.direction)) {
-      this.order = DORDER_BUILD;
-      return true;
+    var pos;
+    if (pos = this.pick_struct_location(structure, at)) {
+      if (orderDroidBuild(this, DORDER_BUILD, structure, pos.x, pos.y, at.direction)) {
+        this.order = DORDER_BUILD;
+        return true;
+      }
     }
     return false;
   };
@@ -591,6 +610,7 @@ CyberBorg = (function() {
     this.stalled = [];
     this.reserve = null;
     this.hq = false;
+    this.pos = [];
   }
 
   /* UPDATES
@@ -623,6 +643,13 @@ CyberBorg = (function() {
 
   /* GETS
   */
+
+  CyberBorg.prototype.location = function(at, pos) {
+    var key;
+    key = "" + at.x + "." + at.y;
+    if (pos) this.pos[key] = pos;
+    return this.pos[key];
+  };
 
   CyberBorg.prototype.for_all = function(test_of) {
     var group, list, object, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
