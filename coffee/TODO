@@ -1,15 +1,18 @@
 TODO:
 
-Use the standard AI file conventions.
-Be able to build the base in any area.
-
 Dericks/Scouts group should push forward once it's
 territory has been secured.
-
 
 DONE:
 
 2013.01.19
+
+Be able to build the base in any area.
+	Just translated the build grid to where we're at.
+	Relies on pickStructLocation.
+	Could be greatly improved.
+
+Use the standard AI file conventions.
 
 Make color coded trace functions.
 	Color coding traces higlights important traces
