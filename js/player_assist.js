@@ -1,6 +1,10 @@
 var BASE, CORDER_PASS, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, SCOUTS, Scouter, WZArray, WZObject, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, group_executions, helping, min_map_and_design, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
+trace = function(message) {
+  if (CyberBorg.TRACE) return debug(message);
+};
+
 Number.prototype.times = function(action) {
   var i, _results;
   i = 0;
@@ -14,10 +18,6 @@ Number.prototype.times = function(action) {
 
 Number.prototype.order_map = function() {
   return CyberBorg.ORDER_MAP[this];
-};
-
-trace = function(message) {
-  if (CyberBorg.TRACE) return debug(message);
 };
 
 WZObject = (function() {
