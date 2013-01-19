@@ -7,4 +7,6 @@ Number::times = (action) ->
     action()
     i++
 
+Number::to_i = () -> parseInt @.toFixed(0)
+
 Number::order_map = () -> CyberBorg.ORDER_MAP[@]

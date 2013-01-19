@@ -28,6 +28,10 @@ Number.prototype.times = function(action) {
   return _results;
 };
 
+Number.prototype.to_i = function() {
+  return parseInt(this.toFixed(0));
+};
+
 Number.prototype.order_map = function() {
   return CyberBorg.ORDER_MAP[this];
 };
@@ -873,8 +877,8 @@ LORDER_RESEARCH = CyberBorg.ORDER_MAP.indexOf('LORDER_RESEARCH');
 
 CORDER_PASS = CyberBorg.ORDER_MAP.indexOf('CORDER_PASS');
 
-CyberBorg.prototype.base_commands = function() {
-  var build, builds, command_center, commands, costs, immediately, light_factory, none, on_budget, one, pass_on_glut, power_generator, research_facility, savings, three, truck, trucks, two, with_help, x, y;
+CyberBorg.prototype.base_commands = function(reserve, resources) {
+  var build, builds, command_center, commands, costs, immediately, light_factory, none, on_budget, one, pass_on_glut, power_generator, rcenter, research_facility, rtx, rty, savings, tcenter, three, truck, trucks, two, with_help, x, y;
   light_factory = "A0LightFactory";
   command_center = "A0CommandCentre";
   research_facility = "A0ResearchFacility";
@@ -956,8 +960,16 @@ CyberBorg.prototype.base_commands = function() {
     obj.cid = null;
     return obj;
   };
-  x = 4;
-  y = 235;
+  tcenter = reserve.trucks().center();
+  trace("Trucks around " + tcenter.x + ", " + tcenter.y);
+  rcenter = WZArray.bless(resources.slice(0, 4)).center();
+  trace("Resources around " + rcenter.x + ", " + rcenter.y + ".");
+  rtx = (rcenter.x + tcenter.x) / 2.0;
+  rty = (rcenter.y + tcenter.y) / 2.0;
+  trace("Cluster center is " + rtx + ", " + rty + ".");
+  x = (rtx - 7.25).to_i();
+  y = (rty - 1.25).to_i();
+  blue_alert("Relative build x,y are " + x + ", " + y + ".");
   commands = [with_help(immediately(three(trucks(build([light_factory, x + 6, y]))))), with_help(immediately(three(trucks(build([research_facility, x + 3, y]))))), with_help(immediately(three(trucks(build([command_center, x + 3, y + 3]))))), immediately(two(truck(builds([power_generator, x, y])))), on_budget(one(truck(builds([power_generator, x, y + 3])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, x, y + 6])))), on_budget(one(truck(builds([power_generator, x + 3, y + 6])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, x + 6, y + 6])))), on_budget(one(truck(builds([power_generator, x + 9, y + 6])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, x + 9, y + 9])))), on_budget(one(truck(builds([power_generator, x + 6, y + 9])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, x + 3, y + 9]))))];
   return WZArray.bless(commands);
 };
@@ -1400,13 +1412,11 @@ gotcha_rogue = function(event) {
 };
 
 gotchas = function(event) {
-  var base, count, counts, gotcha, _i, _len, _ref, _ref2, _ref3;
-  base = cyberBorg.groups.named(BASE).list;
-  blue_alert("Base group first and last: " + ("" + ((_ref = base.first()) != null ? _ref.namexy() : void 0) + ", " + ((_ref2 = base.last()) != null ? _ref2.namexy() : void 0) + "."));
+  var count, counts, gotcha, _i, _len, _ref;
   counts = count = 0;
-  _ref3 = [gotcha_selected, gotcha_idle, gotcha_rogue];
-  for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
-    gotcha = _ref3[_i];
+  _ref = [gotcha_selected, gotcha_idle, gotcha_rogue];
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    gotcha = _ref[_i];
     if (count = gotcha(event)) {
       counts += count;
       trace("");
@@ -1464,7 +1474,7 @@ startLevel = function() {
   cyberBorg.reserve = reserve = CyberBorg.enum_droid();
   resources = CyberBorg.get_resources(reserve.center());
   groups = cyberBorg.groups;
-  base = new Group(BASE, 100, [], cyberBorg.base_commands(), reserve);
+  base = new Group(BASE, 100, [], cyberBorg.base_commands(reserve, resources), reserve);
   groups.push(base);
   derricks = new Group(DERRICKS, 90, [], cyberBorg.derricks_commands(resources), reserve);
   groups.push(derricks);

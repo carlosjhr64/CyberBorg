@@ -83,7 +83,7 @@ startLevel = () ->
   # Finally, the base needs the reserve list.
 
   base = new Group(BASE, 100, [],
-  cyberBorg.base_commands(), reserve)
+  cyberBorg.base_commands(reserve, resources), reserve)
   groups.push(base)
 
   derricks = new Group(DERRICKS, 90, [],

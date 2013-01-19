@@ -15,7 +15,7 @@
 # turret:
 # cid:       the command id is set at the time the command is given.
 # { name: min: max: order: employ: at: ... }
-CyberBorg::base_commands = ->
+CyberBorg::base_commands = (reserve, resources) ->
   # What we're building
   light_factory     = "A0LightFactory"
   command_center    = "A0CommandCentre"
@@ -96,9 +96,27 @@ CyberBorg::base_commands = ->
     obj.cid = null
     obj
 
+  # Center point of our trucks.
+  # ie. (10.5,236)
+  tcenter = reserve.trucks().center()
+  trace "Trucks around #{tcenter.x}, #{tcenter.y}"
+
+  # Center point of our first 4 resources.
+  # ie. (12, 236.5)
+  rcenter = WZArray.bless(resources[0..3]).center()
+  trace "Resources around #{rcenter.x}, #{rcenter.y}."
+
+  rtx = (rcenter.x + tcenter.x) / 2.0
+  rty = (rcenter.y + tcenter.y) / 2.0
+  trace "Cluster center is #{rtx}, #{rty}."
+
   # Positions relative to x,y
-  x = 4
-  y = 235
+  x = (rtx - 7.25).to_i()
+  y = (rty - 1.25).to_i()
+  blue_alert "Relative build x,y are #{x}, #{y}."
+  # So let's see how many locations this will work,
+  # and find ways to improve the heuristics.
+
   commands = [
     # Build up the initial base as fast a posible
     with_help immediately three trucks build [light_factory,    x+6, y]
