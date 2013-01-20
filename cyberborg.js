@@ -878,11 +878,22 @@ LORDER_RESEARCH = CyberBorg.ORDER_MAP.indexOf('LORDER_RESEARCH');
 CORDER_PASS = CyberBorg.ORDER_MAP.indexOf('CORDER_PASS');
 
 CyberBorg.prototype.base_commands = function(reserve, resources) {
-  var build, builds, command_center, commands, costs, immediately, light_factory, none, on_budget, one, pass_on_glut, power_generator, rcenter, research_facility, rtx, rty, savings, tcenter, three, truck, trucks, two, with_help, x, y;
+  var build, builds, command_center, commands, costs, immediately, light_factory, none, on_budget, on_glut, on_surplus, one, pass, power_generator, rcenter, research_facility, rtx, rty, savings, tcenter, three, truck, trucks, two, with_help, x, y;
   light_factory = "A0LightFactory";
   command_center = "A0CommandCentre";
   research_facility = "A0ResearchFacility";
   power_generator = "A0PowerGenerator";
+  none = function() {
+    var obj;
+    obj = {
+      like: /none/,
+      limit: 0,
+      min: 0,
+      max: 0,
+      help: 0
+    };
+    return obj;
+  };
   savings = 500;
   costs = 100;
   build = function(arr) {
@@ -939,25 +950,25 @@ CyberBorg.prototype.base_commands = function(reserve, resources) {
     obj.power = 0;
     return obj;
   };
-  on_budget = function(obj) {
-    obj.power = costs;
-    return obj;
-  };
-  none = {
-    like: /none/,
-    limit: 0,
-    min: 0,
-    max: 0,
-    help: 0
-  };
-  pass_on_glut = function(obj) {
-    obj.power = 400;
+  pass = function(obj) {
     obj.cost = 0;
     obj.order = CORDER_PASS;
     obj.execute = function(units) {
       return 1;
     };
     obj.cid = null;
+    return obj;
+  };
+  on_budget = function(obj) {
+    obj.power = 100;
+    return obj;
+  };
+  on_surplus = function(obj) {
+    obj.power = 125;
+    return obj;
+  };
+  on_glut = function(obj) {
+    obj.power = 400;
     return obj;
   };
   tcenter = reserve.trucks().center();
@@ -970,7 +981,7 @@ CyberBorg.prototype.base_commands = function(reserve, resources) {
   x = (rtx - 7.25).to_i();
   y = (rty - 1.25).to_i();
   blue_alert("Relative build x,y are " + x + ", " + y + ".");
-  commands = [with_help(immediately(three(trucks(build([light_factory, x + 6, y]))))), with_help(immediately(three(trucks(build([research_facility, x + 3, y]))))), with_help(immediately(three(trucks(build([command_center, x + 3, y + 3]))))), immediately(two(truck(builds([power_generator, x, y])))), on_budget(one(truck(builds([power_generator, x, y + 3])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, x, y + 6])))), on_budget(one(truck(builds([power_generator, x + 3, y + 6])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, x + 6, y + 6])))), on_budget(one(truck(builds([power_generator, x + 9, y + 6])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, x + 9, y + 9])))), on_budget(one(truck(builds([power_generator, x + 6, y + 9])))), pass_on_glut(none), on_budget(one(truck(builds([research_facility, x + 3, y + 9]))))];
+  commands = [with_help(immediately(three(trucks(build([light_factory, x + 6, y]))))), with_help(immediately(three(trucks(build([research_facility, x + 3, y]))))), with_help(immediately(three(trucks(build([command_center, x + 3, y + 3]))))), immediately(two(truck(builds([power_generator, x, y])))), on_surplus(one(truck(builds([power_generator, x, y + 3])))), pass(on_glut(none())), on_budget(one(truck(builds([research_facility, x, y + 6])))), on_budget(one(truck(builds([power_generator, x + 3, y + 6])))), pass(on_glut(none())), on_budget(one(truck(builds([research_facility, x + 6, y + 6])))), on_budget(one(truck(builds([power_generator, x + 9, y + 6])))), pass(on_glut(none())), on_budget(one(truck(builds([research_facility, x + 9, y + 9])))), on_budget(one(truck(builds([power_generator, x + 6, y + 9])))), pass(on_glut(none())), on_budget(one(truck(builds([research_facility, x + 3, y + 9]))))];
   return WZArray.bless(commands);
 };
 

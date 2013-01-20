@@ -22,6 +22,15 @@ CyberBorg::base_commands = (reserve, resources) ->
   research_facility = "A0ResearchFacility"
   power_generator   = "A0PowerGenerator"
 
+  none = () ->
+    obj =
+      like: /none/
+      limit: 0
+      min: 0
+      max: 0
+      help: 0
+    obj
+
   # We need to reserve power to ensure the initial base build...
   savings = 500
   # Structures costs about 100
@@ -74,26 +83,25 @@ CyberBorg::base_commands = (reserve, resources) ->
     obj.power = 0
     obj
 
-  on_budget  = (obj) ->
-    obj.power = costs
-    # basically we enlist more help after the project starts
-    obj
-
-  none =
-    like: /none/
-    limit: 0
-    min: 0
-    max: 0
-    help: 0
-
-  pass_on_glut = (obj) ->
-    obj.power = 400
+  pass = (obj) ->
     obj.cost = 0
     obj.order = CORDER_PASS
     # 1 just means success in this case. Normally,
     # it would be the number of units that succesfully executed the command.
     obj.execute = (units) -> 1
     obj.cid = null
+    obj
+
+  on_budget  = (obj) ->
+    obj.power = 100
+    obj
+
+  on_surplus = (obj) ->
+    obj.power = 125
+    obj
+
+  on_glut = (obj) ->
+    obj.power = 400
     obj
 
   # Center point of our trucks.
@@ -122,19 +130,21 @@ CyberBorg::base_commands = (reserve, resources) ->
     with_help immediately three trucks build [light_factory,    x+6, y]
     with_help immediately three trucks build [research_facility, x+3, y]
     with_help immediately three trucks build [command_center,    x+3, y+3]
-    # Transitioning...
+    # Transitioning, two trucks.
     immediately two truck builds [power_generator,   x, y]
-    on_budget one truck builds [power_generator,   x, y+3]
-    pass_on_glut none
+    # Transitioning, one truck.
+    on_surplus one truck builds [power_generator,   x, y+3]
+    # Wait for power levels to come back up.
+    pass on_glut none()
     on_budget one truck builds [research_facility, x, y+6]
     on_budget one truck builds [power_generator,   x+3, y+6]
-    pass_on_glut none
+    pass on_glut none()
     on_budget one truck builds [research_facility, x+6, y+6]
     on_budget one truck builds [power_generator,   x+9, y+6]
-    pass_on_glut none
+    pass on_glut none()
     on_budget one truck builds [research_facility, x+9, y+9]
     on_budget one truck builds [power_generator,   x+6, y+9]
-    pass_on_glut none
+    pass on_glut none()
     on_budget one truck builds [research_facility,  x+3, y+9]
   ]
 
