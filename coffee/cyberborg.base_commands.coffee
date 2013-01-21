@@ -22,13 +22,12 @@ CyberBorg::base_commands = (reserve, resources) ->
   research_facility = "A0ResearchFacility"
   power_generator   = "A0PowerGenerator"
 
-  none = () ->
-    obj =
-      like: /none/
-      limit: 0
-      min: 0
-      max: 0
-      help: 0
+  none = (obj={}) ->
+    obj.like = /none/
+    obj.limit = 0
+    obj.min = 0
+    obj.max = 0
+    obj.help = 0
     obj
 
   # We need to reserve power to ensure the initial base build...
@@ -49,41 +48,41 @@ CyberBorg::base_commands = (reserve, resources) ->
     command
   builds = build # alias
 
-  trucks = (obj) ->
+  trucks = (obj={}) ->
     obj.like = /Truck/
     obj
   truck = trucks # alias
 
-  three = (obj) ->
+  three = (obj={}) ->
     obj.limit = 3 # maximum group size
     obj.min = 1 # it will execute the command only with at least this amount
     obj.max = 3 # it will execute the command with no more than this amount
     obj.help = 0
     obj
 
-  two = (obj) ->
+  two = (obj={}) ->
     obj.limit = 2 # maximum group size
     obj.min = 1
     obj.max = 2
     obj.help = 0
     obj
 
-  one = (obj) ->
+  one = (obj={}) ->
     obj.limit = 1 # maximum group size
     obj.min = 1
     obj.max = 1
     obj.help = 0
     obj
 
-  with_help = (obj) ->
+  with_help = (obj={}) ->
     obj.help = 3
     obj
 
-  immediately = (obj) ->
+  immediately = (obj={}) ->
     obj.power = 0
     obj
 
-  pass = (obj) ->
+  pass = (obj={}) ->
     obj.cost = 0
     obj.order = CORDER_PASS
     # 1 just means success in this case. Normally,
@@ -92,61 +91,81 @@ CyberBorg::base_commands = (reserve, resources) ->
     obj.cid = null
     obj
 
-  on_budget  = (obj) ->
+  on_budget  = (obj={}) ->
     obj.power = 100
     obj
 
-  on_surplus = (obj) ->
-    obj.power = 125
+  on_surplus = (obj={}) ->
+    obj.power = 125 # TODO recheck this
     obj
 
-  on_glut = (obj) ->
+  on_glut = (obj={}) ->
     obj.power = 400
     obj
 
   # Center point of our trucks.
   # ie. (10.5,236)
-  tcenter = reserve.trucks().center()
-  trace "Trucks around #{tcenter.x}, #{tcenter.y}"
+  tc = reserve.trucks().center()
+  trace "Trucks around #{tc.x}, #{tc.y}"
+  x = tc.x.to_i()
+  y = tc.y.to_i()
 
   # Center point of our first 4 resources.
   # ie. (12, 236.5)
-  rcenter = WZArray.bless(resources[0..3]).center()
-  trace "Resources around #{rcenter.x}, #{rcenter.y}."
+  rc = WZArray.bless(resources[0..3]).center()
+  trace "Resources around #{rc.x}, #{rc.y}."
+  rx = rc.x.to_i()
+  ry = rc.y.to_i()
 
-  rtx = (rcenter.x + tcenter.x) / 2.0
-  rty = (rcenter.y + tcenter.y) / 2.0
-  trace "Cluster center is #{rtx}, #{rty}."
+  # Which x direction towards resources
+  dx = 1
+  dx = -1 if x > rx
+  # Which y direction towards resources
+  dy = 1
+  dy = -1 if y > ry
 
-  # Positions relative to x,y
-  x = (rtx - 7.25).to_i()
-  y = (rty - 1.25).to_i()
-  blue_alert "Relative build x,y are #{x}, #{y}."
   # So let's see how many locations this will work,
   # and find ways to improve the heuristics.
 
-  commands = [
+  s = 4 # Spacing
+  block = [
     # Build up the initial base as fast a posible
-    with_help immediately three trucks build [light_factory,    x+6, y]
-    with_help immediately three trucks build [research_facility, x+3, y]
-    with_help immediately three trucks build [command_center,    x+3, y+3]
+    with_help immediately three trucks build [light_factory,     x-s*dx, y-s*dy]
+    with_help immediately three trucks build [research_facility, x,      y-s*dy]
+    with_help immediately three trucks build [command_center,    x+s*dx, y-s*dy]
+
     # Transitioning, two trucks.
-    immediately two truck builds [power_generator,   x, y]
+    immediately two truck builds             [power_generator,   x+s*dx, y]
     # Transitioning, one truck.
-    on_surplus one truck builds [power_generator,   x, y+3]
+    on_surplus one truck builds              [power_generator,   x,      y]
     # Wait for power levels to come back up.
     pass on_glut none()
-    on_budget one truck builds [research_facility, x, y+6]
-    on_budget one truck builds [power_generator,   x+3, y+6]
+    on_budget one truck builds               [research_facility, x-s*dx, y]
+
+    on_budget one truck builds               [power_generator,   x-s*dx, y+s*dy]
     pass on_glut none()
-    on_budget one truck builds [research_facility, x+6, y+6]
-    on_budget one truck builds [power_generator,   x+9, y+6]
-    pass on_glut none()
-    on_budget one truck builds [research_facility, x+9, y+9]
-    on_budget one truck builds [power_generator,   x+6, y+9]
-    pass on_glut none()
-    on_budget one truck builds [research_facility,  x+3, y+9]
+    on_budget one truck builds               [research_facility, x,      y+s*dy]
+    on_budget one truck builds               [power_generator,   x+s*dx, y+s*dy]
   ]
 
+  more = null
+  if (rx-x)*dx > (ry-y)*dy
+    more = [
+      pass on_glut none()
+      on_budget one truck builds               [research_facility, x+2*s*dx, y+s*dy]
+      on_budget one truck builds               [power_generator,   x+2*s*dx, y]
+      pass on_glut none()
+      on_budget one truck builds               [research_facility, x+2*s*dx, y-s*dy]
+    ]
+  else
+    more = [
+      pass on_glut none()
+      on_budget one truck builds               [research_facility, x+s*dx, y+2*s*dy]
+      on_budget one truck builds               [power_generator,   x,      y+2*s*dy]
+      pass on_glut none()
+      on_budget one truck builds               [research_facility, x-s*dx, y+2*s*dy]
+    ]
+
+  commands = block.concat(more)
   # Convert the list to wzarray
   WZArray.bless(commands)
