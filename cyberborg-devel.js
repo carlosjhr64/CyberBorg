@@ -1,4 +1,4 @@
-var BASE, CORDER_PASS, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, IS_LAIDOFF, LABS, LORDER_RESEARCH, SCOUTS, Scouter, WZArray, WZObject, blue_alert, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, green_alert, group_executions, helping, red_alert, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
+var BASE, CORDER_PASS, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, IS_LAIDOFF, LABS, LORDER_RESEARCH, RESERVE, SCOUTS, Scouter, WZArray, WZObject, blue_alert, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, green_alert, group_executions, helping, red_alert, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 trace = function(message) {
@@ -1468,6 +1468,8 @@ FACTORIES = 'Factories';
 
 LABS = 'Labs';
 
+RESERVE = 'Reserve';
+
 events = function(event) {
   cyberBorg.update();
   if (cyberBorg.trace) start_trace(event);
@@ -1589,19 +1591,20 @@ chat = function(sender, to, message) {
 };
 
 report = function(who) {
-  var droid, droids, group, _i, _len, _ref;
-  if (group = cyberBorg.groups.named(who)) {
-    droids = [];
-    _ref = group.list;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      droid = _ref[_i];
-      droids.push(droid.namexy());
+  var droid, empty, list, _i, _len, _ref;
+  if (who === RESERVE) {
+    list = cyberBorg.reserve;
+  } else {
+    list = (_ref = cyberBorg.groups.named(who)) != null ? _ref.list : void 0;
+  }
+  if (list) {
+    empty = true;
+    for (_i = 0, _len = list.length; _i < _len; _i++) {
+      droid = list[_i];
+      empty && (empty = false);
+      console(("" + (droid.namexy()) + " ") + ("corder:" + (droid.corder.order_map()) + " ") + ("dorder:" + (droid.dorder.order_map()) + " ") + ("order:" + (droid.order.order_map()) + " ") + ("health:" + droid.health + "%"));
     }
-    if (droids.length) {
-      return console(droids.join());
-    } else {
-      return console("Group empty");
-    }
+    if (empty) return console("Group currently empty.");
   } else {
     return console("There is not group " + who);
   }

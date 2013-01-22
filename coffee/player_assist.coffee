@@ -12,6 +12,7 @@ DERRICKS  = 'Derricks'	# will build derricks
 SCOUTS    = 'Scouts'	# will scout and guard the area
 FACTORIES = 'Factories'	# builds droids
 LABS      = 'Labs'	# research facilities
+RESERVE   = 'Reserve'
 
 # Refactoring in this AI showed that it made sense to have a single
 # event function pass an object describing the event.
@@ -190,15 +191,23 @@ chat = (sender, to, message) ->
         green_alert("Tracing on.") if cyberBorg.trace
       else console("What?")
 
-# Lists the units in the group by name and position.
-# TODO could add more info like jobs in progress.
+# Lists the units in the group by name, position, 'n stuff.
 report = (who) ->
-  if group = cyberBorg.groups.named(who)
-    droids = []
-    droids.push(droid.namexy()) for droid in group.list
-    if droids.length then console(droids.join())
-    else console("Group empty")
-  else console("There is not group #{who}")
+  if who is RESERVE
+    list = cyberBorg.reserve
+  else
+    list = cyberBorg.groups.named(who)?.list
+  if list
+    empty = true
+    for droid in list
+      empty &&= false
+      console "#{droid.namexy()} " +
+      "corder:#{droid.corder.order_map()} " +
+      "dorder:#{droid.dorder.order_map()} " +
+      "order:#{droid.order.order_map()} " +
+      "health:#{droid.health}%"
+    console "Group currently empty." if empty
+  else console "There is not group #{who}"
 
 # The second structure that this AI builds is a research facility.
 # This AI may build five research facilities (the standard limit,
