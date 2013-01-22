@@ -4,6 +4,8 @@ class CyberBorg
   ### CONSTANTS ###
   #################
 
+  @RESERVE = 'Reserve'
+
   @NORTH = 0
   @EAST = 90
   @SOUTH = 180
@@ -241,4 +243,4 @@ DORDER_MAINTAIN    = CyberBorg.ORDER_MAP.indexOf('DORDER_MAINTAIN')
 FORDER_MANUFACTURE = CyberBorg.ORDER_MAP.indexOf('FORDER_MANUFACTURE')
 LORDER_RESEARCH    = CyberBorg.ORDER_MAP.indexOf('LORDER_RESEARCH')
 CORDER_PASS        = CyberBorg.ORDER_MAP.indexOf('CORDER_PASS')
-IS_LAIDOFF            = CyberBorg.ORDER_MAP.indexOf('IS_LAIDOFF')
+IS_LAIDOFF         = CyberBorg.ORDER_MAP.indexOf('IS_LAIDOFF')

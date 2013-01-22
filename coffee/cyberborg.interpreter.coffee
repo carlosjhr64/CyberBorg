@@ -12,7 +12,6 @@ DERRICKS  = 'Derricks'	# will build derricks
 SCOUTS    = 'Scouts'	# will scout and guard the area
 FACTORIES = 'Factories'	# builds droids
 LABS      = 'Labs'	# research facilities
-RESERVE   = 'Reserve'
 
 # Refactoring in this AI showed that it made sense to have a single
 # event function pass an object describing the event.
@@ -193,7 +192,7 @@ chat = (sender, to, message) ->
 
 # Lists the units in the group by name, position, 'n stuff.
 report = (who) ->
-  if who is RESERVE
+  if who is CyberBorg.RESERVE
     list = cyberBorg.reserve
   else
     list = cyberBorg.groups.named(who)?.list
