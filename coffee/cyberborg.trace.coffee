@@ -6,8 +6,7 @@
 # But this extra work only occurs while tracing.
 # The point is to not do unecessary work while not tracing.
 #
-# Alias debug as trace.
-# It's a way to differentiate intent.
+# trace insted of debug is a way to differentiate intent.
 trace = (message) ->
   debug(message) if cyberBorg.trace
 

@@ -122,6 +122,7 @@ WZObject = (function() {
       if (pos) {
         cyberBorg.location(at, pos);
         if (!(pos.x === at.x && pos.y === at.y)) {
+          debug("me is " + me + " and selectedPlayer is " + selectedPlayer);
           red_alert(("Game AI moved build " + structure + " ") + ("from " + at.x + "," + at.y + " to " + pos.x + "," + pos.y));
         }
       }

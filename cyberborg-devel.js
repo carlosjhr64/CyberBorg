@@ -2,19 +2,25 @@ var BASE, CORDER_PASS, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_M
   __slice = Array.prototype.slice;
 
 trace = function(message) {
-  if (CyberBorg.TRACE) return debug(message);
+  if (cyberBorg.trace) return debug(message);
 };
 
 red_alert = function(message) {
-  return trace("\033[1;31m" + message + "\033[0m");
+  var previous_state;
+  previous_state = cyberBorg.trace;
+  if (cyberBorg.trace || (selectedPlayer === me)) {
+    cyberBorg.trace = true;
+    trace("\033[1;31m" + message + "\033[0m");
+  }
+  return cyberBorg.trace = previous_state;
 };
 
 green_alert = function(message) {
-  return trace("\033[1;32m" + message + "\033[0m");
+  if (cyberBorg.trace) return trace("\033[1;32m" + message + "\033[0m");
 };
 
 blue_alert = function(message) {
-  return trace("\033[1;34m" + message + "\033[0m");
+  if (cyberBorg.trace) return trace("\033[1;34m" + message + "\033[0m");
 };
 
 Number.prototype.times = function(action) {
@@ -302,10 +308,6 @@ WZArray = (function() {
       var _ref;
       return ((_ref = object.command) != null ? _ref.cid : void 0) === cid;
     });
-  };
-
-  WZArray.prototype.idle = function() {
-    return this.filters(CyberBorg.is_idle);
   };
 
   WZArray.prototype.like = function(rgx) {
@@ -612,8 +614,6 @@ CyberBorg = (function() {
   /* CLASS VARIABLES
   */
 
-  CyberBorg.TRACE = selectedPlayer === me;
-
   CyberBorg.CID = 0;
 
   /* CONSTRUCTOR
@@ -626,6 +626,7 @@ CyberBorg = (function() {
     this.reserve = null;
     this.hq = false;
     this.pos = [];
+    this.trace = selectedPlayer === me;
   }
 
   /* UPDATES
@@ -797,19 +798,6 @@ CyberBorg = (function() {
     return structure.stattype === FACTORY;
   };
 
-  CyberBorg.is_idle = function(object) {
-    var not_idle;
-    if (object.type === STRUCTURE) {
-      if (object.command_time === gameTime) {
-        return false;
-      } else {
-        return structureIdle(object);
-      }
-    }
-    not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH, DORDER_REPAIR, DORDER_SCOUT, DORDER_MOVE];
-    return not_idle.indexOf(object.order) === WZArray.NONE;
-  };
-
   CyberBorg.is_resource = function(object) {
     return [OIL_RESOURCE, RESOURCE_EXTRACTOR].indexOf(object.stattype) > WZArray.NONE;
   };
@@ -837,10 +825,6 @@ CyberBorg = (function() {
 
   CyberBorg.get_resources = function(at) {
     return CyberBorg.enum_feature(ALL_PLAYERS, "OilResource").nearest(at);
-  };
-
-  CyberBorg.get_my_trucks = function(at) {
-    return CyberBorg.enum_droid(me, DROID_CONSTRUCT);
   };
 
   CyberBorg.get_free_spots = function(at, n) {
@@ -996,11 +980,11 @@ CyberBorg.prototype.base_commands = function(reserve, resources) {
     return obj;
   };
   tc = reserve.trucks().center();
-  trace("Trucks around " + tc.x + ", " + tc.y);
+  if (cyberBorg.trace) trace("Trucks around " + tc.x + ", " + tc.y);
   x = tc.x.to_i();
   y = tc.y.to_i();
   rc = WZArray.bless(resources.slice(0, 4)).center();
-  trace("Resources around " + rc.x + ", " + rc.y + ".");
+  if (cyberBorg.trace) trace("Resources around " + rc.x + ", " + rc.y + ".");
   rx = rc.x.to_i();
   ry = rc.y.to_i();
   dx = 1;
@@ -1367,7 +1351,6 @@ start_trace = function(event) {
 
 bug_report = function(label, droid, event) {
   var at, command, corder, dorder, order, _ref;
-  command = null;
   order = droid.order;
   dorder = droid.dorder;
   trace("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\tevent:" + event.name);
@@ -1385,17 +1368,19 @@ bug_report = function(label, droid, event) {
     }
   }
   if (event.name === "Destroyed") {
-    trace("\t\t" + ((_ref = event.group) != null ? _ref.name : void 0) + "'s " + (event.object.namexy()) + " was destroyed.");
+    return trace("\t\t" + ((_ref = event.group) != null ? _ref.name : void 0) + "'s " + (event.object.namexy()) + " was destroyed.");
   }
-  return command;
 };
 
 gotcha_working = function(droid, command) {
   var order;
-  if (CyberBorg.TRACE) centreView(droid.x, droid.y);
+  if (command == null) command = droid.command;
+  if (cyberBorg.trace) centreView(droid.x, droid.y);
   if (droid.executes(command)) {
     order = command.order;
-    return green_alert("\tRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".");
+    if (cyberBorg.trace) {
+      return green_alert("\tRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".");
+    }
   } else {
     return red_alert("\t" + droid.name + " is a lazy bum!");
   }
@@ -1410,13 +1395,13 @@ gotcha_selected = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    bug_report("Selected", droid, event);
+    if (cyberBorg.trace) bug_report("Selected", droid, event);
   }
   return count;
 };
 
 gotcha_idle = function(event) {
-  var command, count, droid, _i, _len, _ref;
+  var count, droid, _i, _len, _ref;
   count = 0;
   _ref = cyberBorg.for_all(function(object) {
     return object.order === 0 && (object.command != null);
@@ -1424,8 +1409,8 @@ gotcha_idle = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    command = bug_report("Idle", droid, event);
-    gotcha_working(droid, command);
+    if (cyberBorg.trace) bug_report("Idle", droid, event);
+    gotcha_working(droid);
   }
   return count;
 };
@@ -1445,9 +1430,10 @@ gotcha_rogue = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    command = bug_report("Rogue", droid, event);
+    if (cyberBorg.trace) bug_report("Rogue", droid, event);
+    command = droid.command;
     if ((command != null ? command.order : void 0) === 28) {
-      if (CyberBorg.TRACE) centreView(droid.x, droid.y);
+      if (cyberBorg.trace) centreView(droid.x, droid.y);
       gotcha_working(droid, command);
     } else {
       red_alert("\tUncaught rogue case.");
@@ -1464,10 +1450,10 @@ gotchas = function(event) {
     gotcha = _ref[_i];
     if (count = gotcha(event)) {
       counts += count;
-      trace("");
+      if (cyberBorg.trace) trace("");
     }
   }
-  if (counts) return trace("");
+  if (cyberBorg.trace && counts) return trace("");
 };
 
 cyberBorg = new CyberBorg();
@@ -1484,7 +1470,7 @@ LABS = 'Labs';
 
 events = function(event) {
   cyberBorg.update();
-  start_trace(event);
+  if (cyberBorg.trace) start_trace(event);
   switch (event.name) {
     case 'StartLevel':
       startLevel();
@@ -1592,9 +1578,9 @@ chat = function(sender, to, message) {
       case 'reload':
         return include("multiplay/skirmish/reloads.js");
       case 'trace':
-        if (CyberBorg.TRACE) green_alert("Tracing off.");
-        CyberBorg.TRACE = !CyberBorg.TRACE;
-        if (CyberBorg.TRACE) return green_alert("Tracing on.");
+        if (cyberBorg.trace) green_alert("Tracing off.");
+        cyberBorg.trace = !cyberBorg.trace;
+        if (cyberBorg.trace) return green_alert("Tracing on.");
         break;
       default:
         return console("What?");
