@@ -72,8 +72,7 @@ class CyberBorg
   ### CLASS VARIABLES ###
   #######################
 
-  @TRACE = (selectedPlayer is me)
-  @CID = 0 # TODO Class Variable? :-??
+  @CID = 0
 
   ###################
   ### CONSTRUCTOR ###
@@ -92,6 +91,7 @@ class CyberBorg
     # Has the headquaters been built?
     @hq = false
     @pos = []
+    @trace = (selectedPlayer is me)
 
   ###############
   ### UPDATES ###

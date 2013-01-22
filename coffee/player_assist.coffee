@@ -20,7 +20,7 @@ LABS      = 'Labs'	# research facilities
 # function here.
 events = (event) ->
   cyberBorg.update()
-  start_trace(event)	if CyberBorg.TRACE
+  start_trace(event)	if cyberBorg.trace
 
   switch event.name
     when 'StartLevel'
@@ -191,9 +191,9 @@ chat = (sender, to, message) ->
       when 'reload' then include("multiplay/skirmish/reloads.js")
       # Toggle tracing
       when 'trace'
-        green_alert("Tracing off.") if CyberBorg.TRACE
-        CyberBorg.TRACE = !CyberBorg.TRACE
-        green_alert("Tracing on.") if CyberBorg.TRACE
+        green_alert("Tracing off.") if cyberBorg.trace
+        cyberBorg.trace = !cyberBorg.trace
+        green_alert("Tracing on.") if cyberBorg.trace
       else console("What?")
 
 # Lists the units in the group by name and position.

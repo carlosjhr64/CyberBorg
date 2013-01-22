@@ -31,10 +31,10 @@ bug_report = (label, droid, event) ->
 
 # Re-issue command
 gotcha_working = (droid, command = droid.command) ->
-  centreView(droid.x, droid.y) if CyberBorg.TRACE
+  centreView(droid.x, droid.y) if cyberBorg.trace
   if droid.executes(command)
     order = command.order
-    if CyberBorg.TRACE
+    if cyberBorg.trace
       green_alert "\tRe-issued #{order.order_map()}, ##{order}, to #{droid.name}."
   else
     red_alert("\t#{droid.name} is a lazy bum!")
@@ -45,7 +45,7 @@ gotcha_selected = (event) ->
   # Selected units
   for droid in cyberBorg.for_all((object) -> object.selected)
     count += 1
-    bug_report("Selected", droid, event) if CyberBorg.TRACE
+    bug_report("Selected", droid, event) if cyberBorg.trace
   return count
 
 # Report idle droids.
@@ -54,7 +54,7 @@ gotcha_idle = (event) ->
   # Idle units under command
   for droid in cyberBorg.for_all((object) -> object.order is 0 and object.command?)
     count += 1
-    bug_report("Idle", droid, event) if CyberBorg.TRACE
+    bug_report("Idle", droid, event) if cyberBorg.trace
     # OK, let's circumvent the game bugs...
     gotcha_working(droid)
   return count
@@ -69,10 +69,10 @@ gotcha_rogue = (event) ->
     return false
   for droid in cyberBorg.for_all((object) -> rogue(object))
     count += 1
-    bug_report("Rogue", droid, event) if CyberBorg.TRACE
+    bug_report("Rogue", droid, event) if cyberBorg.trace
     command = droid.command
     if command?.order is 28
-      centreView(droid.x, droid.y) if CyberBorg.TRACE
+      centreView(droid.x, droid.y) if cyberBorg.trace
       gotcha_working(droid, command)
     else
       red_alert("\tUncaught rogue case.")
@@ -83,5 +83,5 @@ gotchas = (event) ->
   for gotcha in [gotcha_selected, gotcha_idle, gotcha_rogue]
     if count = gotcha(event)
       counts += count
-      trace "" if CyberBorg.TRACE
-  trace "" if CyberBorg.TRACE and counts
+      trace "" if cyberBorg.trace
+  trace "" if cyberBorg.trace and counts

@@ -114,14 +114,14 @@ CyberBorg::base_commands = (reserve, resources) ->
   # Center point of our trucks.
   # ie. (10.5,236)
   tc = reserve.trucks().center()
-  trace "Trucks around #{tc.x}, #{tc.y}" if CyberBorg.TRACE
+  trace "Trucks around #{tc.x}, #{tc.y}" if cyberBorg.trace
   x = tc.x.to_i()
   y = tc.y.to_i()
 
   # Center point of our first 4 resources.
   # ie. (12, 236.5)
   rc = WZArray.bless(resources[0..3]).center()
-  trace "Resources around #{rc.x}, #{rc.y}." if CyberBorg.TRACE
+  trace "Resources around #{rc.x}, #{rc.y}." if cyberBorg.trace
   rx = rc.x.to_i()
   ry = rc.y.to_i()
 

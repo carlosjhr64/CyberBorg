@@ -2,25 +2,25 @@ var BASE, CORDER_PASS, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_M
   __slice = Array.prototype.slice;
 
 trace = function(message) {
-  if (CyberBorg.TRACE) return debug(message);
+  if (cyberBorg.trace) return debug(message);
 };
 
 red_alert = function(message) {
   var previous_state;
-  previous_state = CyberBorg.TRACE;
-  if (CyberBorg.TRACE || (selectedPlayer === me)) {
-    CyberBorg.TRACE = true;
+  previous_state = cyberBorg.trace;
+  if (cyberBorg.trace || (selectedPlayer === me)) {
+    cyberBorg.trace = true;
     trace("\033[1;31m" + message + "\033[0m");
   }
-  return CyberBorg.TRACE = previous_state;
+  return cyberBorg.trace = previous_state;
 };
 
 green_alert = function(message) {
-  if (CyberBorg.TRACE) return trace("\033[1;32m" + message + "\033[0m");
+  if (cyberBorg.trace) return trace("\033[1;32m" + message + "\033[0m");
 };
 
 blue_alert = function(message) {
-  if (CyberBorg.TRACE) return trace("\033[1;34m" + message + "\033[0m");
+  if (cyberBorg.trace) return trace("\033[1;34m" + message + "\033[0m");
 };
 
 Number.prototype.times = function(action) {
@@ -618,8 +618,6 @@ CyberBorg = (function() {
   /* CLASS VARIABLES
   */
 
-  CyberBorg.TRACE = selectedPlayer === me;
-
   CyberBorg.CID = 0;
 
   /* CONSTRUCTOR
@@ -632,6 +630,7 @@ CyberBorg = (function() {
     this.reserve = null;
     this.hq = false;
     this.pos = [];
+    this.trace = selectedPlayer === me;
   }
 
   /* UPDATES
@@ -1002,11 +1001,11 @@ CyberBorg.prototype.base_commands = function(reserve, resources) {
     return obj;
   };
   tc = reserve.trucks().center();
-  if (CyberBorg.TRACE) trace("Trucks around " + tc.x + ", " + tc.y);
+  if (cyberBorg.trace) trace("Trucks around " + tc.x + ", " + tc.y);
   x = tc.x.to_i();
   y = tc.y.to_i();
   rc = WZArray.bless(resources.slice(0, 4)).center();
-  if (CyberBorg.TRACE) trace("Resources around " + rc.x + ", " + rc.y + ".");
+  if (cyberBorg.trace) trace("Resources around " + rc.x + ", " + rc.y + ".");
   rx = rc.x.to_i();
   ry = rc.y.to_i();
   dx = 1;
@@ -1397,10 +1396,10 @@ bug_report = function(label, droid, event) {
 gotcha_working = function(droid, command) {
   var order;
   if (command == null) command = droid.command;
-  if (CyberBorg.TRACE) centreView(droid.x, droid.y);
+  if (cyberBorg.trace) centreView(droid.x, droid.y);
   if (droid.executes(command)) {
     order = command.order;
-    if (CyberBorg.TRACE) {
+    if (cyberBorg.trace) {
       return green_alert("\tRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".");
     }
   } else {
@@ -1417,7 +1416,7 @@ gotcha_selected = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    if (CyberBorg.TRACE) bug_report("Selected", droid, event);
+    if (cyberBorg.trace) bug_report("Selected", droid, event);
   }
   return count;
 };
@@ -1431,7 +1430,7 @@ gotcha_idle = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    if (CyberBorg.TRACE) bug_report("Idle", droid, event);
+    if (cyberBorg.trace) bug_report("Idle", droid, event);
     gotcha_working(droid);
   }
   return count;
@@ -1452,10 +1451,10 @@ gotcha_rogue = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    if (CyberBorg.TRACE) bug_report("Rogue", droid, event);
+    if (cyberBorg.trace) bug_report("Rogue", droid, event);
     command = droid.command;
     if ((command != null ? command.order : void 0) === 28) {
-      if (CyberBorg.TRACE) centreView(droid.x, droid.y);
+      if (cyberBorg.trace) centreView(droid.x, droid.y);
       gotcha_working(droid, command);
     } else {
       red_alert("\tUncaught rogue case.");
@@ -1472,10 +1471,10 @@ gotchas = function(event) {
     gotcha = _ref[_i];
     if (count = gotcha(event)) {
       counts += count;
-      if (CyberBorg.TRACE) trace("");
+      if (cyberBorg.trace) trace("");
     }
   }
-  if (CyberBorg.TRACE && counts) return trace("");
+  if (cyberBorg.trace && counts) return trace("");
 };
 
 cyberBorg = new CyberBorg();
@@ -1492,7 +1491,7 @@ LABS = 'Labs';
 
 events = function(event) {
   cyberBorg.update();
-  if (CyberBorg.TRACE) start_trace(event);
+  if (cyberBorg.trace) start_trace(event);
   switch (event.name) {
     case 'StartLevel':
       startLevel();
@@ -1600,9 +1599,9 @@ chat = function(sender, to, message) {
       case 'reload':
         return include("multiplay/skirmish/reloads.js");
       case 'trace':
-        if (CyberBorg.TRACE) green_alert("Tracing off.");
-        CyberBorg.TRACE = !CyberBorg.TRACE;
-        if (CyberBorg.TRACE) return green_alert("Tracing on.");
+        if (cyberBorg.trace) green_alert("Tracing off.");
+        cyberBorg.trace = !cyberBorg.trace;
+        if (cyberBorg.trace) return green_alert("Tracing on.");
         break;
       default:
         return console("What?");

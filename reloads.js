@@ -40,10 +40,10 @@ bug_report = function(label, droid, event) {
 gotcha_working = function(droid, command) {
   var order;
   if (command == null) command = droid.command;
-  if (CyberBorg.TRACE) centreView(droid.x, droid.y);
+  if (cyberBorg.trace) centreView(droid.x, droid.y);
   if (droid.executes(command)) {
     order = command.order;
-    if (CyberBorg.TRACE) {
+    if (cyberBorg.trace) {
       return green_alert("\tRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".");
     }
   } else {
@@ -60,7 +60,7 @@ gotcha_selected = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    if (CyberBorg.TRACE) bug_report("Selected", droid, event);
+    if (cyberBorg.trace) bug_report("Selected", droid, event);
   }
   return count;
 };
@@ -74,7 +74,7 @@ gotcha_idle = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    if (CyberBorg.TRACE) bug_report("Idle", droid, event);
+    if (cyberBorg.trace) bug_report("Idle", droid, event);
     gotcha_working(droid);
   }
   return count;
@@ -95,10 +95,10 @@ gotcha_rogue = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    if (CyberBorg.TRACE) bug_report("Rogue", droid, event);
+    if (cyberBorg.trace) bug_report("Rogue", droid, event);
     command = droid.command;
     if ((command != null ? command.order : void 0) === 28) {
-      if (CyberBorg.TRACE) centreView(droid.x, droid.y);
+      if (cyberBorg.trace) centreView(droid.x, droid.y);
       gotcha_working(droid, command);
     } else {
       red_alert("\tUncaught rogue case.");
@@ -115,8 +115,8 @@ gotchas = function(event) {
     gotcha = _ref[_i];
     if (count = gotcha(event)) {
       counts += count;
-      if (CyberBorg.TRACE) trace("");
+      if (cyberBorg.trace) trace("");
     }
   }
-  if (CyberBorg.TRACE && counts) return trace("");
+  if (cyberBorg.trace && counts) return trace("");
 };
