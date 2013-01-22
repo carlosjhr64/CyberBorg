@@ -17,3 +17,10 @@ It'll play a no base T1 game up to dual machine guns...
 
 I'm developing in the 8 player map, Concrete,
 with low power level.
+
+In the very last line of
+   ./data/mp/multiplay/skirmish/rules.js
+I include
+   'multiplay/skirmish/cyberborg-devel.js'
+That way I can test changes to the AI against its previous version
+without having to go to debug mode.

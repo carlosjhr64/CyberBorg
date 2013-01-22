@@ -20,7 +20,7 @@ LABS      = 'Labs'	# research facilities
 # function here.
 events = (event) ->
   cyberBorg.update()
-  start_trace(event)
+  start_trace(event)	if CyberBorg.TRACE
 
   switch event.name
     when 'StartLevel'

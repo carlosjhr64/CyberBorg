@@ -1,5 +1,5 @@
 coffee							\
---join	cyberborg.js					\
+--join	cyberborg-devel.js				\
 --bare --compile --watch --lint				\
 	coffee/cyberborg.trace.coffee			\
 	coffee/cyberborg.extensions.coffee		\

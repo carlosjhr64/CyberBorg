@@ -1,4 +1,4 @@
 [AI]
-name = "CyberBorg v0.01"
+name = "CyberBorg 2013-01-22"
 js = cyberborg.js
 tip = "Skirmish AI written in CoffeeScript"

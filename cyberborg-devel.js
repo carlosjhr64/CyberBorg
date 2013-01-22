@@ -1484,7 +1484,7 @@ LABS = 'Labs';
 
 events = function(event) {
   cyberBorg.update();
-  if (CyberBorg.TRACE) start_trace(event);
+  start_trace(event);
   switch (event.name) {
     case 'StartLevel':
       startLevel();
