@@ -202,8 +202,8 @@ report = (who) ->
     for droid in list
       empty &&= false
       console "#{droid.namexy()} " +
-      "corder:#{droid.corder.order_map()} " +
-      "dorder:#{droid.dorder.order_map()} " +
+      "corder:#{droid.corder?.order_map()} " +
+      "dorder:#{droid.dorder?.order_map()} " +
       "order:#{droid.order.order_map()} " +
       "health:#{droid.health}%"
     console "Group currently empty." if empty

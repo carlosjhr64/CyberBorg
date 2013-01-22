@@ -1591,7 +1591,7 @@ chat = function(sender, to, message) {
 };
 
 report = function(who) {
-  var droid, empty, list, _i, _len, _ref;
+  var droid, empty, list, _i, _len, _ref, _ref2, _ref3;
   if (who === RESERVE) {
     list = cyberBorg.reserve;
   } else {
@@ -1602,7 +1602,7 @@ report = function(who) {
     for (_i = 0, _len = list.length; _i < _len; _i++) {
       droid = list[_i];
       empty && (empty = false);
-      console(("" + (droid.namexy()) + " ") + ("corder:" + (droid.corder.order_map()) + " ") + ("dorder:" + (droid.dorder.order_map()) + " ") + ("order:" + (droid.order.order_map()) + " ") + ("health:" + droid.health + "%"));
+      console(("" + (droid.namexy()) + " ") + ("corder:" + ((_ref2 = droid.corder) != null ? _ref2.order_map() : void 0) + " ") + ("dorder:" + ((_ref3 = droid.dorder) != null ? _ref3.order_map() : void 0) + " ") + ("order:" + (droid.order.order_map()) + " ") + ("health:" + droid.health + "%"));
     }
     if (empty) return console("Group currently empty.");
   } else {
