@@ -6,15 +6,21 @@ trace = function(message) {
 };
 
 red_alert = function(message) {
-  return trace("\033[1;31m" + message + "\033[0m");
+  var previous_state;
+  previous_state = CyberBorg.TRACE;
+  if (CyberBorg.TRACE || (selectedPlayer === me)) {
+    CyberBorg.TRACE = true;
+    trace("\033[1;31m" + message + "\033[0m");
+  }
+  return CyberBorg.TRACE = previous_state;
 };
 
 green_alert = function(message) {
-  return trace("\033[1;32m" + message + "\033[0m");
+  if (CyberBorg.TRACE) return trace("\033[1;32m" + message + "\033[0m");
 };
 
 blue_alert = function(message) {
-  return trace("\033[1;34m" + message + "\033[0m");
+  if (CyberBorg.TRACE) return trace("\033[1;34m" + message + "\033[0m");
 };
 
 Number.prototype.times = function(action) {
@@ -996,11 +1002,11 @@ CyberBorg.prototype.base_commands = function(reserve, resources) {
     return obj;
   };
   tc = reserve.trucks().center();
-  trace("Trucks around " + tc.x + ", " + tc.y);
+  if (CyberBorg.TRACE) trace("Trucks around " + tc.x + ", " + tc.y);
   x = tc.x.to_i();
   y = tc.y.to_i();
   rc = WZArray.bless(resources.slice(0, 4)).center();
-  trace("Resources around " + rc.x + ", " + rc.y + ".");
+  if (CyberBorg.TRACE) trace("Resources around " + rc.x + ", " + rc.y + ".");
   rx = rc.x.to_i();
   ry = rc.y.to_i();
   dx = 1;
@@ -1367,7 +1373,6 @@ start_trace = function(event) {
 
 bug_report = function(label, droid, event) {
   var at, command, corder, dorder, order, _ref;
-  command = null;
   order = droid.order;
   dorder = droid.dorder;
   trace("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\tevent:" + event.name);
@@ -1385,17 +1390,19 @@ bug_report = function(label, droid, event) {
     }
   }
   if (event.name === "Destroyed") {
-    trace("\t\t" + ((_ref = event.group) != null ? _ref.name : void 0) + "'s " + (event.object.namexy()) + " was destroyed.");
+    return trace("\t\t" + ((_ref = event.group) != null ? _ref.name : void 0) + "'s " + (event.object.namexy()) + " was destroyed.");
   }
-  return command;
 };
 
 gotcha_working = function(droid, command) {
   var order;
+  if (command == null) command = droid.command;
   if (CyberBorg.TRACE) centreView(droid.x, droid.y);
   if (droid.executes(command)) {
     order = command.order;
-    return green_alert("\tRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".");
+    if (CyberBorg.TRACE) {
+      return green_alert("\tRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".");
+    }
   } else {
     return red_alert("\t" + droid.name + " is a lazy bum!");
   }
@@ -1410,13 +1417,13 @@ gotcha_selected = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    bug_report("Selected", droid, event);
+    if (CyberBorg.TRACE) bug_report("Selected", droid, event);
   }
   return count;
 };
 
 gotcha_idle = function(event) {
-  var command, count, droid, _i, _len, _ref;
+  var count, droid, _i, _len, _ref;
   count = 0;
   _ref = cyberBorg.for_all(function(object) {
     return object.order === 0 && (object.command != null);
@@ -1424,8 +1431,8 @@ gotcha_idle = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    command = bug_report("Idle", droid, event);
-    gotcha_working(droid, command);
+    if (CyberBorg.TRACE) bug_report("Idle", droid, event);
+    gotcha_working(droid);
   }
   return count;
 };
@@ -1445,7 +1452,8 @@ gotcha_rogue = function(event) {
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
-    command = bug_report("Rogue", droid, event);
+    if (CyberBorg.TRACE) bug_report("Rogue", droid, event);
+    command = droid.command;
     if ((command != null ? command.order : void 0) === 28) {
       if (CyberBorg.TRACE) centreView(droid.x, droid.y);
       gotcha_working(droid, command);
@@ -1464,10 +1472,10 @@ gotchas = function(event) {
     gotcha = _ref[_i];
     if (count = gotcha(event)) {
       counts += count;
-      trace("");
+      if (CyberBorg.TRACE) trace("");
     }
   }
-  if (counts) return trace("");
+  if (CyberBorg.TRACE && counts) return trace("");
 };
 
 cyberBorg = new CyberBorg();

@@ -9,8 +9,7 @@ start_trace = (event) ->
     trace "\tDroid: #{droid.namexy()}\tID:#{droid.id}\tCost: #{droid.cost}"
 
 # The bug report.
-bug_report = (label,droid,event) ->
-  command = null
+bug_report = (label, droid, event) ->
   order = droid.order
   dorder = droid.dorder
   trace "#{label}:\t#{droid.namexy()}\tid:#{droid.id}\tevent:#{event.name}"
@@ -29,14 +28,14 @@ bug_report = (label,droid,event) ->
       trace "\t\tBUG: Order changed." unless order is droid.dorder
   if event.name is "Destroyed"
     trace "\t\t#{event.group?.name}'s #{event.object.namexy()} was destroyed."
-  return command
 
 # Re-issue command
-gotcha_working = (droid, command) ->
+gotcha_working = (droid, command = droid.command) ->
   centreView(droid.x, droid.y) if CyberBorg.TRACE
   if droid.executes(command)
     order = command.order
-    green_alert "\tRe-issued #{order.order_map()}, ##{order}, to #{droid.name}."
+    if CyberBorg.TRACE
+      green_alert "\tRe-issued #{order.order_map()}, ##{order}, to #{droid.name}."
   else
     red_alert("\t#{droid.name} is a lazy bum!")
 
@@ -46,7 +45,7 @@ gotcha_selected = (event) ->
   # Selected units
   for droid in cyberBorg.for_all((object) -> object.selected)
     count += 1
-    bug_report("Selected", droid, event)
+    bug_report("Selected", droid, event) if CyberBorg.TRACE
   return count
 
 # Report idle droids.
@@ -55,9 +54,9 @@ gotcha_idle = (event) ->
   # Idle units under command
   for droid in cyberBorg.for_all((object) -> object.order is 0 and object.command?)
     count += 1
-    command = bug_report("Idle", droid, event)
+    bug_report("Idle", droid, event) if CyberBorg.TRACE
     # OK, let's circumvent the game bugs...
-    gotcha_working(droid, command)
+    gotcha_working(droid)
   return count
 
 # Report droids under command which are acting their own...
@@ -70,7 +69,8 @@ gotcha_rogue = (event) ->
     return false
   for droid in cyberBorg.for_all((object) -> rogue(object))
     count += 1
-    command = bug_report("Rogue", droid, event)
+    bug_report("Rogue", droid, event) if CyberBorg.TRACE
+    command = droid.command
     if command?.order is 28
       centreView(droid.x, droid.y) if CyberBorg.TRACE
       gotcha_working(droid, command)
@@ -83,5 +83,5 @@ gotchas = (event) ->
   for gotcha in [gotcha_selected, gotcha_idle, gotcha_rogue]
     if count = gotcha(event)
       counts += count
-      trace ""
-  trace "" if counts
+      trace "" if CyberBorg.TRACE
+  trace "" if CyberBorg.TRACE and counts

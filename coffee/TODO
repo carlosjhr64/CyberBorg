@@ -3,11 +3,15 @@ TODO:
 Dericks/Scouts group should push forward once it's
 territory has been secured.
 
-Make tracing more efficient.
-
 Looks like there's a meta language emerging.
 
 DONE:
+
+2013.01.22
+
+Make tracing more efficient.
+	From now on, try to test TRACE before calling trace.
+	But in any case, trace itself tests TRACE.
 
 2013.01.19
 
