@@ -125,7 +125,7 @@ structureBuilt = (structure, droid, group) ->
   # may change and become part of what the AI figures out later).
   # Anyways, when a factory gets built,
   # we need to get it started building droids.
-  # So we push the structure into the RESERVE and
+  # So we push the structure into the reserve and
   # it should get picked up by the FACTORIES group in group_executions (below).
   cyberBorg.reserve.push(structure)
   # There may be exceptional catches to be done per structure...
@@ -160,7 +160,7 @@ droidBuilt = (droid, structure, group) ->
   # Now what with the new droid?
   # If it's a truck, maybe it should go to the nearest job?
   # Well, the style for this AI is to work with groups.
-  # So what we'll do is add the new droids to the RESERVE.
+  # So what we'll do is add the new droids to the reserve.
   cyberBorg.reserve.push(droid)
   # There may be ongoing jobs so let's see what available.
   helping(droid)
@@ -254,9 +254,8 @@ stalled_units = () ->
     if cyberBorg.power > command.power
       unless unit.executes(command)
         # Unexpected error... why would this ever happen?
-        throw new Error(
-          "#{structure.namexy()} could not pursue #{command.research}"
-        )
+        red_alert "#{unit.name} could not execute #{command.order.order_map()}"
+        red_alert "\t#{command.research}" if command.research
     else
       # push unit into stalled list
       stalled.push(unit)

@@ -68,7 +68,7 @@ gotcha_idle = function(event) {
   var command, count, droid, _i, _len, _ref;
   count = 0;
   _ref = cyberBorg.for_all(function(object) {
-    return object.order === 0;
+    return object.order === 0 && (object.command != null);
   });
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
@@ -83,7 +83,7 @@ gotcha_rogue = function(event) {
   var command, count, droid, rogue, _i, _len, _ref;
   count = 0;
   rogue = function(object) {
-    if (object.command) {
+    if (object.command != null) {
       if (!((object.order === 0) || (object.order === object.dorder))) return true;
     }
     return false;

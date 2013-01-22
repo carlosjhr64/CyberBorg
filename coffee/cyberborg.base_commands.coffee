@@ -91,16 +91,24 @@ CyberBorg::base_commands = (reserve, resources) ->
     obj.cid = null
     obj
 
+  on_income  = (obj={}) ->
+    cost = obj.cost or 100
+    obj.power = cost/2
+    obj
+
   on_budget  = (obj={}) ->
-    obj.power = 100
+    cost = obj.cost or 100
+    obj.power = cost
     obj
 
   on_surplus = (obj={}) ->
-    obj.power = 125 # TODO recheck this
+    cost = obj.cost or 100
+    obj.power = 2*cost
     obj
 
   on_glut = (obj={}) ->
-    obj.power = 400
+    cost = obj.cost or 100
+    obj.power = 4*cost
     obj
 
   # Center point of our trucks.
@@ -134,10 +142,10 @@ CyberBorg::base_commands = (reserve, resources) ->
     with_help immediately three trucks build [research_facility, x,      y-s*dy]
     with_help immediately three trucks build [command_center,    x+s*dx, y-s*dy]
 
-    # Transitioning, two trucks.
-    immediately two truck builds             [power_generator,   x+s*dx, y]
-    # Transitioning, one truck.
+    # Transitioning.
+    immediately three trucks build           [power_generator,   x+s*dx, y]
     on_surplus one truck builds              [power_generator,   x,      y]
+
     # Wait for power levels to come back up.
     pass on_glut none()
     on_budget one truck builds               [research_facility, x-s*dx, y]

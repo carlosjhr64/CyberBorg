@@ -19,17 +19,17 @@ class Group
     if @group.contains(droid)
       @group.removeObject(droid)
       @reserve.push(droid)
-      droid.order = CyberBorg.IS_IDLE
     else
       throw new Error("Can't remove #{droid.namexy()} b/c it's not in group.")
 
-  layoffs: (command, reset=null) ->
+  layoffs: (command) ->
     # Ensure the AI's process...
     throw new Error("Command without cid") unless command.cid
     for unit in @group.in_cid(command.cid)
       @remove(unit)
-      unit.command = reset # droid laidoff
-    command.cid = reset # command completed
+      unit.order = IS_LAIDOFF
+      unit.command = null # droid laidoff
+    command.cid = null # command completed
 
   units: (command) ->
     min = command.min

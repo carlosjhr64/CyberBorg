@@ -1,4 +1,4 @@
-var BASE, CORDER_PASS, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, LABS, LORDER_RESEARCH, SCOUTS, Scouter, WZArray, WZObject, blue_alert, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, green_alert, group_executions, helping, red_alert, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
+var BASE, CORDER_PASS, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, IS_LAIDOFF, LABS, LORDER_RESEARCH, SCOUTS, Scouter, WZArray, WZObject, blue_alert, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, green_alert, group_executions, helping, red_alert, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
 trace = function(message) {
@@ -46,8 +46,8 @@ WZObject = (function() {
   WZObject.prototype.copy = function(object) {
     var key, _results;
     this.game_time = gameTime;
-    this.corder = CyberBorg.IS_IDLE;
-    this.dorder = CyberBorg.IS_IDLE;
+    this.corder = IS_LAIDOFF;
+    this.dorder = IS_LAIDOFF;
     _results = [];
     for (key in object) {
       _results.push(this[key] = object[key]);
@@ -520,24 +520,23 @@ Group = (function() {
   Group.prototype.remove = function(droid) {
     if (this.group.contains(droid)) {
       this.group.removeObject(droid);
-      this.reserve.push(droid);
-      return droid.order = CyberBorg.IS_IDLE;
+      return this.reserve.push(droid);
     } else {
       throw new Error("Can't remove " + (droid.namexy()) + " b/c it's not in group.");
     }
   };
 
-  Group.prototype.layoffs = function(command, reset) {
+  Group.prototype.layoffs = function(command) {
     var unit, _i, _len, _ref;
-    if (reset == null) reset = null;
     if (!command.cid) throw new Error("Command without cid");
     _ref = this.group.in_cid(command.cid);
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       unit = _ref[_i];
       this.remove(unit);
-      unit.command = reset;
+      unit.order = IS_LAIDOFF;
+      unit.command = null;
     }
-    return command.cid = reset;
+    return command.cid = null;
   };
 
   Group.prototype.units = function(command) {
@@ -606,14 +605,12 @@ CyberBorg = (function() {
 
   CyberBorg.WEST = 270;
 
-  CyberBorg.IS_IDLE = -1;
-
-  CyberBorg.ORDER_MAP = ['DORDER_NONE', 'DORDER_STOP', 'DORDER_MOVE', 'DORDER_ATTACK', 'DORDER_BUILD', 'DORDER_HELPBUILD', 'DORDER_LINEBUILD', 'DORDER_DEMOLISH', 'DORDER_REPAIR', 'DORDER_OBSERVE', 'DORDER_FIRESUPPORT', 'DORDER_RETREAT', 'DORDER_DESTRUCT', 'DORDER_RTB', 'DORDER_RTR', 'DORDER_RUN', 'DORDER_EMBARK', 'DORDER_DISEMBARK', 'DORDER_ATTACKTARGET', 'DORDER_COMMANDERSUPPORT', 'DORDER_BUILDMODULE', 'DORDER_RECYCLE', 'DORDER_TRANSPORTOUT', 'DORDER_TRANSPORTIN', 'DORDER_TRANSPORTRETURN', 'DORDER_GUARD', 'DORDER_DROIDREPAIR', 'DORDER_RESTORE', 'DORDER_SCOUT', 'DORDER_RUNBURN', 'DORDER_UNUSED', 'DORDER_PATROL', 'DORDER_REARM', 'DORDER_RECOVER', 'DORDER_LEAVEMAP', 'DORDER_RTR_SPECIFIED', 'DORDER_CIRCLE', 'DORDER_HOLD', null, null, 'DORDER_CIRCLE', null, null, null, null, null, null, null, null, null, 'DORDER_MAINTAIN', 'FORDER_MANUFACTURE', 'LORDER_RESEARCH', null, null, null, null, null, null, null, 'CORDER_PASS'];
+  CyberBorg.ORDER_MAP = ['DORDER_NONE', 'DORDER_STOP', 'DORDER_MOVE', 'DORDER_ATTACK', 'DORDER_BUILD', 'DORDER_HELPBUILD', 'DORDER_LINEBUILD', 'DORDER_DEMOLISH', 'DORDER_REPAIR', 'DORDER_OBSERVE', 'DORDER_FIRESUPPORT', 'DORDER_RETREAT', 'DORDER_DESTRUCT', 'DORDER_RTB', 'DORDER_RTR', 'DORDER_RUN', 'DORDER_EMBARK', 'DORDER_DISEMBARK', 'DORDER_ATTACKTARGET', 'DORDER_COMMANDERSUPPORT', 'DORDER_BUILDMODULE', 'DORDER_RECYCLE', 'DORDER_TRANSPORTOUT', 'DORDER_TRANSPORTIN', 'DORDER_TRANSPORTRETURN', 'DORDER_GUARD', 'DORDER_DROIDREPAIR', 'DORDER_RESTORE', 'DORDER_SCOUT', 'DORDER_RUNBURN', 'DORDER_UNUSED', 'DORDER_PATROL', 'DORDER_REARM', 'DORDER_RECOVER', 'DORDER_LEAVEMAP', 'DORDER_RTR_SPECIFIED', 'DORDER_CIRCLE', 'DORDER_HOLD', null, null, 'DORDER_CIRCLE', null, null, null, null, null, null, null, null, null, 'DORDER_MAINTAIN', 'FORDER_MANUFACTURE', 'LORDER_RESEARCH', 'CORDER_PASS', 'IS_LAIDOFF'];
 
   /* CLASS VARIABLES
   */
 
-  CyberBorg.TRACE = false;
+  CyberBorg.TRACE = selectedPlayer === me;
 
   CyberBorg.CID = 0;
 
@@ -670,47 +667,49 @@ CyberBorg = (function() {
   CyberBorg.prototype.for_all = function(test_of) {
     var group, list, object, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
     list = [];
-    _ref = this.reserve;
+    _ref = this.groups;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      object = _ref[_i];
-      if (test_of(object)) list.push(object);
-    }
-    _ref2 = this.groups;
-    for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-      group = _ref2[_j];
-      _ref3 = group.list;
-      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-        object = _ref3[_k];
+      group = _ref[_i];
+      _ref2 = group.list;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        object = _ref2[_j];
         if (test_of(object)) list.push(object);
       }
+    }
+    _ref3 = this.reserve;
+    for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+      object = _ref3[_k];
+      if (test_of(object)) list.push(object);
     }
     return WZArray.bless(list);
   };
 
   CyberBorg.prototype.for_one = function(test_of) {
     var group, object, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
-    _ref = this.reserve;
+    _ref = this.groups;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      object = _ref[_i];
-      if (test_of(object)) {
-        return {
-          object: object,
-          group: group
-        };
-      }
-    }
-    _ref2 = this.groups;
-    for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-      group = _ref2[_j];
-      _ref3 = group.list;
-      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-        object = _ref3[_k];
+      group = _ref[_i];
+      _ref2 = group.list;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        object = _ref2[_j];
         if (test_of(object)) {
           return {
             object: object,
             group: group
           };
         }
+      }
+    }
+    _ref3 = this.reserve;
+    for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+      object = _ref3[_k];
+      if (test_of(object)) {
+        return {
+          object: object,
+          group: {
+            list: this.reserve
+          }
+        };
       }
     }
     return null;
@@ -877,8 +876,10 @@ LORDER_RESEARCH = CyberBorg.ORDER_MAP.indexOf('LORDER_RESEARCH');
 
 CORDER_PASS = CyberBorg.ORDER_MAP.indexOf('CORDER_PASS');
 
+IS_LAIDOFF = CyberBorg.ORDER_MAP.indexOf('IS_LAIDOFF');
+
 CyberBorg.prototype.base_commands = function(reserve, resources) {
-  var block, build, builds, command_center, commands, costs, dx, dy, immediately, light_factory, more, none, on_budget, on_glut, on_surplus, one, pass, power_generator, rc, research_facility, rx, ry, s, savings, tc, three, truck, trucks, two, with_help, x, y;
+  var block, build, builds, command_center, commands, costs, dx, dy, immediately, light_factory, more, none, on_budget, on_glut, on_income, on_surplus, one, pass, power_generator, rc, research_facility, rx, ry, s, savings, tc, three, truck, trucks, two, with_help, x, y;
   light_factory = "A0LightFactory";
   command_center = "A0CommandCentre";
   research_facility = "A0ResearchFacility";
@@ -964,19 +965,32 @@ CyberBorg.prototype.base_commands = function(reserve, resources) {
     obj.cid = null;
     return obj;
   };
-  on_budget = function(obj) {
+  on_income = function(obj) {
+    var cost;
     if (obj == null) obj = {};
-    obj.power = 100;
+    cost = obj.cost || 100;
+    obj.power = cost / 2;
+    return obj;
+  };
+  on_budget = function(obj) {
+    var cost;
+    if (obj == null) obj = {};
+    cost = obj.cost || 100;
+    obj.power = cost;
     return obj;
   };
   on_surplus = function(obj) {
+    var cost;
     if (obj == null) obj = {};
-    obj.power = 125;
+    cost = obj.cost || 100;
+    obj.power = 2 * cost;
     return obj;
   };
   on_glut = function(obj) {
+    var cost;
     if (obj == null) obj = {};
-    obj.power = 400;
+    cost = obj.cost || 100;
+    obj.power = 4 * cost;
     return obj;
   };
   tc = reserve.trucks().center();
@@ -992,7 +1006,7 @@ CyberBorg.prototype.base_commands = function(reserve, resources) {
   dy = 1;
   if (y > ry) dy = -1;
   s = 4;
-  block = [with_help(immediately(three(trucks(build([light_factory, x - s * dx, y - s * dy]))))), with_help(immediately(three(trucks(build([research_facility, x, y - s * dy]))))), with_help(immediately(three(trucks(build([command_center, x + s * dx, y - s * dy]))))), immediately(two(truck(builds([power_generator, x + s * dx, y])))), on_surplus(one(truck(builds([power_generator, x, y])))), pass(on_glut(none())), on_budget(one(truck(builds([research_facility, x - s * dx, y])))), on_budget(one(truck(builds([power_generator, x - s * dx, y + s * dy])))), pass(on_glut(none())), on_budget(one(truck(builds([research_facility, x, y + s * dy])))), on_budget(one(truck(builds([power_generator, x + s * dx, y + s * dy]))))];
+  block = [with_help(immediately(three(trucks(build([light_factory, x - s * dx, y - s * dy]))))), with_help(immediately(three(trucks(build([research_facility, x, y - s * dy]))))), with_help(immediately(three(trucks(build([command_center, x + s * dx, y - s * dy]))))), immediately(three(trucks(build([power_generator, x + s * dx, y])))), on_surplus(one(truck(builds([power_generator, x, y])))), pass(on_glut(none())), on_budget(one(truck(builds([research_facility, x - s * dx, y])))), on_budget(one(truck(builds([power_generator, x - s * dx, y + s * dy])))), pass(on_glut(none())), on_budget(one(truck(builds([research_facility, x, y + s * dy])))), on_budget(one(truck(builds([power_generator, x + s * dx, y + s * dy]))))];
   more = null;
   if ((rx - x) * dx > (ry - y) * dy) {
     more = [pass(on_glut(none())), on_budget(one(truck(builds([research_facility, x + 2 * s * dx, y + s * dy])))), on_budget(one(truck(builds([power_generator, x + 2 * s * dx, y])))), pass(on_glut(none())), on_budget(one(truck(builds([research_facility, x + 2 * s * dx, y - s * dy]))))];
@@ -1403,7 +1417,7 @@ gotcha_idle = function(event) {
   var command, count, droid, _i, _len, _ref;
   count = 0;
   _ref = cyberBorg.for_all(function(object) {
-    return object.order === 0;
+    return object.order === 0 && (object.command != null);
   });
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
@@ -1418,7 +1432,7 @@ gotcha_rogue = function(event) {
   var command, count, droid, rogue, _i, _len, _ref;
   count = 0;
   rogue = function(object) {
-    if (object.command) {
+    if (object.command != null) {
       if (!((object.order === 0) || (object.order === object.dorder))) return true;
     }
     return false;
@@ -1632,7 +1646,8 @@ stalled_units = function() {
     cyberBorg.power -= command.cost;
     if (cyberBorg.power > command.power) {
       if (!unit.executes(command)) {
-        throw new Error("" + (structure.namexy()) + " could not pursue " + command.research);
+        red_alert("" + unit.name + " could not execute " + (command.order.order_map()));
+        if (command.research) red_alert("\t" + command.research);
       }
     } else {
       stalled.push(unit);

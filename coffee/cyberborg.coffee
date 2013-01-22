@@ -8,7 +8,6 @@ class CyberBorg
   @EAST = 90
   @SOUTH = 180
   @WEST = 270
-  @IS_IDLE = -1
 
   @ORDER_MAP = [
     'DORDER_NONE'		# 0
@@ -65,21 +64,15 @@ class CyberBorg
     'DORDER_MAINTAIN'		# 50
     'FORDER_MANUFACTURE'	# 51
     'LORDER_RESEARCH'		# 52
-    null			# 53
-    null			# 54
-    null			# 55
-    null			# 56
-    null			# 57
-    null			# 58
-    null			# 59
-    'CORDER_PASS'		# 60
+    'CORDER_PASS'		# 53
+    'IS_LAIDOFF'			# 54
   ]
 
   #######################
   ### CLASS VARIABLES ###
   #######################
 
-  @TRACE = false
+  @TRACE = (selectedPlayer is me)
   @CID = 0 # TODO Class Variable? :-??
 
   ###################
@@ -127,19 +120,21 @@ class CyberBorg
 
   for_all: (test_of) ->
     list = []
-    for object in @reserve
-      list.push(object) if test_of(object)
     for group in @groups
       for object in group.list
         list.push(object) if test_of(object)
+    for object in @reserve
+      list.push(object) if test_of(object)
     return WZArray.bless(list)
 
   for_one: (test_of) ->
-    for object in @reserve
-      return({object:object,group:group}) if test_of(object)
     for group in @groups
       for object in group.list
         return({object:object,group:group}) if test_of(object)
+    for object in @reserve
+      if test_of(object)
+        # Only time this happens in on eventDestroyed?
+        return({object:object,group:{list:@reserve}})
     return null
 
   # When we get pre-existing game objects from WZ's JS API,
@@ -267,3 +262,4 @@ DORDER_MAINTAIN    = CyberBorg.ORDER_MAP.indexOf('DORDER_MAINTAIN')
 FORDER_MANUFACTURE = CyberBorg.ORDER_MAP.indexOf('FORDER_MANUFACTURE')
 LORDER_RESEARCH    = CyberBorg.ORDER_MAP.indexOf('LORDER_RESEARCH')
 CORDER_PASS        = CyberBorg.ORDER_MAP.indexOf('CORDER_PASS')
+IS_LAIDOFF            = CyberBorg.ORDER_MAP.indexOf('IS_LAIDOFF')

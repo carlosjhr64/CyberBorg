@@ -5,8 +5,8 @@ class WZObject
     @is_wzobject = true
   copy: (object) ->
     @game_time = gameTime
-    @corder = CyberBorg.IS_IDLE
-    @dorder = CyberBorg.IS_IDLE
+    @corder = IS_LAIDOFF
+    @dorder = IS_LAIDOFF
     @[key] = object[key] for key of object
 
   update: () ->

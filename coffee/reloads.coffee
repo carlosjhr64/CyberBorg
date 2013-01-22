@@ -43,6 +43,7 @@ gotcha_working = (droid, command) ->
 # Report selected droids.
 gotcha_selected = (event) ->
   count = 0
+  # Selected units
   for droid in cyberBorg.for_all((object) -> object.selected)
     count += 1
     bug_report("Selected", droid, event)
@@ -51,7 +52,8 @@ gotcha_selected = (event) ->
 # Report idle droids.
 gotcha_idle = (event) ->
   count = 0
-  for droid in cyberBorg.for_all((object) -> object.order is 0)
+  # Idle units under command
+  for droid in cyberBorg.for_all((object) -> object.order is 0 and object.command?)
     count += 1
     command = bug_report("Idle", droid, event)
     # OK, let's circumvent the game bugs...
@@ -62,7 +64,8 @@ gotcha_idle = (event) ->
 gotcha_rogue = (event) ->
   count = 0
   rogue = (object) ->
-    if object.command
+    if object.command?
+      # Units under command not idle but acting on different orders
       return true unless (object.order is 0) or (object.order is object.dorder)
     return false
   for droid in cyberBorg.for_all((object) -> rogue(object))
