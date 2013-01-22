@@ -20,16 +20,18 @@ class Group
       @group.removeObject(droid)
       @reserve.push(droid)
     else
-      throw new Error("Can't remove #{droid.namexy()} b/c it's not in group.")
+      red_alert "Can't remove #{droid.name} b/c it's not in group."
 
   layoffs: (command) ->
     # Ensure the AI's process...
-    throw new Error("Command without cid") unless command.cid
-    for unit in @group.in_cid(command.cid)
-      @remove(unit)
-      unit.order = IS_LAIDOFF
-      unit.command = null # droid laidoff
-    command.cid = null # command completed
+    if command.cid?
+      for unit in @group.in_cid(command.cid)
+        @remove(unit)
+        unit.order = IS_LAIDOFF
+        unit.command = null # droid laidoff
+      command.cid = null # command completed
+    else
+      red_alert "Command without cid"
 
   units: (command) ->
     min = command.min

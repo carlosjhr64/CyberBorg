@@ -522,21 +522,24 @@ Group = (function() {
       this.group.removeObject(droid);
       return this.reserve.push(droid);
     } else {
-      throw new Error("Can't remove " + (droid.namexy()) + " b/c it's not in group.");
+      return red_alert("Can't remove " + droid.name + " b/c it's not in group.");
     }
   };
 
   Group.prototype.layoffs = function(command) {
     var unit, _i, _len, _ref;
-    if (!command.cid) throw new Error("Command without cid");
-    _ref = this.group.in_cid(command.cid);
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      unit = _ref[_i];
-      this.remove(unit);
-      unit.order = IS_LAIDOFF;
-      unit.command = null;
+    if (command.cid != null) {
+      _ref = this.group.in_cid(command.cid);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        unit = _ref[_i];
+        this.remove(unit);
+        unit.order = IS_LAIDOFF;
+        unit.command = null;
+      }
+      return command.cid = null;
+    } else {
+      return red_alert("Command without cid");
     }
-    return command.cid = null;
   };
 
   Group.prototype.units = function(command) {

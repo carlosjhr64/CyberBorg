@@ -149,8 +149,9 @@ CyberBorg::base_commands = (reserve, resources) ->
     # Wait for power levels to come back up.
     pass on_glut none()
     on_budget one truck builds               [research_facility, x-s*dx, y]
-
     on_budget one truck builds               [power_generator,   x-s*dx, y+s*dy]
+
+    # Wait for power levels to come back up.
     pass on_glut none()
     on_budget one truck builds               [research_facility, x,      y+s*dy]
     on_budget one truck builds               [power_generator,   x+s*dx, y+s*dy]
