@@ -13,16 +13,16 @@ class WZObject
     obj = objFromId(@)
     @x = obj.x
     @y = obj.y
-    # TODO z currently not used
+    # todo: z currently not used
     #@z = obj.x
     @selected = obj.selected
     @health = obj.health
-    # TODO experience currently not used.
+    # todo: experience currently not used.
     # @experience = obj.experience
-    # TODO try not to rely on order updates
+    # todo: try not to rely on order updates
     order = obj.order
     @order = order if order?
-    # TODO we should be able to maintain status and modules
+    # todo: we should be able to maintain status and modules
     # @status = obj.status
     # @modules = obj.modules
 

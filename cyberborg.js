@@ -310,10 +310,6 @@ WZArray = (function() {
     });
   };
 
-  WZArray.prototype.idle = function() {
-    return this.filters(CyberBorg.is_idle);
-  };
-
   WZArray.prototype.like = function(rgx) {
     return this.filters(function(object) {
       return rgx.test(object.name);
@@ -802,19 +798,6 @@ CyberBorg = (function() {
     return structure.stattype === FACTORY;
   };
 
-  CyberBorg.is_idle = function(object) {
-    var not_idle;
-    if (object.type === STRUCTURE) {
-      if (object.command_time === gameTime) {
-        return false;
-      } else {
-        return structureIdle(object);
-      }
-    }
-    not_idle = [DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD, DORDER_DEMOLISH, DORDER_REPAIR, DORDER_SCOUT, DORDER_MOVE];
-    return not_idle.indexOf(object.order) === WZArray.NONE;
-  };
-
   CyberBorg.is_resource = function(object) {
     return [OIL_RESOURCE, RESOURCE_EXTRACTOR].indexOf(object.stattype) > WZArray.NONE;
   };
@@ -842,10 +825,6 @@ CyberBorg = (function() {
 
   CyberBorg.get_resources = function(at) {
     return CyberBorg.enum_feature(ALL_PLAYERS, "OilResource").nearest(at);
-  };
-
-  CyberBorg.get_my_trucks = function(at) {
-    return CyberBorg.enum_droid(me, DROID_CONSTRUCT);
   };
 
   CyberBorg.get_free_spots = function(at, n) {

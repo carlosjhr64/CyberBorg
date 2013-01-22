@@ -131,14 +131,6 @@ structureBuilt = (structure, droid, group) ->
   # There may be exceptional catches to be done per structure...
   if structure.type is STRUCTURE
     switch structure.stattype
-      # Because we've overridden rules.js eventStructureBuilt,
-      # we need to need to enforce one of the rules in the game.
-      # Unfortunately, rules.js is the human player's file.
-      # We are in it's name space.
-      # min_map_and_design_on turns on mini-map and design when HQ is built,
-      # as per rules.js.
-      # TODO check if this file is being runned by rules.js first.
-      # May be being runned as a stand alone AI.
       when HQ then cyberBorg.hq = true
   # There may be ongoing jobs so let's see what available.
   helping(droid)
@@ -187,7 +179,9 @@ chat = (sender, to, message) ->
   if sender is me
     switch words[0]
       when 'report' then report(words[1])
-      # TODO some way to modify tha AI while in play?
+      # In reloads.js, I have code that can be safely edited and reloaded
+      # while in play.  Mostly contains tracing, but also contains in play
+      # bug fixes.
       when 'reload' then include("multiplay/skirmish/reloads.js")
       # Toggle tracing
       when 'trace'
@@ -267,9 +261,6 @@ stalled_units = () ->
 # and let them execute commands as they can.
 group_executions = (event) ->
   groups = cyberBorg.groups
-  # TODO TBD if a lower rank group releases droids, should we restart?
-  # Maybe this should be broken up into phases.
-  # A layoff phase followed by an employment phase.
   for group in groups
     name = group.name
     # For the sake of fairness to the human player,
@@ -284,4 +275,4 @@ group_executions = (event) ->
         commands.revert()
         break
   # For now, stalled units will be consider of lowest rank...
-  stalled_units() # have any stalled unit try to excute their command.
+  stalled_units() # have any stalled unit try to execute their command.

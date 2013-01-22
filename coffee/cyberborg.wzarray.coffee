@@ -24,7 +24,6 @@ class WZArray
   # We'll take an Array and "bless" into it the methods in this class.
   @bless = (array) ->
     if array.is_wzarray
-      # TODO TBD might want to throw an error instead here?
       red_alert "Warning: WZArray re'bless'ing"
       return array
     array[name] = method for name, method of WZArray.prototype
@@ -89,9 +88,6 @@ class WZArray
     @filters((object) -> group.group.indexOfObject(object) > WZArray.NONE)
 
   in_cid: (cid) -> @filters((object) -> object.command?.cid is cid)
-
-  # selects from list objects that are idle in list
-  idle: -> @filters(CyberBorg.is_idle)
 
   # select units in the list which name matches the pattern given.
   like: (rgx) -> @filters((object) -> rgx.test(object.name))
@@ -198,7 +194,6 @@ class WZArray
 class Scouter
   @bless = (array) ->
     if array.is_scouter
-      # TODO TBD might want to throw an error instead here?
       red_alert "Warning: Scouter re'bless'ing"
       return array
     array[name] = method for name, method of Scouter.prototype

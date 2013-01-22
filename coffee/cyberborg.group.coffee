@@ -4,7 +4,6 @@ class Group
     for list in [@group, @commands, @reserve]
       WZArray.bless(list) unless list.is_wzarray
     @list = @group # alias
-    # TODO check the commands for errors?
 
   add: (droid) ->
     # Need to enforce the reserve condition

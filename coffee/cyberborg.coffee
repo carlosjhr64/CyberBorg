@@ -189,24 +189,6 @@ class CyberBorg
   @is_factory = (structure) ->
     structure.stattype is FACTORY
 
-  # TODO will this ever be relevant again?
-  @is_idle = (object) ->
-    # It's not really a droid  :P
-    if object.type is STRUCTURE
-      if object.command_time is gameTime
-        # It got it's command just now
-        return(false)
-      else
-        return(structureIdle(object))
-    # It's a droid # TODO may need more cases.
-    not_idle = [
-      DORDER_BUILD, DORDER_HELPBUILD, DORDER_LINEBUILD
-      DORDER_DEMOLISH
-      DORDER_REPAIR
-      DORDER_SCOUT, DORDER_MOVE
-    ]
-    not_idle.indexOf(object.order) is WZArray.NONE
-
   @is_resource = (object) ->
     [
       OIL_RESOURCE,
@@ -239,9 +221,6 @@ class CyberBorg
 
   @get_resources = (at) ->
     CyberBorg.enum_feature(ALL_PLAYERS, "OilResource").nearest(at)
-
-  @get_my_trucks = (at) -> # TODO out of group style?
-    CyberBorg.enum_droid(me, DROID_CONSTRUCT)
 
   @get_free_spots = (at,n=1) ->
     x = at.x
