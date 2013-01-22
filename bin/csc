@@ -14,4 +14,5 @@ coffee							\
 	coffee/cyberborg.scouts_commands.coffee		\
 	coffee/cyberborg.events.coffee			\
 	coffee/cyberborg.reloads.coffee			\
-	coffee/cyberborg.interpreter.coffee
+	coffee/cyberborg.interpreter.coffee		\
+	coffee/cyberborg.script.coffee
