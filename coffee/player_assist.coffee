@@ -147,7 +147,7 @@ destroyed = (object, group) ->
   # There might be other stuff to do...
   # The object has been removed from the group already.
   # We're given object and group as reference.
-  if object.type is STRUCTURE
+  if object.player is me and object.type is STRUCTURE
     switch object.stattype
       when HQ then cyberBorg.hq = false
 

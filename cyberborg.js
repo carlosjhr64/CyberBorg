@@ -338,12 +338,11 @@ WZArray = (function() {
   */
 
   WZArray.prototype.counts = function(type) {
-    var count, i;
+    var count, object, _i, _len;
     count = 0;
-    i = 0;
-    while (i < this.length) {
-      if (type(this[i])) count += 1;
-      i++;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      object = this[_i];
+      if (type(object)) count += 1;
     }
     return count;
   };
@@ -1548,7 +1547,7 @@ structureBuilt = function(structure, droid, group) {
 };
 
 destroyed = function(object, group) {
-  if (object.type === STRUCTURE) {
+  if (object.player === me && object.type === STRUCTURE) {
     switch (object.stattype) {
       case HQ:
         return cyberBorg.hq = false;

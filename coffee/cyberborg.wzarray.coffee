@@ -122,10 +122,8 @@ class WZArray
   # Counts the number of type in list
   counts: (type) ->
     count = 0
-    i = 0
-    while i < @length
-      count += 1  if type(@[i])
-      i++
+    for object in @
+      count += 1 if type(object)
     count
 
   # Counts the number of game objects named by the given name.
