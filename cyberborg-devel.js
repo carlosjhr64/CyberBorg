@@ -1,6 +1,25 @@
 var BASE, CORDER_PASS, CyberBorg, DERRICKS, DORDER_MAINTAIN, FACTORIES, FORDER_MANUFACTURE, Group, IS_LAIDOFF, LABS, LORDER_RESEARCH, RESERVE, SCOUTS, Scouter, WZArray, WZObject, blue_alert, bug_report, chat, cyberBorg, destroyed, droidBuilt, droidIdle, eventChat, eventDestroyed, eventDroidBuilt, eventDroidIdle, eventResearched, eventStartLevel, eventStructureBuilt, events, gotcha_idle, gotcha_rogue, gotcha_selected, gotcha_working, gotchas, green_alert, group_executions, helping, red_alert, report, researched, stalled_units, startLevel, start_trace, structureBuilt, trace,
   __slice = Array.prototype.slice;
 
+Number.prototype.times = function(action) {
+  var i, _results;
+  i = 0;
+  _results = [];
+  while (i < this.valueOf()) {
+    action();
+    _results.push(i++);
+  }
+  return _results;
+};
+
+Number.prototype.to_i = function() {
+  return parseInt(this.toFixed(0));
+};
+
+Number.prototype.order_map = function() {
+  return CyberBorg.ORDER_MAP[this];
+};
+
 trace = function(message) {
   if (cyberBorg.trace) return debug(message);
 };
@@ -21,25 +40,6 @@ green_alert = function(message) {
 
 blue_alert = function(message) {
   if (cyberBorg.trace) return trace("\033[1;34m" + message + "\033[0m");
-};
-
-Number.prototype.times = function(action) {
-  var i, _results;
-  i = 0;
-  _results = [];
-  while (i < this.valueOf()) {
-    action();
-    _results.push(i++);
-  }
-  return _results;
-};
-
-Number.prototype.to_i = function() {
-  return parseInt(this.toFixed(0));
-};
-
-Number.prototype.order_map = function() {
-  return CyberBorg.ORDER_MAP[this];
 };
 
 WZObject = (function() {
