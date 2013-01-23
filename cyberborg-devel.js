@@ -1720,7 +1720,7 @@ chat = function(sender, to, message) {
       case 'report':
         return report(words[1]);
       case 'reload':
-        return include("multiplay/skirmish/reloads.js");
+        return include("multiplay/skirmish/cyberborg-reloads.js");
       case 'trace':
         if (cyberBorg.trace) {
           green_alert("Tracing off.");

@@ -182,7 +182,7 @@ chat = (sender, to, message) ->
       # In reloads.js, I have code that can be safely edited and reloaded
       # while in play.  Mostly contains tracing, but also contains in play
       # bug fixes.
-      when 'reload' then include("multiplay/skirmish/reloads.js")
+      when 'reload' then include("multiplay/skirmish/cyberborg-reloads.js")
       # Toggle tracing
       when 'trace'
         green_alert("Tracing off.") if cyberBorg.trace
