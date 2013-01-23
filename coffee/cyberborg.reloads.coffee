@@ -35,7 +35,8 @@ gotcha_working = (droid, command = droid.command) ->
   if droid.executes(command)
     order = command.order
     if cyberBorg.trace
-      green_alert "\tRe-issued #{order.order_map()}, ##{order}, to #{droid.name}."
+      green_alert "\tRe-issued " +
+      "#{order.order_map()}, ##{order}, to #{droid.name}."
   else
     red_alert("\t#{droid.name} is a lazy bum!")
 
@@ -52,9 +53,10 @@ gotcha_selected = (event) ->
 gotcha_idle = (event) ->
   count = 0
   # Idle units under command
-  for droid in cyberBorg.for_all((object) -> object.order is 0 and object.command?)
+  is_quitter = (object) -> object.order is 0 and object.command?
+  for droid in cyberBorg.for_all(is_quitter)
     count += 1
-    bug_report("Idle", droid, event) if cyberBorg.trace
+    bug_report("Quitter", droid, event) if cyberBorg.trace
     # OK, let's circumvent the game bugs...
     gotcha_working(droid)
   return count

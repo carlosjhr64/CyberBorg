@@ -18,11 +18,11 @@ red_alert = (message) ->
   previous_state = cyberBorg.trace
   if cyberBorg.trace or (selectedPlayer is me)
     cyberBorg.trace = true # regarless of previous state.
-    trace `"\033[1;31m"`+message+`"\033[0m"`
+    trace "\u001b[1;31m#{message}\u001b[0m"
   cyberBorg.trace = previous_state
 
 green_alert = (message) ->
-  trace `"\033[1;32m"`+message+`"\033[0m"` if cyberBorg.trace
+  trace "\u001b[1;32m#{message}\u001b[0m" if cyberBorg.trace
 
 blue_alert = (message) ->
-  trace `"\033[1;34m"`+message+`"\033[0m"` if cyberBorg.trace
+  trace "\u001b[1;34m#{message}\u001b[0m" if cyberBorg.trace

@@ -32,20 +32,20 @@ red_alert = function(message) {
   previous_state = cyberBorg.trace;
   if (cyberBorg.trace || (selectedPlayer === me)) {
     cyberBorg.trace = true;
-    trace("\033[1;31m" + message + "\033[0m");
+    trace("\u001b[1;31m" + message + "\u001b[0m");
   }
   return cyberBorg.trace = previous_state;
 };
 
 green_alert = function(message) {
   if (cyberBorg.trace) {
-    return trace("\033[1;32m" + message + "\033[0m");
+    return trace("\u001b[1;32m" + message + "\u001b[0m");
   }
 };
 
 blue_alert = function(message) {
   if (cyberBorg.trace) {
-    return trace("\033[1;34m" + message + "\033[0m");
+    return trace("\u001b[1;34m" + message + "\u001b[0m");
   }
 };
 
@@ -684,6 +684,7 @@ CyberBorg = (function() {
     this.power = 0;
     this.stalled = [];
     this.reserve = null;
+    this.resources = null;
     this.hq = false;
     this.pos = [];
     this.trace = selectedPlayer === me;
@@ -1505,7 +1506,7 @@ gotcha_working = function(droid, command) {
   if (droid.executes(command)) {
     order = command.order;
     if (cyberBorg.trace) {
-      return green_alert("\tRe-issued " + (order.order_map()) + ", #" + order + ", to " + droid.name + ".");
+      return green_alert("\tRe-issued " + ("" + (order.order_map()) + ", #" + order + ", to " + droid.name + "."));
     }
   } else {
     return red_alert("\t" + droid.name + " is a lazy bum!");
@@ -1529,16 +1530,17 @@ gotcha_selected = function(event) {
 };
 
 gotcha_idle = function(event) {
-  var count, droid, _i, _len, _ref;
+  var count, droid, is_quitter, _i, _len, _ref;
   count = 0;
-  _ref = cyberBorg.for_all(function(object) {
+  is_quitter = function(object) {
     return object.order === 0 && (object.command != null);
-  });
+  };
+  _ref = cyberBorg.for_all(is_quitter);
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
     if (cyberBorg.trace) {
-      bug_report("Idle", droid, event);
+      bug_report("Quitter", droid, event);
     }
     gotcha_working(droid);
   }
@@ -1645,7 +1647,7 @@ events = function(event) {
 startLevel = function() {
   var base, derricks, factories, groups, labs, reserve, resources, scouts;
   cyberBorg.reserve = reserve = CyberBorg.enum_droid();
-  resources = CyberBorg.get_resources(reserve.center());
+  cyberBorg.resources = resources = CyberBorg.get_resources(reserve.center());
   groups = cyberBorg.groups;
   base = new Group(BASE, 100, [], cyberBorg.base_commands(reserve, resources), reserve);
   groups.push(base);

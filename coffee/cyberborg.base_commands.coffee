@@ -138,41 +138,41 @@ CyberBorg::base_commands = (reserve, resources) ->
   s = 4 # Spacing
   block = [
     # Build up the initial base as fast a posible
-    with_help immediately three trucks build [light_factory,     x-s*dx, y-s*dy]
-    with_help immediately three trucks build [research_facility, x,      y-s*dy]
-    with_help immediately three trucks build [command_center,    x+s*dx, y-s*dy]
+    with_help immediately three trucks build	[light_factory,     x-s*dx, y-s*dy]
+    with_help immediately three trucks build	[research_facility, x,      y-s*dy]
+    with_help immediately three trucks build	[command_center,    x+s*dx, y-s*dy]
 
     # Transitioning.
-    immediately three trucks build           [power_generator,   x+s*dx, y]
-    on_surplus one truck builds              [power_generator,   x,      y]
+    immediately three trucks build	[power_generator,   x+s*dx, y]
+    on_surplus one truck builds		[power_generator,   x,      y]
 
     # Wait for power levels to come back up.
     pass on_glut none()
-    on_budget one truck builds               [research_facility, x-s*dx, y]
-    on_budget one truck builds               [power_generator,   x-s*dx, y+s*dy]
+    on_budget one truck builds		[research_facility, x-s*dx, y]
+    on_budget one truck builds		[power_generator,   x-s*dx, y+s*dy]
 
     # Wait for power levels to come back up.
     pass on_glut none()
-    on_budget one truck builds               [research_facility, x,      y+s*dy]
-    on_budget one truck builds               [power_generator,   x+s*dx, y+s*dy]
+    on_budget one truck builds		[research_facility, x,      y+s*dy]
+    on_budget one truck builds		[power_generator,   x+s*dx, y+s*dy]
   ]
 
   more = null
   if (rx-x)*dx > (ry-y)*dy
     more = [
       pass on_glut none()
-      on_budget one truck builds               [research_facility, x+2*s*dx, y+s*dy]
-      on_budget one truck builds               [power_generator,   x+2*s*dx, y]
+      on_budget one truck builds	[research_facility, x+2*s*dx, y+s*dy]
+      on_budget one truck builds	[power_generator,   x+2*s*dx, y]
       pass on_glut none()
-      on_budget one truck builds               [research_facility, x+2*s*dx, y-s*dy]
+      on_budget one truck builds	[research_facility, x+2*s*dx, y-s*dy]
     ]
   else
     more = [
       pass on_glut none()
-      on_budget one truck builds               [research_facility, x+s*dx, y+2*s*dy]
-      on_budget one truck builds               [power_generator,   x,      y+2*s*dy]
+      on_budget one truck builds	[research_facility, x+s*dx, y+2*s*dy]
+      on_budget one truck builds	[power_generator,   x,      y+2*s*dy]
       pass on_glut none()
-      on_budget one truck builds               [research_facility, x-s*dx, y+2*s*dy]
+      on_budget one truck builds	[research_facility, x-s*dx, y+2*s*dy]
     ]
 
   commands = block.concat(more)

@@ -41,7 +41,7 @@ end
 # Do an initial compile
 if doit
   # Get the compile time
-  mtime = File.mtime(TARGET)
+  mtime = Time.now
   while true do
     # Check every second
     sleep 1
@@ -50,7 +50,7 @@ if doit
       if File.mtime(file) > mtime
         # Compile and show result
         doit
-        mtime = File.mtime(TARGET)
+        mtime = Time.now
         break
       end
     end

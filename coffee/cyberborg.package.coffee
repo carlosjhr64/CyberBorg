@@ -88,8 +88,9 @@ class CyberBorg
     @power = 0
     # Stalled units waiting for enough power to continue their command
     @stalled = []
-    # Quick access to reseve list
+    # Quick access to reseve and resource list
     @reserve = null
+    @resources = null
     # Has the headquaters been built?
     @hq = false
     @pos = []

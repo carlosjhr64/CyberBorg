@@ -60,7 +60,7 @@ startLevel = () ->
   # cyberBorg can list all the resources available on the map and
   # sort them according to distance from where we are.
   # It will provide the AI a guide to our territorial expansion.
-  resources = CyberBorg.get_resources(reserve.center())
+  cyberBorg.resources = resources = CyberBorg.get_resources(reserve.center())
 
   # We'll create many groups besides the reserve, and
   # we'll keep them in cyberBorg.groups.
