@@ -1,4 +1,1 @@
-coffee							\
---join	reloads.js					\
---bare --compile --watch --lint				\
-	coffee/reloads.coffee
+./bin/cofcomp ./cyberborg-reloads.js ./coffee/cyberborg.reloads.coffee

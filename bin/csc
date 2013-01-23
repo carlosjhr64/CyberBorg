@@ -1,18 +1,16 @@
-coffee							\
---join	cyberborg-devel.js				\
---bare --compile --watch --lint				\
-	coffee/cyberborg.extensions.coffee		\
-	coffee/cyberborg.trace.coffee			\
-	coffee/cyberborg.wzobject.coffee		\
-	coffee/cyberborg.wzarray.coffee			\
-	coffee/cyberborg.group.coffee			\
-	coffee/cyberborg.package.coffee			\
-	coffee/cyberborg.base_commands.coffee		\
-	coffee/cyberborg.factory_commands.coffee	\
-	coffee/cyberborg.lab_commands.coffee		\
-	coffee/cyberborg.derricks_commands.coffee	\
-	coffee/cyberborg.scouts_commands.coffee		\
-	coffee/cyberborg.events.coffee			\
-	coffee/cyberborg.reloads.coffee			\
-	coffee/cyberborg.interpreter.coffee		\
-	coffee/cyberborg.script.coffee
+./bin/cofcomp ./cyberborg-devel.js			\
+	./coffee/cyberborg.extensions.coffee		\
+	./coffee/cyberborg.trace.coffee			\
+	./coffee/cyberborg.wzobject.coffee		\
+	./coffee/cyberborg.wzarray.coffee		\
+	./coffee/cyberborg.group.coffee			\
+	./coffee/cyberborg.package.coffee		\
+	./coffee/cyberborg.base_commands.coffee		\
+	./coffee/cyberborg.factory_commands.coffee	\
+	./coffee/cyberborg.lab_commands.coffee		\
+	./coffee/cyberborg.derricks_commands.coffee	\
+	./coffee/cyberborg.scouts_commands.coffee	\
+	./coffee/cyberborg.events.coffee		\
+	./coffee/cyberborg.reloads.coffee		\
+	./coffee/cyberborg.interpreter.coffee		\
+	./coffee/cyberborg.script.coffee
