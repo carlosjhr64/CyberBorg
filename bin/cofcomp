@@ -8,8 +8,8 @@ while ARGV[0]=~/^-/ do
 end
 
 # The *.js file to write.
-target = ARGV.shift
-raise "Need target *.js file" unless target and target =~ /\.js$/
+TARGET = ARGV.shift
+raise "Need target *.js file" unless TARGET and TARGET =~ /\.js$/
 
 # The *.coffee files to read in.
 files = []
@@ -24,13 +24,24 @@ end
 raise "need input files" unless files.length > 0
 
 # The coffee command to run
-command = "coffee -j #{target} -cbl #{files.join(' ')}"
+COMMAND = "coffee -j #{TARGET} -cbl #{files.join(' ')}"
+def doit
+  if system(COMMAND)
+    system("ls -tl #{TARGET}")
+    # Nice to have audio feedback that in fact alliswell.
+    system("ogg123 -q /usr/share/sounds/ubuntu/stereo/window-slide.ogg")
+    true
+  else
+    system("touch #{TARGET}")
+    system("ogg123 -q /usr/share/sounds/ubuntu/stereo/dialog-warning.ogg")
+    false
+  end
+end
 
 # Do an initial compile
-if system(command)
-  system("ls -tl #{target}")
+if doit
   # Get the compile time
-  mtime = File.mtime(target)
+  mtime = File.mtime(TARGET)
   while true do
     # Check every second
     sleep 1
@@ -38,9 +49,8 @@ if system(command)
       # See if a file was edited
       if File.mtime(file) > mtime
         # Compile and show result
-        system("ls -tl #{target}") if system(command)
-        system("touch #{target}")
-        mtime = File.mtime(target)
+        doit
+        mtime = File.mtime(TARGET)
         break
       end
     end
