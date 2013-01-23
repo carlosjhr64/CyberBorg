@@ -8,8 +8,6 @@ cyberBorg = new CyberBorg()
 # these are a convenience...
 # Define the group names
 BASE      = 'Base'	# will build the base
-DERRICKS  = 'Derricks'	# will build derricks
-SCOUTS    = 'Scouts'	# will scout and guard the area
 FACTORIES = 'Factories'	# builds droids
 LABS      = 'Labs'	# research facilities
 
@@ -50,22 +48,19 @@ events = (event) ->
 # StartLevel event is then switched here by events above.
 startLevel = () ->
   # The game starts...
- 
   # Usually the game starts out with some number of trucks,
   # or droids in general.  Let's see what we have.
   # CyberBorg.enum_droid returns the units we currently have.
   # We'll put them in a reserve for now.
   cyberBorg.reserve = reserve = CyberBorg.enum_droid()
-
   # cyberBorg can list all the resources available on the map and
   # sort them according to distance from where we are.
   # It will provide the AI a guide to our territorial expansion.
-  cyberBorg.resources = resources = CyberBorg.get_resources(reserve.center())
-
+  cyberBorg.resources = resources =
+  CyberBorg.get_resources(cyberBorg.reserve.center())
   # We'll create many groups besides the reserve, and
   # we'll keep them in cyberBorg.groups.
   groups = cyberBorg.groups
-
   # For this AI, we won't command individual droids directly.
   # All commands will be given to groups, which
   # will then be relayed down to an individual droid.
@@ -81,19 +76,9 @@ startLevel = () ->
   # The datafile defines the function that returns the group's commands.
   # For example, cyberBorg.base_commands in the case of BASE group.
   # Finally, the base needs the reserve list.
-
   base = new Group(BASE, 100, [],
   cyberBorg.base_commands(reserve, resources), reserve)
   groups.push(base)
-
-  derricks = new Group(DERRICKS, 90, [],
-  cyberBorg.derricks_commands(resources), reserve)
-  groups.push(derricks)
-
-  scouts = new Group(SCOUTS, 70, [],
-  cyberBorg.scouts_commands(resources), reserve)
-  groups.push(scouts)
-  
   # Structures are also considered units the AI can command.
   # Let's have a factory group... etc.
   # So do use reserve for structure units, just as we do for droids...
@@ -103,9 +88,10 @@ startLevel = () ->
   labs = new Group(LABS, 19, [],
   cyberBorg.lab_commands(), reserve)
   groups.push(labs)
-
+  # More groups...
+  script()
   # This is probably the only time we'll need to sort groups.
-  groups.sort (a, b) -> b.rank - a.rank
+  cyberBorg.groups.sort (a, b) -> b.rank - a.rank
   
   # Our first concern is our base.
   # We'll build it up and here forth react to events in the game.

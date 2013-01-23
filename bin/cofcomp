@@ -47,11 +47,15 @@ if doit
     sleep 1
     files.each do |file|
       # See if a file was edited
-      if File.mtime(file) > mtime
-        # Compile and show result
-        doit
-        mtime = Time.now
-        break
+      begin
+        if File.mtime(file) > mtime
+          # Compile and show result
+          doit
+          mtime = Time.now
+          break
+        end
+      rescue Exception
+        $stderr.puts $!
       end
     end
   end
