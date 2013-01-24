@@ -1,7 +1,7 @@
 # Want to try to expose to the strategist
 # as little of the AI's code as possible.
 # Here begins "volatile" coding.
-# 
+#
 # Really want to keep the number of globals down, but
 # these are a convenience...
 # Define the group names
@@ -43,7 +43,8 @@ script = () ->
   # The datafile defines the function that returns the group's commands.
   # For example, cyberBorg.base_commands in the case of BASE group.
   # Finally, the base needs the reserve list.
-  cyberBorg.add_group(BASE, 10, cyberBorg.base_commands(reserve, resources))
+  commands = new Command()
+  cyberBorg.add_group(BASE, 10, commands.base_commands())
   # Structures are also considered units the AI can command.
   # Let's have a factory group... etc.
   # So do use reserve for structure units, just as we do for droids...

@@ -10,3 +10,5 @@ Number::times = (action) ->
 Number::to_i = () -> parseInt @.toFixed(0)
 
 Number::order_map = () -> CyberBorg.ORDER_MAP[@]
+
+Object::to_at = () -> {x: @.x.to_i(), y: @.y.to_i()}
