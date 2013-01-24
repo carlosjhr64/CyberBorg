@@ -1,9 +1,10 @@
 # The Group Class
 class Group
-  constructor: (@name, @rank, @group=[], @commands=[], @reserve=[]) ->
-    for list in [@group, @commands, @reserve]
-      WZArray.bless(list) unless list.is_wzarray
+  constructor: (@name, @rank, @commands=[], @group=[]) ->
+    WZArray.bless(@commands) unless @commands.is_wzarray
+    WZArray.bless(@group) unless @group.is_wzarray
     @list = @group # alias
+    @reserve = cyberBorg.reserve
 
   add: (droid) ->
     # Need to enforce the reserve condition

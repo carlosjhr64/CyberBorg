@@ -4,13 +4,6 @@
 # abstract it to any map.  So lets get CyberBorg to help us out.
 cyberBorg = new CyberBorg()
 
-# Really want to keep the number of globals down, but
-# these are a convenience...
-# Define the group names
-BASE      = 'Base'	# will build the base
-FACTORIES = 'Factories'	# builds droids
-LABS      = 'Labs'	# research facilities
-
 # Refactoring in this AI showed that it made sense to have a single
 # event function pass an object describing the event.
 # The original JS API event functions are found in cyberborg.events.coffee.
@@ -52,52 +45,14 @@ startLevel = () ->
   # or droids in general.  Let's see what we have.
   # CyberBorg.enum_droid returns the units we currently have.
   # We'll put them in a reserve for now.
-  cyberBorg.reserve = reserve = CyberBorg.enum_droid()
+  cyberBorg.reserve = CyberBorg.enum_droid()
   # cyberBorg can list all the resources available on the map and
   # sort them according to distance from where we are.
   # It will provide the AI a guide to our territorial expansion.
-  cyberBorg.resources = resources =
-  CyberBorg.get_resources(cyberBorg.reserve.center())
-  # We'll create many groups besides the reserve, and
-  # we'll keep them in cyberBorg.groups.
-  groups = cyberBorg.groups
-  # For this AI, we won't command individual droids directly.
-  # All commands will be given to groups, which
-  # will then be relayed down to an individual droid.
-  # Group is a class provided by CyberBorg.
-  # Rank is used to determine which group gets to pick units first.
-  # Rank number will allow us to sort the groups by priority.
-  # Groups with higher priority get first dibs on any action.
-  # Groups can release droids they no longer need
-  # into the reserve, and draw droids they need from the reserve.
-  # The Base group will be responsible for building the base.
-  # The group starts out empty, with [].
-  # Also, from a datafile, we give the Base group its commands list.
-  # The datafile defines the function that returns the group's commands.
-  # For example, cyberBorg.base_commands in the case of BASE group.
-  # Finally, the base needs the reserve list.
-  base = new Group(BASE, 100, [],
-  cyberBorg.base_commands(reserve, resources), reserve)
-  groups.push(base)
-  # Structures are also considered units the AI can command.
-  # Let's have a factory group... etc.
-  # So do use reserve for structure units, just as we do for droids...
-  factories = new Group(FACTORIES, 20, [],
-  cyberBorg.factory_commands(), reserve)
-  groups.push(factories)
-  labs = new Group(LABS, 19, [],
-  cyberBorg.lab_commands(), reserve)
-  groups.push(labs)
-  # More groups...
+  cyberBorg.resources = CyberBorg.get_resources(cyberBorg.reserve.center())
   script()
   # This is probably the only time we'll need to sort groups.
-  cyberBorg.groups.sort (a, b) -> b.rank - a.rank
-  
-  # Our first concern is our base.
-  # We'll build it up and here forth react to events in the game.
-  # With only two trucks (usually) to start and base group with first dibs,
-  # the AI guarantees that the first thing that happens
-  # is that the base gets built.
+  cyberBorg.groups.sort (a, b) -> a.rank - b.rank
 
 # When base group (or anyone else) builds a structure,
 # a "structure built" event triggers an eventStructureBuilt call.
@@ -261,8 +216,7 @@ group_executions = (event) ->
     # this AI is crippled a bit without HQ.
     # Without HQ, only BASE, FACTORIES, and LABS group
     # continue the command cycle.
-    continue unless cyberBorg.hq or
-    name is BASE or name is FACTORIES or name is LABS
+    continue unless cyberBorg.hq or base_group(name)
     commands = group.commands
     while command = commands.next()
       unless group.execute(command)

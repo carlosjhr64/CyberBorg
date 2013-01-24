@@ -96,6 +96,9 @@ class CyberBorg
     @pos = []
     @trace = (selectedPlayer is me)
 
+  add_group: (name, rank, commands) ->
+    @groups.push(new Group(name, rank, commands))
+
   ###############
   ### UPDATES ###
   ###############
