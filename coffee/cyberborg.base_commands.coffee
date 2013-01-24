@@ -10,7 +10,7 @@
 # at:        preferred location (and direction).
 # structure: structure to be built
 # research:  technology to be researched
-# bo@dy:
+# body:
 # propulsion:
 # turret:
 # cid:       the command id is set at the time the command is given.
@@ -38,7 +38,7 @@ class Command
     # Which y direction towards resources
     @dy = 1
     @dy = -1 if @tc.y > @rc.y
-    # Spacing between build points
+    # Spacing between maintain points
     @s = 4
     # Which way is the greater offset?
     @horizontal = false
@@ -46,7 +46,7 @@ class Command
       @horizontal = true
     # So let's see how many locations this will work,
     # and find ways to improve the heuristics.
-    # We'll assume build is relative to trucks.
+    # We'll assume maintain is relative to trucks.
     @x = @tc.x
     @y = @tc.y
 
@@ -74,6 +74,38 @@ class Command
     obj.structure = name
     obj
 
+  ##################
+  ### propulsion ###
+  ##################
+
+  wheeled: (obj={}) ->
+    obj.propulsion = "wheeled01"
+    obj
+
+  ############
+  ### body ###
+  ############
+
+  viper: (obj={}) ->
+    obj.body = "Body1REC"
+    obj
+
+  ##############
+  ### turret ###
+  ##############
+
+  trucker: (obj={}) ->
+    obj.name = "Truck"
+    obj.turret = "Spade1Mk1"
+    obj.droid_type = DROID_CONSTRUCT
+    obj
+
+  gunner: (obj={}) ->
+    obj.name = "Gunner"
+    obj.turret = ["MG3Mk1", "MG2Mk1", "MG1Mk1"]
+    obj.droid_type = DROID_WEAPON
+    obj
+
   ############
   ### Who? ###
   ############
@@ -90,6 +122,10 @@ class Command
     obj.like = /Truck/
     obj
 
+  factory: (obj={}) ->
+    obj.like = /Factory/
+    obj
+
   ##############
   ### Where? ###
   ##############
@@ -102,7 +138,13 @@ class Command
   ### Orders ###
   ##############
 
-  build: (obj={}) ->
+  manufacture: (obj={}) ->
+    obj.order = FORDER_MANUFACTURE
+    obj.like = /Factory/
+    obj.cost = 62
+    obj
+
+  maintain: (obj={}) ->
     cost = @cost
     if @savings > @cost
       cost = @savings
@@ -180,49 +222,62 @@ class Command
   base_commands: () ->
     block = [
       # Build up the initial base as fast a posible
-      @with_help @immediately @three @trucks @build @light_factory @at @x-@s*@dx, @y-@s*@dy
-      @with_help @immediately @three @trucks @build @research_facility @at @x, @y-@s*@dy
-      @with_help @immediately @three @trucks @build @command_center @at @x+@s*@dx, @y-@s*@dy
+      @with_help @immediately @three @trucks @maintain @light_factory @at @x-@s*@dx, @y-@s*@dy
+      @with_help @immediately @three @trucks @maintain @research_facility @at @x, @y-@s*@dy
+      @with_help @immediately @three @trucks @maintain @command_center @at @x+@s*@dx, @y-@s*@dy
 
       # Transitioning.
-      @immediately @three @trucks @build @power_generator @at @x+@s*@dx, @y
-      @on_surplus @one @truck @builds @power_generator @at @x, @y
+      @immediately @three @trucks @maintain @power_generator @at @x+@s*@dx, @y
+      @on_surplus @one @truck @maintains @power_generator @at @x, @y
 
       # Wait for power levels to come back up.
       @pass @on_glut @none()
-      @on_budget @one @truck @builds @research_facility @at @x-@s*@dx, @y
-      @on_budget @one @truck @builds @power_generator @at @x-@s*@dx, @y+@s*@dy
+      @on_budget @one @truck @maintains @research_facility @at @x-@s*@dx, @y
+      @on_budget @one @truck @maintains @power_generator @at @x-@s*@dx, @y+@s*@dy
 
       # Wait for power levels to come back up.
       @pass @on_glut @none()
-      @on_budget @one @truck @builds @research_facility @at @x, @y+@s*@dy
-      @on_budget @one @truck @builds @power_generator @at @x+@s*@dx, @y+@s*@dy
+      @on_budget @one @truck @maintains @research_facility @at @x, @y+@s*@dy
+      @on_budget @one @truck @maintains @power_generator @at @x+@s*@dx, @y+@s*@dy
     ]
 
     more = null
     if @horizontal
       more = [
         @pass @on_glut @none()
-        @on_budget @one @truck @builds @research_facility @at @x+2*@s*@dx, @y+@s*@dy
-        @on_budget @one @truck @builds @power_generator @at @x+2*@s*@dx, @y
+        @on_budget @one @truck @maintains @research_facility @at @x+2*@s*@dx, @y+@s*@dy
+        @on_budget @one @truck @maintains @power_generator @at @x+2*@s*@dx, @y
         @pass @on_glut @none()
-        @on_budget @one @truck @builds @research_facility @at @x+2*s*@dx, @y-@s*@dy
+        @on_budget @one @truck @maintains @research_facility @at @x+2*s*@dx, @y-@s*@dy
       ]
     else
       more = [
         @pass @on_glut @none()
-        @on_budget @one @truck @builds @research_facility @at @x+@s*@dx, @y+2*@s*@dy
-        @on_budget @one @truck @builds @power_generator @at @x, @y+2*@s*@dy
+        @on_budget @one @truck @maintains @research_facility @at @x+@s*@dx, @y+2*@s*@dy
+        @on_budget @one @truck @maintains @power_generator @at @x, @y+2*@s*@dy
         @pass @on_glut @none()
-        @on_budget @one @truck @builds @research_facility @at @x-@s*@dx, @y+2*@s*@dy
+        @on_budget @one @truck @maintains @research_facility @at @x-@s*@dx, @y+2*@s*@dy
       ]
 
     commands = block.concat(more)
     # Convert the list to wzarray
     WZArray.bless(commands)
 
+  factory_commands: () ->
+    # The commands are...
+    truck = @on_budget @manufacture @wheeled @viper @trucker()
+    gunner = @on_budget @manufacture @wheeled @viper @gunner()
+    commands = []
+    # ... 1 truck
+    commands.push(truck)
+    # ... 12 machine gunners
+    12.times -> commands.push(gunner)
+    commands.push(truck)
+    WZArray.bless(commands)
+
 ###############
 ### Aliases ###
 ###############
-Command::builds = Command::build
+Command::maintains = Command::maintain
+Command::manufactures = Command::manufacture
 Command::trucks = Command::truck

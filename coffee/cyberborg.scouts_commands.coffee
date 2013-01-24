@@ -19,7 +19,7 @@ CyberBorg::scouts_commands = (derricks) ->
   scout = (derrick) ->
     power: 0
     cost: 0
-    like: /MgWh/
+    like: /Gunner/
     limit: 12
     min: 1
     max: 1

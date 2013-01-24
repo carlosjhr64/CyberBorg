@@ -48,7 +48,7 @@ script = () ->
   # Structures are also considered units the AI can command.
   # Let's have a factory group... etc.
   # So do use reserve for structure units, just as we do for droids...
-  cyberBorg.add_group(FACTORIES, 20, cyberBorg.factory_commands())
+  cyberBorg.add_group(FACTORIES, 20, commands.factory_commands())
   cyberBorg.add_group(LABS, 30, cyberBorg.lab_commands())
   # More groups...
   resources = cyberBorg.resources
