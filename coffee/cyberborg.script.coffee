@@ -59,3 +59,59 @@ script = () ->
   # With only two trucks (usually) to start and base group with first dibs,
   # the AI guarantees that the first thing that happens
   # is that the base gets built.
+
+Command::base_commands = () ->
+  block = [
+    # Build up the initial base as fast a posible
+    @with_help @immediately @three @trucks @maintain @light_factory @at @x-@s*@dx, @y-@s*@dy
+    @with_help @immediately @three @trucks @maintain @research_facility @at @x, @y-@s*@dy
+    @with_help @immediately @three @trucks @maintain @command_center @at @x+@s*@dx, @y-@s*@dy
+
+    # Transitioning.
+    @immediately @three @trucks @maintain @power_generator @at @x+@s*@dx, @y
+    @on_surplus @one @truck @maintains @power_generator @at @x, @y
+
+    # Wait for power levels to come back up.
+    @pass @on_glut @none()
+    @on_budget @one @truck @maintains @research_facility @at @x-@s*@dx, @y
+    @on_budget @one @truck @maintains @power_generator @at @x-@s*@dx, @y+@s*@dy
+
+    # Wait for power levels to come back up.
+    @pass @on_glut @none()
+    @on_budget @one @truck @maintains @research_facility @at @x, @y+@s*@dy
+    @on_budget @one @truck @maintains @power_generator @at @x+@s*@dx, @y+@s*@dy
+  ]
+
+  more = null
+  if @horizontal
+    more = [
+      @pass @on_glut @none()
+      @on_budget @one @truck @maintains @research_facility @at @x+2*@s*@dx, @y+@s*@dy
+      @on_budget @one @truck @maintains @power_generator @at @x+2*@s*@dx, @y
+      @pass @on_glut @none()
+      @on_budget @one @truck @maintains @research_facility @at @x+2*s*@dx, @y-@s*@dy
+    ]
+  else
+    more = [
+      @pass @on_glut @none()
+      @on_budget @one @truck @maintains @research_facility @at @x+@s*@dx, @y+2*@s*@dy
+      @on_budget @one @truck @maintains @power_generator @at @x, @y+2*@s*@dy
+      @pass @on_glut @none()
+      @on_budget @one @truck @maintains @research_facility @at @x-@s*@dx, @y+2*@s*@dy
+    ]
+
+  commands = block.concat(more)
+  # Convert the list to wzarray
+  WZArray.bless(commands)
+
+Command::factory_commands = () ->
+  # The commands are...
+  truck = @on_budget @manufacture @wheeled @viper @trucker()
+  gunner = @on_budget @manufacture @wheeled @viper @gunner()
+  commands = []
+  # ... 1 truck
+  commands.push(truck)
+  # ... 12 machine gunners
+  12.times -> commands.push(gunner)
+  commands.push(truck)
+  WZArray.bless(commands)
