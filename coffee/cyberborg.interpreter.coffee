@@ -222,5 +222,6 @@ group_executions = (event) ->
       unless group.execute(command)
         commands.revert()
         break
+      trace_command(command) if cyberBorg.trace
   # For now, stalled units will be consider of lowest rank...
   stalled_units() # have any stalled unit try to execute their command.

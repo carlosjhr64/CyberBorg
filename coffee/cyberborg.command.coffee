@@ -19,18 +19,20 @@
 # CyberBorg::base_commands = (reserve, resources) ->
 
 class Command
+  @to_at = (o) -> {x: o.x.to_i(), y: o.y.to_i()}
+
   # @cost is the default cost of structures
   # @savings is... TODO
-  constructor: (@savings=500, @cost=100) ->
+  constructor: (@limit=0, @savings=0, @cost=0) ->
     reserve = cyberBorg.reserve
     resources = cyberBorg.resources
     # Center point of our trucks.
     # ie. (10.5,236)
-    @tc = reserve.trucks().center().to_at()
+    @tc = Command.to_at reserve.trucks().center()
     trace "Trucks around #{@tc.x}, #{@tc.y}" if cyberBorg.trace
     # Center point of our first 4 resources.
     # ie. (12, 236.5)
-    @rc = WZArray.bless(resources[0..3]).center().to_at()
+    @rc = Command.to_at WZArray.bless(resources[0..3]).center()
     trace "Resources around #{@rc.x}, #{@rc.y}." if cyberBorg.trace
     # Which x direction towards resources
     @dx = 1
@@ -70,6 +72,10 @@ class Command
     obj.structure = "A0PowerGenerator"
     obj
 
+  resource_extractor: (obj={}) ->
+    obj.structure = "A0ResourceExtractor"
+    obj
+
   structure: (name, obj={}) ->
     obj.structure = name
     obj
@@ -95,13 +101,15 @@ class Command
   ##############
 
   trucker: (obj={}) ->
+    obj.like = /Truck/
     obj.name = "Truck"
     obj.turret = "Spade1Mk1"
     obj.droid_type = DROID_CONSTRUCT
     obj
 
   gunner: (obj={}) ->
-    obj.name = "Gunner"
+    obj.like = /Gun/
+    obj.name = "Gun"
     obj.turret = ["MG3Mk1", "MG2Mk1", "MG1Mk1"]
     obj.droid_type = DROID_WEAPON
     obj
@@ -122,6 +130,10 @@ class Command
     obj.like = /Truck/
     obj
 
+  gun: (obj={}) ->
+    obj.like = /Gun/
+    obj
+
   factory: (obj={}) ->
     obj.like = /Factory/
     obj
@@ -138,19 +150,39 @@ class Command
   ### Orders ###
   ##############
 
+  pursue: (research, cost, obj={}) ->
+    obj.research = research
+    obj.order = LORDER_RESEARCH
+    obj.like = /Research Facility/
+    obj.power = @cost
+    obj.cost = @cost
+    obj.limit = @limit
+    obj.min = 1
+    obj.max = 1
+    obj.help = 1
+    obj
+
   manufacture: (obj={}) ->
+    cost = @cost
+    if obj.body and obj.propulsion and obj.turret
+      # makeTemplate... :-??
+      cost = @cost
     obj.order = FORDER_MANUFACTURE
     obj.like = /Factory/
-    obj.cost = 62
+    obj.cost = cost
     obj
 
   maintain: (obj={}) ->
-    cost = @cost
-    if @savings > @cost
-      cost = @savings
+    if @savings > 0
       @savings -= @cost
     obj.order = DORDER_MAINTAIN
-    obj.cost = cost
+    obj.cost = @cost
+    obj.savings = @savings
+    obj
+
+  scout: (obj={}) ->
+    obj.cost = @cost
+    obj.order = DORDER_SCOUT
     obj
 
   pass: (obj={}) ->
@@ -167,21 +199,21 @@ class Command
   #################
 
   three: (obj={}) ->
-    obj.limit = 3 # maximum group size
+    obj.limit = @limit # maximum group size
     obj.min = 1 # it will execute the command only with at least this amount
     obj.max = 3 # it will execute the command with no more than this amount
     obj.help = 0
     obj
 
   two: (obj={}) ->
-    obj.limit = 2 # maximum group size
+    obj.limit = @limit # maximum group size
     obj.min = 1
     obj.max = 2
     obj.help = 0
     obj
 
   one: (obj={}) ->
-    obj.limit = 1 # maximum group size
+    obj.limit = @limit # maximum group size
     obj.min = 1
     obj.max = 1
     obj.help = 0
@@ -225,3 +257,4 @@ class Command
 Command::maintains = Command::maintain
 Command::manufactures = Command::manufacture
 Command::trucks = Command::truck
+Command::scouts = Command::scout

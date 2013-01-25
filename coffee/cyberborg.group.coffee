@@ -89,4 +89,7 @@ class Group
     # actually available for them... that we're saving toward this
     # command's goals.
     cyberBorg.power -= command.cost
+    # If we are not able to execute the command,
+    # deduct additional amount we want to save for.
+    cyberBorg.power -= command.savings if count is 0 and command.savings?
     return count

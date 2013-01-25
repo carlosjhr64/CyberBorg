@@ -45,22 +45,26 @@ script = () ->
   # Finally, the base needs the reserve list.
   commands = new Command()
   cyberBorg.add_group(BASE, 10, commands.base_commands())
+
   # Structures are also considered units the AI can command.
   # Let's have a factory group... etc.
   # So do use reserve for structure units, just as we do for droids...
   cyberBorg.add_group(FACTORIES, 20, commands.factory_commands())
-  cyberBorg.add_group(LABS, 30, cyberBorg.lab_commands())
-  # More groups...
-  resources = cyberBorg.resources
-  cyberBorg.add_group(DERRICKS, 40, cyberBorg.derricks_commands(resources))
-  cyberBorg.add_group(SCOUTS, 50, cyberBorg.scouts_commands(resources))
-  # Our first concern is our base.
-  # We'll build it up and here forth react to events in the game.
-  # With only two trucks (usually) to start and base group with first dibs,
-  # the AI guarantees that the first thing that happens
-  # is that the base gets built.
+  cyberBorg.add_group(LABS, 30, commands.lab_commands())
 
+  # More groups...
+  cyberBorg.add_group(DERRICKS, 40, commands.derricks_commands(resources))
+  cyberBorg.add_group(SCOUTS, 50, commands.scouts_commands(resources))
+
+# Our first concern is our base.
+# We'll build it up and here forth react to events in the game.
+# With only two trucks (usually) to start and base group with first dibs,
+# the AI guarantees that the first thing that happens
+# is that the base gets built.
 Command::base_commands = () ->
+  @limit = 3 # Group size limit
+  @savings = 400 # TODO explain
+  @cost = 100 # default cost of command
   block = [
     # Build up the initial base as fast a posible
     @with_help @immediately @three @trucks @maintain @light_factory @at @x-@s*@dx, @y-@s*@dy
@@ -105,6 +109,9 @@ Command::base_commands = () ->
   WZArray.bless(commands)
 
 Command::factory_commands = () ->
+  @limit = 1 # Group size limit
+  @savings = 0 # TODO explain
+  @cost = 100 # default cost of command
   # The commands are...
   truck = @on_budget @manufacture @wheeled @viper @trucker()
   gunner = @on_budget @manufacture @wheeled @viper @gunner()
@@ -114,4 +121,52 @@ Command::factory_commands = () ->
   # ... 12 machine gunners
   12.times -> commands.push(gunner)
   commands.push(truck)
+  WZArray.bless(commands)
+
+Command::derricks_commands = (derricks) ->
+  @limit = 3 # Group size limit
+  @savings = 0 # TODO explain
+  @cost = 100 # default cost of command
+  commands = WZArray.bless([])
+  for derrick in derricks
+    commands.push(
+      @immediately @one @truck @maintains @resource_extractor @at derrick.x, derrick.y)
+  # Eight derricks starting from derrick #0
+  Scouter.bless(commands)
+  commands.mod = 8
+  commands.offset = 0
+  commands
+
+Command::scouts_commands = (derricks) ->
+  @limit = 12 # Group size limit
+  @savings = 0 # TODO explain
+  @cost = 0 # default cost of command
+  commands = WZArray.bless([])
+  for derrick in derricks
+    commands.push(
+      @immediately @one @gun @scouts @at derrick.x, derrick.y)
+  # Five derricks starting at derrick #3
+  Scouter.bless(commands)
+  commands.mod = 5
+  commands.offset = 3
+  commands
+
+Command::lab_commands = () ->
+  @limit = 5 # Group size limit
+  @savings = 0 # TODO explain
+  @cost = 100 # default cost of command
+  commands = [
+    @pursue('R-Wpn-MG1Mk1', 1)			# Machine Gun
+    @pursue('R-Wpn-MG2Mk1', 37)			# Dual Machine Gun
+    @pursue('R-Struc-PowerModuleMk1', 37)	# Power Module
+    @pursue('R-Wpn-MG3Mk1', 75)			# Heavy Machine Gun
+    @pursue('R-Struc-RepairFacility', 75)	# Repair Facility
+    @pursue('R-Defense-Tower01', 18)		# MG Tower
+    @pursue('R-Defense-WallTower02', 75)	# Ligh Cannon Hardpoint
+    @pursue('R-Defense-AASite-QuadMg1', 112)	# AA
+    @pursue('R-Vehicle-Body04', 75)		# Bug Body
+    @pursue('R-Vehicle-Prop-VTOL', 100)		# Vtol
+    @pursue('R-Struc-VTOLFactory', 100)		# Vtol Factory
+    @pursue('R-Wpn-Bomb01', 100)		# Vtol Bomb
+  ]
   WZArray.bless(commands)

@@ -8,7 +8,8 @@ territory has been secured.
 Looks like there's a meta language emerging.
 Try moving commands to cyberborg.script.coffee
 
-Use makeTemplate to estimate droid build cost.
+Find a way to estimate costs.
+makeTemplate currently returns null if droid is not available to build.
 
 DONE:
 

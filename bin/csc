@@ -6,10 +6,6 @@
 	./coffee/cyberborg.group.coffee			\
 	./coffee/cyberborg.package.coffee		\
 	./coffee/cyberborg.command.coffee		\
-	./coffee/cyberborg.factory_commands.coffee	\
-	./coffee/cyberborg.lab_commands.coffee		\
-	./coffee/cyberborg.derricks_commands.coffee	\
-	./coffee/cyberborg.scouts_commands.coffee	\
 	./coffee/cyberborg.events.coffee		\
 	./coffee/cyberborg.reloads.coffee		\
 	./coffee/cyberborg.script.coffee		\

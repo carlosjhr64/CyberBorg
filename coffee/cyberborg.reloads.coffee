@@ -8,6 +8,19 @@ start_trace = (event) ->
   if droid = event.droid
     trace "\tDroid: #{droid.namexy()}\tID:#{droid.id}\tCost: #{droid.cost}"
 
+trace_command = (command) ->
+  keyvals = []
+  for key of command
+    switch key
+      when 'at'
+        at = command.at
+        keyvals.push("#{key}:{#{at.x},#{at.y}}")
+      when 'execute'
+        keyvals.push("execute:->")
+      else
+        keyvals.push("#{key}:#{command[key]}")
+  blue_alert(keyvals.sort().join(' '))
+
 # The bug report.
 bug_report = (label, droid, event) ->
   order = droid.order
@@ -26,7 +39,7 @@ bug_report = (label, droid, event) ->
       trace "\t\tBUG: Quitter."
     else
       trace "\t\tBUG: Order changed." unless order is droid.dorder
-  if event.name is "Destroyed"
+  if event.name is 'Destroyed'
     trace "\t\t#{event.group?.name}'s #{event.object.namexy()} was destroyed."
 
 # Re-issue command
