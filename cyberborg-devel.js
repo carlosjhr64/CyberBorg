@@ -1755,18 +1755,20 @@ script = function() {
 };
 
 Command.prototype.base_commands = function() {
-  var block, commands, more;
+  var commands, more;
   this.limit = 3;
   this.savings = 400;
   this.cost = 100;
-  block = [this.with_help(this.immediately(this.three(this.trucks(this.maintain(this.light_factory(this.at(this.x - this.s * this.dx, this.y - this.s * this.dy))))))), this.with_help(this.immediately(this.three(this.trucks(this.maintain(this.research_facility(this.at(this.x, this.y - this.s * this.dy))))))), this.with_help(this.immediately(this.three(this.trucks(this.maintain(this.command_center(this.at(this.x + this.s * this.dx, this.y - this.s * this.dy))))))), this.immediately(this.three(this.trucks(this.maintain(this.power_generator(this.at(this.x + this.s * this.dx, this.y)))))), this.on_surplus(this.one(this.truck(this.maintains(this.power_generator(this.at(this.x, this.y)))))), this.pass(this.on_glut(this.none())), this.on_budget(this.one(this.truck(this.maintains(this.research_facility(this.at(this.x - this.s * this.dx, this.y)))))), this.on_budget(this.one(this.truck(this.maintains(this.power_generator(this.at(this.x - this.s * this.dx, this.y + this.s * this.dy)))))), this.pass(this.on_glut(this.none())), this.on_budget(this.one(this.truck(this.maintains(this.research_facility(this.at(this.x, this.y + this.s * this.dy)))))), this.on_budget(this.one(this.truck(this.maintains(this.power_generator(this.at(this.x + this.s * this.dx, this.y + this.s * this.dy))))))];
-  more = null;
+  commands = [this.with_help(this.immediately(this.three(this.trucks(this.maintain(this.light_factory(this.at(this.x - this.s * this.dx, this.y - this.s * this.dy))))))), this.with_help(this.immediately(this.three(this.trucks(this.maintain(this.research_facility(this.at(this.x, this.y - this.s * this.dy))))))), this.with_help(this.immediately(this.three(this.trucks(this.maintain(this.command_center(this.at(this.x + this.s * this.dx, this.y - this.s * this.dy))))))), this.with_help(this.immediately(this.three(this.trucks(this.maintain(this.power_generator(this.at(this.x + this.s * this.dx, this.y)))))))];
+  this.limit = 1;
+  more = [this.on_surplus(this.one(this.truck(this.maintains(this.power_generator(this.at(this.x, this.y)))))), this.pass(this.on_glut(this.none())), this.on_budget(this.one(this.truck(this.maintains(this.research_facility(this.at(this.x - this.s * this.dx, this.y)))))), this.on_budget(this.one(this.truck(this.maintains(this.power_generator(this.at(this.x - this.s * this.dx, this.y + this.s * this.dy)))))), this.pass(this.on_glut(this.none())), this.on_budget(this.one(this.truck(this.maintains(this.research_facility(this.at(this.x, this.y + this.s * this.dy)))))), this.on_budget(this.one(this.truck(this.maintains(this.power_generator(this.at(this.x + this.s * this.dx, this.y + this.s * this.dy))))))];
+  commands = commands.concat(more);
   if (this.horizontal) {
     more = [this.pass(this.on_glut(this.none())), this.on_budget(this.one(this.truck(this.maintains(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y + this.s * this.dy)))))), this.on_budget(this.one(this.truck(this.maintains(this.power_generator(this.at(this.x + 2 * this.s * this.dx, this.y)))))), this.pass(this.on_glut(this.none())), this.on_budget(this.one(this.truck(this.maintains(this.research_facility(this.at(this.x + 2 * s * this.dx, this.y - this.s * this.dy))))))];
   } else {
     more = [this.pass(this.on_glut(this.none())), this.on_budget(this.one(this.truck(this.maintains(this.research_facility(this.at(this.x + this.s * this.dx, this.y + 2 * this.s * this.dy)))))), this.on_budget(this.one(this.truck(this.maintains(this.power_generator(this.at(this.x, this.y + 2 * this.s * this.dy)))))), this.pass(this.on_glut(this.none())), this.on_budget(this.one(this.truck(this.maintains(this.research_facility(this.at(this.x - this.s * this.dx, this.y + 2 * this.s * this.dy))))))];
   }
-  commands = block.concat(more);
+  commands = commands.concat(more);
   return WZArray.bless(commands);
 };
 

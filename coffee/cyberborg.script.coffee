@@ -62,31 +62,32 @@ script = () ->
 # the AI guarantees that the first thing that happens
 # is that the base gets built.
 Command::base_commands = () ->
+
   @limit = 3 # Group size limit
   @savings = 400 # TODO explain
   @cost = 100 # default cost of command
-  block = [
+  commands = [
     # Build up the initial base as fast a posible
     @with_help @immediately @three @trucks @maintain @light_factory @at @x-@s*@dx, @y-@s*@dy
     @with_help @immediately @three @trucks @maintain @research_facility @at @x, @y-@s*@dy
     @with_help @immediately @three @trucks @maintain @command_center @at @x+@s*@dx, @y-@s*@dy
+    @with_help @immediately @three @trucks @maintain @power_generator @at @x+@s*@dx, @y
+  ]
 
-    # Transitioning.
-    @immediately @three @trucks @maintain @power_generator @at @x+@s*@dx, @y
+  @limit = 1
+  more = [
     @on_surplus @one @truck @maintains @power_generator @at @x, @y
-
     # Wait for power levels to come back up.
     @pass @on_glut @none()
     @on_budget @one @truck @maintains @research_facility @at @x-@s*@dx, @y
     @on_budget @one @truck @maintains @power_generator @at @x-@s*@dx, @y+@s*@dy
-
     # Wait for power levels to come back up.
     @pass @on_glut @none()
     @on_budget @one @truck @maintains @research_facility @at @x, @y+@s*@dy
     @on_budget @one @truck @maintains @power_generator @at @x+@s*@dx, @y+@s*@dy
   ]
+  commands = commands.concat(more)
 
-  more = null
   if @horizontal
     more = [
       @pass @on_glut @none()
@@ -103,8 +104,7 @@ Command::base_commands = () ->
       @pass @on_glut @none()
       @on_budget @one @truck @maintains @research_facility @at @x-@s*@dx, @y+2*@s*@dy
     ]
-
-  commands = block.concat(more)
+  commands = commands.concat(more)
   # Convert the list to wzarray
   WZArray.bless(commands)
 

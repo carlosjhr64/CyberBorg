@@ -5,13 +5,17 @@ Check the commands for errors.  :-??
 Dericks/Scouts group should push forward once it's
 territory has been secured.
 
-Looks like there's a meta language emerging.
-Try moving commands to cyberborg.script.coffee
-
 Find a way to estimate costs.
 makeTemplate currently returns null if droid is not available to build.
 
 DONE:
+
+2013.01.25
+
+Looks like there's a meta language emerging.
+Try moving commands to cyberborg.script.coffee
+	Commands are now written in *script*, but
+	in the *command* space.
 
 2013.01.22
 
