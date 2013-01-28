@@ -7,6 +7,7 @@ cyberBorg = new CyberBorg()
 class Ai
   constructor: () ->
     @trace = new Trace()
+    @hq = false
 
   # Refactoring in this AI showed that it made sense to have a single
   # event function pass an object describing the event.
@@ -76,7 +77,7 @@ class Ai
     # There may be exceptional catches to be done per structure...
     if structure.type is STRUCTURE
       switch structure.stattype
-        when HQ then cyberBorg.hq = true
+        when HQ then @hq = true
     # There may be ongoing jobs so let's see what available.
     @helping(droid)
 
@@ -86,7 +87,7 @@ class Ai
     # We're given object and group as reference.
     if object.player is me and object.type is STRUCTURE
       switch object.stattype
-        when HQ then cyberBorg.hq = false
+        when HQ then @hq = false
 
   #  When a droid is built, it triggers a droid built event and
   #  eventDroidBuilt(a WZ2100 JS API) is called.
@@ -220,7 +221,7 @@ class Ai
       # this AI is crippled a bit without HQ.
       # Without HQ, only BASE, FACTORIES, and LABS group
       # continue the command cycle.
-      continue unless cyberBorg.hq or base_group(name)
+      continue unless @hq or base_group(name)
       commands = group.commands
       while command = commands.next()
         unless group.execute(command)

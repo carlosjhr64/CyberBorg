@@ -92,7 +92,6 @@ class CyberBorg
     @reserve = null
     @resources = null
     # Has the headquaters been built?
-    @hq = false
     @pos = []
 
   add_group: (name, rank, commands) ->

@@ -181,7 +181,7 @@ WZObject = (function() {
   };
 
   WZObject.prototype.build_droid = function(command) {
-    if ((cyberBorg.hq || allowed_hqless_build(command)) && buildDroid(this, command.name, command.body, command.propulsion, "", command.droid_type, command.turret)) {
+    if ((ai.hq || allowed_hqless_build(command)) && buildDroid(this, command.name, command.body, command.propulsion, "", command.droid_type, command.turret)) {
       this.order = FORDER_MANUFACTURE;
       return true;
     }
@@ -696,7 +696,6 @@ CyberBorg = (function() {
     this.stalled = [];
     this.reserve = null;
     this.resources = null;
-    this.hq = false;
     this.pos = [];
   }
 
@@ -1626,6 +1625,7 @@ Ai = (function() {
 
   function Ai() {
     this.trace = new Trace();
+    this.hq = false;
   }
 
   Ai.prototype.events = function(event) {
@@ -1679,7 +1679,7 @@ Ai = (function() {
     if (structure.type === STRUCTURE) {
       switch (structure.stattype) {
         case HQ:
-          cyberBorg.hq = true;
+          this.hq = true;
       }
     }
     return this.helping(droid);
@@ -1689,7 +1689,7 @@ Ai = (function() {
     if (object.player === me && object.type === STRUCTURE) {
       switch (object.stattype) {
         case HQ:
-          return cyberBorg.hq = false;
+          return this.hq = false;
       }
     }
   };
@@ -1814,7 +1814,7 @@ Ai = (function() {
     for (_i = 0, _len = groups.length; _i < _len; _i++) {
       group = groups[_i];
       name = group.name;
-      if (!(cyberBorg.hq || base_group(name))) {
+      if (!(this.hq || base_group(name))) {
         continue;
       }
       commands = group.commands;
