@@ -8,6 +8,8 @@ territory has been secured.
 Find a way to estimate costs.
 makeTemplate currently returns null if droid is not available to build.
 
+Convert entirely to OOP.
+
 DONE:
 
 2013.01.25
