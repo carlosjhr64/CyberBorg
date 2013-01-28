@@ -837,7 +837,6 @@ CyberBorg = (function() {
 
 
   function CyberBorg() {
-    this.resources = null;
     this.pos = [];
   }
 
@@ -987,17 +986,16 @@ Command = (function() {
   };
 
   function Command(limit, savings, cost) {
-    var reserve, resources;
     this.limit = limit != null ? limit : 0;
     this.savings = savings != null ? savings : 0;
     this.cost = cost != null ? cost : 0;
-    reserve = ai.groups.reserve;
-    resources = cyberBorg.resources;
-    this.tc = Command.to_at(reserve.trucks().center());
+    this.reserve = ai.groups.reserve;
+    this.resources = CyberBorg.get_resources(this.reserve.center());
+    this.tc = Command.to_at(this.reserve.trucks().center());
     if (ai.trace.on) {
       ai.trace.out("Trucks around " + this.tc.x + ", " + this.tc.y);
     }
-    this.rc = Command.to_at(WZArray.bless(resources.slice(0, 4)).center());
+    this.rc = Command.to_at(WZArray.bless(this.resources.slice(0, 4)).center());
     if (ai.trace.on) {
       ai.trace.out("Resources around " + this.rc.x + ", " + this.rc.y + ".");
     }
@@ -1553,15 +1551,13 @@ allowed_hqless_build = function(command) {
 };
 
 script = function() {
-  var commands, reserve, resources;
-  resources = cyberBorg.resources;
-  reserve = ai.groups.reserve;
+  var commands;
   commands = new Command();
   ai.groups.add_group(BASE, 10, commands.base_commands());
   ai.groups.add_group(FACTORIES, 20, commands.factory_commands());
   ai.groups.add_group(LABS, 30, commands.lab_commands());
-  ai.groups.add_group(DERRICKS, 40, commands.derricks_commands(resources));
-  return ai.groups.add_group(SCOUTS, 50, commands.scouts_commands(resources));
+  ai.groups.add_group(DERRICKS, 40, commands.derricks_commands());
+  return ai.groups.add_group(SCOUTS, 50, commands.scouts_commands());
 };
 
 Command.prototype.base_commands = function() {
@@ -1598,14 +1594,15 @@ Command.prototype.factory_commands = function() {
   return WZArray.bless(commands);
 };
 
-Command.prototype.derricks_commands = function(derricks) {
-  var commands, derrick, _i, _len;
+Command.prototype.derricks_commands = function() {
+  var commands, derrick, _i, _len, _ref;
   this.limit = 3;
   this.savings = 0;
   this.cost = 100;
   commands = WZArray.bless([]);
-  for (_i = 0, _len = derricks.length; _i < _len; _i++) {
-    derrick = derricks[_i];
+  _ref = this.resources;
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    derrick = _ref[_i];
     commands.push(this.immediately(this.one(this.truck(this.maintains(this.resource_extractor(this.at(derrick.x, derrick.y)))))));
   }
   Scouter.bless(commands);
@@ -1614,14 +1611,15 @@ Command.prototype.derricks_commands = function(derricks) {
   return commands;
 };
 
-Command.prototype.scouts_commands = function(derricks) {
-  var commands, derrick, _i, _len;
+Command.prototype.scouts_commands = function() {
+  var commands, derrick, _i, _len, _ref;
   this.limit = 12;
   this.savings = 0;
   this.cost = 0;
   commands = WZArray.bless([]);
-  for (_i = 0, _len = derricks.length; _i < _len; _i++) {
-    derrick = derricks[_i];
+  _ref = this.resources;
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    derrick = _ref[_i];
     commands.push(this.immediately(this.one(this.gun(this.scouts(this.at(derrick.x, derrick.y))))));
   }
   Scouter.bless(commands);
@@ -1690,7 +1688,6 @@ Ai = (function() {
 
   Ai.prototype.startLevel = function() {
     this.groups.reserve = CyberBorg.enum_droid();
-    cyberBorg.resources = CyberBorg.get_resources(this.groups.reserve.center());
     script();
     return this.groups.sort(function(a, b) {
       return a.rank - b.rank;

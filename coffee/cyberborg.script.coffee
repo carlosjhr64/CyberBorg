@@ -24,8 +24,6 @@ allowed_hqless_build = (command) ->
   false
 
 script = () ->
-  resources = cyberBorg.resources
-  reserve = ai.groups.reserve
   # We'll create many groups besides the reserve, and
   # we'll keep them in cyberBorg.groups.
   # For this AI, we won't command individual droids directly.
@@ -53,8 +51,8 @@ script = () ->
   ai.groups.add_group(LABS, 30, commands.lab_commands())
 
   # More groups...
-  ai.groups.add_group(DERRICKS, 40, commands.derricks_commands(resources))
-  ai.groups.add_group(SCOUTS, 50, commands.scouts_commands(resources))
+  ai.groups.add_group(DERRICKS, 40, commands.derricks_commands())
+  ai.groups.add_group(SCOUTS, 50, commands.scouts_commands())
 
 # Our first concern is our base.
 # We'll build it up and here forth react to events in the game.
@@ -123,12 +121,12 @@ Command::factory_commands = () ->
   commands.push(truck)
   WZArray.bless(commands)
 
-Command::derricks_commands = (derricks) ->
+Command::derricks_commands = () ->
   @limit = 3 # Group size limit
   @savings = 0 # TODO explain
   @cost = 100 # default cost of command
   commands = WZArray.bless([])
-  for derrick in derricks
+  for derrick in @resources
     commands.push(
       @immediately @one @truck @maintains @resource_extractor @at derrick.x, derrick.y)
   # Eight derricks starting from derrick #0
@@ -137,12 +135,12 @@ Command::derricks_commands = (derricks) ->
   commands.offset = 0
   commands
 
-Command::scouts_commands = (derricks) ->
+Command::scouts_commands = () ->
   @limit = 12 # Group size limit
   @savings = 0 # TODO explain
   @cost = 0 # default cost of command
   commands = WZArray.bless([])
-  for derrick in derricks
+  for derrick in @resources
     commands.push(
       @immediately @one @gun @scouts @at derrick.x, derrick.y)
   # Five derricks starting at derrick #3
