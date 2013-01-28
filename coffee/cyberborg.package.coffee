@@ -81,8 +81,6 @@ class CyberBorg
   ###################
 
   constructor: () ->
-    # Stalled units waiting for enough power to continue their command
-    @stalled = []
     # Quick access to reseve and resource list
     @resources = null
     # Has the headquaters been built?

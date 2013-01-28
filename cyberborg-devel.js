@@ -837,7 +837,6 @@ CyberBorg = (function() {
 
 
   function CyberBorg() {
-    this.stalled = [];
     this.resources = null;
     this.pos = [];
   }
@@ -1650,6 +1649,7 @@ Ai = (function() {
     this.hq = false;
     this.power = null;
     this.groups = Groups.bless([]);
+    this.stalled = [];
   }
 
   Ai.prototype.update = function(event) {
@@ -1802,7 +1802,7 @@ Ai = (function() {
       if (research === completed) {
         return group.layoffs(command);
       } else {
-        return cyberBorg.stalled.push(structure);
+        return this.stalled.push(structure);
       }
     }
   };
@@ -1817,7 +1817,7 @@ Ai = (function() {
   Ai.prototype.stalled_units = function() {
     var command, stalled, unit;
     stalled = [];
-    while (unit = cyberBorg.stalled.shift()) {
+    while (unit = this.stalled.shift()) {
       command = unit.command;
       this.power -= command.cost;
       if (this.power > command.power) {
@@ -1831,7 +1831,7 @@ Ai = (function() {
         stalled.push(unit);
       }
     }
-    return cyberBorg.stalled = stalled;
+    return this.stalled = stalled;
   };
 
   Ai.prototype.group_executions = function(event) {

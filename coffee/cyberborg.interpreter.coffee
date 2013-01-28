@@ -10,6 +10,8 @@ class Ai
     @hq = false
     @power = null # Used to keep track of power consumption.
     @groups = Groups.bless([])
+    # Stalled units waiting for enough power to continue their command
+    @stalled = []
 
   update: (event) ->
     @power = playerPower(me)
@@ -185,7 +187,7 @@ class Ai
         group.layoffs(command)
       else
         # assume stalled...
-        cyberBorg.stalled.push(structure)
+        @stalled.push(structure)
 
   # A DroidIdle event occurs typically at the end of a move command.
   # The droid arrives and awaits new commands.
@@ -200,7 +202,7 @@ class Ai
   # Right now, only research labs are expected in the list
   stalled_units: () ->
     stalled = []
-    while unit = cyberBorg.stalled.shift()
+    while unit = @stalled.shift()
       command = unit.command
       # regardless of the command's execution, we  deduct from power
       # the command's cost to make subsequent commands aware of
@@ -214,7 +216,7 @@ class Ai
       else
         # push unit into stalled list
         stalled.push(unit)
-    cyberBorg.stalled = stalled
+    @stalled = stalled
 
   # This is the work horse of the AI.
   # We iterate through all the groups,
