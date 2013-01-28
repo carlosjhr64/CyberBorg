@@ -8,16 +8,14 @@ class Ai
   constructor: () ->
     @trace = new Trace()
     @hq = false
+    @power = null # Used to keep track of power consumption.
 
-  # Refactoring in this AI showed that it made sense to have a single
-  # event function pass an object describing the event.
-  # The original JS API event functions are found in cyberborg.events.coffee.
-  # After some data wrapping, the event data are funnel into a single event
-  # function here.
-  events: (event) ->
+  update: (event) ->
+    @power = playerPower(me)
     cyberBorg.update()
     start_trace(event)	if @trace.on
 
+  switches: (event) ->
     switch event.name
       when 'StartLevel'
         @startLevel()
@@ -36,6 +34,14 @@ class Ai
       # We should catch all possibilities, but in case we missed something...
       else @trace.red("#{event.name} NOT HANDLED!")
 
+  # Refactoring in this AI showed that it made sense to have a single
+  # event function pass an object describing the event.
+  # The original JS API event functions are found in cyberborg.events.coffee.
+  # After some data wrapping, the event data are funnel into a single event
+  # function here.
+  events: (event) ->
+    @update(event)
+    @switches(event)
     # Next see what commands the groups can execute
     @group_executions(event)
     # Next, due to bugs either in this script or in the game...
@@ -198,8 +204,8 @@ class Ai
       # regardless of the command's execution, we  deduct from power
       # the command's cost to make subsequent commands aware of
       # the actual power available to them.
-      cyberBorg.power -= command.cost
-      if cyberBorg.power > command.power
+      @power -= command.cost
+      if @power > command.power
         unless unit.executes(command)
           # Unexpected error... why would this ever happen?
           @trace.red "#{unit.name} could not execute #{command.order.order_map()}"

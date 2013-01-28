@@ -73,7 +73,7 @@ class Group
   execute: (command) ->
     count = 0
     # If the power requirement is zero, just go ahead...
-    if ((command.power is 0) or (cyberBorg.power > command.power))
+    if ((command.power is 0) or (ai.power > command.power))
       count = @order_units(command)
       # Does the command have it's own execute?
       if command.execute?
@@ -88,8 +88,8 @@ class Group
     # we want to make the lower ranks aware of the power
     # actually available for them... that we're saving toward this
     # command's goals.
-    cyberBorg.power -= command.cost
+    ai.power -= command.cost
     # If we are not able to execute the command,
     # deduct additional amount we want to save for.
-    cyberBorg.power -= command.savings if count is 0 and command.savings?
+    ai.power -= command.savings if count is 0 and command.savings?
     return count

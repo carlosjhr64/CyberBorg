@@ -1,6 +1,6 @@
 # Let's find problems and fix'em.
 start_trace = (event) ->
-  ai.trace.out "Power level: #{cyberBorg.power} in #{event.name}"
+  ai.trace.out "Power level: #{ai.power} in #{event.name}"
   if structure = event.structure
     ai.trace.out "\tStructure: #{structure.namexy()}\tCost: #{structure.cost}"
   if research = event.research

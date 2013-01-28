@@ -83,9 +83,6 @@ class CyberBorg
   constructor: () ->
     # Need a way to register groups
     @groups = WZArray.bless([])
-    # Used to keep track of power consumption.
-    # Gets updated in update, below.
-    @power = 0
     # Stalled units waiting for enough power to continue their command
     @stalled = []
     # Quick access to reseve and resource list
@@ -103,7 +100,6 @@ class CyberBorg
 
   # Updates all game objects, group by group.
   update: () ->
-    @power = playerPower(me)
     for group in @groups
       for object in group.list
         object.update() if object.game_time < gameTime

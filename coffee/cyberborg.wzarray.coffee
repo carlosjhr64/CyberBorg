@@ -7,6 +7,18 @@ Array::first = ()-> @[0]
 Array::last = ()-> @[@length-1]
 Array::shuffle = -> @sort -> 0.5 - Math.random()
 
+####################
+### ***Groups*** ###
+####################
+class Groups
+  @bless = (array) ->
+    if array.is_groups
+      ai.trace.red "Warning: Groups re'bless'ing"
+      return array
+    array[name] = method for name, method of Groups.prototype
+    array.is_groups = true
+    array
+
 #####################
 ### ***WZArray*** ###
 #####################
