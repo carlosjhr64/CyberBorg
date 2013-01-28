@@ -24,7 +24,7 @@ class Command
   # @cost is the default cost of structures
   # @savings is... TODO
   constructor: (@limit=0, @savings=0, @cost=0) ->
-    reserve = cyberBorg.reserve
+    reserve = ai.groups.reserve
     resources = cyberBorg.resources
     # Center point of our trucks.
     # ie. (10.5,236)

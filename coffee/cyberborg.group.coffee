@@ -4,7 +4,7 @@ class Group
     WZArray.bless(@commands) unless @commands.is_wzarray
     WZArray.bless(@group) unless @group.is_wzarray
     @list = @group # alias
-    @reserve = cyberBorg.reserve
+    @reserve = ai.groups.reserve
 
   add: (droid) ->
     # Need to enforce the reserve condition

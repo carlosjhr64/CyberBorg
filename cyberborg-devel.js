@@ -165,7 +165,7 @@ WZObject = (function() {
 
   WZObject.prototype.maintain_structure = function(structure, at) {
     var built;
-    if (built = cyberBorg.structure_at(at)) {
+    if (built = ai.groups.structure_at(at)) {
       return this.repair_structure(built);
     }
     return this.build_structure(structure, at);
@@ -262,8 +262,138 @@ Groups = (function() {
       method = _ref[name];
       array[name] = method;
     }
+    array.reserve = [];
     array.is_groups = true;
     return array;
+  };
+
+  Groups.prototype.add_group = function(name, rank, commands) {
+    return this.push(new Group(name, rank, commands));
+  };
+
+  Groups.prototype.update = function() {
+    var group, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _results;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      group = this[_i];
+      _ref = group.list;
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        object = _ref[_j];
+        if (object.game_time < gameTime) {
+          object.update();
+        }
+      }
+    }
+    _ref1 = this.reserve;
+    _results = [];
+    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+      object = _ref1[_k];
+      if (object.game_time < gameTime) {
+        _results.push(object.update());
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  };
+
+  Groups.prototype.for_all = function(test_of) {
+    var group, list, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
+    list = [];
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      group = this[_i];
+      _ref = group.list;
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        object = _ref[_j];
+        if (test_of(object)) {
+          list.push(object);
+        }
+      }
+    }
+    _ref1 = this.reserve;
+    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+      object = _ref1[_k];
+      if (test_of(object)) {
+        list.push(object);
+      }
+    }
+    return WZArray.bless(list);
+  };
+
+  Groups.prototype.for_one = function(test_of) {
+    var group, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      group = this[_i];
+      _ref = group.list;
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        object = _ref[_j];
+        if (test_of(object)) {
+          return {
+            object: object,
+            group: group
+          };
+        }
+      }
+    }
+    _ref1 = this.reserve;
+    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+      object = _ref1[_k];
+      if (test_of(object)) {
+        return {
+          object: object,
+          group: {
+            list: this.reserve
+          }
+        };
+      }
+    }
+    return null;
+  };
+
+  Groups.prototype.find = function(target) {
+    var _ref;
+    return (_ref = this.for_one(function(object) {
+      return object.id === target.id;
+    })) != null ? _ref.object : void 0;
+  };
+
+  Groups.prototype.finds = function(target) {
+    return this.for_one(function(object) {
+      return object.id === target.id;
+    });
+  };
+
+  Groups.prototype.structure_at = function(at) {
+    var found, _ref;
+    found = function(object) {
+      return object.x === at.x && object.y === at.y && object.type === STRUCTURE;
+    };
+    return (_ref = this.for_one(found)) != null ? _ref.object : void 0;
+  };
+
+  Groups.prototype.get_command = function(cid) {
+    var command, group, _i, _j, _len, _len1, _ref;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      group = this[_i];
+      _ref = group.commands;
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        command = _ref[_j];
+        if (command.cid === cid) {
+          return command;
+        }
+      }
+    }
+    return null;
+  };
+
+  Groups.prototype.named = function(name) {
+    var object, _i, _len;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      object = this[_i];
+      if (object.name === name) {
+        return object;
+      }
+    }
+    return null;
   };
 
   return Groups;
@@ -353,13 +483,13 @@ WZArray = (function() {
 
   WZArray.prototype.not_in = function(group) {
     return this.filters(function(object) {
-      return group.group.indexOfObject(object) === WZArray.NONE;
+      return group.list.indexOfObject(object) === WZArray.NONE;
     });
   };
 
   WZArray.prototype["in"] = function(group) {
     return this.filters(function(object) {
-      return group.group.indexOfObject(object) > WZArray.NONE;
+      return group.list.indexOfObject(object) > WZArray.NONE;
     });
   };
 
@@ -459,17 +589,6 @@ WZArray = (function() {
   /* ACCESSING
   */
 
-
-  WZArray.prototype.named = function(name) {
-    var object, _i, _len;
-    for (_i = 0, _len = this.length; _i < _len; _i++) {
-      object = this[_i];
-      if (object.name === name) {
-        return object;
-      }
-    }
-    return null;
-  };
 
   WZArray.prototype.get_command = function(cid) {
     var command, _i, _len;
@@ -584,7 +703,7 @@ Group = (function() {
       WZArray.bless(this.group);
     }
     this.list = this.group;
-    this.reserve = cyberBorg.reserve;
+    this.reserve = ai.groups.reserve;
   }
 
   Group.prototype.add = function(droid) {
@@ -718,44 +837,14 @@ CyberBorg = (function() {
 
 
   function CyberBorg() {
-    this.groups = WZArray.bless([]);
     this.stalled = [];
-    this.reserve = null;
     this.resources = null;
     this.pos = [];
   }
 
-  CyberBorg.prototype.add_group = function(name, rank, commands) {
-    return this.groups.push(new Group(name, rank, commands));
-  };
-
   /* UPDATES
   */
 
-
-  CyberBorg.prototype.update = function() {
-    var group, object, _i, _len, _ref, _results;
-    _ref = this.groups;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      group = _ref[_i];
-      _results.push((function() {
-        var _j, _len1, _ref1, _results1;
-        _ref1 = group.list;
-        _results1 = [];
-        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-          object = _ref1[_j];
-          if (object.game_time < gameTime) {
-            _results1.push(object.update());
-          } else {
-            _results1.push(void 0);
-          }
-        }
-        return _results1;
-      })());
-    }
-    return _results;
-  };
 
   /* GETS
   */
@@ -768,98 +857,6 @@ CyberBorg = (function() {
       this.pos[key] = pos;
     }
     return this.pos[key];
-  };
-
-  CyberBorg.prototype.for_all = function(test_of) {
-    var group, list, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
-    list = [];
-    _ref = this.groups;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      group = _ref[_i];
-      _ref1 = group.list;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        object = _ref1[_j];
-        if (test_of(object)) {
-          list.push(object);
-        }
-      }
-    }
-    _ref2 = this.reserve;
-    for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-      object = _ref2[_k];
-      if (test_of(object)) {
-        list.push(object);
-      }
-    }
-    return WZArray.bless(list);
-  };
-
-  CyberBorg.prototype.for_one = function(test_of) {
-    var group, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
-    _ref = this.groups;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      group = _ref[_i];
-      _ref1 = group.list;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        object = _ref1[_j];
-        if (test_of(object)) {
-          return {
-            object: object,
-            group: group
-          };
-        }
-      }
-    }
-    _ref2 = this.reserve;
-    for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-      object = _ref2[_k];
-      if (test_of(object)) {
-        return {
-          object: object,
-          group: {
-            list: this.reserve
-          }
-        };
-      }
-    }
-    return null;
-  };
-
-  CyberBorg.prototype.find = function(target) {
-    var _ref;
-    return (_ref = this.for_one(function(object) {
-      return object.id === target.id;
-    })) != null ? _ref.object : void 0;
-  };
-
-  CyberBorg.prototype.finds = function(target) {
-    return this.for_one(function(object) {
-      return object.id === target.id;
-    });
-  };
-
-  CyberBorg.prototype.structure_at = function(at) {
-    var found, _ref;
-    found = function(object) {
-      return object.x === at.x && object.y === at.y && object.type === STRUCTURE;
-    };
-    return (_ref = this.for_one(found)) != null ? _ref.object : void 0;
-  };
-
-  CyberBorg.prototype.get_command = function(cid) {
-    var command, group, _i, _j, _len, _len1, _ref, _ref1;
-    _ref = this.groups;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      group = _ref[_i];
-      _ref1 = group.commands;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        command = _ref1[_j];
-        if (command.cid === cid) {
-          return command;
-        }
-      }
-    }
-    return null;
   };
 
   /* ENUMS
@@ -995,7 +992,7 @@ Command = (function() {
     this.limit = limit != null ? limit : 0;
     this.savings = savings != null ? savings : 0;
     this.cost = cost != null ? cost : 0;
-    reserve = cyberBorg.reserve;
+    reserve = ai.groups.reserve;
     resources = cyberBorg.resources;
     this.tc = Command.to_at(reserve.trucks().center());
     if (ai.trace.on) {
@@ -1445,7 +1442,7 @@ gotcha_working = function(droid, command) {
 gotcha_selected = function(event) {
   var count, droid, _i, _len, _ref;
   count = 0;
-  _ref = cyberBorg.for_all(function(object) {
+  _ref = ai.groups.for_all(function(object) {
     return object.selected;
   });
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -1464,7 +1461,7 @@ gotcha_idle = function(event) {
   is_quitter = function(object) {
     return object.order === 0 && (object.command != null);
   };
-  _ref = cyberBorg.for_all(is_quitter);
+  _ref = ai.groups.for_all(is_quitter);
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     droid = _ref[_i];
     count += 1;
@@ -1487,7 +1484,7 @@ gotcha_rogue = function(event) {
     }
     return false;
   };
-  _ref = cyberBorg.for_all(function(object) {
+  _ref = ai.groups.for_all(function(object) {
     return rogue(object);
   });
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -1559,13 +1556,13 @@ allowed_hqless_build = function(command) {
 script = function() {
   var commands, reserve, resources;
   resources = cyberBorg.resources;
-  reserve = cyberBorg.reserve;
+  reserve = ai.groups.reserve;
   commands = new Command();
-  cyberBorg.add_group(BASE, 10, commands.base_commands());
-  cyberBorg.add_group(FACTORIES, 20, commands.factory_commands());
-  cyberBorg.add_group(LABS, 30, commands.lab_commands());
-  cyberBorg.add_group(DERRICKS, 40, commands.derricks_commands(resources));
-  return cyberBorg.add_group(SCOUTS, 50, commands.scouts_commands(resources));
+  ai.groups.add_group(BASE, 10, commands.base_commands());
+  ai.groups.add_group(FACTORIES, 20, commands.factory_commands());
+  ai.groups.add_group(LABS, 30, commands.lab_commands());
+  ai.groups.add_group(DERRICKS, 40, commands.derricks_commands(resources));
+  return ai.groups.add_group(SCOUTS, 50, commands.scouts_commands(resources));
 };
 
 Command.prototype.base_commands = function() {
@@ -1652,11 +1649,12 @@ Ai = (function() {
     this.trace = new Trace();
     this.hq = false;
     this.power = null;
+    this.groups = Groups.bless([]);
   }
 
   Ai.prototype.update = function(event) {
     this.power = playerPower(me);
-    cyberBorg.update();
+    this.groups.update();
     if (this.trace.on) {
       return start_trace(event);
     }
@@ -1691,10 +1689,10 @@ Ai = (function() {
   };
 
   Ai.prototype.startLevel = function() {
-    cyberBorg.reserve = CyberBorg.enum_droid();
-    cyberBorg.resources = CyberBorg.get_resources(cyberBorg.reserve.center());
+    this.groups.reserve = CyberBorg.enum_droid();
+    cyberBorg.resources = CyberBorg.get_resources(this.groups.reserve.center());
     script();
-    return cyberBorg.groups.sort(function(a, b) {
+    return this.groups.sort(function(a, b) {
       return a.rank - b.rank;
     });
   };
@@ -1703,7 +1701,7 @@ Ai = (function() {
     if (droid.command) {
       group.layoffs(droid.command);
     }
-    cyberBorg.reserve.push(structure);
+    this.groups.reserve.push(structure);
     if (structure.type === STRUCTURE) {
       switch (structure.stattype) {
         case HQ:
@@ -1726,13 +1724,13 @@ Ai = (function() {
     if (structure != null ? structure.command : void 0) {
       group.layoffs(structure.command);
     }
-    cyberBorg.reserve.push(droid);
+    this.groups.reserve.push(droid);
     return this.helping(droid);
   };
 
   Ai.prototype.helping = function(unit) {
     var cid, command, employed, group, help_wanted, _i, _len, _ref;
-    _ref = cyberBorg.groups;
+    _ref = this.groups;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       group = _ref[_i];
       command = group.commands.current();
@@ -1776,9 +1774,9 @@ Ai = (function() {
   report = function(who) {
     var droid, empty, list, _i, _len, _ref, _ref1, _ref2, _ref3;
     if (who === CyberBorg.RESERVE) {
-      list = cyberBorg.reserve;
+      list = this.groups.reserve;
     } else {
-      list = (_ref = cyberBorg.groups.named(who)) != null ? _ref.list : void 0;
+      list = (_ref = this.groups.named(who)) != null ? _ref.list : void 0;
     }
     if (list) {
       empty = true;
@@ -1837,10 +1835,10 @@ Ai = (function() {
   };
 
   Ai.prototype.group_executions = function(event) {
-    var command, commands, group, groups, name, _i, _len;
-    groups = cyberBorg.groups;
-    for (_i = 0, _len = groups.length; _i < _len; _i++) {
-      group = groups[_i];
+    var command, commands, group, name, _i, _len, _ref;
+    _ref = this.groups;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      group = _ref[_i];
       name = group.name;
       if (!(this.hq || base_group(name))) {
         continue;
@@ -1889,7 +1887,7 @@ eventDestroyed = function(object) {
   var found, group, obj;
   if (object.name !== 'Oil Resource') {
     group = null;
-    if (object.player === me && (found = cyberBorg.finds(object))) {
+    if (object.player === me && (found = ai.groups.finds(object))) {
       group = found.group;
       object = found.object;
       group.list.removeObject(object);
@@ -1907,7 +1905,7 @@ eventDestroyed = function(object) {
 
 eventDroidBuilt = function(droid, structure) {
   var found, obj;
-  found = cyberBorg.finds(structure);
+  found = ai.groups.finds(structure);
   obj = {
     name: 'DroidBuilt',
     droid: new WZObject(droid),
@@ -1919,7 +1917,7 @@ eventDroidBuilt = function(droid, structure) {
 
 eventDroidIdle = function(droid) {
   var found, obj;
-  found = cyberBorg.finds(droid);
+  found = ai.groups.finds(droid);
   obj = {
     name: 'DroidIdle',
     droid: found.object,
@@ -1930,7 +1928,7 @@ eventDroidIdle = function(droid) {
 
 eventResearched = function(research, structure) {
   var found, obj;
-  found = cyberBorg.finds(structure);
+  found = ai.groups.finds(structure);
   obj = {
     name: 'Researched',
     research: research,
@@ -1950,7 +1948,7 @@ eventStartLevel = function() {
 
 eventStructureBuilt = function(structure, droid) {
   var found, obj;
-  found = cyberBorg.finds(droid);
+  found = ai.groups.finds(droid);
   obj = {
     name: 'StructureBuilt',
     structure: new WZObject(structure),

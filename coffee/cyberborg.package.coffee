@@ -81,28 +81,17 @@ class CyberBorg
   ###################
 
   constructor: () ->
-    # Need a way to register groups
-    @groups = WZArray.bless([])
     # Stalled units waiting for enough power to continue their command
     @stalled = []
     # Quick access to reseve and resource list
-    @reserve = null
     @resources = null
     # Has the headquaters been built?
     @pos = []
-
-  add_group: (name, rank, commands) ->
-    @groups.push(new Group(name, rank, commands))
 
   ###############
   ### UPDATES ###
   ###############
 
-  # Updates all game objects, group by group.
-  update: () ->
-    for group in @groups
-      for object in group.list
-        object.update() if object.game_time < gameTime
 
   ############
   ### GETS ###
@@ -117,48 +106,6 @@ class CyberBorg
     if pos
       @pos[key] = pos
     @pos[key]
-
-  for_all: (test_of) ->
-    list = []
-    for group in @groups
-      for object in group.list
-        list.push(object) if test_of(object)
-    for object in @reserve
-      list.push(object) if test_of(object)
-    return WZArray.bless(list)
-
-  for_one: (test_of) ->
-    for group in @groups
-      for object in group.list
-        return({object:object,group:group}) if test_of(object)
-    for object in @reserve
-      if test_of(object)
-        # Only time this happens in on eventDestroyed?
-        return({object:object,group:{list:@reserve}})
-    return null
-
-  # When we get pre-existing game objects from WZ's JS API,
-  # we need to find them in our groups.
-  # Otherwise we end up with duplicates.
-  find: (target) -> @for_one((object) -> object.id is target.id)?.object
-
-  # For cases where we want to get both our copy of the object and
-  # the group it's in.
-  finds: (target) -> @for_one((object)->  object.id is target.id)
-
-  structure_at: (at) ->
-    found = (object) ->
-      object.x is at.x and
-      object.y is at.y and
-      object.type is STRUCTURE
-    @for_one(found)?.object
-
-  # Returns the first command found with the given cid
-  get_command: (cid) ->
-    for group in @groups
-      for command in group.commands
-        return command if command.cid is cid
-    return null
 
   #############
   ### ENUMS ###

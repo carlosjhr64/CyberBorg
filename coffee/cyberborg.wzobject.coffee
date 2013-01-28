@@ -77,7 +77,7 @@ class WZObject
 
   # Let's try to be a bit smarter....
   maintain_structure: (structure, at) ->
-    if built = cyberBorg.structure_at(at)
+    if built = ai.groups.structure_at(at)
       return @repair_structure(built)
     @build_structure(structure, at)
 

@@ -24,7 +24,7 @@ eventDestroyed = (object) ->
     group = null
     # Might not actually belong to us...
     if object.player is me and
-    found = cyberBorg.finds(object)
+    found = ai.groups.finds(object)
       group = found.group
       object = found.object
       # object is gone.
@@ -39,7 +39,7 @@ eventDestroyed = (object) ->
     ai.events(obj)
 
 eventDroidBuilt = (droid, structure) ->
-  found = cyberBorg.finds(structure)
+  found = ai.groups.finds(structure)
   obj =
     name: 'DroidBuilt'
     # Here, droid is an new game object
@@ -50,7 +50,7 @@ eventDroidBuilt = (droid, structure) ->
   ai.events(obj)
 
 eventDroidIdle = (droid) ->
-  found = cyberBorg.finds(droid)
+  found = ai.groups.finds(droid)
   obj =
     name: 'DroidIdle'
     # Here, droid is pre-existing!
@@ -59,7 +59,7 @@ eventDroidIdle = (droid) ->
   ai.events(obj)
 
 eventResearched = (research, structure) ->
-  found = cyberBorg.finds(structure)
+  found = ai.groups.finds(structure)
   obj =
     name: 'Researched'
     research: research
@@ -72,7 +72,7 @@ eventStartLevel = () ->
   ai.events(obj)
 
 eventStructureBuilt = (structure, droid) ->
-  found = cyberBorg.finds(droid)
+  found = ai.groups.finds(droid)
   obj =
     name: 'StructureBuilt'
     # Here, structure is new

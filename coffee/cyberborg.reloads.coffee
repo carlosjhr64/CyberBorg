@@ -57,7 +57,7 @@ gotcha_working = (droid, command = droid.command) ->
 gotcha_selected = (event) ->
   count = 0
   # Selected units
-  for droid in cyberBorg.for_all((object) -> object.selected)
+  for droid in ai.groups.for_all((object) -> object.selected)
     count += 1
     bug_report("Selected", droid, event) if ai.trace.on
   return count
@@ -67,7 +67,7 @@ gotcha_idle = (event) ->
   count = 0
   # Idle units under command
   is_quitter = (object) -> object.order is 0 and object.command?
-  for droid in cyberBorg.for_all(is_quitter)
+  for droid in ai.groups.for_all(is_quitter)
     count += 1
     bug_report("Quitter", droid, event) if ai.trace.on
     # OK, let's circumvent the game bugs...
@@ -82,7 +82,7 @@ gotcha_rogue = (event) ->
       # Units under command not idle but acting on different orders
       return true unless (object.order is 0) or (object.order is object.dorder)
     return false
-  for droid in cyberBorg.for_all((object) -> rogue(object))
+  for droid in ai.groups.for_all((object) -> rogue(object))
     count += 1
     bug_report("Rogue", droid, event) if ai.trace.on
     command = droid.command

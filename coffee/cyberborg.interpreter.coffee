@@ -9,10 +9,11 @@ class Ai
     @trace = new Trace()
     @hq = false
     @power = null # Used to keep track of power consumption.
+    @groups = Groups.bless([])
 
   update: (event) ->
     @power = playerPower(me)
-    cyberBorg.update()
+    @groups.update()
     start_trace(event)	if @trace.on
 
   switches: (event) ->
@@ -56,14 +57,14 @@ class Ai
     # or droids in general.  Let's see what we have.
     # CyberBorg.enum_droid returns the units we currently have.
     # We'll put them in a reserve for now.
-    cyberBorg.reserve = CyberBorg.enum_droid()
+    @groups.reserve = CyberBorg.enum_droid()
     # cyberBorg can list all the resources available on the map and
     # sort them according to distance from where we are.
     # It will provide the AI a guide to our territorial expansion.
-    cyberBorg.resources = CyberBorg.get_resources(cyberBorg.reserve.center())
+    cyberBorg.resources = CyberBorg.get_resources(@groups.reserve.center())
     script()
     # This is probably the only time we'll need to sort groups.
-    cyberBorg.groups.sort (a, b) -> a.rank - b.rank
+    @groups.sort (a, b) -> a.rank - b.rank
 
   # When base group (or anyone else) builds a structure,
   # a "structure built" event triggers an eventStructureBuilt call.
@@ -79,7 +80,7 @@ class Ai
     # we need to get it started building droids.
     # So we push the structure into the reserve and
     # it should get picked up by the FACTORIES group in group_executions (below).
-    cyberBorg.reserve.push(structure)
+    @groups.reserve.push(structure)
     # There may be exceptional catches to be done per structure...
     if structure.type is STRUCTURE
       switch structure.stattype
@@ -105,14 +106,14 @@ class Ai
     # If it's a truck, maybe it should go to the nearest job?
     # Well, the style for this AI is to work with groups.
     # So what we'll do is add the new droids to the reserve.
-    cyberBorg.reserve.push(droid)
+    @groups.reserve.push(droid)
     # There may be ongoing jobs so let's see what available.
     @helping(droid)
 
   # helping is called whenever a droid finds itself idle, as
   # when it first gets created.
   helping: (unit) ->
-    for group in cyberBorg.groups
+    for group in @groups
       command = group.commands.current()
       cid = command?.cid
       # So for each ongoing job, check if it'll take the droid.
@@ -145,9 +146,9 @@ class Ai
   # Lists the units in the group by name, position, 'n stuff.
   report = (who) ->
     if who is CyberBorg.RESERVE
-      list = cyberBorg.reserve
+      list = @groups.reserve
     else
-      list = cyberBorg.groups.named(who)?.list
+      list = @groups.named(who)?.list
     if list
       empty = true
       for droid in list
@@ -220,8 +221,7 @@ class Ai
   # higher ranks first,
   # and let them execute commands as they can.
   group_executions: (event) ->
-    groups = cyberBorg.groups
-    for group in groups
+    for group in @groups
       name = group.name
       # For the sake of fairness to the human player,
       # this AI is crippled a bit without HQ.
