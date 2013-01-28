@@ -4,11 +4,9 @@
 # abstract it to any map.  So lets get CyberBorg to help us out.
 cyberBorg = new CyberBorg()
 
-trace = new Trace()
-
 class Ai
   constructor: () ->
-    @tmp = null # TODO
+    @trace = new Trace()
 
   # Refactoring in this AI showed that it made sense to have a single
   # event function pass an object describing the event.
@@ -17,7 +15,7 @@ class Ai
   # function here.
   events: (event) ->
     cyberBorg.update()
-    start_trace(event)	if trace.on
+    start_trace(event)	if @trace.on
 
     switch event.name
       when 'StartLevel'
@@ -35,7 +33,7 @@ class Ai
       when 'Chat'
         @chat(event.sender, event.to, event.message)
       # We should catch all possibilities, but in case we missed something...
-      else trace.red("#{event.name} NOT HANDLED!")
+      else @trace.red("#{event.name} NOT HANDLED!")
 
     # Next see what commands the groups can execute
     @group_executions(event)
@@ -132,9 +130,9 @@ class Ai
         when 'reload' then include("multiplay/skirmish/cyberborg-reloads.js")
         # Toggle tracing
         when 'trace'
-          trace.green("Tracing off.") if trace.on
-          trace.on = !trace.on
-          trace.green("Tracing on.") if trace.on
+          @trace.green("Tracing off.") if @trace.on
+          @trace.on = !@trace.on
+          @trace.green("Tracing on.") if @trace.on
         else console("What?")
 
   # Lists the units in the group by name, position, 'n stuff.
@@ -203,8 +201,8 @@ class Ai
       if cyberBorg.power > command.power
         unless unit.executes(command)
           # Unexpected error... why would this ever happen?
-          trace.red "#{unit.name} could not execute #{command.order.order_map()}"
-          trace.red "\t#{command.research}" if command.research
+          @trace.red "#{unit.name} could not execute #{command.order.order_map()}"
+          @trace.red "\t#{command.research}" if command.research
       else
         # push unit into stalled list
         stalled.push(unit)
@@ -228,6 +226,6 @@ class Ai
         unless group.execute(command)
           commands.revert()
           break
-        trace_command(command) if trace.on
+        trace_command(command) if @trace.on
     # For now, stalled units will be consider of lowest rank...
     @stalled_units() # have any stalled unit try to execute their command.

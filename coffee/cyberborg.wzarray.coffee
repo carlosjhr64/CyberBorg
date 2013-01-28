@@ -24,7 +24,7 @@ class WZArray
   # We'll take an Array and "bless" into it the methods in this class.
   @bless = (array) ->
     if array.is_wzarray
-      trace.red "Warning: WZArray re'bless'ing"
+      ai.trace.red "Warning: WZArray re'bless'ing"
       return array
     array[name] = method for name, method of WZArray.prototype
     array.is_wzarray = true
@@ -194,7 +194,7 @@ class WZArray
 class Scouter
   @bless = (array) ->
     if array.is_scouter
-      trace.red "Warning: Scouter re'bless'ing"
+      ai.trace.red "Warning: Scouter re'bless'ing"
       return array
     array[name] = method for name, method of Scouter.prototype
     array.offset = 0

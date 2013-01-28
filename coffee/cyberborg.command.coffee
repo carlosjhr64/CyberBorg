@@ -29,11 +29,11 @@ class Command
     # Center point of our trucks.
     # ie. (10.5,236)
     @tc = Command.to_at reserve.trucks().center()
-    trace.out "Trucks around #{@tc.x}, #{@tc.y}" if trace.on
+    ai.trace.out "Trucks around #{@tc.x}, #{@tc.y}" if ai.trace.on
     # Center point of our first 4 resources.
     # ie. (12, 236.5)
     @rc = Command.to_at WZArray.bless(resources[0..3]).center()
-    trace.out "Resources around #{@rc.x}, #{@rc.y}." if trace.on
+    ai.trace.out "Resources around #{@rc.x}, #{@rc.y}." if ai.trace.on
     # Which x direction towards resources
     @dx = 1
     @dx = -1 if @tc.x > @rc.x

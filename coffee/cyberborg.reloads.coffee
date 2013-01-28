@@ -1,12 +1,12 @@
 # Let's find problems and fix'em.
 start_trace = (event) ->
-  trace.out "Power level: #{cyberBorg.power} in #{event.name}"
+  ai.trace.out "Power level: #{cyberBorg.power} in #{event.name}"
   if structure = event.structure
-    trace.out "\tStructure: #{structure.namexy()}\tCost: #{structure.cost}"
+    ai.trace.out "\tStructure: #{structure.namexy()}\tCost: #{structure.cost}"
   if research = event.research
-    trace.out "\tResearch: #{event.research.name}\tCost: #{research.power}"
+    ai.trace.out "\tResearch: #{event.research.name}\tCost: #{research.power}"
   if droid = event.droid
-    trace.out "\tDroid: #{droid.namexy()}\tID:#{droid.id}\tCost: #{droid.cost}"
+    ai.trace.out "\tDroid: #{droid.namexy()}\tID:#{droid.id}\tCost: #{droid.cost}"
 
 trace_command = (command) ->
   keyvals = []
@@ -19,39 +19,39 @@ trace_command = (command) ->
         keyvals.push("execute:->")
       else
         keyvals.push("#{key}:#{command[key]}")
-  trace.blue(keyvals.sort().join(' '))
+  ai.trace.blue(keyvals.sort().join(' '))
 
 # The bug report.
 bug_report = (label, droid, event) ->
   order = droid.order
   dorder = droid.dorder
-  trace.out "#{label}:\t#{droid.namexy()}\tid:#{droid.id}\tevent:#{event.name}"
-  trace.out "\t\torder:#{order} => #{order.order_map()}"
-  trace.out "\t\tdorder:#{dorder} => #{dorder.order_map()}"
+  ai.trace.out "#{label}:\t#{droid.namexy()}\tid:#{droid.id}\tevent:#{event.name}"
+  ai.trace.out "\t\torder:#{order} => #{order.order_map()}"
+  ai.trace.out "\t\tdorder:#{dorder} => #{dorder.order_map()}"
   if command = droid.command
     corder = command.order
-    trace.out "\t\t#{corder.order_map()}\t##{corder}\tcid:#{command.cid}"
+    ai.trace.out "\t\t#{corder.order_map()}\t##{corder}\tcid:#{command.cid}"
     if command.structure
-      trace.out "\t\tstructure:#{command.structure}"
+      ai.trace.out "\t\tstructure:#{command.structure}"
     if at = command.at
-      trace.out "\t\tat:(#{at.x},#{at.y})"
+      ai.trace.out "\t\tat:(#{at.x},#{at.y})"
     if order is 0
-      trace.out "\t\tBUG: Quitter."
+      ai.trace.out "\t\tBUG: Quitter."
     else
-      trace.out "\t\tBUG: Order changed." unless order is droid.dorder
+      ai.trace.out "\t\tBUG: Order changed." unless order is droid.dorder
   if event.name is 'Destroyed'
-    trace.out "\t\t#{event.group?.name}'s #{event.object.namexy()} was destroyed."
+    ai.trace.out "\t\t#{event.group?.name}'s #{event.object.namexy()} was destroyed."
 
 # Re-issue command
 gotcha_working = (droid, command = droid.command) ->
-  centreView(droid.x, droid.y) if trace.on
+  centreView(droid.x, droid.y) if ai.trace.on
   if droid.executes(command)
     order = command.order
-    if trace.on
-      trace.green "\tRe-issued " +
+    if ai.trace.on
+      ai.trace.green "\tRe-issued " +
       "#{order.order_map()}, ##{order}, to #{droid.name}."
   else
-    trace.red("\t#{droid.name} is a lazy bum!")
+    ai.trace.red("\t#{droid.name} is a lazy bum!")
 
 # Report selected droids.
 gotcha_selected = (event) ->
@@ -59,7 +59,7 @@ gotcha_selected = (event) ->
   # Selected units
   for droid in cyberBorg.for_all((object) -> object.selected)
     count += 1
-    bug_report("Selected", droid, event) if trace.on
+    bug_report("Selected", droid, event) if ai.trace.on
   return count
 
 # Report idle droids.
@@ -69,7 +69,7 @@ gotcha_idle = (event) ->
   is_quitter = (object) -> object.order is 0 and object.command?
   for droid in cyberBorg.for_all(is_quitter)
     count += 1
-    bug_report("Quitter", droid, event) if trace.on
+    bug_report("Quitter", droid, event) if ai.trace.on
     # OK, let's circumvent the game bugs...
     gotcha_working(droid)
   return count
@@ -84,13 +84,13 @@ gotcha_rogue = (event) ->
     return false
   for droid in cyberBorg.for_all((object) -> rogue(object))
     count += 1
-    bug_report("Rogue", droid, event) if trace.on
+    bug_report("Rogue", droid, event) if ai.trace.on
     command = droid.command
     if command?.order is 28
-      centreView(droid.x, droid.y) if trace.on
+      centreView(droid.x, droid.y) if ai.trace.on
       gotcha_working(droid, command)
     else
-      trace.red("\tUncaught rogue case.")
+      ai.trace.red("\tUncaught rogue case.")
   return count
 
 gotchas = (event) ->
@@ -98,5 +98,5 @@ gotchas = (event) ->
   for gotcha in [gotcha_selected, gotcha_idle, gotcha_rogue]
     if count = gotcha(event)
       counts += count
-      trace.out "" if trace.on
-  trace.out "" if trace.on and counts
+      ai.trace.out "" if ai.trace.on
+  ai.trace.out "" if ai.trace.on and counts
