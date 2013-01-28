@@ -63,7 +63,7 @@ class WZObject
         unless pos.x is at.x and pos.y is at.y
           # We don't like changes to our AI.
           # WUT U DO!???
-          red_alert "Game AI moved build #{structure} "+
+          trace.red "Game AI moved build #{structure} "+
           "from #{at.x},#{at.y} to #{pos.x},#{pos.y}"
     pos
 
@@ -119,7 +119,7 @@ class WZObject
         @order = CORDER_PASS
         true
       else
-        red_alert "#{order.order_map()}, ##{order}, un-implemented."
+        trace.red "#{order.order_map()}, ##{order}, un-implemented."
         false
     # If the unit was able to take the command...
     if ok

@@ -20,7 +20,7 @@ class Group
       @group.removeObject(droid)
       @reserve.push(droid)
     else
-      red_alert "Can't remove #{droid.name} b/c it's not in group."
+      trace.red "Can't remove #{droid.name} b/c it's not in group."
 
   layoffs: (command) ->
     # Ensure the AI's process...
@@ -31,7 +31,7 @@ class Group
         unit.command = null # droid laidoff
       command.cid = null # command completed
     else
-      red_alert "Command without cid"
+      trace.red "Command without cid"
 
   units: (command) ->
     min = command.min
@@ -82,7 +82,7 @@ class Group
         try
           count = command.execute(@)
         catch error
-          red_alert error
+          trace.red error
           count = 0
     # We regardless deduct the command cost from available power b/c
     # we want to make the lower ranks aware of the power
