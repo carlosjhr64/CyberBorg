@@ -65,21 +65,8 @@ class CyberBorg
     'FORDER_MANUFACTURE'	# 51
     'LORDER_RESEARCH'		# 52
     'CORDER_PASS'		# 53
-    'IS_LAIDOFF'			# 54
+    'IS_LAIDOFF'		# 54
   ]
-
-  #######################
-  ### CLASS VARIABLES ###
-  #######################
-
-  ###############
-  ### UPDATES ###
-  ###############
-
-
-  ############
-  ### GETS ###
-  ############
 
   #############
   ### ENUMS ###
