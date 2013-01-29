@@ -4,8 +4,6 @@ class CyberBorg
   ### CONSTANTS ###
   #################
 
-  @RESERVE = 'Reserve'
-
   @NORTH = 0
   @EAST = 90
   @SOUTH = 180

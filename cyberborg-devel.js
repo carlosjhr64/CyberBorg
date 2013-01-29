@@ -845,8 +845,6 @@ CyberBorg = (function() {
 
   function CyberBorg() {}
 
-  CyberBorg.RESERVE = 'Reserve';
-
   CyberBorg.NORTH = 0;
 
   CyberBorg.EAST = 90;
@@ -1668,7 +1666,8 @@ Command.prototype.lab_commands = function() {
 };
 
 Ai = (function() {
-  var report;
+
+  Ai.RESERVE = 'Reserve';
 
   function Ai() {
     this.trace = new Trace();
@@ -1779,7 +1778,7 @@ Ai = (function() {
     if (sender === me) {
       switch (words[0]) {
         case 'report':
-          return report(words[1]);
+          return this.report(words[1]);
         case 'reload':
           return include("multiplay/skirmish/cyberborg-reloads.js");
         case 'trace':
@@ -1797,9 +1796,9 @@ Ai = (function() {
     }
   };
 
-  report = function(who) {
+  Ai.prototype.report = function(who) {
     var droid, empty, list, _i, _len, _ref, _ref1, _ref2, _ref3;
-    if (who === CyberBorg.RESERVE) {
+    if (who === Ai.RESERVE) {
       list = this.groups.reserve;
     } else {
       list = (_ref = this.groups.named(who)) != null ? _ref.list : void 0;

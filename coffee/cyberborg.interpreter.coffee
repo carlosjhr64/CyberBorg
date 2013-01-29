@@ -4,6 +4,8 @@
 # abstract it to any map.  So lets get CyberBorg to help us out.
 
 class Ai
+  @RESERVE = 'Reserve'
+
   constructor: () ->
     @trace = new Trace()
     @hq = false
@@ -128,7 +130,7 @@ class Ai
     words = message.split(/\s+/)
     if sender is me
       switch words[0]
-        when 'report' then report(words[1])
+        when 'report' then @report(words[1])
         # In reloads.js, I have code that can be safely edited and reloaded
         # while in play.  Mostly contains tracing, but also contains in play
         # bug fixes.
@@ -141,8 +143,8 @@ class Ai
         else console("What?")
 
   # Lists the units in the group by name, position, 'n stuff.
-  report = (who) ->
-    if who is CyberBorg.RESERVE
+  report: (who) ->
+    if who is Ai.RESERVE
       list = @groups.reserve
     else
       list = @groups.named(who)?.list
