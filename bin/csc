@@ -1,5 +1,5 @@
 ./bin/cofcomp ./cyberborg-devel.js			\
-	./coffee/cyberborg.extensions.coffee		\
+	./coffee/cyberborg.number.coffee		\
 	./coffee/cyberborg.trace.coffee			\
 	./coffee/cyberborg.wzobject.coffee		\
 	./coffee/cyberborg.wzarray.coffee		\
@@ -8,5 +8,5 @@
 	./coffee/cyberborg.command.coffee		\
 	./coffee/cyberborg.gotcha.coffee		\
 	./coffee/cyberborg.script.coffee		\
-	./coffee/cyberborg.interpreter.coffee		\
+	./coffee/cyberborg.ai.coffee			\
 	./coffee/cyberborg.events.coffee
