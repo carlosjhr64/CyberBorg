@@ -2,7 +2,6 @@
 # first position (player 0), played with no bases, T1, and
 # low power setting.  Hopefully, when done, I'll be able to then
 # abstract it to any map.  So lets get CyberBorg to help us out.
-cyberBorg = new CyberBorg()
 
 class Ai
   constructor: () ->

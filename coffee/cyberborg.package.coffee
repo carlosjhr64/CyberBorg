@@ -76,14 +76,6 @@ class CyberBorg
 
   @CID = 0
 
-  ###################
-  ### CONSTRUCTOR ###
-  ###################
-
-  constructor: () ->
-    # Has the headquaters been built?
-    @pos = []
-
   ###############
   ### UPDATES ###
   ###############
@@ -92,16 +84,6 @@ class CyberBorg
   ############
   ### GETS ###
   ############
-
-  # This records the actual position the pickStrucLocation
-  # chose for a build.  Care should be taken that
-  # the hash value remains valid.
-  # Usually the value will remain valid, though.
-  location: (at, pos) ->
-    key = "#{at.x}.#{at.y}"
-    if pos
-      @pos[key] = pos
-    @pos[key]
 
   #############
   ### ENUMS ###

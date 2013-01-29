@@ -1,5 +1,27 @@
+class Location
+  ###################
+  ### CONSTRUCTOR ###
+  ###################
+  constructor: () ->
+    # Has the headquaters been built?
+    @position = {}
+  # This records the actual position the pickStrucLocation
+  # chose for a build.  Care should be taken that
+  # the hash value remains valid.
+  # Usually the value will remain valid, though.
+  picked: (at, position) ->
+    key = "#{at.x}.#{at.y}"
+    if position
+      @position[key] = position
+    @position[key]
+
+  @location = new Location()
+  @picked = (at, position) -> @location.picked(at, position)
+
 # Warzone 2100 Objects
 class WZObject
+  @location = new Location()
+
   constructor: (object) ->
     @copy(object)
     @is_wzobject = true
@@ -54,12 +76,12 @@ class WZObject
     # Just give at back in that case.
     return at if structure is 'A0ResourceExtractor'
     # We may already have a positon hashed.
-    pos = cyberBorg.location(at)
+    pos = Location.picked(at)
     unless pos
       pos = pickStructLocation(@, structure, at.x, at.y)
       if pos
         # Hash the position so as to not have to call pickStructLocation again.
-        cyberBorg.location(at, pos)
+        Location.picked(at, pos)
         unless pos.x is at.x and pos.y is at.y
           # We don't like changes to our AI.
           # WUT U DO!???
