@@ -59,6 +59,10 @@ script = () ->
 # With only two trucks (usually) to start and base group with first dibs,
 # the AI guarantees that the first thing that happens
 # is that the base gets built.
+Command::with_three_trucks = (obj) ->
+  @with_help @immediately @three @trucks @maintain obj
+Command::with_one_truck = (obj) ->
+  @on_budget @one @truck @maintains obj
 Command::base_commands = () ->
 
   @limit = 3 # Group size limit
@@ -66,10 +70,10 @@ Command::base_commands = () ->
   @cost = 100 # default cost of command
   commands = [
     # Build up the initial base as fast a posible
-    @with_help @immediately @three @trucks @maintain @light_factory @at @x-@s*@dx, @y-@s*@dy
-    @with_help @immediately @three @trucks @maintain @research_facility @at @x, @y-@s*@dy
-    @with_help @immediately @three @trucks @maintain @command_center @at @x+@s*@dx, @y-@s*@dy
-    @with_help @immediately @three @trucks @maintain @power_generator @at @x+@s*@dx, @y
+    @with_three_trucks @light_factory @at @x-@s*@dx, @y-@s*@dy
+    @with_three_trucks @research_facility @at @x, @y-@s*@dy
+    @with_three_trucks @command_center @at @x+@s*@dx, @y-@s*@dy
+    @with_three_trucks @power_generator @at @x+@s*@dx, @y
   ]
 
   @limit = 1
@@ -89,18 +93,18 @@ Command::base_commands = () ->
   if @horizontal
     more = [
       @pass @on_glut @none()
-      @on_budget @one @truck @maintains @research_facility @at @x+2*@s*@dx, @y+@s*@dy
-      @on_budget @one @truck @maintains @power_generator @at @x+2*@s*@dx, @y
+      @with_one_truck @research_facility @at @x+2*@s*@dx, @y+@s*@dy
+      @with_one_truck @power_generator @at @x+2*@s*@dx, @y
       @pass @on_glut @none()
-      @on_budget @one @truck @maintains @research_facility @at @x+2*s*@dx, @y-@s*@dy
+      @with_one_truck @research_facility @at @x+2*s*@dx, @y-@s*@dy
     ]
   else
     more = [
       @pass @on_glut @none()
-      @on_budget @one @truck @maintains @research_facility @at @x+@s*@dx, @y+2*@s*@dy
-      @on_budget @one @truck @maintains @power_generator @at @x, @y+2*@s*@dy
+      @with_one_truck @research_facility @at @x+@s*@dx, @y+2*@s*@dy
+      @with_one_truck @power_generator @at @x, @y+2*@s*@dy
       @pass @on_glut @none()
-      @on_budget @one @truck @maintains @research_facility @at @x-@s*@dx, @y+2*@s*@dy
+      @with_one_truck @research_facility @at @x-@s*@dx, @y+2*@s*@dy
     ]
   commands = commands.concat(more)
   # Convert the list to wzarray
@@ -121,14 +125,15 @@ Command::factory_commands = () ->
   commands.push(truck)
   WZArray.bless(commands)
 
+Command::now_with_truck = (obj) ->
+  @immediately @one @truck @maintains obj
 Command::derricks_commands = () ->
   @limit = 3 # Group size limit
   @savings = 0 # TODO explain
   @cost = 100 # default cost of command
   commands = WZArray.bless([])
   for derrick in @resources
-    commands.push(
-      @immediately @one @truck @maintains @resource_extractor @at derrick.x, derrick.y)
+    commands.push(@now_with_truck @resource_extractor @at derrick.x, derrick.y)
   # Eight derricks starting from derrick #0
   Scouter.bless(commands)
   commands.mod = 8
