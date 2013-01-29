@@ -1841,14 +1841,15 @@ Ai = (function() {
   };
 
   Ai.prototype.stalled_units = function() {
-    var command, stalled, unit;
+    var command, order, stalled, unit;
     stalled = [];
     while (unit = this.stalled.shift()) {
       command = unit.command;
       this.power -= command.cost;
       if (this.power > command.power) {
         if (!unit.executes(command)) {
-          this.trace.red("" + unit.name + " could not execute " + (command.order.order_map()));
+          order = command.order.order_map();
+          this.trace.red("" + unit.name + " could not execute " + order);
           if (command.research) {
             this.trace.red("\t" + command.research);
           }

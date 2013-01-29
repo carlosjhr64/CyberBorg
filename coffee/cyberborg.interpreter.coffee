@@ -74,10 +74,9 @@ class Ai
     # So every time we build a structure, this function gets called.
     # And the first thing that gets built is a Factory (as I first wrote this,
     # may change and become part of what the AI figures out later).
-    # Anyways, when a factory gets built,
-    # we need to get it started building droids.
-    # So we push the structure into the reserve and
-    # it should get picked up by the FACTORIES group in group_executions (below).
+    # Anyways, when a factory gets built, we need to get it started building
+    # droids. So we push the structure into the reserve and it should get
+    # picked up by the FACTORIES group in group_executions (below).
     @groups.reserve.push(structure)
     # There may be exceptional catches to be done per structure...
     if structure.type is STRUCTURE
@@ -207,7 +206,8 @@ class Ai
       if @power > command.power
         unless unit.executes(command)
           # Unexpected error... why would this ever happen?
-          @trace.red "#{unit.name} could not execute #{command.order.order_map()}"
+          order = command.order.order_map()
+          @trace.red "#{unit.name} could not execute #{order}"
           @trace.red "\t#{command.research}" if command.research
       else
         # push unit into stalled list
