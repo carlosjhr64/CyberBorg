@@ -72,8 +72,6 @@ class CyberBorg
   ### CLASS VARIABLES ###
   #######################
 
-  @CID = 0
-
   ###############
   ### UPDATES ###
   ###############
@@ -155,8 +153,6 @@ class CyberBorg
         pos = {x:(x+i),y:(y+j)}
         positions.push(pos) unless list.collision(pos)
     positions
-
-  @cid = () -> CyberBorg.CID += 1
 
 # This is to keep with the WZ JS API's way...
 # Globals for ME STUFF order numbers.

@@ -1,5 +1,8 @@
 # The Group Class
 class Group
+  @CID = 0
+  @cid = () -> Group.CID += 1
+
   constructor: (@name, @rank, @commands=[], @group=[]) ->
     WZArray.bless(@commands) unless @commands.is_wzarray
     WZArray.bless(@group) unless @group.is_wzarray
@@ -61,7 +64,7 @@ class Group
   order_units: (command) ->
     count = 0
     if units = @units(command)
-      cid = CyberBorg.cid() # A unique command id.
+      cid = Group.cid() # A unique command id.
       for unit in units
         if unit.executes(command)
           unit.command = command

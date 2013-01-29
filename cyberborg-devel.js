@@ -720,6 +720,12 @@ Scouter = (function() {
 
 Group = (function() {
 
+  Group.CID = 0;
+
+  Group.cid = function() {
+    return Group.CID += 1;
+  };
+
   function Group(name, rank, commands, group) {
     this.name = name;
     this.rank = rank;
@@ -798,7 +804,7 @@ Group = (function() {
     var cid, count, unit, units, _i, _len;
     count = 0;
     if (units = this.units(command)) {
-      cid = CyberBorg.cid();
+      cid = Group.cid();
       for (_i = 0, _len = units.length; _i < _len; _i++) {
         unit = units[_i];
         if (unit.executes(command)) {
@@ -858,8 +864,6 @@ CyberBorg = (function() {
   /* CLASS VARIABLES
   */
 
-
-  CyberBorg.CID = 0;
 
   /* UPDATES
   */
@@ -968,10 +972,6 @@ CyberBorg = (function() {
       }
     }
     return positions;
-  };
-
-  CyberBorg.cid = function() {
-    return CyberBorg.CID += 1;
   };
 
   return CyberBorg;
