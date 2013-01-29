@@ -6,7 +6,7 @@
 	./coffee/cyberborg.group.coffee			\
 	./coffee/cyberborg.package.coffee		\
 	./coffee/cyberborg.command.coffee		\
-	./coffee/cyberborg.reloads.coffee		\
+	./coffee/cyberborg.gotcha.coffee		\
 	./coffee/cyberborg.script.coffee		\
 	./coffee/cyberborg.interpreter.coffee		\
 	./coffee/cyberborg.events.coffee

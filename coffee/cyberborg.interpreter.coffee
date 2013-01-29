@@ -12,11 +12,12 @@ class Ai
     @groups = Groups.bless([])
     # Stalled units waiting for enough power to continue their command
     @stalled = []
+    @gotcha = new Gotcha(@)
 
   update: (event) ->
     @power = playerPower(me)
     @groups.update()
-    start_trace(event)	if @trace.on
+    @gotcha.start(event)	if @trace.on
 
   switches: (event) ->
     switch event.name
@@ -48,7 +49,7 @@ class Ai
     # Next see what commands the groups can execute
     @group_executions(event)
     # Next, due to bugs either in this script or in the game...
-    gotchas(event)
+    @gotcha.end(event)
 
   # When Warzone 2100 starts the game, it calls eventStartLevel.
   # eventStarLevel is WZ2100 JS API.
@@ -231,6 +232,6 @@ class Ai
         unless group.execute(command)
           commands.revert()
           break
-        trace_command(command) if @trace.on
+        @gotcha.command(command) if @trace.on
     # For now, stalled units will be consider of lowest rank...
     @stalled_units() # have any stalled unit try to execute their command.

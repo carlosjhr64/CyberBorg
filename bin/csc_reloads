@@ -1,1 +1,1 @@
-./bin/cofcomp ./cyberborg-reloads.js ./coffee/cyberborg.reloads.coffee
+./bin/cofcomp ./cyberborg-reloads.js ./coffee/cyberborg.gotcha.coffee
