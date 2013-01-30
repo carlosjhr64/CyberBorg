@@ -748,9 +748,8 @@ Group = (function() {
     return Group.CID += 1;
   };
 
-  function Group(name, rank, commands, group) {
+  function Group(name, commands, group) {
     this.name = name;
-    this.rank = rank;
     this.commands = commands != null ? commands : [];
     this.group = group != null ? group : [];
     if (!this.commands.is_wzarray) {
@@ -1590,10 +1589,7 @@ Ai = (function() {
       droid = _ref[_i];
       Groups.RESERVE.push(droid);
     }
-    this.script();
-    return GROUPS.sort(function(a, b) {
-      return a.rank - b.rank;
-    });
+    return this.script();
   };
 
   Ai.prototype.structureBuilt = function(structure, droid, group) {
@@ -2021,11 +2017,11 @@ Ai.prototype.allowed_hqless = function(command) {
 Ai.prototype.script = function() {
   var commands;
   commands = new Command();
-  GROUPS.add_group(BASE, 10, commands.base_commands());
-  GROUPS.add_group(FACTORIES, 20, commands.factory_commands());
-  GROUPS.add_group(LABS, 30, commands.lab_commands());
-  GROUPS.add_group(DERRICKS, 40, commands.derricks_commands());
-  return GROUPS.add_group(SCOUTS, 50, commands.scouts_commands());
+  GROUPS.add_group(BASE, commands.base_commands());
+  GROUPS.add_group(FACTORIES, commands.factory_commands());
+  GROUPS.add_group(LABS, commands.lab_commands());
+  GROUPS.add_group(DERRICKS, commands.derricks_commands());
+  return GROUPS.add_group(SCOUTS, commands.scouts_commands());
 };
 
 Command.prototype.with_three_trucks = function(obj) {

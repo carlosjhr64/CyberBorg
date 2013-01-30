@@ -59,8 +59,6 @@ class Ai
     # We'll put them in a reserve for now.
     Groups.RESERVE.push(droid) for droid in CyberBorg.enum_droid()
     @script()
-    # This is probably the only time we'll need to sort groups.
-    GROUPS.sort (a, b) -> a.rank - b.rank
 
   # When base group (or anyone else) builds a structure,
   # a "structure built" event triggers an eventStructureBuilt call.

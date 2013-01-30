@@ -3,7 +3,7 @@ class Group
   @CID = 0
   @cid = () -> Group.CID += 1
 
-  constructor: (@name, @rank, @commands=[], @group=[]) ->
+  constructor: (@name, @commands=[], @group=[]) ->
     WZArray.bless(@commands) unless @commands.is_wzarray
     WZArray.bless(@group) unless @group.is_wzarray
     @list = @group # alias

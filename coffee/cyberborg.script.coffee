@@ -45,17 +45,18 @@ Ai::script = () ->
   # For example, cyberBorg.base_commands in the case of BASE group.
   # Finally, the base needs the reserve list.
   commands = new Command()
-  GROUPS.add_group(BASE, 10, commands.base_commands())
+  # just add groups in order rather than rely on rank.
+  GROUPS.add_group(BASE, commands.base_commands())
 
   # Structures are also considered units the AI can command.
   # Let's have a factory group... etc.
   # So do use reserve for structure units, just as we do for droids...
-  GROUPS.add_group(FACTORIES, 20, commands.factory_commands())
-  GROUPS.add_group(LABS, 30, commands.lab_commands())
+  GROUPS.add_group(FACTORIES, commands.factory_commands())
+  GROUPS.add_group(LABS, commands.lab_commands())
 
   # More groups...
-  GROUPS.add_group(DERRICKS, 40, commands.derricks_commands())
-  GROUPS.add_group(SCOUTS, 50, commands.scouts_commands())
+  GROUPS.add_group(DERRICKS, commands.derricks_commands())
+  GROUPS.add_group(SCOUTS, commands.scouts_commands())
 
 # Our first concern is our base.
 # We'll build it up and here forth react to events in the game.
