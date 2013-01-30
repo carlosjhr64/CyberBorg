@@ -61,7 +61,7 @@ class Ai
     # CyberBorg.enum_droid returns the units we currently have.
     # We'll put them in a reserve for now.
     @groups.reserve = CyberBorg.enum_droid()
-    script(@)
+    @script()
     # This is probably the only time we'll need to sort groups.
     @groups.sort (a, b) -> a.rank - b.rank
 

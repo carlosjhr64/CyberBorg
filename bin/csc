@@ -7,6 +7,6 @@
 	./coffee/cyberborg.package.coffee		\
 	./coffee/cyberborg.command.coffee		\
 	./coffee/cyberborg.gotcha.coffee		\
-	./coffee/cyberborg.script.coffee		\
 	./coffee/cyberborg.ai.coffee			\
-	./coffee/cyberborg.events.coffee
+	./coffee/cyberborg.events.coffee		\
+	./coffee/cyberborg.script.coffee
