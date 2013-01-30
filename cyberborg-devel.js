@@ -1478,7 +1478,7 @@ Gotcha = (function() {
   };
 
   Gotcha.prototype.rogue = function(event) {
-    var command, count, droid, rogue, _i, _len, _ref;
+    var command, corder, count, dorder, droid, order, rogue, _i, _len, _ref, _ref1, _ref2;
     count = 0;
     rogue = function(object) {
       if (object.command != null) {
@@ -1504,7 +1504,11 @@ Gotcha = (function() {
         }
         this.working(droid, command);
       } else {
-        Trace.red("\tUncaught rogue case.");
+        order = droid.order.order_map();
+        Trace.red("\tUncaught rogue case: " + (droid.namexy()) + " " + order + ".");
+        dorder = (_ref1 = droid.dorder) != null ? _ref1.order_map() : void 0;
+        corder = (_ref2 = droid.corder) != null ? _ref2.order_map() : void 0;
+        Trace.red("\t\tWanted " + corder + " => " + dorder + ".");
       }
     }
     return count;
@@ -1708,27 +1712,6 @@ Ai = (function() {
     return this.helping(droid);
   };
 
-  Ai.prototype.stalled_units = function() {
-    var command, order, stalled, unit;
-    stalled = [];
-    while (unit = this.stalled.shift()) {
-      command = unit.command;
-      this.power -= command.cost;
-      if (this.power > command.power) {
-        if (!unit.executes(command)) {
-          order = command.order.order_map();
-          Trace.red("" + unit.name + " could not execute " + order);
-          if (command.research) {
-            Trace.red("\t" + command.research);
-          }
-        }
-      } else {
-        stalled.push(unit);
-      }
-    }
-    return this.stalled = stalled;
-  };
-
   Ai.prototype.has = function(power) {
     if (power != null) {
       if (this.power >= power) {
@@ -1737,6 +1720,30 @@ Ai = (function() {
       return false;
     }
     return true;
+  };
+
+  Ai.prototype.stalled_units = function() {
+    var command, group, order, stalled, unit, _ref;
+    stalled = [];
+    while (unit = this.stalled.shift()) {
+      command = unit.command;
+      this.power -= command.cost;
+      if (this.has(command.power)) {
+        if (!unit.executes(command)) {
+          order = command.order.order_map();
+          Trace.red("" + unit.name + " could not execute " + order);
+          if (command.research) {
+            Trace.red("\t" + command.research);
+          }
+          if (group = (_ref = GROUPS.finds(unit)) != null ? _ref.group : void 0) {
+            group.layoffs(command);
+          }
+        }
+      } else {
+        stalled.push(unit);
+      }
+    }
+    return this.stalled = stalled;
   };
 
   Ai.prototype.group_executions = function(event) {

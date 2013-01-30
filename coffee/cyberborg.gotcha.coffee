@@ -97,7 +97,11 @@ class Gotcha
         centreView(droid.x, droid.y) if Trace.on
         @working(droid, command)
       else
-        Trace.red("\tUncaught rogue case.")
+        order = droid.order.order_map()
+        Trace.red "\tUncaught rogue case: #{droid.namexy()} #{order}."
+        dorder = droid.dorder?.order_map()
+        corder = droid.corder?.order_map()
+        Trace.red "\t\tWanted #{corder} => #{dorder}."
     return count
 
   end: (event) ->

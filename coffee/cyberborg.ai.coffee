@@ -192,6 +192,15 @@ class Ai
     # Anything else?  :)
     @helping(droid)
 
+  has: (power) ->
+    if power?
+      # Has enough power
+      return true if @power >= power
+      # Not enough power
+      return false
+    # No power requirements
+    return true
+
   # Right now, only research labs are expected in the list
   stalled_units: () ->
     stalled = []
@@ -201,25 +210,19 @@ class Ai
       # the command's cost to make subsequent commands aware of
       # the actual power available to them.
       @power -= command.cost
-      if @power > command.power
+      if @has(command.power)
         unless unit.executes(command)
           # Unexpected error... why would this ever happen?
           order = command.order.order_map()
           Trace.red "#{unit.name} could not execute #{order}"
           Trace.red "\t#{command.research}" if command.research
+          if group = GROUPS.finds(unit)?.group
+            # TODO TBD so layoffs the entire command?
+            group.layoffs(command)
       else
         # push unit into stalled list
         stalled.push(unit)
     @stalled = stalled
-
-  has: (power) ->
-    if power?
-      # Has enough power
-      return true if @power >= power
-      # Not enough power
-      return false
-    # No power requirements
-    return true
 
   # This is the work horse of the AI.
   # We iterate through all the groups,
