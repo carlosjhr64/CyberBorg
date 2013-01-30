@@ -12,7 +12,7 @@ DERRICKS  = 'Derricks'	# will build derricks
 SCOUTS    = 'Scouts'	# will scout and guard the area
 
 # Which groups are allowed to execute commands without HQ?
-base_group = (name) ->
+Ai::base_group = (name) ->
   for base in [BASE, FACTORIES, LABS]
     return true if name is base
   false

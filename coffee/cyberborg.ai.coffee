@@ -235,7 +235,7 @@ class Ai
       # this AI is crippled a bit without HQ.
       # Without HQ, only BASE, FACTORIES, and LABS group
       # continue the command cycle.
-      continue unless @hq or base_group(name)
+      continue unless @hq or @base_group(name)
       commands = group.commands
       while command = commands.next()
         break unless @hq or @allowed_hqless(command)
