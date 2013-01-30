@@ -23,20 +23,21 @@ class Command
 
   # @cost is the default cost of structures
   # @savings is... TODO
-  constructor: (@limit=0, @savings=0, @cost=0) ->
-    @reserve = ai.groups.reserve
+  constructor: (@ai, @limit=0, @savings=0, @cost=0) ->
+    @trace = @ai.trace
+    @reserve = @ai.groups.reserve # TODO should this really be here?
     # cyberBorg can list all the resources available on the map and
     # sort them according to distance from where we are.
     # It will provide the AI a guide to our territorial expansion.
-    @resources = CyberBorg.get_resources(@reserve.center())
+    @resources = CyberBorg.get_resources(@reserve.center()) # TODO and this?
     # Center point of our trucks.
     # ie. (10.5,236)
     @tc = Command.to_at @reserve.trucks().center()
-    ai.trace.out "Trucks around #{@tc.x}, #{@tc.y}" if ai.trace.on
+    @trace.out "Trucks around #{@tc.x}, #{@tc.y}" if @trace.on
     # Center point of our first 4 resources.
     # ie. (12, 236.5)
     @rc = Command.to_at WZArray.bless(@resources[0..3]).center()
-    ai.trace.out "Resources around #{@rc.x}, #{@rc.y}." if ai.trace.on
+    @trace.out "Resources around #{@rc.x}, #{@rc.y}." if @trace.on
     # Which x direction towards resources
     @dx = 1
     @dx = -1 if @tc.x > @rc.x

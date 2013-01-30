@@ -16,7 +16,7 @@ class Groups
       ai.trace.red "Warning: Groups re'bless'ing"
       return array
     array[name] = method for name, method of Groups.prototype
-    array.reserve = [] # gets reset in start level.
+    array.reserve = [] # gets reset in start level. TODO should be a class var?
     array.is_groups = true
     array
 

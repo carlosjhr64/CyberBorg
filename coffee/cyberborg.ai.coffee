@@ -62,7 +62,7 @@ class Ai
     # CyberBorg.enum_droid returns the units we currently have.
     # We'll put them in a reserve for now.
     @groups.reserve = CyberBorg.enum_droid()
-    script()
+    script(@)
     # This is probably the only time we'll need to sort groups.
     @groups.sort (a, b) -> a.rank - b.rank
 
@@ -216,6 +216,15 @@ class Ai
         stalled.push(unit)
     @stalled = stalled
 
+  has: (power) ->
+    if power?
+      # Has enough power
+      return true if @power >= power
+      # Not enough power
+      return false
+    # No power requirements
+    return true
+
   # This is the work horse of the AI.
   # We iterate through all the groups,
   # higher ranks first,
@@ -230,7 +239,15 @@ class Ai
       continue unless @hq or base_group(name)
       commands = group.commands
       while command = commands.next()
-        unless group.execute(command)
+        # We regardless deduct the command cost from available power b/c
+        # we want to make the lower ranks aware of the power
+        # actually available for them... that we're saving toward this
+        # command's goals.
+        @power -= command.cost
+        unless @has(command.power) and group.execute(command)
+          # If we are not able to execute the command,
+          # deduct additional amount we want to save for.
+          @power -= command.savings if command.savings?
           commands.revert()
           break
         @gotcha.command(command) if @trace.on

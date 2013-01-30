@@ -8,6 +8,7 @@ class Group
     WZArray.bless(@group) unless @group.is_wzarray
     @list = @group # alias
     @reserve = ai.groups.reserve
+    @trace = ai.trace
 
   add: (droid) ->
     # Need to enforce the reserve condition
@@ -23,7 +24,7 @@ class Group
       @group.removeObject(droid)
       @reserve.push(droid)
     else
-      ai.trace.red "Can't remove #{droid.name} b/c it's not in group."
+      @trace.red "Can't remove #{droid.name} b/c it's not in group."
 
   layoffs: (command) ->
     # Ensure the AI's process...
@@ -34,7 +35,7 @@ class Group
         unit.command = null # droid laidoff
       command.cid = null # command completed
     else
-      ai.trace.red "Command without cid"
+      @trace.red "Command without cid"
 
   units: (command) ->
     min = command.min
@@ -74,25 +75,14 @@ class Group
     count
 
   execute: (command) ->
-    count = 0
-    # If the power requirement is zero, just go ahead...
-    if ((command.power is 0) or (ai.power > command.power))
-      count = @order_units(command)
-      # Does the command have it's own execute?
-      if command.execute?
-        # b/c we now execute volatile code,
-        # we enclose it in a try/catch block.
-        try
-          count = command.execute(@)
-        catch error
-          ai.trace.red error
-          count = 0
-    # We regardless deduct the command cost from available power b/c
-    # we want to make the lower ranks aware of the power
-    # actually available for them... that we're saving toward this
-    # command's goals.
-    ai.power -= command.cost
-    # If we are not able to execute the command,
-    # deduct additional amount we want to save for.
-    ai.power -= command.savings if count is 0 and command.savings?
+    count = @order_units(command)
+    # Does the command have it's own execute?
+    if command.execute?
+      # b/c we now execute volatile code,
+      # we enclose it in a try/catch block.
+      try
+        count = command.execute(@)
+      catch error
+        @trace.red error
+        count = 0
     return count

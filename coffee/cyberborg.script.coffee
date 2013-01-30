@@ -23,7 +23,7 @@ allowed_hqless_build = (command) ->
     return true
   false
 
-script = () ->
+script = (ai) ->
   # We'll create many groups besides the reserve, and
   # we'll keep them in cyberBorg.groups.
   # For this AI, we won't command individual droids directly.
@@ -41,7 +41,7 @@ script = () ->
   # The datafile defines the function that returns the group's commands.
   # For example, cyberBorg.base_commands in the case of BASE group.
   # Finally, the base needs the reserve list.
-  commands = new Command()
+  commands = new Command(ai)
   ai.groups.add_group(BASE, 10, commands.base_commands())
 
   # Structures are also considered units the AI can command.

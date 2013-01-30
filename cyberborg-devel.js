@@ -739,6 +739,7 @@ Group = (function() {
     }
     this.list = this.group;
     this.reserve = ai.groups.reserve;
+    this.trace = ai.trace;
   }
 
   Group.prototype.add = function(droid) {
@@ -755,7 +756,7 @@ Group = (function() {
       this.group.removeObject(droid);
       return this.reserve.push(droid);
     } else {
-      return ai.trace.red("Can't remove " + droid.name + " b/c it's not in group.");
+      return this.trace.red("Can't remove " + droid.name + " b/c it's not in group.");
     }
   };
 
@@ -771,7 +772,7 @@ Group = (function() {
       }
       return command.cid = null;
     } else {
-      return ai.trace.red("Command without cid");
+      return this.trace.red("Command without cid");
     }
   };
 
@@ -822,21 +823,14 @@ Group = (function() {
 
   Group.prototype.execute = function(command) {
     var count;
-    count = 0;
-    if ((command.power === 0) || (ai.power > command.power)) {
-      count = this.order_units(command);
-      if (command.execute != null) {
-        try {
-          count = command.execute(this);
-        } catch (error) {
-          ai.trace.red(error);
-          count = 0;
-        }
+    count = this.order_units(command);
+    if (command.execute != null) {
+      try {
+        count = command.execute(this);
+      } catch (error) {
+        this.trace.red(error);
+        count = 0;
       }
-    }
-    ai.power -= command.cost;
-    if (count === 0 && (command.savings != null)) {
-      ai.power -= command.savings;
     }
     return count;
   };
@@ -985,19 +979,21 @@ Command = (function() {
     };
   };
 
-  function Command(limit, savings, cost) {
+  function Command(ai, limit, savings, cost) {
+    this.ai = ai;
     this.limit = limit != null ? limit : 0;
     this.savings = savings != null ? savings : 0;
     this.cost = cost != null ? cost : 0;
-    this.reserve = ai.groups.reserve;
+    this.trace = this.ai.trace;
+    this.reserve = this.ai.groups.reserve;
     this.resources = CyberBorg.get_resources(this.reserve.center());
     this.tc = Command.to_at(this.reserve.trucks().center());
-    if (ai.trace.on) {
-      ai.trace.out("Trucks around " + this.tc.x + ", " + this.tc.y);
+    if (this.trace.on) {
+      this.trace.out("Trucks around " + this.tc.x + ", " + this.tc.y);
     }
     this.rc = Command.to_at(WZArray.bless(this.resources.slice(0, 4)).center());
-    if (ai.trace.on) {
-      ai.trace.out("Resources around " + this.rc.x + ", " + this.rc.y + ".");
+    if (this.trace.on) {
+      this.trace.out("Resources around " + this.rc.x + ", " + this.rc.y + ".");
     }
     this.dx = 1;
     if (this.tc.x > this.rc.x) {
@@ -1566,9 +1562,9 @@ allowed_hqless_build = function(command) {
   return false;
 };
 
-script = function() {
+script = function(ai) {
   var commands;
-  commands = new Command();
+  commands = new Command(ai);
   ai.groups.add_group(BASE, 10, commands.base_commands());
   ai.groups.add_group(FACTORIES, 20, commands.factory_commands());
   ai.groups.add_group(LABS, 30, commands.lab_commands());
@@ -1716,7 +1712,7 @@ Ai = (function() {
 
   Ai.prototype.startLevel = function() {
     this.groups.reserve = CyberBorg.enum_droid();
-    script();
+    script(this);
     return this.groups.sort(function(a, b) {
       return a.rank - b.rank;
     });
@@ -1860,6 +1856,16 @@ Ai = (function() {
     return this.stalled = stalled;
   };
 
+  Ai.prototype.has = function(power) {
+    if (power != null) {
+      if (this.power >= power) {
+        return true;
+      }
+      return false;
+    }
+    return true;
+  };
+
   Ai.prototype.group_executions = function(event) {
     var command, commands, group, name, _i, _len, _ref;
     _ref = this.groups;
@@ -1871,7 +1877,11 @@ Ai = (function() {
       }
       commands = group.commands;
       while (command = commands.next()) {
-        if (!group.execute(command)) {
+        this.power -= command.cost;
+        if (!(this.has(command.power) && group.execute(command))) {
+          if (command.savings != null) {
+            this.power -= command.savings;
+          }
           commands.revert();
           break;
         }

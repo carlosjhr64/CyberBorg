@@ -9,6 +9,7 @@ Find a way to estimate costs.
 makeTemplate currently returns null if droid is not available to build.
 
 Convert entirely to OOP.
+ai object as a global should only be used in *events*.
 
 DONE:
 
