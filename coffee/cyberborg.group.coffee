@@ -8,7 +8,6 @@ class Group
     WZArray.bless(@group) unless @group.is_wzarray
     @list = @group # alias
     @reserve = ai.groups.reserve
-    @trace = ai.trace
 
   add: (droid) ->
     # Need to enforce the reserve condition
@@ -24,7 +23,7 @@ class Group
       @group.removeObject(droid)
       @reserve.push(droid)
     else
-      @trace.red "Can't remove #{droid.name} b/c it's not in group."
+      Trace.red "Can't remove #{droid.name} b/c it's not in group."
 
   layoffs: (command) ->
     # Ensure the AI's process...
@@ -35,7 +34,7 @@ class Group
         unit.command = null # droid laidoff
       command.cid = null # command completed
     else
-      @trace.red "Command without cid"
+      Trace.red "Command without cid"
 
   units: (command) ->
     min = command.min
@@ -83,6 +82,6 @@ class Group
       try
         count = command.execute(@)
       catch error
-        @trace.red error
+        Trace.red error
         count = 0
     return count

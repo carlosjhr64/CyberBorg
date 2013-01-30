@@ -7,7 +7,6 @@ class Ai
   @RESERVE = 'Reserve'
 
   constructor: () ->
-    @trace = new Trace()
     @hq = false
     @power = null # Used to keep track of power consumption.
     @groups = Groups.bless([])
@@ -18,7 +17,7 @@ class Ai
   update: (event) ->
     @power = playerPower(me)
     @groups.update()
-    @gotcha.start(event)	if @trace.on
+    @gotcha.start(event)	if Trace.on
 
   switches: (event) ->
     switch event.name
@@ -37,7 +36,7 @@ class Ai
       when 'Chat'
         @chat(event.sender, event.to, event.message)
       # We should catch all possibilities, but in case we missed something...
-      else @trace.red("#{event.name} NOT HANDLED!")
+      else Trace.red("#{event.name} NOT HANDLED!")
 
   # Refactoring in this AI showed that it made sense to have a single
   # event function pass an object describing the event.
@@ -137,9 +136,9 @@ class Ai
         when 'reload' then include("multiplay/skirmish/cyberborg-reloads.js")
         # Toggle tracing
         when 'trace'
-          @trace.green("Tracing off.") if @trace.on
-          @trace.on = !@trace.on
-          @trace.green("Tracing on.") if @trace.on
+          Trace.green("Tracing off.") if Trace.on
+          Trace.on = !Trace.on
+          Trace.green("Tracing on.") if Trace.on
         else console("What?")
 
   # Lists the units in the group by name, position, 'n stuff.
@@ -209,8 +208,8 @@ class Ai
         unless unit.executes(command)
           # Unexpected error... why would this ever happen?
           order = command.order.order_map()
-          @trace.red "#{unit.name} could not execute #{order}"
-          @trace.red "\t#{command.research}" if command.research
+          Trace.red "#{unit.name} could not execute #{order}"
+          Trace.red "\t#{command.research}" if command.research
       else
         # push unit into stalled list
         stalled.push(unit)
@@ -250,6 +249,6 @@ class Ai
           @power -= command.savings if command.savings?
           commands.revert()
           break
-        @gotcha.command(command) if @trace.on
+        @gotcha.command(command) if Trace.on
     # For now, stalled units will be consider of lowest rank...
     @stalled_units() # have any stalled unit try to execute their command.

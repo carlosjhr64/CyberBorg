@@ -1,15 +1,15 @@
 # Let's find problems and fix'em.
 class Gotcha
-  constructor: (@ai, @trace=@ai.trace) ->
+  constructor: (@ai) ->
 
   start: (event) ->
-    @trace.out "Power level: #{@ai.power} in #{event.name}"
+    Trace.out "Power level: #{@ai.power} in #{event.name}"
     if structure = event.structure
-      @trace.out "\t#{structure.namexy()}\tCost: #{structure.cost}"
+      Trace.out "\t#{structure.namexy()}\tCost: #{structure.cost}"
     if research = event.research
-      @trace.out "\t#{event.research.name}\tCost: #{research.power}"
+      Trace.out "\t#{event.research.name}\tCost: #{research.power}"
     if droid = event.droid
-      @trace.out "\t#{droid.namexy()}\tID:#{droid.id}\tCost: #{droid.cost}"
+      Trace.out "\t#{droid.namexy()}\tID:#{droid.id}\tCost: #{droid.cost}"
 
   command: (command) ->
     keyvals = []
@@ -22,42 +22,42 @@ class Gotcha
           keyvals.push("execute:->")
         else
           keyvals.push("#{key}:#{command[key]}")
-    @trace.blue(keyvals.sort().join(' '))
+    Trace.blue(keyvals.sort().join(' '))
 
   # The bug report.
   bug_report: (label, droid, event) ->
     order = droid.order
     dorder = droid.dorder
-    @trace.out "#{label}:\t#{droid.namexy()}\tid:#{droid.id}\t"
-    @trace.out "\t\tevent: #{event.name}"
-    @trace.out "\t\torder: #{order} => #{order.order_map()}"
-    @trace.out "\t\tdorder: #{dorder} => #{dorder.order_map()}"
+    Trace.out "#{label}:\t#{droid.namexy()}\tid:#{droid.id}\t"
+    Trace.out "\t\tevent: #{event.name}"
+    Trace.out "\t\torder: #{order} => #{order.order_map()}"
+    Trace.out "\t\tdorder: #{dorder} => #{dorder.order_map()}"
     if command = droid.command
       corder = command.order
-      @trace.out "\t\t#{corder.order_map()}\t##{corder}\tcid:#{command.cid}"
+      Trace.out "\t\t#{corder.order_map()}\t##{corder}\tcid:#{command.cid}"
       if command.structure
-        @trace.out "\t\tstructure:#{command.structure}"
+        Trace.out "\t\tstructure:#{command.structure}"
       if at = command.at
-        @trace.out "\t\tat:(#{at.x},#{at.y})"
+        Trace.out "\t\tat:(#{at.x},#{at.y})"
       if order is 0
-        @trace.out "\t\tBUG: Quitter."
+        Trace.out "\t\tBUG: Quitter."
       else
-        @trace.out "\t\tBUG: Order changed." unless order is droid.dorder
+        Trace.out "\t\tBUG: Order changed." unless order is droid.dorder
     if event.name is 'Destroyed'
       group = event.group?.name
       object = event.object.namexy()
-      @trace.out "\t\t#{group}'s #{object} destroyed."
+      Trace.out "\t\t#{group}'s #{object} destroyed."
 
   # Re-issue command
   working: (droid, command = droid.command) ->
-    centreView(droid.x, droid.y) if @trace.on
+    centreView(droid.x, droid.y) if Trace.on
     if droid.executes(command)
       order = command.order
-      if @trace.on
-        @trace.green "\tRe-issued " +
+      if Trace.on
+        Trace.green "\tRe-issued " +
         "#{order.order_map()}, ##{order}, to #{droid.name}."
     else
-      @trace.red("\t#{droid.name} is a lazy bum!")
+      Trace.red("\t#{droid.name} is a lazy bum!")
 
   # Report selected droids.
   selected: (event) ->
@@ -65,7 +65,7 @@ class Gotcha
     # Selected units
     for droid in @ai.groups.for_all((object) -> object.selected)
       count += 1
-      @bug_report("Selected", droid, event) if @trace.on
+      @bug_report("Selected", droid, event) if Trace.on
     return count
 
   # Report idle droids.
@@ -75,7 +75,7 @@ class Gotcha
     is_quitter = (object) -> object.order is 0 and object.command?
     for droid in @ai.groups.for_all(is_quitter)
       count += 1
-      @bug_report("Quitter", droid, event) if @trace.on
+      @bug_report("Quitter", droid, event) if Trace.on
       # OK, let's circumvent the game bugs...
       @working(droid)
     return count
@@ -91,26 +91,26 @@ class Gotcha
       return false
     for droid in @ai.groups.for_all((object) -> rogue(object))
       count += 1
-      @bug_report("Rogue", droid, event) if @trace.on
+      @bug_report("Rogue", droid, event) if Trace.on
       command = droid.command
       if command?.order is 28
-        centreView(droid.x, droid.y) if @trace.on
+        centreView(droid.x, droid.y) if Trace.on
         @working(droid, command)
       else
-        @trace.red("\tUncaught rogue case.")
+        Trace.red("\tUncaught rogue case.")
     return count
 
   end: (event) ->
     counts = count = 0
     # JS had OOP troubles with the for..in...
     #for gotcha in [@selected, @idle, @rogue]
-    if count = @selected(event) and @trace.on
+    if count = @selected(event) and Trace.on
       counts += count
-      @trace.out ""
-    if count = @idle(event) and @trace.on
+      Trace.out ""
+    if count = @idle(event) and Trace.on
       counts += count
-      @trace.out ""
-    if count = @rogue(event) and @trace.on
+      Trace.out ""
+    if count = @rogue(event) and Trace.on
       counts += count
-      @trace.out ""
-    @trace.out "" if @trace.on and counts
+      Trace.out ""
+    Trace.out "" if Trace.on and counts

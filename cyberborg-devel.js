@@ -23,34 +23,34 @@ Number.prototype.order_map = function() {
 
 Trace = (function() {
 
-  function Trace() {
-    this.on = selectedPlayer === me;
-  }
+  function Trace() {}
 
-  Trace.prototype.out = function(message) {
-    if (this.on) {
+  Trace.on = selectedPlayer === me;
+
+  Trace.out = function(message) {
+    if (Trace.on) {
       return debug(message);
     }
   };
 
-  Trace.prototype.red = function(message) {
+  Trace.red = function(message) {
     var previous_state;
-    previous_state = this.on;
-    if (this.on || (selectedPlayer === me)) {
-      this.on = true;
+    previous_state = Trace.on;
+    if (Trace.on || (selectedPlayer === me)) {
+      Trace.on = true;
       this.out("\u001b[1;31m" + message + "\u001b[0m");
     }
-    return this.on = previous_state;
+    return Trace.on = previous_state;
   };
 
-  Trace.prototype.green = function(message) {
-    if (this.on) {
+  Trace.green = function(message) {
+    if (Trace.on) {
       return this.out("\u001b[1;32m" + message + "\u001b[0m");
     }
   };
 
-  Trace.prototype.blue = function(message) {
-    if (this.on) {
+  Trace.blue = function(message) {
+    if (Trace.on) {
       return this.out("\u001b[1;34m" + message + "\u001b[0m");
     }
   };
@@ -174,7 +174,7 @@ WZObject = (function() {
       if (pos) {
         Location.picked(at, pos);
         if (!(pos.x === at.x && pos.y === at.y)) {
-          ai.trace.red(("Game AI moved build " + structure + " ") + ("from " + at.x + "," + at.y + " to " + pos.x + "," + pos.y));
+          Trace.red(("Game AI moved build " + structure + " ") + ("from " + at.x + "," + at.y + " to " + pos.x + "," + pos.y));
         }
       }
     }
@@ -238,7 +238,7 @@ WZObject = (function() {
           this.order = CORDER_PASS;
           return true;
         default:
-          ai.trace.red("" + (order.order_map()) + ", #" + order + ", un-implemented.");
+          Trace.red("" + (order.order_map()) + ", #" + order + ", un-implemented.");
           return false;
       }
     }).call(this);
@@ -283,7 +283,7 @@ Groups = (function() {
   Groups.bless = function(array) {
     var method, name, _ref;
     if (array.is_groups) {
-      ai.trace.red("Warning: Groups re'bless'ing");
+      Trace.red("Warning: Groups re'bless'ing");
       return array;
     }
     _ref = Groups.prototype;
@@ -444,7 +444,7 @@ WZArray = (function() {
   WZArray.bless = function(array) {
     var method, name, _ref;
     if (array.is_wzarray) {
-      ai.trace.red("Warning: WZArray re'bless'ing");
+      Trace.red("Warning: WZArray re'bless'ing");
       return array;
     }
     _ref = WZArray.prototype;
@@ -681,7 +681,7 @@ Scouter = (function() {
   Scouter.bless = function(array) {
     var method, name, _ref;
     if (array.is_scouter) {
-      ai.trace.red("Warning: Scouter re'bless'ing");
+      Trace.red("Warning: Scouter re'bless'ing");
       return array;
     }
     _ref = Scouter.prototype;
@@ -739,7 +739,6 @@ Group = (function() {
     }
     this.list = this.group;
     this.reserve = ai.groups.reserve;
-    this.trace = ai.trace;
   }
 
   Group.prototype.add = function(droid) {
@@ -756,7 +755,7 @@ Group = (function() {
       this.group.removeObject(droid);
       return this.reserve.push(droid);
     } else {
-      return this.trace.red("Can't remove " + droid.name + " b/c it's not in group.");
+      return Trace.red("Can't remove " + droid.name + " b/c it's not in group.");
     }
   };
 
@@ -772,7 +771,7 @@ Group = (function() {
       }
       return command.cid = null;
     } else {
-      return this.trace.red("Command without cid");
+      return Trace.red("Command without cid");
     }
   };
 
@@ -828,7 +827,7 @@ Group = (function() {
       try {
         count = command.execute(this);
       } catch (error) {
-        this.trace.red(error);
+        Trace.red(error);
         count = 0;
       }
     }
@@ -984,16 +983,15 @@ Command = (function() {
     this.limit = limit != null ? limit : 0;
     this.savings = savings != null ? savings : 0;
     this.cost = cost != null ? cost : 0;
-    this.trace = this.ai.trace;
     this.reserve = this.ai.groups.reserve;
     this.resources = CyberBorg.get_resources(this.reserve.center());
     this.tc = Command.to_at(this.reserve.trucks().center());
-    if (this.trace.on) {
-      this.trace.out("Trucks around " + this.tc.x + ", " + this.tc.y);
+    if (Trace.on) {
+      Trace.out("Trucks around " + this.tc.x + ", " + this.tc.y);
     }
     this.rc = Command.to_at(WZArray.bless(this.resources.slice(0, 4)).center());
-    if (this.trace.on) {
-      this.trace.out("Resources around " + this.rc.x + ", " + this.rc.y + ".");
+    if (Trace.on) {
+      Trace.out("Resources around " + this.rc.x + ", " + this.rc.y + ".");
     }
     this.dx = 1;
     if (this.tc.x > this.rc.x) {
@@ -1354,22 +1352,21 @@ Command.prototype.scouts = Command.prototype.scout;
 
 Gotcha = (function() {
 
-  function Gotcha(ai, trace) {
+  function Gotcha(ai) {
     this.ai = ai;
-    this.trace = trace != null ? trace : this.ai.trace;
   }
 
   Gotcha.prototype.start = function(event) {
     var droid, research, structure;
-    this.trace.out("Power level: " + this.ai.power + " in " + event.name);
+    Trace.out("Power level: " + this.ai.power + " in " + event.name);
     if (structure = event.structure) {
-      this.trace.out("\t" + (structure.namexy()) + "\tCost: " + structure.cost);
+      Trace.out("\t" + (structure.namexy()) + "\tCost: " + structure.cost);
     }
     if (research = event.research) {
-      this.trace.out("\t" + event.research.name + "\tCost: " + research.power);
+      Trace.out("\t" + event.research.name + "\tCost: " + research.power);
     }
     if (droid = event.droid) {
-      return this.trace.out("\t" + (droid.namexy()) + "\tID:" + droid.id + "\tCost: " + droid.cost);
+      return Trace.out("\t" + (droid.namexy()) + "\tID:" + droid.id + "\tCost: " + droid.cost);
     }
   };
 
@@ -1389,38 +1386,38 @@ Gotcha = (function() {
           keyvals.push("" + key + ":" + command[key]);
       }
     }
-    return this.trace.blue(keyvals.sort().join(' '));
+    return Trace.blue(keyvals.sort().join(' '));
   };
 
   Gotcha.prototype.bug_report = function(label, droid, event) {
     var at, command, corder, dorder, group, object, order, _ref;
     order = droid.order;
     dorder = droid.dorder;
-    this.trace.out("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\t");
-    this.trace.out("\t\tevent: " + event.name);
-    this.trace.out("\t\torder: " + order + " => " + (order.order_map()));
-    this.trace.out("\t\tdorder: " + dorder + " => " + (dorder.order_map()));
+    Trace.out("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\t");
+    Trace.out("\t\tevent: " + event.name);
+    Trace.out("\t\torder: " + order + " => " + (order.order_map()));
+    Trace.out("\t\tdorder: " + dorder + " => " + (dorder.order_map()));
     if (command = droid.command) {
       corder = command.order;
-      this.trace.out("\t\t" + (corder.order_map()) + "\t#" + corder + "\tcid:" + command.cid);
+      Trace.out("\t\t" + (corder.order_map()) + "\t#" + corder + "\tcid:" + command.cid);
       if (command.structure) {
-        this.trace.out("\t\tstructure:" + command.structure);
+        Trace.out("\t\tstructure:" + command.structure);
       }
       if (at = command.at) {
-        this.trace.out("\t\tat:(" + at.x + "," + at.y + ")");
+        Trace.out("\t\tat:(" + at.x + "," + at.y + ")");
       }
       if (order === 0) {
-        this.trace.out("\t\tBUG: Quitter.");
+        Trace.out("\t\tBUG: Quitter.");
       } else {
         if (order !== droid.dorder) {
-          this.trace.out("\t\tBUG: Order changed.");
+          Trace.out("\t\tBUG: Order changed.");
         }
       }
     }
     if (event.name === 'Destroyed') {
       group = (_ref = event.group) != null ? _ref.name : void 0;
       object = event.object.namexy();
-      return this.trace.out("\t\t" + group + "'s " + object + " destroyed.");
+      return Trace.out("\t\t" + group + "'s " + object + " destroyed.");
     }
   };
 
@@ -1429,16 +1426,16 @@ Gotcha = (function() {
     if (command == null) {
       command = droid.command;
     }
-    if (this.trace.on) {
+    if (Trace.on) {
       centreView(droid.x, droid.y);
     }
     if (droid.executes(command)) {
       order = command.order;
-      if (this.trace.on) {
-        return this.trace.green("\tRe-issued " + ("" + (order.order_map()) + ", #" + order + ", to " + droid.name + "."));
+      if (Trace.on) {
+        return Trace.green("\tRe-issued " + ("" + (order.order_map()) + ", #" + order + ", to " + droid.name + "."));
       }
     } else {
-      return this.trace.red("\t" + droid.name + " is a lazy bum!");
+      return Trace.red("\t" + droid.name + " is a lazy bum!");
     }
   };
 
@@ -1451,7 +1448,7 @@ Gotcha = (function() {
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       droid = _ref[_i];
       count += 1;
-      if (this.trace.on) {
+      if (Trace.on) {
         this.bug_report("Selected", droid, event);
       }
     }
@@ -1468,7 +1465,7 @@ Gotcha = (function() {
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       droid = _ref[_i];
       count += 1;
-      if (this.trace.on) {
+      if (Trace.on) {
         this.bug_report("Quitter", droid, event);
       }
       this.working(droid);
@@ -1493,17 +1490,17 @@ Gotcha = (function() {
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       droid = _ref[_i];
       count += 1;
-      if (this.trace.on) {
+      if (Trace.on) {
         this.bug_report("Rogue", droid, event);
       }
       command = droid.command;
       if ((command != null ? command.order : void 0) === 28) {
-        if (this.trace.on) {
+        if (Trace.on) {
           centreView(droid.x, droid.y);
         }
         this.working(droid, command);
       } else {
-        this.trace.red("\tUncaught rogue case.");
+        Trace.red("\tUncaught rogue case.");
       }
     }
     return count;
@@ -1512,20 +1509,20 @@ Gotcha = (function() {
   Gotcha.prototype.end = function(event) {
     var count, counts;
     counts = count = 0;
-    if (count = this.selected(event) && this.trace.on) {
+    if (count = this.selected(event) && Trace.on) {
       counts += count;
-      this.trace.out("");
+      Trace.out("");
     }
-    if (count = this.idle(event) && this.trace.on) {
+    if (count = this.idle(event) && Trace.on) {
       counts += count;
-      this.trace.out("");
+      Trace.out("");
     }
-    if (count = this.rogue(event) && this.trace.on) {
+    if (count = this.rogue(event) && Trace.on) {
       counts += count;
-      this.trace.out("");
+      Trace.out("");
     }
-    if (this.trace.on && counts) {
-      return this.trace.out("");
+    if (Trace.on && counts) {
+      return Trace.out("");
     }
   };
 
@@ -1666,7 +1663,6 @@ Ai = (function() {
   Ai.RESERVE = 'Reserve';
 
   function Ai() {
-    this.trace = new Trace();
     this.hq = false;
     this.power = null;
     this.groups = Groups.bless([]);
@@ -1677,7 +1673,7 @@ Ai = (function() {
   Ai.prototype.update = function(event) {
     this.power = playerPower(me);
     this.groups.update();
-    if (this.trace.on) {
+    if (Trace.on) {
       return this.gotcha.start(event);
     }
   };
@@ -1699,7 +1695,7 @@ Ai = (function() {
       case 'Chat':
         return this.chat(event.sender, event.to, event.message);
       default:
-        return this.trace.red("" + event.name + " NOT HANDLED!");
+        return Trace.red("" + event.name + " NOT HANDLED!");
     }
   };
 
@@ -1778,12 +1774,12 @@ Ai = (function() {
         case 'reload':
           return include("multiplay/skirmish/cyberborg-reloads.js");
         case 'trace':
-          if (this.trace.on) {
-            this.trace.green("Tracing off.");
+          if (Trace.on) {
+            Trace.green("Tracing off.");
           }
-          this.trace.on = !this.trace.on;
-          if (this.trace.on) {
-            return this.trace.green("Tracing on.");
+          Trace.on = !Trace.on;
+          if (Trace.on) {
+            return Trace.green("Tracing on.");
           }
           break;
         default:
@@ -1844,9 +1840,9 @@ Ai = (function() {
       if (this.power > command.power) {
         if (!unit.executes(command)) {
           order = command.order.order_map();
-          this.trace.red("" + unit.name + " could not execute " + order);
+          Trace.red("" + unit.name + " could not execute " + order);
           if (command.research) {
-            this.trace.red("\t" + command.research);
+            Trace.red("\t" + command.research);
           }
         }
       } else {
@@ -1885,7 +1881,7 @@ Ai = (function() {
           commands.revert();
           break;
         }
-        if (this.trace.on) {
+        if (Trace.on) {
           this.gotcha.command(command);
         }
       }

@@ -13,7 +13,7 @@ Array::shuffle = -> @sort -> 0.5 - Math.random()
 class Groups
   @bless = (array) ->
     if array.is_groups
-      ai.trace.red "Warning: Groups re'bless'ing"
+      Trace.red "Warning: Groups re'bless'ing"
       return array
     array[name] = method for name, method of Groups.prototype
     array.reserve = [] # gets reset in start level. TODO should be a class var?
@@ -97,7 +97,7 @@ class WZArray
   # We'll take an Array and "bless" into it the methods in this class.
   @bless = (array) ->
     if array.is_wzarray
-      ai.trace.red "Warning: WZArray re'bless'ing"
+      Trace.red "Warning: WZArray re'bless'ing"
       return array
     array[name] = method for name, method of WZArray.prototype
     array.is_wzarray = true
@@ -261,7 +261,7 @@ class WZArray
 class Scouter
   @bless = (array) ->
     if array.is_scouter
-      ai.trace.red "Warning: Scouter re'bless'ing"
+      Trace.red "Warning: Scouter re'bless'ing"
       return array
     array[name] = method for name, method of Scouter.prototype
     array.offset = 0
