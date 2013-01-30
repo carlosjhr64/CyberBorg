@@ -984,14 +984,15 @@ Command = (function() {
     };
   };
 
-  function Command(ai, limit, savings, cost) {
-    this.ai = ai;
+  function Command(groups, limit, savings, cost) {
+    var reserve;
+    this.groups = groups;
     this.limit = limit != null ? limit : 0;
     this.savings = savings != null ? savings : 0;
     this.cost = cost != null ? cost : 0;
-    this.reserve = this.ai.groups.reserve;
-    this.resources = CyberBorg.get_resources(this.reserve.center());
-    this.tc = Command.to_at(this.reserve.trucks().center());
+    reserve = this.groups.reserve;
+    this.resources = CyberBorg.get_resources(reserve.center());
+    this.tc = Command.to_at(reserve.trucks().center());
     if (Trace.on) {
       Trace.out("Trucks around " + this.tc.x + ", " + this.tc.y);
     }
@@ -2013,7 +2014,7 @@ Ai.prototype.allowed_hqless = function(command) {
 
 Ai.prototype.script = function() {
   var commands;
-  commands = new Command(this);
+  commands = new Command(this.groups);
   this.groups.add_group(BASE, 10, commands.base_commands());
   this.groups.add_group(FACTORIES, 20, commands.factory_commands());
   this.groups.add_group(LABS, 30, commands.lab_commands());
@@ -2039,7 +2040,7 @@ Command.prototype.base_commands = function() {
   more = [this.on_surplus(this.one(this.truck(this.maintains(this.power_generator(this.at(this.x, this.y)))))), this.pass(this.on_glut(this.none())), this.on_budget(this.one(this.truck(this.maintains(this.research_facility(this.at(this.x - this.s * this.dx, this.y)))))), this.on_budget(this.one(this.truck(this.maintains(this.power_generator(this.at(this.x - this.s * this.dx, this.y + this.s * this.dy)))))), this.pass(this.on_glut(this.none())), this.on_budget(this.one(this.truck(this.maintains(this.research_facility(this.at(this.x, this.y + this.s * this.dy)))))), this.on_budget(this.one(this.truck(this.maintains(this.power_generator(this.at(this.x + this.s * this.dx, this.y + this.s * this.dy))))))];
   commands = commands.concat(more);
   if (this.horizontal) {
-    more = [this.pass(this.on_glut(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y + this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x + 2 * this.s * this.dx, this.y))), this.pass(this.on_glut(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * s * this.dx, this.y - this.s * this.dy)))];
+    more = [this.pass(this.on_glut(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y + this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x + 2 * this.s * this.dx, this.y))), this.pass(this.on_glut(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y - this.s * this.dy)))];
   } else {
     more = [this.pass(this.on_glut(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + this.s * this.dx, this.y + 2 * this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x, this.y + 2 * this.s * this.dy))), this.pass(this.on_glut(this.none())), this.with_one_truck(this.research_facility(this.at(this.x - this.s * this.dx, this.y + 2 * this.s * this.dy)))];
   }

@@ -44,7 +44,7 @@ Ai::script = () ->
   # The datafile defines the function that returns the group's commands.
   # For example, cyberBorg.base_commands in the case of BASE group.
   # Finally, the base needs the reserve list.
-  commands = new Command(@)
+  commands = new Command(@groups)
   @groups.add_group(BASE, 10, commands.base_commands())
 
   # Structures are also considered units the AI can command.
@@ -99,7 +99,7 @@ Command::base_commands = () ->
       @with_one_truck @research_facility @at @x+2*@s*@dx, @y+@s*@dy
       @with_one_truck @power_generator @at @x+2*@s*@dx, @y
       @pass @on_glut @none()
-      @with_one_truck @research_facility @at @x+2*s*@dx, @y-@s*@dy
+      @with_one_truck @research_facility @at @x+2*@s*@dx, @y-@s*@dy
     ]
   else
     more = [
