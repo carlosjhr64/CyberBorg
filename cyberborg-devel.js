@@ -1017,52 +1017,47 @@ Command = (function() {
   */
 
 
-  Command.prototype.light_factory = function(obj) {
-    if (obj == null) {
-      obj = {};
-    }
-    obj.structure = "A0LightFactory";
-    return obj;
-  };
-
-  Command.prototype.command_center = function(obj) {
-    if (obj == null) {
-      obj = {};
-    }
-    obj.structure = "A0CommandCentre";
-    return obj;
-  };
-
-  Command.prototype.research_facility = function(obj) {
-    if (obj == null) {
-      obj = {};
-    }
-    obj.structure = "A0ResearchFacility";
-    return obj;
-  };
-
-  Command.prototype.power_generator = function(obj) {
-    if (obj == null) {
-      obj = {};
-    }
-    obj.structure = "A0PowerGenerator";
-    return obj;
-  };
-
-  Command.prototype.resource_extractor = function(obj) {
-    if (obj == null) {
-      obj = {};
-    }
-    obj.structure = "A0ResourceExtractor";
-    return obj;
-  };
-
   Command.prototype.structure = function(name, obj) {
     if (obj == null) {
       obj = {};
     }
     obj.structure = name;
     return obj;
+  };
+
+  Command.prototype.light_factory = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.structure("A0LightFactory", obj);
+  };
+
+  Command.prototype.command_center = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.structure("A0CommandCentre", obj);
+  };
+
+  Command.prototype.research_facility = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.structure("A0ResearchFacility", obj);
+  };
+
+  Command.prototype.power_generator = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.structure("A0PowerGenerator", obj);
+  };
+
+  Command.prototype.resource_extractor = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.structure("A0ResourceExtractor", obj);
   };
 
   /* propulsion

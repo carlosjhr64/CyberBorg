@@ -64,29 +64,14 @@ class Command
   ### Buildings ###
   #################
 
-  light_factory: (obj={}) ->
-    obj.structure = "A0LightFactory"
-    obj
-
-  command_center: (obj={}) ->
-    obj.structure = "A0CommandCentre"
-    obj
-
-  research_facility: (obj={}) ->
-    obj.structure = "A0ResearchFacility"
-    obj
-
-  power_generator: (obj={}) ->
-    obj.structure = "A0PowerGenerator"
-    obj
-
-  resource_extractor: (obj={}) ->
-    obj.structure = "A0ResourceExtractor"
-    obj
-
   structure: (name, obj={}) ->
     obj.structure = name
     obj
+  light_factory:      (obj={}) -> @structure("A0LightFactory",      obj)
+  command_center:     (obj={}) -> @structure("A0CommandCentre",     obj)
+  research_facility:  (obj={}) -> @structure("A0ResearchFacility",  obj)
+  power_generator:    (obj={}) -> @structure("A0PowerGenerator",    obj)
+  resource_extractor: (obj={}) -> @structure("A0ResourceExtractor", obj)
 
   ##################
   ### propulsion ###
