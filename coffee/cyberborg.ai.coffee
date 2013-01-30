@@ -238,6 +238,7 @@ class Ai
       continue unless @hq or base_group(name)
       commands = group.commands
       while command = commands.next()
+        break unless @hq or @allowed_hqless(command)
         # We regardless deduct the command cost from available power b/c
         # we want to make the lower ranks aware of the power
         # actually available for them... that we're saving toward this

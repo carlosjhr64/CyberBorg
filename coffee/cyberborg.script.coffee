@@ -17,11 +17,14 @@ base_group = (name) ->
     return true if name is base
   false
 
-# What type of droids is the factory allowed to build without HQ?
-allowed_hqless_build = (command) ->
+# What types of commands are allowed without HQ?
+Ai::allowed_hqless = (command) ->
+  # Any command allowed except manufacture.
+  return true unless command.order is FORDER_MANUFACTURE
+  # We can only manufacture trucks without HQ.
   if command.droid_type is DROID_CONSTRUCT
     return true
-  false
+  return false
 
 Ai::script = () ->
   # We'll create many groups besides the reserve, and

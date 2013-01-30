@@ -114,8 +114,7 @@ class WZObject
     # For the sake of fairness to the human player,
     # this AI is crippled a bit without HQ.
     # Without HQ, factories can only build trucks.
-    if (ai.hq or allowed_hqless_build(command)) and
-    buildDroid(@, command.name, command.body, command.propulsion, "",
+    if buildDroid(@, command.name, command.body, command.propulsion, "",
     command.droid_type, command.turret)
       @order = FORDER_MANUFACTURE
       return true
