@@ -232,27 +232,27 @@ class Command
   ##########################
 
   immediately: (obj={}) ->
-    obj.power = 0
+    obj.power = null
     obj
 
   on_income: (obj={}) ->
     cost = obj.cost or @cost
-    obj.power = cost/2
+    obj.power = -cost/2
     obj
 
   on_budget: (obj={}) ->
     cost = obj.cost or @cost
-    obj.power = cost
+    obj.power = 0
     obj
 
   on_surplus: (obj={}) ->
     cost = obj.cost or @cost
-    obj.power = 2*cost
+    obj.power = cost
     obj
 
   on_glut: (obj={}) ->
     cost = obj.cost or @cost
-    obj.power = 4*cost
+    obj.power = 3*cost
     obj
 
 ###############

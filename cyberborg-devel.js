@@ -1292,7 +1292,7 @@ Command = (function() {
     if (obj == null) {
       obj = {};
     }
-    obj.power = 0;
+    obj.power = null;
     return obj;
   };
 
@@ -1302,7 +1302,7 @@ Command = (function() {
       obj = {};
     }
     cost = obj.cost || this.cost;
-    obj.power = cost / 2;
+    obj.power = -cost / 2;
     return obj;
   };
 
@@ -1312,7 +1312,7 @@ Command = (function() {
       obj = {};
     }
     cost = obj.cost || this.cost;
-    obj.power = cost;
+    obj.power = 0;
     return obj;
   };
 
@@ -1322,7 +1322,7 @@ Command = (function() {
       obj = {};
     }
     cost = obj.cost || this.cost;
-    obj.power = 2 * cost;
+    obj.power = cost;
     return obj;
   };
 
@@ -1332,7 +1332,7 @@ Command = (function() {
       obj = {};
     }
     cost = obj.cost || this.cost;
-    obj.power = 4 * cost;
+    obj.power = 3 * cost;
     return obj;
   };
 
