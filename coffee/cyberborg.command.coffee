@@ -23,8 +23,8 @@ class Command
 
   # @cost is the default cost of structures
   # @savings is... TODO
-  constructor: (@groups, @limit=0, @savings=0, @cost=0) ->
-    reserve = @groups.reserve
+  constructor: (@limit=0, @savings=0, @cost=0) ->
+    reserve = GROUPS.reserve
     # cyberBorg can list all the resources available on the map and
     # sort them according to distance from where we are.
     # It will provide the AI a guide to our territorial expansion.

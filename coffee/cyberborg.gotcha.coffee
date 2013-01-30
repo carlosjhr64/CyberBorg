@@ -63,7 +63,7 @@ class Gotcha
   selected: (event) ->
     count = 0
     # Selected units
-    for droid in @ai.groups.for_all((object) -> object.selected)
+    for droid in GROUPS.for_all((object) -> object.selected)
       count += 1
       @bug_report("Selected", droid, event) if Trace.on
     return count
@@ -73,7 +73,7 @@ class Gotcha
     count = 0
     # Idle units under command
     is_quitter = (object) -> object.order is 0 and object.command?
-    for droid in @ai.groups.for_all(is_quitter)
+    for droid in GROUPS.for_all(is_quitter)
       count += 1
       @bug_report("Quitter", droid, event) if Trace.on
       # OK, let's circumvent the game bugs...
@@ -89,7 +89,7 @@ class Gotcha
         unless (object.order is 0) or (object.order is object.dorder)
           return true
       return false
-    for droid in @ai.groups.for_all((object) -> rogue(object))
+    for droid in GROUPS.for_all((object) -> rogue(object))
       count += 1
       @bug_report("Rogue", droid, event) if Trace.on
       command = droid.command

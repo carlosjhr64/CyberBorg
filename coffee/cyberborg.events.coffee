@@ -6,6 +6,11 @@
  Preliminary data wrapping into either WZArray or WZObject occurs here.
 ###
 
+# Took me a while to recognize the role of GROUPS.
+# It's a constant, referring to the same list of this player's pieces in the game.
+# It acts as a whiteboard available to this process.
+GROUPS = Groups.bless([])
+
 # AI is actually a constant in this namespace.
 # It's set just this once and one time only.
 AI = new Ai()
@@ -26,7 +31,7 @@ eventDestroyed = (object) ->
     group = null
     # Might not actually belong to us...
     if object.player is me and
-    found = AI.groups.finds(object)
+    found = GROUPS.finds(object)
       group = found.group
       object = found.object
       # object is gone.
@@ -41,7 +46,7 @@ eventDestroyed = (object) ->
     AI.events(obj)
 
 eventDroidBuilt = (droid, structure) ->
-  found = AI.groups.finds(structure)
+  found = GROUPS.finds(structure)
   obj =
     name: 'DroidBuilt'
     # Here, droid is an new game object
@@ -52,7 +57,7 @@ eventDroidBuilt = (droid, structure) ->
   AI.events(obj)
 
 eventDroidIdle = (droid) ->
-  found = AI.groups.finds(droid)
+  found = GROUPS.finds(droid)
   obj =
     name: 'DroidIdle'
     # Here, droid is pre-existing!
@@ -61,7 +66,7 @@ eventDroidIdle = (droid) ->
   AI.events(obj)
 
 eventResearched = (research, structure) ->
-  found = AI.groups.finds(structure)
+  found = GROUPS.finds(structure)
   obj =
     name: 'Researched'
     research: research
@@ -74,7 +79,7 @@ eventStartLevel = () ->
   AI.events(obj)
 
 eventStructureBuilt = (structure, droid) ->
-  found = AI.groups.finds(droid)
+  found = GROUPS.finds(droid)
   obj =
     name: 'StructureBuilt'
     # Here, structure is new

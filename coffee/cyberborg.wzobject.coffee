@@ -99,8 +99,7 @@ class WZObject
 
   # Let's try to be a bit smarter....
   maintain_structure: (structure, at) ->
-    # TODO Don't know of a good way to get rid of this gobal AI.
-    if built = AI.groups.structure_at(at)
+    if built = GROUPS.structure_at(at)
       return @repair_structure(built)
     @build_structure(structure, at)
 

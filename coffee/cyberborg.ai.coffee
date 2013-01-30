@@ -9,14 +9,13 @@ class Ai
   constructor: () ->
     @hq = false
     @power = null # Used to keep track of power consumption.
-    @groups = Groups.bless([])
     # Stalled units waiting for enough power to continue their command
     @stalled = []
     @gotcha = new Gotcha(@)
 
   update: (event) ->
     @power = playerPower(me)
-    @groups.update()
+    GROUPS.update()
     @gotcha.start(event)	if Trace.on
 
   switches: (event) ->
@@ -60,10 +59,10 @@ class Ai
     # or droids in general.  Let's see what we have.
     # CyberBorg.enum_droid returns the units we currently have.
     # We'll put them in a reserve for now.
-    @groups.reserve = CyberBorg.enum_droid()
+    GROUPS.reserve = CyberBorg.enum_droid()
     @script()
     # This is probably the only time we'll need to sort groups.
-    @groups.sort (a, b) -> a.rank - b.rank
+    GROUPS.sort (a, b) -> a.rank - b.rank
 
   # When base group (or anyone else) builds a structure,
   # a "structure built" event triggers an eventStructureBuilt call.
@@ -78,7 +77,7 @@ class Ai
     # Anyways, when a factory gets built, we need to get it started building
     # droids. So we push the structure into the reserve and it should get
     # picked up by the FACTORIES group in group_executions (below).
-    @groups.reserve.push(structure)
+    GROUPS.reserve.push(structure)
     # There may be exceptional catches to be done per structure...
     if structure.type is STRUCTURE
       switch structure.stattype
@@ -104,14 +103,14 @@ class Ai
     # If it's a truck, maybe it should go to the nearest job?
     # Well, the style for this AI is to work with groups.
     # So what we'll do is add the new droids to the reserve.
-    @groups.reserve.push(droid)
+    GROUPS.reserve.push(droid)
     # There may be ongoing jobs so let's see what available.
     @helping(droid)
 
   # helping is called whenever a droid finds itself idle, as
   # when it first gets created.
   helping: (unit) ->
-    for group in @groups
+    for group in GROUPS
       command = group.commands.current()
       cid = command?.cid
       # So for each ongoing job, check if it'll take the droid.
@@ -144,9 +143,9 @@ class Ai
   # Lists the units in the group by name, position, 'n stuff.
   report: (who) ->
     if who is Ai.RESERVE
-      list = @groups.reserve
+      list = GROUPS.reserve
     else
-      list = @groups.named(who)?.list
+      list = GROUPS.named(who)?.list
     if list
       empty = true
       for droid in list
@@ -229,7 +228,7 @@ class Ai
   # higher ranks first,
   # and let them execute commands as they can.
   group_executions: (event) ->
-    for group in @groups
+    for group in GROUPS
       name = group.name
       # For the sake of fairness to the human player,
       # this AI is crippled a bit without HQ.
