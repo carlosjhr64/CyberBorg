@@ -162,7 +162,7 @@ class Command
     obj.research = research
     obj.order = LORDER_RESEARCH
     obj.like = /Research Facility/
-    obj.power = @cost
+    obj.power = 0 # This just means we've not gone negative.
     obj.cost = @cost
     obj.limit = @limit
     obj.min = 1
