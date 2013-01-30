@@ -4,8 +4,6 @@
 # abstract it to any map.  So lets get CyberBorg to help us out.
 
 class Ai
-  @RESERVE = 'Reserve'
-
   constructor: () ->
     @hq = false
     @power = null # Used to keep track of power consumption.
@@ -59,7 +57,7 @@ class Ai
     # or droids in general.  Let's see what we have.
     # CyberBorg.enum_droid returns the units we currently have.
     # We'll put them in a reserve for now.
-    GROUPS.reserve = CyberBorg.enum_droid()
+    Groups.RESERVE.push(droid) for droid in CyberBorg.enum_droid()
     @script()
     # This is probably the only time we'll need to sort groups.
     GROUPS.sort (a, b) -> a.rank - b.rank
@@ -77,7 +75,7 @@ class Ai
     # Anyways, when a factory gets built, we need to get it started building
     # droids. So we push the structure into the reserve and it should get
     # picked up by the FACTORIES group in group_executions (below).
-    GROUPS.reserve.push(structure)
+    Groups.RESERVE.push(structure)
     # There may be exceptional catches to be done per structure...
     if structure.type is STRUCTURE
       switch structure.stattype
@@ -103,7 +101,7 @@ class Ai
     # If it's a truck, maybe it should go to the nearest job?
     # Well, the style for this AI is to work with groups.
     # So what we'll do is add the new droids to the reserve.
-    GROUPS.reserve.push(droid)
+    Groups.RESERVE.push(droid)
     # There may be ongoing jobs so let's see what available.
     @helping(droid)
 
@@ -142,8 +140,8 @@ class Ai
 
   # Lists the units in the group by name, position, 'n stuff.
   report: (who) ->
-    if who is Ai.RESERVE
-      list = GROUPS.reserve
+    if who is 'Reserve'
+      list = Groups.RESERVE
     else
       list = GROUPS.named(who)?.list
     if list

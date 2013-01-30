@@ -272,169 +272,6 @@ Array.prototype.shuffle = function() {
   });
 };
 
-/* ***Groups***
-*/
-
-
-Groups = (function() {
-
-  function Groups() {}
-
-  Groups.bless = function(array) {
-    var method, name, _ref;
-    if (array.is_groups) {
-      Trace.red("Warning: Groups re'bless'ing");
-      return array;
-    }
-    _ref = Groups.prototype;
-    for (name in _ref) {
-      method = _ref[name];
-      array[name] = method;
-    }
-    array.reserve = [];
-    array.is_groups = true;
-    return array;
-  };
-
-  Groups.prototype.add_group = function() {
-    var params;
-    params = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    return this.push((function(func, args, ctor) {
-      ctor.prototype = func.prototype;
-      var child = new ctor, result = func.apply(child, args);
-      return Object(result) === result ? result : child;
-    })(Group, [this.reserve].concat(__slice.call(params)), function(){}));
-  };
-
-  Groups.prototype.update = function() {
-    var group, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _results;
-    for (_i = 0, _len = this.length; _i < _len; _i++) {
-      group = this[_i];
-      _ref = group.list;
-      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-        object = _ref[_j];
-        if (object.game_time < gameTime) {
-          object.update();
-        }
-      }
-    }
-    _ref1 = this.reserve;
-    _results = [];
-    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
-      object = _ref1[_k];
-      if (object.game_time < gameTime) {
-        _results.push(object.update());
-      } else {
-        _results.push(void 0);
-      }
-    }
-    return _results;
-  };
-
-  Groups.prototype.for_all = function(test_of) {
-    var group, list, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
-    list = [];
-    for (_i = 0, _len = this.length; _i < _len; _i++) {
-      group = this[_i];
-      _ref = group.list;
-      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-        object = _ref[_j];
-        if (test_of(object)) {
-          list.push(object);
-        }
-      }
-    }
-    _ref1 = this.reserve;
-    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
-      object = _ref1[_k];
-      if (test_of(object)) {
-        list.push(object);
-      }
-    }
-    return WZArray.bless(list);
-  };
-
-  Groups.prototype.for_one = function(test_of) {
-    var group, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
-    for (_i = 0, _len = this.length; _i < _len; _i++) {
-      group = this[_i];
-      _ref = group.list;
-      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-        object = _ref[_j];
-        if (test_of(object)) {
-          return {
-            object: object,
-            group: group
-          };
-        }
-      }
-    }
-    _ref1 = this.reserve;
-    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
-      object = _ref1[_k];
-      if (test_of(object)) {
-        return {
-          object: object,
-          group: {
-            list: this.reserve
-          }
-        };
-      }
-    }
-    return null;
-  };
-
-  Groups.prototype.find = function(target) {
-    var _ref;
-    return (_ref = this.for_one(function(object) {
-      return object.id === target.id;
-    })) != null ? _ref.object : void 0;
-  };
-
-  Groups.prototype.finds = function(target) {
-    return this.for_one(function(object) {
-      return object.id === target.id;
-    });
-  };
-
-  Groups.prototype.structure_at = function(at) {
-    var found, _ref;
-    found = function(object) {
-      return object.x === at.x && object.y === at.y && object.type === STRUCTURE;
-    };
-    return (_ref = this.for_one(found)) != null ? _ref.object : void 0;
-  };
-
-  Groups.prototype.get_command = function(cid) {
-    var command, group, _i, _j, _len, _len1, _ref;
-    for (_i = 0, _len = this.length; _i < _len; _i++) {
-      group = this[_i];
-      _ref = group.commands;
-      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-        command = _ref[_j];
-        if (command.cid === cid) {
-          return command;
-        }
-      }
-    }
-    return null;
-  };
-
-  Groups.prototype.named = function(name) {
-    var object, _i, _len;
-    for (_i = 0, _len = this.length; _i < _len; _i++) {
-      object = this[_i];
-      if (object.name === name) {
-        return object;
-      }
-    }
-    return null;
-  };
-
-  return Groups;
-
-})();
-
 /* ***WZArray***
 */
 
@@ -724,6 +561,170 @@ Scouter = (function() {
 
 })();
 
+/* ***Groups***
+*/
+
+
+Groups = (function() {
+
+  function Groups() {}
+
+  Groups.RESERVE = WZArray.bless([]);
+
+  Groups.bless = function(array) {
+    var method, name, _ref;
+    if (array.is_groups) {
+      Trace.red("Warning: Groups re'bless'ing");
+      return array;
+    }
+    _ref = Groups.prototype;
+    for (name in _ref) {
+      method = _ref[name];
+      array[name] = method;
+    }
+    array.is_groups = true;
+    return array;
+  };
+
+  Groups.prototype.add_group = function() {
+    var params;
+    params = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    return this.push((function(func, args, ctor) {
+      ctor.prototype = func.prototype;
+      var child = new ctor, result = func.apply(child, args);
+      return Object(result) === result ? result : child;
+    })(Group, params, function(){}));
+  };
+
+  Groups.prototype.update = function() {
+    var group, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _results;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      group = this[_i];
+      _ref = group.list;
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        object = _ref[_j];
+        if (object.game_time < gameTime) {
+          object.update();
+        }
+      }
+    }
+    _ref1 = Groups.RESERVE;
+    _results = [];
+    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+      object = _ref1[_k];
+      if (object.game_time < gameTime) {
+        _results.push(object.update());
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  };
+
+  Groups.prototype.for_all = function(test_of) {
+    var group, list, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
+    list = [];
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      group = this[_i];
+      _ref = group.list;
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        object = _ref[_j];
+        if (test_of(object)) {
+          list.push(object);
+        }
+      }
+    }
+    _ref1 = Groups.RESERVE;
+    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+      object = _ref1[_k];
+      if (test_of(object)) {
+        list.push(object);
+      }
+    }
+    return WZArray.bless(list);
+  };
+
+  Groups.prototype.for_one = function(test_of) {
+    var group, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      group = this[_i];
+      _ref = group.list;
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        object = _ref[_j];
+        if (test_of(object)) {
+          return {
+            object: object,
+            group: group
+          };
+        }
+      }
+    }
+    _ref1 = Groups.RESERVE;
+    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+      object = _ref1[_k];
+      if (test_of(object)) {
+        return {
+          object: object,
+          group: {
+            list: Groups.RESERVE
+          }
+        };
+      }
+    }
+    return null;
+  };
+
+  Groups.prototype.find = function(target) {
+    var _ref;
+    return (_ref = this.for_one(function(object) {
+      return object.id === target.id;
+    })) != null ? _ref.object : void 0;
+  };
+
+  Groups.prototype.finds = function(target) {
+    return this.for_one(function(object) {
+      return object.id === target.id;
+    });
+  };
+
+  Groups.prototype.structure_at = function(at) {
+    var found, _ref;
+    found = function(object) {
+      return object.x === at.x && object.y === at.y && object.type === STRUCTURE;
+    };
+    return (_ref = this.for_one(found)) != null ? _ref.object : void 0;
+  };
+
+  Groups.prototype.get_command = function(cid) {
+    var command, group, _i, _j, _len, _len1, _ref;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      group = this[_i];
+      _ref = group.commands;
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        command = _ref[_j];
+        if (command.cid === cid) {
+          return command;
+        }
+      }
+    }
+    return null;
+  };
+
+  Groups.prototype.named = function(name) {
+    var object, _i, _len;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      object = this[_i];
+      if (object.name === name) {
+        return object;
+      }
+    }
+    return null;
+  };
+
+  return Groups;
+
+})();
+
 Group = (function() {
 
   Group.CID = 0;
@@ -732,8 +733,7 @@ Group = (function() {
     return Group.CID += 1;
   };
 
-  function Group(reserve, name, rank, commands, group) {
-    this.reserve = reserve;
+  function Group(name, rank, commands, group) {
     this.name = name;
     this.rank = rank;
     this.commands = commands != null ? commands : [];
@@ -748,8 +748,8 @@ Group = (function() {
   }
 
   Group.prototype.add = function(droid) {
-    if (this.reserve.contains(droid)) {
-      this.reserve.removeObject(droid);
+    if (Groups.RESERVE.contains(droid)) {
+      Groups.RESERVE.removeObject(droid);
       return this.group.push(droid);
     } else {
       throw new Error("Can't add " + (droid.namexy()) + " b/c it's not in reserve.");
@@ -759,7 +759,7 @@ Group = (function() {
   Group.prototype.remove = function(droid) {
     if (this.group.contains(droid)) {
       this.group.removeObject(droid);
-      return this.reserve.push(droid);
+      return Groups.RESERVE.push(droid);
     } else {
       return Trace.red("Can't remove " + droid.name + " b/c it's not in group.");
     }
@@ -789,7 +789,7 @@ Group = (function() {
     if (size + min > limit) {
       return null;
     }
-    units = this.reserve.like(command.like);
+    units = Groups.RESERVE.like(command.like);
     if (units.length < min) {
       return null;
     }
@@ -985,16 +985,14 @@ Command = (function() {
   };
 
   function Command(limit, savings, cost) {
-    var reserve;
     this.limit = limit != null ? limit : 0;
     this.savings = savings != null ? savings : 0;
     this.cost = cost != null ? cost : 0;
-    reserve = GROUPS.reserve;
-    this.resources = CyberBorg.get_resources(reserve.center());
-    this.tc = Command.to_at(reserve.trucks().center());
+    this.tc = Command.to_at(Groups.RESERVE.trucks().center());
     if (Trace.on) {
       Trace.out("Trucks around " + this.tc.x + ", " + this.tc.y);
     }
+    this.resources = CyberBorg.get_resources(this.tc);
     this.rc = Command.to_at(WZArray.bless(this.resources.slice(0, 4)).center());
     if (Trace.on) {
       Trace.out("Resources around " + this.rc.x + ", " + this.rc.y + ".");
@@ -1538,8 +1536,6 @@ Gotcha = (function() {
 
 Ai = (function() {
 
-  Ai.RESERVE = 'Reserve';
-
   function Ai() {
     this.hq = false;
     this.power = null;
@@ -1584,7 +1580,12 @@ Ai = (function() {
   };
 
   Ai.prototype.startLevel = function() {
-    GROUPS.reserve = CyberBorg.enum_droid();
+    var droid, _i, _len, _ref;
+    _ref = CyberBorg.enum_droid();
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      droid = _ref[_i];
+      Groups.RESERVE.push(droid);
+    }
     this.script();
     return GROUPS.sort(function(a, b) {
       return a.rank - b.rank;
@@ -1595,7 +1596,7 @@ Ai = (function() {
     if (droid.command) {
       group.layoffs(droid.command);
     }
-    GROUPS.reserve.push(structure);
+    Groups.RESERVE.push(structure);
     if (structure.type === STRUCTURE) {
       switch (structure.stattype) {
         case HQ:
@@ -1618,7 +1619,7 @@ Ai = (function() {
     if (structure != null ? structure.command : void 0) {
       group.layoffs(structure.command);
     }
-    GROUPS.reserve.push(droid);
+    Groups.RESERVE.push(droid);
     return this.helping(droid);
   };
 
@@ -1666,8 +1667,8 @@ Ai = (function() {
 
   Ai.prototype.report = function(who) {
     var droid, empty, list, _i, _len, _ref, _ref1, _ref2, _ref3;
-    if (who === Ai.RESERVE) {
-      list = GROUPS.reserve;
+    if (who === 'Reserve') {
+      list = Groups.RESERVE;
     } else {
       list = (_ref = GROUPS.named(who)) != null ? _ref.list : void 0;
     }

@@ -7,79 +7,6 @@ Array::first = ()-> @[0]
 Array::last = ()-> @[@length-1]
 Array::shuffle = -> @sort -> 0.5 - Math.random()
 
-####################
-### ***Groups*** ###
-####################
-class Groups
-  @bless = (array) ->
-    if array.is_groups
-      Trace.red "Warning: Groups re'bless'ing"
-      return array
-    array[name] = method for name, method of Groups.prototype
-    array.reserve = [] # gets reset in start level.
-    array.is_groups = true
-    array
-
-  # Need a way to register groups
-  add_group: (params...) ->
-    @push(new Group(@reserve, params...))
-
-  # Updates all game objects, group by group.
-  update: () ->
-    for group in @
-      for object in group.list
-        object.update() if object.game_time < gameTime
-    for object in @reserve
-      object.update() if object.game_time < gameTime
-
-  for_all: (test_of) ->
-    list = []
-    for group in @
-      for object in group.list
-        list.push(object) if test_of(object)
-    for object in @reserve
-      list.push(object) if test_of(object)
-    return WZArray.bless(list)
-
-  for_one: (test_of) ->
-    for group in @
-      for object in group.list
-        return({object:object,group:group}) if test_of(object)
-    for object in @reserve
-      if test_of(object)
-        # Only time this happens in on eventDestroyed?
-        return({object:object,group:{list:@reserve}})
-    return null
-
-  # When we get pre-existing game objects from WZ's JS API,
-  # we need to find them in our groups.
-  # Otherwise we end up with duplicates.
-  find: (target) -> @for_one((object) -> object.id is target.id)?.object
-
-  # For cases where we want to get both our copy of the object and
-  # the group it's in.
-  finds: (target) -> @for_one((object)->  object.id is target.id)
-
-  structure_at: (at) ->
-    found = (object) ->
-      object.x is at.x and
-      object.y is at.y and
-      object.type is STRUCTURE
-    @for_one(found)?.object
-
-  # Returns the first command found with the given cid
-  get_command: (cid) ->
-    for group in @
-      for command in group.commands
-        return command if command.cid is cid
-    return null
-
-  # Returns the first item with the given name.
-  named: (name) ->
-    for object in @
-      return object if object.name is name
-    null
-
 #####################
 ### ***WZArray*** ###
 #####################
@@ -285,3 +212,79 @@ class Scouter
       @_set_current()
     else
       @_current = -1
+
+####################
+### ***Groups*** ###
+####################
+class Groups
+  # This might bite me in the future, but
+  # I don't see us ever using more than one reserve.
+  @RESERVE = WZArray.bless([])
+
+  @bless = (array) ->
+    if array.is_groups
+      Trace.red "Warning: Groups re'bless'ing"
+      return array
+    array[name] = method for name, method of Groups.prototype
+    array.is_groups = true
+    array
+
+  # Need a way to register groups
+  add_group: (params...) ->
+    @push(new Group(params...))
+
+  # Updates all game objects, group by group.
+  update: () ->
+    for group in @
+      for object in group.list
+        object.update() if object.game_time < gameTime
+    for object in Groups.RESERVE
+      object.update() if object.game_time < gameTime
+
+  for_all: (test_of) ->
+    list = []
+    for group in @
+      for object in group.list
+        list.push(object) if test_of(object)
+    for object in Groups.RESERVE
+      list.push(object) if test_of(object)
+    return WZArray.bless(list)
+
+  for_one: (test_of) ->
+    for group in @
+      for object in group.list
+        return({object:object,group:group}) if test_of(object)
+    for object in Groups.RESERVE
+      if test_of(object)
+        # Only time this happens in on eventDestroyed?
+        return({object:object,group:{list:Groups.RESERVE}})
+    return null
+
+  # When we get pre-existing game objects from WZ's JS API,
+  # we need to find them in our groups.
+  # Otherwise we end up with duplicates.
+  find: (target) -> @for_one((object) -> object.id is target.id)?.object
+
+  # For cases where we want to get both our copy of the object and
+  # the group it's in.
+  finds: (target) -> @for_one((object)->  object.id is target.id)
+
+  structure_at: (at) ->
+    found = (object) ->
+      object.x is at.x and
+      object.y is at.y and
+      object.type is STRUCTURE
+    @for_one(found)?.object
+
+  # Returns the first command found with the given cid
+  get_command: (cid) ->
+    for group in @
+      for command in group.commands
+        return command if command.cid is cid
+    return null
+
+  # Returns the first item with the given name.
+  named: (name) ->
+    for object in @
+      return object if object.name is name
+    null

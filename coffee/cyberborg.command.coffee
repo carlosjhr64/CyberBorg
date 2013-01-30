@@ -24,31 +24,36 @@ class Command
   # @cost is the default cost of structures
   # @savings is... TODO
   constructor: (@limit=0, @savings=0, @cost=0) ->
-    reserve = GROUPS.reserve
+    # Center point of our trucks.
+    # ie. (10.5,236)
+    @tc = Command.to_at Groups.RESERVE.trucks().center()
+    Trace.out "Trucks around #{@tc.x}, #{@tc.y}" if Trace.on
+
     # cyberBorg can list all the resources available on the map and
     # sort them according to distance from where we are.
     # It will provide the AI a guide to our territorial expansion.
-    @resources = CyberBorg.get_resources(reserve.center())
-    # Center point of our trucks.
-    # ie. (10.5,236)
-    @tc = Command.to_at reserve.trucks().center()
-    Trace.out "Trucks around #{@tc.x}, #{@tc.y}" if Trace.on
+    @resources = CyberBorg.get_resources(@tc)
+
     # Center point of our first 4 resources.
     # ie. (12, 236.5)
     @rc = Command.to_at WZArray.bless(@resources[0..3]).center()
     Trace.out "Resources around #{@rc.x}, #{@rc.y}." if Trace.on
+
     # Which x direction towards resources
     @dx = 1
     @dx = -1 if @tc.x > @rc.x
     # Which y direction towards resources
     @dy = 1
     @dy = -1 if @tc.y > @rc.y
+
     # Spacing between maintain points
     @s = 4
+
     # Which way is the greater offset?
     @horizontal = false
     if (@rc.x-@tc.x)*@dx > (@rc.y-@tc.y)*@dy
       @horizontal = true
+
     # So let's see how many locations this will work,
     # and find ways to improve the heuristics.
     # We'll assume maintain is relative to trucks.

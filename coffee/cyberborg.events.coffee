@@ -7,7 +7,8 @@
 ###
 
 # Took me a while to recognize the role of GROUPS.
-# It's a constant, referring to the same list of this player's pieces in the game.
+# It's a constant, referring to the same list
+# of this player's pieces in the game.
 # It acts as a whiteboard available to this process.
 GROUPS = Groups.bless([])
 

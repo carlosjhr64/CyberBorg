@@ -8,10 +8,14 @@ territory has been secured.
 Find a way to estimate costs.
 makeTemplate currently returns null if droid is not available to build.
 
+DONE:
+
+2012.01.30
+
 Convert entirely to OOP.
 ai object as a global should only be used in *events*.
-
-DONE:
+	I've fixed all architechtural issues I could find.
+	Basically, no real changes to the AI logic itself.
 
 2013.01.25
 

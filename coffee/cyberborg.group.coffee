@@ -3,15 +3,15 @@ class Group
   @CID = 0
   @cid = () -> Group.CID += 1
 
-  constructor: (@reserve, @name, @rank, @commands=[], @group=[]) ->
+  constructor: (@name, @rank, @commands=[], @group=[]) ->
     WZArray.bless(@commands) unless @commands.is_wzarray
     WZArray.bless(@group) unless @group.is_wzarray
     @list = @group # alias
 
   add: (droid) ->
     # Need to enforce the reserve condition
-    if @reserve.contains(droid)
-      @reserve.removeObject(droid)
+    if Groups.RESERVE.contains(droid)
+      Groups.RESERVE.removeObject(droid)
       @group.push(droid)
     else
       throw new Error("Can't add #{droid.namexy()} b/c it's not in reserve.")
@@ -20,7 +20,7 @@ class Group
     # Need to enforce the group to reserve condition
     if @group.contains(droid)
       @group.removeObject(droid)
-      @reserve.push(droid)
+      Groups.RESERVE.push(droid)
     else
       Trace.red "Can't remove #{droid.name} b/c it's not in group."
 
@@ -43,7 +43,7 @@ class Group
     # Check the group limit
     return null if size + min > limit
 
-    units = @reserve.like(command.like)
+    units = Groups.RESERVE.like(command.like)
     # Check we have the minimum units required for the command.
     # If not, shortcut out of this function.
     return null if units.length < min
