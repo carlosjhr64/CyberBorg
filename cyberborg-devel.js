@@ -284,6 +284,21 @@ WZArray = (function() {
 
   WZArray.NONE = -1;
 
+  /* METRICS
+  */
+
+
+  WZArray.distance_metric = function(a, b) {
+    var x, y;
+    x = a.x - b.x;
+    y = a.y - b.y;
+    return x * x + y * y;
+  };
+
+  WZArray.nearest_metric = function(a, b, at) {
+    return WZArray.distance_metric(a, at) - WZArray.distance_metric(b, at);
+  };
+
   WZArray.bless = function(array) {
     var method, name, _ref;
     if (array.is_wzarray) {
@@ -297,6 +312,16 @@ WZArray = (function() {
     }
     array.is_wzarray = true;
     return array;
+  };
+
+  /* SORTS
+  */
+
+
+  WZArray.prototype.nearest = function(at) {
+    return this.sort(function(a, b) {
+      return WZArray.nearest_metric(a, b, at);
+    });
   };
 
   /* QUERIES
@@ -388,16 +413,6 @@ WZArray = (function() {
 
   WZArray.prototype.add = function(arr) {
     return WZArray.bless(this.concat(arr));
-  };
-
-  /* SORTS
-  */
-
-
-  WZArray.prototype.nearest = function(at) {
-    return this.sort(function(a, b) {
-      return CyberBorg.nearest_metric(a, b, at);
-    });
   };
 
   /* SUMARIES
@@ -913,21 +928,6 @@ CyberBorg = (function() {
 
   CyberBorg.is_not_built = function(structure) {
     return structure.status !== BUILT;
-  };
-
-  /* METRICS
-  */
-
-
-  CyberBorg.distance_metric = function(a, b) {
-    var x, y;
-    x = a.x - b.x;
-    y = a.y - b.y;
-    return x * x + y * y;
-  };
-
-  CyberBorg.nearest_metric = function(a, b, at) {
-    return CyberBorg.distance_metric(a, at) - CyberBorg.distance_metric(b, at);
   };
 
   /* GETS

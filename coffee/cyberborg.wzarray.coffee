@@ -20,6 +20,18 @@ class WZArray
   # The no match index of indexOf.
   @NONE = -1
 
+  ###############
+  ### METRICS ###
+  ###############
+
+  @distance_metric = (a, b) ->
+    x = a.x - b.x
+    y = a.y - b.y
+    x * x + y * y
+
+  @nearest_metric = (a, b, at) ->
+    WZArray.distance_metric(a, at) - WZArray.distance_metric(b, at)
+
   # Sometimes it's easier to take an existing object and augment.
   # We'll take an Array and "bless" into it the methods in this class.
   @bless = (array) ->
@@ -29,6 +41,15 @@ class WZArray
     array[name] = method for name, method of WZArray.prototype
     array.is_wzarray = true
     array
+
+  #############
+  ### SORTS ###
+  #############
+
+  # Sorts list by distance.
+  # Nearest object would be first on list.
+  nearest: (at) ->
+    @sort (a, b) -> WZArray.nearest_metric(a, b, at)
 
   ###############
   ### QUERIES ###
@@ -101,15 +122,6 @@ class WZArray
 
   # concats the array given, blessing the result into the class.
   add: (arr) -> WZArray.bless(@concat(arr))
-
-  #############
-  ### SORTS ###
-  #############
-
-  # Sorts list by distance.
-  # Nearest object would be first on list.
-  nearest: (at) ->
-    @sort (a, b) -> CyberBorg.nearest_metric(a, b, at)
 
   ################
   ### SUMARIES ###

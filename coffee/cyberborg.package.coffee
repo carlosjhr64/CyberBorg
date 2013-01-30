@@ -111,18 +111,6 @@ class CyberBorg
   # So the function is named by what it tests and means.
   @is_not_built = (structure) -> structure.status != BUILT
 
-  ###############
-  ### METRICS ###
-  ###############
-
-  @distance_metric = (a, b) ->
-    x = a.x - b.x
-    y = a.y - b.y
-    x * x + y * y
-
-  @nearest_metric = (a, b, at) ->
-    CyberBorg.distance_metric(a, at) - CyberBorg.distance_metric(b, at)
-
   ############
   ### GETS ###
   ############
