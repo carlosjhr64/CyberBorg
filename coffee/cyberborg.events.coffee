@@ -6,7 +6,9 @@
  Preliminary data wrapping into either WZArray or WZObject occurs here.
 ###
 
-ai = new Ai()
+# AI is actually a constant in this namespace.
+# It's set just this once and one time only.
+AI = new Ai()
 
 eventChat = (sender,to, message) ->
   obj =
@@ -14,7 +16,7 @@ eventChat = (sender,to, message) ->
     sender: sender
     to: to
     message: message
-  ai.events(obj)
+  AI.events(obj)
 
 eventDestroyed = (object) ->
   # At this time for the AI,
@@ -24,7 +26,7 @@ eventDestroyed = (object) ->
     group = null
     # Might not actually belong to us...
     if object.player is me and
-    found = ai.groups.finds(object)
+    found = AI.groups.finds(object)
       group = found.group
       object = found.object
       # object is gone.
@@ -36,10 +38,10 @@ eventDestroyed = (object) ->
       name: 'Destroyed'
       object: object
       group: group
-    ai.events(obj)
+    AI.events(obj)
 
 eventDroidBuilt = (droid, structure) ->
-  found = ai.groups.finds(structure)
+  found = AI.groups.finds(structure)
   obj =
     name: 'DroidBuilt'
     # Here, droid is an new game object
@@ -47,32 +49,32 @@ eventDroidBuilt = (droid, structure) ->
     # But structrue is pre-existing
     structure: found.object
     group: found.group
-  ai.events(obj)
+  AI.events(obj)
 
 eventDroidIdle = (droid) ->
-  found = ai.groups.finds(droid)
+  found = AI.groups.finds(droid)
   obj =
     name: 'DroidIdle'
     # Here, droid is pre-existing!
     droid: found.object
     group: found.group
-  ai.events(obj)
+  AI.events(obj)
 
 eventResearched = (research, structure) ->
-  found = ai.groups.finds(structure)
+  found = AI.groups.finds(structure)
   obj =
     name: 'Researched'
     research: research
     structure: found?.object
     group: found?.group
-  ai.events(obj)
+  AI.events(obj)
 
 eventStartLevel = () ->
   obj = name: 'StartLevel'
-  ai.events(obj)
+  AI.events(obj)
 
 eventStructureBuilt = (structure, droid) ->
-  found = ai.groups.finds(droid)
+  found = AI.groups.finds(droid)
   obj =
     name: 'StructureBuilt'
     # Here, structure is new
@@ -80,7 +82,7 @@ eventStructureBuilt = (structure, droid) ->
     # But droid is prexisting!!!
     droid: found.object
     group: found.group
-  ai.events(obj)
+  AI.events(obj)
 
 ###
 eventAttacked = (victim, attacker) ->
@@ -88,14 +90,14 @@ eventAttacked = (victim, attacker) ->
     name: 'Attacked'
     victim: new WZObject(victim)
     attacker: new WZObject(attacker)
-  ai.events(obj)
+  AI.events(obj)
 
 eventAttackedUnthrottled = (victim, attacker) ->
   obj =
     name: 'Attacked'
     victim: new WZObject(victim)
     attacker: new WZObject(attacker)
-  ai.events(obj)
+  AI.events(obj)
 
 eventBeacon = (x, y, sender, to, message) ->
   obj =
@@ -104,36 +106,36 @@ eventBeacon = (x, y, sender, to, message) ->
     sender: sender
     to: to
     message: message
-  ai.events(obj)
+  AI.events(obj)
 
 eventBeaconRemoved = (sender, to) ->
   obj =
     name: 'BeaconReamoved'
     sender: sender
     to: to
-  ai.events(obj)
+  AI.events(obj)
 
 eventCheatMode = (entered) ->
   obj =
     name: 'CheatMode'
     entered: entered
-  ai.events(obj)
+  AI.events(obj)
 
 eventGameInit = () ->
   obj = name: 'GameInit'
-  ai.events(obj)
+  AI.events(obj)
 
 eventGameLoaded = () ->
   obj = name: 'GameLoaded'
-  ai.events(obj)
+  AI.events(obj)
 
 eventGameSaved = () ->
   obj = name: 'GameSaved'
-  ai.events(obj)
+  AI.events(obj)
 
 eventGameSaving = () ->
   obj = name: 'GameSaving'
-  ai.events(obj)
+  AI.events(obj)
 
 eventGroupLoss = (object, group, size) ->
   obj =
@@ -141,34 +143,34 @@ eventGroupLoss = (object, group, size) ->
     object: new WZObject(object)
     group: group
     size: size
-  ai.events(obj)
+  AI.events(obj)
 
 eventLaunchTransporter = () ->
   obj = name: 'LaunchTransporter'
-  ai.events(obj)
+  AI.events(obj)
 
 eventMissionTimeout = () ->
   obj = name: 'MissionTimeout'
-  ai.events(obj)
+  AI.events(obj)
 
 eventObjectSeen = (sensor, object) ->
   obj =
     name: 'ObjectSeen'
     sensor: new WZObject(sensor)
     object: new WZObject(object)
-  ai.events(obj)
+  AI.events(obj)
 
 eventObjectTransfer = () ->
   obj = name: 'ObjectTransfer'
-  ai.events(obj)
+  AI.events(obj)
 
 eventPickup = () ->
   obj = name: 'Pickup'
-  ai.events(obj)
+  AI.events(obj)
 
 eventReinforcementsArrived = () ->
   obj = name: 'ReinforcementArrived'
-  ai.events(obj)
+  AI.events(obj)
 
 eventSelectionChange = (selected) ->
   selected = selected.map( (object) -> new WZObject(object) )
@@ -176,15 +178,15 @@ eventSelectionChange = (selected) ->
   obj =
     name: 'SelectionChange'
     selected: selected
-  ai.events(obj)
+  AI.events(obj)
 
 eventStructureReady = (structure) ->
   obj =
     name: 'StructureReady'
     structure: new WZObject(structure)
-  ai.events(obj)
+  AI.events(obj)
 
 eventVideoDone = () ->
   obj = name: 'VideoDone'
-  ai.events(obj)
+  AI.events(obj)
 ###
