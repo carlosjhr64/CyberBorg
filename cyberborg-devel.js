@@ -296,8 +296,14 @@ Groups = (function() {
     return array;
   };
 
-  Groups.prototype.add_group = function(name, rank, commands) {
-    return this.push(new Group(name, rank, commands));
+  Groups.prototype.add_group = function() {
+    var params;
+    params = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    return this.push((function(func, args, ctor) {
+      ctor.prototype = func.prototype;
+      var child = new ctor, result = func.apply(child, args);
+      return Object(result) === result ? result : child;
+    })(Group, [this.reserve].concat(__slice.call(params)), function(){}));
   };
 
   Groups.prototype.update = function() {
@@ -726,7 +732,8 @@ Group = (function() {
     return Group.CID += 1;
   };
 
-  function Group(name, rank, commands, group) {
+  function Group(reserve, name, rank, commands, group) {
+    this.reserve = reserve;
     this.name = name;
     this.rank = rank;
     this.commands = commands != null ? commands : [];
@@ -738,7 +745,6 @@ Group = (function() {
       WZArray.bless(this.group);
     }
     this.list = this.group;
-    this.reserve = ai.groups.reserve;
   }
 
   Group.prototype.add = function(droid) {

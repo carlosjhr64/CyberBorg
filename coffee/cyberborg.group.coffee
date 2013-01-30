@@ -3,11 +3,10 @@ class Group
   @CID = 0
   @cid = () -> Group.CID += 1
 
-  constructor: (@name, @rank, @commands=[], @group=[]) ->
+  constructor: (@reserve, @name, @rank, @commands=[], @group=[]) ->
     WZArray.bless(@commands) unless @commands.is_wzarray
     WZArray.bless(@group) unless @group.is_wzarray
     @list = @group # alias
-    @reserve = ai.groups.reserve
 
   add: (droid) ->
     # Need to enforce the reserve condition

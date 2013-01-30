@@ -21,8 +21,8 @@ class Groups
     array
 
   # Need a way to register groups
-  add_group: (name, rank, commands) ->
-    @push(new Group(name, rank, commands))
+  add_group: (params...) ->
+    @push(new Group(@reserve, params...))
 
   # Updates all game objects, group by group.
   update: () ->
