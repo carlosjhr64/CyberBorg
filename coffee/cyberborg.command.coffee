@@ -141,9 +141,17 @@ class Command
   ### Propulsion ###
   ##################
 
-  wheeled: (obj={}) ->
-    obj.propulsion = "wheeled01"
+  propulsion: (pname, propulsionid, pcost, obj={}) ->
+    obj.pname = pname
+    obj.propulsion = propulsionid
+    obj.pcost = pcost
     obj
+
+  wheels: (obj={}) -> @propulsion("Wheels", "wheeled01", 1.5, obj)
+  half_tracks: (obj={}) -> @propulsion("Half-tracks", "HalfTrack", 1.75, obj)
+  hover: (obj={}) -> @propulsion("Hover", "hover01", 2.0, obj)
+  tracks: (obj={}) -> @propulsion("Tracks", "tracked", 2.25, obj)
+  vtol: (obj={}) -> @propulsion("VTOL", "V-Tol", 2.50, obj)
 
   ################
   ### Research ###

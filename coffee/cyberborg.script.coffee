@@ -125,8 +125,8 @@ Command::factory_commands = () ->
   @limit = 1 # Group size limit
   @savings = 0 # TODO explain
   # The commands are...
-  truck = @on_budget @manufacture @wheeled @viper @trucker()
-  gunner = @on_budget @manufacture @wheeled @viper @gunner()
+  truck = @on_budget @manufacture @wheels @viper @trucker()
+  gunner = @on_budget @manufacture @wheels @viper @gunner()
   commands = []
   # ... 1 truck
   commands.push(truck)

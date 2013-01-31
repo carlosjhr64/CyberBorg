@@ -1266,12 +1266,49 @@ Command = (function() {
   */
 
 
-  Command.prototype.wheeled = function(obj) {
+  Command.prototype.propulsion = function(pname, propulsionid, pcost, obj) {
     if (obj == null) {
       obj = {};
     }
-    obj.propulsion = "wheeled01";
+    obj.pname = pname;
+    obj.propulsion = propulsionid;
+    obj.pcost = pcost;
     return obj;
+  };
+
+  Command.prototype.wheels = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.propulsion("Wheels", "wheeled01", 1.5, obj);
+  };
+
+  Command.prototype.half_tracks = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.propulsion("Half-tracks", "HalfTrack", 1.75, obj);
+  };
+
+  Command.prototype.hover = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.propulsion("Hover", "hover01", 2.0, obj);
+  };
+
+  Command.prototype.tracks = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.propulsion("Tracks", "tracked", 2.25, obj);
+  };
+
+  Command.prototype.vtol = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.propulsion("VTOL", "V-Tol", 2.50, obj);
   };
 
   /* Research
@@ -2215,8 +2252,8 @@ Command.prototype.factory_commands = function() {
   var commands, gunner, truck;
   this.limit = 1;
   this.savings = 0;
-  truck = this.on_budget(this.manufacture(this.wheeled(this.viper(this.trucker()))));
-  gunner = this.on_budget(this.manufacture(this.wheeled(this.viper(this.gunner()))));
+  truck = this.on_budget(this.manufacture(this.wheels(this.viper(this.trucker()))));
+  gunner = this.on_budget(this.manufacture(this.wheels(this.viper(this.gunner()))));
   commands = [];
   commands.push(truck);
   12..times(function() {
