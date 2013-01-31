@@ -19,11 +19,19 @@ Ai::base_group = (name) ->
 
 # What types of commands are allowed without HQ?
 Ai::allowed_hqless = (command) ->
-  # Any command allowed except manufacture.
-  return true unless command.order is FORDER_MANUFACTURE
-  # We can only manufacture trucks without HQ.
-  if command.droid_type is DROID_CONSTRUCT
-    return true
+  switch command.order
+    when FORDER_MANUFACTURE
+      # Only trucks allowed to be built without HQ.
+      # Note that this is stricter than for human players.
+      # Human players just can't design new units.
+      return true if command.droid_type is DROID_CONSTRUCT
+    when LORDER_RESEARCH
+      # As per the guide...
+      # No research of defensive structures allowed without HQ.
+      return true unless /Defense/.test(command.research)
+    else
+      # Any command allowed except manufacture or research.
+      return true
   return false
 
 Ai::script = () ->

@@ -2000,11 +2000,19 @@ Ai.prototype.base_group = function(name) {
 };
 
 Ai.prototype.allowed_hqless = function(command) {
-  if (command.order !== FORDER_MANUFACTURE) {
-    return true;
-  }
-  if (command.droid_type === DROID_CONSTRUCT) {
-    return true;
+  switch (command.order) {
+    case FORDER_MANUFACTURE:
+      if (command.droid_type === DROID_CONSTRUCT) {
+        return true;
+      }
+      break;
+    case LORDER_RESEARCH:
+      if (!/Defense/.test(command.research)) {
+        return true;
+      }
+      break;
+    default:
+      return true;
   }
   return false;
 };
