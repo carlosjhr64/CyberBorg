@@ -59,59 +59,35 @@ class Command
     @x = @tc.x
     @y = @tc.y
 
-  #################
-  ### Buildings ###
-  #################
+  #######################
+  ### Base Structures ###
+  #######################
 
-  structure: (name, obj={}) ->
-    obj.structure = name
-    obj.cost = 100 unless obj.cost?
+  structure: (structureid, cost, obj={}) ->
+    obj.structure = structureid
+    obj.cost = cost
     obj
 
-  command_center: (obj={}) -> @structure("A0CommandCentre", obj)
+  command_center: (obj={}) -> @structure("A0CommandCentre", 100, obj)
+  power_generator: (obj={}) -> @structure("A0PowerGenerator", 50, obj)
+  power_module: (obj={}) -> @structure("A0PowMod1", 0, obj)
+  research_facility: (obj={}) -> @structure("A0ResearchFacility", 100, obj)
+  research_module: (obj={}) -> @structure("A0ResearchModule1", 100, obj)
+  light_factory: (obj={}) -> @structure("A0LightFactory", 100, obj)
+  factory_module: (obj={}) -> @structure("A0FacMod1", 100, obj)
+  cyborg_factory: (obj={}) -> @structure("A0CyborgFactory", 100, obj)
+  vtol_factory: (obj={}) -> @structure("A0VTolFactory1", 100, obj)
+  command_relay_center: (obj={}) -> @structure("A0ComDroidControl", 100, obj)
+  vtol_rearming_pad: (obj={}) -> @structure("A0VtolPad", 100, obj)
+  repair_facility: (obj={}) -> @structure("A0RepairCentre3", 100, obj)
+  oil_derrick: (obj={}) -> @structure("A0ResourceExtractor", 0, obj)
 
-  power_generator: (obj={}) ->
-    obj.cost = 50
-    @structure("A0PowerGenerator", obj)
-
-  power_module: (obj={}) ->
-    obj.cost = 0
-    @structure("A0PowMod1", obj)
-
-  research_facility: (obj={}) -> @structure("A0ResearchFacility", obj)
-  research_module: (obj={}) -> @structure("A0ResearchModule1", obj)
-
-  light_factory: (obj={}) -> @structure("A0LightFactory", obj)
-  factory_module: (obj={}) -> @structure("A0FacMod1", obj)
-  cyborg_factory: (obj={}) -> @structure("A0CyborgFactory", obj)
-  vtol_factory: (obj={}) -> @structure("A0VTolFactory1", obj)
-
-  command_relay_center: (obj={}) -> @structure("A0ComDroidControl", obj)
-
-  vtol_rearming_pad: (obj={}) -> @structure("A0VtolPad", obj)
-  repair_facility: (obj={}) -> @structure("A0RepairCentre3", obj)
-  oil_derrick: (obj={}) ->
-    obj.cost = 0
-    @structure("A0ResourceExtractor", obj)
-
-  ##################
-  ### propulsion ###
-  ##################
-
-  wheeled: (obj={}) ->
-    obj.propulsion = "wheeled01"
-    obj
-
-  ############
-  ### body ###
-  ############
-
-  viper: (obj={}) ->
-    obj.body = "Body1REC"
-    obj
+  ################
+  ### Defenses ###
+  ################
 
   ##############
-  ### turret ###
+  ### Turrets ###
   ##############
 
   trucker: (obj={}) ->
@@ -127,6 +103,51 @@ class Command
     obj.turret = ["MG3Mk1", "MG2Mk1", "MG1Mk1"]
     obj.droid_type = DROID_WEAPON
     obj
+
+  ###############
+  ### Cyborgs ###
+  ###############
+
+  ##############
+  ### Bodies ###
+  ##############
+
+  body: (bname, bodyid, cost, obj={}) ->
+    obj.body = bodyid
+    obj.bname = bname
+    obj.bcost = cost
+    obj
+
+  viper: (obj={}) -> @body("Viper", "Body1REC", 30, obj)
+  cobra: (obj={}) -> @body("Cobra", "Body5REC", 46, obj)
+  python: (obj={}) -> @body("Python", "Body11ABT", 60, obj)
+
+  bug: (obj={}) -> @body("Bug", "Body4ABT", 25, obj)
+  scorpion: (obj={}) -> @body("Scorpion", "Body8MBT", 39, obj)
+  mantis: (obj={}) -> @body("Mantis", "Body12SUP", 52, obj)
+
+  leopard: (obj={}) -> @body("Leopard", "Body2SUP", 41, obj)
+  panther: (obj={}) -> @body("Panther", "Body6SUPP", 57, obj)
+  tiger: (obj={}) -> @body("Tiger", "Body9REC", 71, obj)
+
+  retaliation: (obj={}) -> @body("Retaliation", "Body3MBT", 68, obj)
+  retribution: (obj={}) -> @body("Retribution", "Body7ABT", 100, obj)
+  vengeance: (obj={}) -> @body("Vengeance", "Body10MBT", 130, obj)
+
+  wyvern: (obj={}) -> @body("Wyvern", "Body13SUP", 156, obj)
+  dragon: (obj={}) -> @body("Dragon", "Body14SUP", 182, obj)
+
+  ##################
+  ### Propulsion ###
+  ##################
+
+  wheeled: (obj={}) ->
+    obj.propulsion = "wheeled01"
+    obj
+
+  ################
+  ### Research ###
+  ################
 
   ############
   ### Who? ###

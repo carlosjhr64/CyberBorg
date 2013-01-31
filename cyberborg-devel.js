@@ -1012,18 +1012,16 @@ Command = (function() {
     this.y = this.tc.y;
   }
 
-  /* Buildings
+  /* Base Structures
   */
 
 
-  Command.prototype.structure = function(name, obj) {
+  Command.prototype.structure = function(structureid, cost, obj) {
     if (obj == null) {
       obj = {};
     }
-    obj.structure = name;
-    if (obj.cost == null) {
-      obj.cost = 100;
-    }
+    obj.structure = structureid;
+    obj.cost = cost;
     return obj;
   };
 
@@ -1031,121 +1029,98 @@ Command = (function() {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("A0CommandCentre", obj);
+    return this.structure("A0CommandCentre", 100, obj);
   };
 
   Command.prototype.power_generator = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    obj.cost = 50;
-    return this.structure("A0PowerGenerator", obj);
+    return this.structure("A0PowerGenerator", 50, obj);
   };
 
   Command.prototype.power_module = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    obj.cost = 0;
-    return this.structure("A0PowMod1", obj);
+    return this.structure("A0PowMod1", 0, obj);
   };
 
   Command.prototype.research_facility = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("A0ResearchFacility", obj);
+    return this.structure("A0ResearchFacility", 100, obj);
   };
 
   Command.prototype.research_module = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("A0ResearchModule1", obj);
+    return this.structure("A0ResearchModule1", 100, obj);
   };
 
   Command.prototype.light_factory = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("A0LightFactory", obj);
+    return this.structure("A0LightFactory", 100, obj);
   };
 
   Command.prototype.factory_module = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("A0FacMod1", obj);
+    return this.structure("A0FacMod1", 100, obj);
   };
 
   Command.prototype.cyborg_factory = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("A0CyborgFactory", obj);
+    return this.structure("A0CyborgFactory", 100, obj);
   };
 
   Command.prototype.vtol_factory = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("A0VTolFactory1", obj);
+    return this.structure("A0VTolFactory1", 100, obj);
   };
 
   Command.prototype.command_relay_center = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("A0ComDroidControl", obj);
+    return this.structure("A0ComDroidControl", 100, obj);
   };
 
   Command.prototype.vtol_rearming_pad = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("A0VtolPad", obj);
+    return this.structure("A0VtolPad", 100, obj);
   };
 
   Command.prototype.repair_facility = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("A0RepairCentre3", obj);
+    return this.structure("A0RepairCentre3", 100, obj);
   };
 
   Command.prototype.oil_derrick = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    obj.cost = 0;
-    return this.structure("A0ResourceExtractor", obj);
+    return this.structure("A0ResourceExtractor", 0, obj);
   };
 
-  /* propulsion
+  /* Defenses
   */
 
 
-  Command.prototype.wheeled = function(obj) {
-    if (obj == null) {
-      obj = {};
-    }
-    obj.propulsion = "wheeled01";
-    return obj;
-  };
-
-  /* body
-  */
-
-
-  Command.prototype.viper = function(obj) {
-    if (obj == null) {
-      obj = {};
-    }
-    obj.body = "Body1REC";
-    return obj;
-  };
-
-  /* turret
+  /* Turrets
   */
 
 
@@ -1170,6 +1145,138 @@ Command = (function() {
     obj.droid_type = DROID_WEAPON;
     return obj;
   };
+
+  /* Cyborgs
+  */
+
+
+  /* Bodies
+  */
+
+
+  Command.prototype.body = function(bname, bodyid, cost, obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    obj.body = bodyid;
+    obj.bname = bname;
+    obj.bcost = cost;
+    return obj;
+  };
+
+  Command.prototype.viper = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.body("Viper", "Body1REC", 30, obj);
+  };
+
+  Command.prototype.cobra = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.body("Cobra", "Body5REC", 46, obj);
+  };
+
+  Command.prototype.python = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.body("Python", "Body11ABT", 60, obj);
+  };
+
+  Command.prototype.bug = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.body("Bug", "Body4ABT", 25, obj);
+  };
+
+  Command.prototype.scorpion = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.body("Scorpion", "Body8MBT", 39, obj);
+  };
+
+  Command.prototype.mantis = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.body("Mantis", "Body12SUP", 52, obj);
+  };
+
+  Command.prototype.leopard = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.body("Leopard", "Body2SUP", 41, obj);
+  };
+
+  Command.prototype.panther = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.body("Panther", "Body6SUPP", 57, obj);
+  };
+
+  Command.prototype.tiger = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.body("Tiger", "Body9REC", 71, obj);
+  };
+
+  Command.prototype.retaliation = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.body("Retaliation", "Body3MBT", 68, obj);
+  };
+
+  Command.prototype.retribution = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.body("Retribution", "Body7ABT", 100, obj);
+  };
+
+  Command.prototype.vengeance = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.body("Vengeance", "Body10MBT", 130, obj);
+  };
+
+  Command.prototype.wyvern = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.body("Wyvern", "Body13SUP", 156, obj);
+  };
+
+  Command.prototype.dragon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.body("Dragon", "Body14SUP", 182, obj);
+  };
+
+  /* Propulsion
+  */
+
+
+  Command.prototype.wheeled = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    obj.propulsion = "wheeled01";
+    return obj;
+  };
+
+  /* Research
+  */
+
 
   /* Who?
   */
