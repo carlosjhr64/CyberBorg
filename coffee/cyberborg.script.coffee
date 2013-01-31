@@ -79,7 +79,6 @@ Command::base_commands = () ->
 
   @limit = 3 # Group size limit
   @savings = 400 # TODO explain
-  @cost = 100 # default cost of command
   commands = [
     # Build up the initial base as fast a posible
     @with_three_trucks @light_factory @at @x-@s*@dx, @y-@s*@dy
@@ -125,7 +124,6 @@ Command::base_commands = () ->
 Command::factory_commands = () ->
   @limit = 1 # Group size limit
   @savings = 0 # TODO explain
-  @cost = 100 # default cost of command
   # The commands are...
   truck = @on_budget @manufacture @wheeled @viper @trucker()
   gunner = @on_budget @manufacture @wheeled @viper @gunner()
@@ -142,10 +140,9 @@ Command::now_with_truck = (obj) ->
 Command::derricks_commands = () ->
   @limit = 3 # Group size limit
   @savings = 0 # TODO explain
-  @cost = 100 # default cost of command
   commands = WZArray.bless([])
   for derrick in @resources
-    commands.push(@now_with_truck @resource_extractor @at derrick.x, derrick.y)
+    commands.push(@now_with_truck @oil_derrick @at derrick.x, derrick.y)
   # Eight derricks starting from derrick #0
   Scouter.bless(commands)
   commands.mod = 8
@@ -155,7 +152,6 @@ Command::derricks_commands = () ->
 Command::scouts_commands = () ->
   @limit = 12 # Group size limit
   @savings = 0 # TODO explain
-  @cost = 0 # default cost of command
   commands = WZArray.bless([])
   for derrick in @resources
     commands.push(
@@ -169,7 +165,6 @@ Command::scouts_commands = () ->
 Command::lab_commands = () ->
   @limit = 5 # Group size limit
   @savings = 0 # TODO explain
-  @cost = 100 # default cost of command
   commands = [
     @pursue('R-Wpn-MG1Mk1', 1)			# Machine Gun
     @pursue('R-Wpn-MG2Mk1', 37)			# Dual Machine Gun

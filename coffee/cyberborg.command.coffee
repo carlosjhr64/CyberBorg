@@ -21,9 +21,8 @@
 class Command
   @to_at = (o) -> {x: o.x.to_i(), y: o.y.to_i()}
 
-  # @cost is the default cost of structures
   # @savings is... TODO
-  constructor: (@limit=0, @savings=0, @cost=0) ->
+  constructor: (@limit=0, @savings=0) ->
     # Center point of our trucks.
     # ie. (10.5,236)
     @tc = Command.to_at Groups.RESERVE.trucks().center()
@@ -66,12 +65,34 @@ class Command
 
   structure: (name, obj={}) ->
     obj.structure = name
+    obj.cost = 100 unless obj.cost?
     obj
-  light_factory:      (obj={}) -> @structure("A0LightFactory",      obj)
-  command_center:     (obj={}) -> @structure("A0CommandCentre",     obj)
-  research_facility:  (obj={}) -> @structure("A0ResearchFacility",  obj)
-  power_generator:    (obj={}) -> @structure("A0PowerGenerator",    obj)
-  resource_extractor: (obj={}) -> @structure("A0ResourceExtractor", obj)
+
+  command_center: (obj={}) -> @structure("A0CommandCentre", obj)
+
+  power_generator: (obj={}) ->
+    obj.cost = 50
+    @structure("A0PowerGenerator", obj)
+
+  power_module: (obj={}) ->
+    obj.cost = 0
+    @structure("A0PowMod1", obj)
+
+  research_facility: (obj={}) -> @structure("A0ResearchFacility", obj)
+  research_module: (obj={}) -> @structure("A0ResearchModule1", obj)
+
+  light_factory: (obj={}) -> @structure("A0LightFactory", obj)
+  factory_module: (obj={}) -> @structure("A0FacMod1", obj)
+  cyborg_factory: (obj={}) -> @structure("A0CyborgFactory", obj)
+  vtol_factory: (obj={}) -> @structure("A0VTolFactory1", obj)
+
+  command_relay_center: (obj={}) -> @structure("A0ComDroidControl", obj)
+
+  vtol_rearming_pad: (obj={}) -> @structure("A0VtolPad", obj)
+  repair_facility: (obj={}) -> @structure("A0RepairCentre3", obj)
+  oil_derrick: (obj={}) ->
+    obj.cost = 0
+    @structure("A0ResourceExtractor", obj)
 
   ##################
   ### propulsion ###
@@ -148,7 +169,7 @@ class Command
     obj.order = LORDER_RESEARCH
     obj.like = /Research Facility/
     obj.power = 0 # This just means we've not gone negative.
-    obj.cost = @cost
+    obj.cost = cost
     obj.limit = @limit
     obj.min = 1
     obj.max = 1
@@ -156,10 +177,10 @@ class Command
     obj
 
   manufacture: (obj={}) ->
-    cost = @cost
+    cost = 100 # TODO
     if obj.body and obj.propulsion and obj.turret
       # makeTemplate... :-??
-      cost = @cost
+      cost = 100
     obj.order = FORDER_MANUFACTURE
     obj.like = /Factory/
     obj.cost = cost
@@ -167,14 +188,13 @@ class Command
 
   maintain: (obj={}) ->
     if @savings > 0
-      @savings -= @cost
+      @savings -= obj.cost
     obj.order = DORDER_MAINTAIN
-    obj.cost = @cost
     obj.savings = @savings
     obj
 
   scout: (obj={}) ->
-    obj.cost = @cost
+    obj.cost = 0
     obj.order = DORDER_SCOUT
     obj
 
@@ -225,23 +245,19 @@ class Command
     obj
 
   on_income: (obj={}) ->
-    cost = obj.cost or @cost
-    obj.power = -cost/2
+    obj.power = -obj.cost/2
     obj
 
   on_budget: (obj={}) ->
-    cost = obj.cost or @cost
     obj.power = 0
     obj
 
   on_surplus: (obj={}) ->
-    cost = obj.cost or @cost
-    obj.power = cost
+    obj.power = obj.cost
     obj
 
   on_glut: (obj={}) ->
-    cost = obj.cost or @cost
-    obj.power = 3*cost
+    obj.power = 3*obj.cost
     obj
 
 ###############

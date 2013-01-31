@@ -983,10 +983,9 @@ Command = (function() {
     };
   };
 
-  function Command(limit, savings, cost) {
+  function Command(limit, savings) {
     this.limit = limit != null ? limit : 0;
     this.savings = savings != null ? savings : 0;
-    this.cost = cost != null ? cost : 0;
     this.tc = Command.to_at(Groups.RESERVE.trucks().center());
     if (Trace.on) {
       Trace.out("Trucks around " + this.tc.x + ", " + this.tc.y);
@@ -1022,14 +1021,10 @@ Command = (function() {
       obj = {};
     }
     obj.structure = name;
-    return obj;
-  };
-
-  Command.prototype.light_factory = function(obj) {
-    if (obj == null) {
-      obj = {};
+    if (obj.cost == null) {
+      obj.cost = 100;
     }
-    return this.structure("A0LightFactory", obj);
+    return obj;
   };
 
   Command.prototype.command_center = function(obj) {
@@ -1039,6 +1034,22 @@ Command = (function() {
     return this.structure("A0CommandCentre", obj);
   };
 
+  Command.prototype.power_generator = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    obj.cost = 50;
+    return this.structure("A0PowerGenerator", obj);
+  };
+
+  Command.prototype.power_module = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    obj.cost = 0;
+    return this.structure("A0PowMod1", obj);
+  };
+
   Command.prototype.research_facility = function(obj) {
     if (obj == null) {
       obj = {};
@@ -1046,17 +1057,67 @@ Command = (function() {
     return this.structure("A0ResearchFacility", obj);
   };
 
-  Command.prototype.power_generator = function(obj) {
+  Command.prototype.research_module = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("A0PowerGenerator", obj);
+    return this.structure("A0ResearchModule1", obj);
   };
 
-  Command.prototype.resource_extractor = function(obj) {
+  Command.prototype.light_factory = function(obj) {
     if (obj == null) {
       obj = {};
     }
+    return this.structure("A0LightFactory", obj);
+  };
+
+  Command.prototype.factory_module = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.structure("A0FacMod1", obj);
+  };
+
+  Command.prototype.cyborg_factory = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.structure("A0CyborgFactory", obj);
+  };
+
+  Command.prototype.vtol_factory = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.structure("A0VTolFactory1", obj);
+  };
+
+  Command.prototype.command_relay_center = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.structure("A0ComDroidControl", obj);
+  };
+
+  Command.prototype.vtol_rearming_pad = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.structure("A0VtolPad", obj);
+  };
+
+  Command.prototype.repair_facility = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.structure("A0RepairCentre3", obj);
+  };
+
+  Command.prototype.oil_derrick = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    obj.cost = 0;
     return this.structure("A0ResourceExtractor", obj);
   };
 
@@ -1177,7 +1238,7 @@ Command = (function() {
     obj.order = LORDER_RESEARCH;
     obj.like = /Research Facility/;
     obj.power = 0;
-    obj.cost = this.cost;
+    obj.cost = cost;
     obj.limit = this.limit;
     obj.min = 1;
     obj.max = 1;
@@ -1190,9 +1251,9 @@ Command = (function() {
     if (obj == null) {
       obj = {};
     }
-    cost = this.cost;
+    cost = 100;
     if (obj.body && obj.propulsion && obj.turret) {
-      cost = this.cost;
+      cost = 100;
     }
     obj.order = FORDER_MANUFACTURE;
     obj.like = /Factory/;
@@ -1205,10 +1266,9 @@ Command = (function() {
       obj = {};
     }
     if (this.savings > 0) {
-      this.savings -= this.cost;
+      this.savings -= obj.cost;
     }
     obj.order = DORDER_MAINTAIN;
-    obj.cost = this.cost;
     obj.savings = this.savings;
     return obj;
   };
@@ -1217,7 +1277,7 @@ Command = (function() {
     if (obj == null) {
       obj = {};
     }
-    obj.cost = this.cost;
+    obj.cost = 0;
     obj.order = DORDER_SCOUT;
     return obj;
   };
@@ -1293,42 +1353,34 @@ Command = (function() {
   };
 
   Command.prototype.on_income = function(obj) {
-    var cost;
     if (obj == null) {
       obj = {};
     }
-    cost = obj.cost || this.cost;
-    obj.power = -cost / 2;
+    obj.power = -obj.cost / 2;
     return obj;
   };
 
   Command.prototype.on_budget = function(obj) {
-    var cost;
     if (obj == null) {
       obj = {};
     }
-    cost = obj.cost || this.cost;
     obj.power = 0;
     return obj;
   };
 
   Command.prototype.on_surplus = function(obj) {
-    var cost;
     if (obj == null) {
       obj = {};
     }
-    cost = obj.cost || this.cost;
-    obj.power = cost;
+    obj.power = obj.cost;
     return obj;
   };
 
   Command.prototype.on_glut = function(obj) {
-    var cost;
     if (obj == null) {
       obj = {};
     }
-    cost = obj.cost || this.cost;
-    obj.power = 3 * cost;
+    obj.power = 3 * obj.cost;
     return obj;
   };
 
@@ -2039,7 +2091,6 @@ Command.prototype.base_commands = function() {
   var commands, more;
   this.limit = 3;
   this.savings = 400;
-  this.cost = 100;
   commands = [this.with_three_trucks(this.light_factory(this.at(this.x - this.s * this.dx, this.y - this.s * this.dy))), this.with_three_trucks(this.research_facility(this.at(this.x, this.y - this.s * this.dy))), this.with_three_trucks(this.command_center(this.at(this.x + this.s * this.dx, this.y - this.s * this.dy))), this.with_three_trucks(this.power_generator(this.at(this.x + this.s * this.dx, this.y)))];
   this.limit = 1;
   more = [this.on_surplus(this.one(this.truck(this.maintains(this.power_generator(this.at(this.x, this.y)))))), this.pass(this.on_glut(this.none())), this.on_budget(this.one(this.truck(this.maintains(this.research_facility(this.at(this.x - this.s * this.dx, this.y)))))), this.on_budget(this.one(this.truck(this.maintains(this.power_generator(this.at(this.x - this.s * this.dx, this.y + this.s * this.dy)))))), this.pass(this.on_glut(this.none())), this.on_budget(this.one(this.truck(this.maintains(this.research_facility(this.at(this.x, this.y + this.s * this.dy)))))), this.on_budget(this.one(this.truck(this.maintains(this.power_generator(this.at(this.x + this.s * this.dx, this.y + this.s * this.dy))))))];
@@ -2057,7 +2108,6 @@ Command.prototype.factory_commands = function() {
   var commands, gunner, truck;
   this.limit = 1;
   this.savings = 0;
-  this.cost = 100;
   truck = this.on_budget(this.manufacture(this.wheeled(this.viper(this.trucker()))));
   gunner = this.on_budget(this.manufacture(this.wheeled(this.viper(this.gunner()))));
   commands = [];
@@ -2077,12 +2127,11 @@ Command.prototype.derricks_commands = function() {
   var commands, derrick, _i, _len, _ref;
   this.limit = 3;
   this.savings = 0;
-  this.cost = 100;
   commands = WZArray.bless([]);
   _ref = this.resources;
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     derrick = _ref[_i];
-    commands.push(this.now_with_truck(this.resource_extractor(this.at(derrick.x, derrick.y))));
+    commands.push(this.now_with_truck(this.oil_derrick(this.at(derrick.x, derrick.y))));
   }
   Scouter.bless(commands);
   commands.mod = 8;
@@ -2094,7 +2143,6 @@ Command.prototype.scouts_commands = function() {
   var commands, derrick, _i, _len, _ref;
   this.limit = 12;
   this.savings = 0;
-  this.cost = 0;
   commands = WZArray.bless([]);
   _ref = this.resources;
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -2111,7 +2159,6 @@ Command.prototype.lab_commands = function() {
   var commands;
   this.limit = 5;
   this.savings = 0;
-  this.cost = 100;
   commands = [this.pursue('R-Wpn-MG1Mk1', 1), this.pursue('R-Wpn-MG2Mk1', 37), this.pursue('R-Struc-PowerModuleMk1', 37), this.pursue('R-Wpn-MG3Mk1', 75), this.pursue('R-Struc-RepairFacility', 75), this.pursue('R-Defense-Tower01', 18), this.pursue('R-Defense-WallTower02', 75), this.pursue('R-Defense-AASite-QuadMg1', 112), this.pursue('R-Vehicle-Body04', 75), this.pursue('R-Vehicle-Prop-VTOL', 100), this.pursue('R-Struc-VTOLFactory', 100), this.pursue('R-Wpn-Bomb01', 100)];
   return WZArray.bless(commands);
 };
