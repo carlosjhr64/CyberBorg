@@ -29,7 +29,7 @@ def doit
   if system(COMMAND)
     system("ls -tl #{TARGET}")
     # Nice to have audio feedback that in fact alliswell.
-    system("ogg123 -q /usr/share/sounds/ubuntu/stereo/window-slide.ogg")
+    system("ogg123 -q /usr/share/sounds/ubuntu/stereo/message-new-instant.ogg")
     true
   else
     system("touch #{TARGET}")
