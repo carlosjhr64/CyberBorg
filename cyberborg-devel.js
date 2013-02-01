@@ -1124,18 +1124,649 @@ Command = (function() {
   */
 
 
-  Command.prototype.trucker = function(obj) {
+  Command.prototype.turret = function(tname, turretid, tcost, dtype, obj) {
     if (obj == null) {
       obj = {};
     }
-    obj.like = /Truck/;
-    obj.name = "Truck";
-    obj.turret = "Spade1Mk1";
-    obj.droid_type = DROID_CONSTRUCT;
+    obj.like = new RegExp(tname);
+    obj.name = tname;
+    obj.turret = turretid;
+    obj.tcost = tcost;
+    obj.droid_type = dtype;
     return obj;
   };
 
-  Command.prototype.gunner = function(obj) {
+  Command.prototype.truck = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Truck", "Spade1Mk1", 17, DROID_CONSTRUCT, obj);
+  };
+
+  Command.prototype.repair = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Repair", "LightRepair1", 50, DROID_REPAIR, obj);
+  };
+
+  Command.prototype.heavy_repair = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Heavy Repair", "HeavyRepair", 70, DROID_REPAIR, obj);
+  };
+
+  Command.prototype.wide_spectrum = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Wide Spectrum", "Sensor-WideSpec", 5, DROID_SENSOR, obj);
+  };
+
+  Command.prototype.cb_radar = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("CB Radar", "Sys-CBTurret01", 20, DROID_SENSOR, obj);
+  };
+
+  Command.prototype.radar_detector = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Radar Detector", "RadarDetector", 20, DROID_SENSOR, obj);
+  };
+
+  Command.prototype.sensor = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Sensor", "SensorTurret1Mk1", 20, DROID_SENSOR, obj);
+  };
+
+  Command.prototype.vtol_cb_radar = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL CB Radar", "Sys-VTOLCBTurret01", 20, DROID_SENSOR, obj);
+  };
+
+  Command.prototype.vtol_strike = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Strike", "Sys-VstrikeTurret01", 20, DROID_SENSOR, obj);
+  };
+
+  Command.prototype.command1 = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Command 1", "CommandTurret1", 250, DROID_COMMAND, obj);
+  };
+
+  Command.prototype.command2 = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Command 2", "CommandTurret2", 750, DROID_COMMAND, obj);
+  };
+
+  Command.prototype.command3 = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Command 3", "CommandTurret3", 1250, DROID_COMMAND, obj);
+  };
+
+  Command.prototype.command4 = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Command 4", "CommandTurret4", 1750, DROID_COMMAND, obj);
+  };
+
+  Command.prototype.machinegun = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Machinegun", "MG1Mk1", 10, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.twin_machinegun = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Twin Machinegun", "MG2Mk1", 25, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.heavy_machinegun = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Heavy Machinegun", "MG3Mk1", 50, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.assault_gun = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Assault Gun", "MG4ROTARYMk1", 100, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.twin_assault_gun = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Twin Assault Gun", "MG5TWINROTARY", 100, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.light_cannon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Light Cannon", "Cannon1Mk1", 75, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.medium_cannon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Medium Cannon", "Cannon2A-TMk1", 150, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.assault_cannon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Assault Cannon", "Cannon5VulcanMk1", 150, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.hyper_velocity_cannon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Hyper Velocity Cannon", "Cannon4AUTOMk1", 175, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.heavy_cannon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Heavy Cannon", "Cannon375mmMk1", 250, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.twin_assault_cannon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Twin Assault Cannon", "Cannon6TwinAslt", 250, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.plasma_cannon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Plasma Cannon", "Laser4-PlasmaCannon", 750, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.flamer = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Flamer", "Flame1Mk1", 40, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.inferno = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Inferno", "Flame2", 80, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.plasmite_flamer = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Plasmite Flamer", "PlasmiteFlamer", 80, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.mortart = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Mortar", "Mortar1Mk1", 100, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.incendiary_mortar = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Incendiary Mortar", "Mortar-Incenediary", 150, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.bombard = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Bombard", "Mortar2Mk1", 200, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.pepperpot = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Pepperpot", "Mortar3ROTARYMk1", 300, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.howitzer = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Howitzer", "Howitzer105Mk1", 250, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.incendiary_howitzer = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Incendiary Howitzer", "Howitzer-Incenediary", 250, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.ground_shaker = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Ground Shaker", "Howitzer150Mk1", 350, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.hellstorm = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Hellstorm", "Howitzer03-Rot", 400, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.mini_rocket_pod = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Mini-Rocket Pod", "Rocket-Pod", 75, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.mini_rocket_array = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Mini-Rocket Array", "Rocket-MRL", 100, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.bunker_buster = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Bunker Buster", "Rocket-BB", 150, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.lancer = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Lancer", "Rocket-LtA-T", 150, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.tank_killer = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Tank Killer", "Rocket-HvyA-T", 200, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.ripple_rockets = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Ripple Rockets", "Rocket-IDF", 300, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.scourge_missile = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Scourge Missile", "Missile-A-T", 300, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.seraph_missile_array = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Seraph Missile Array", "Missile-MdArt", 400, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.archangel_missile = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Archangel Missile", "Missile-HvyArt", 500, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.needle_gun = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Needle Gun", "RailGun1Mk1", 250, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.rail_gun = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Rail Gun", "RailGun2Mk1", 300, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.gauss_cannon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Gauss Cannon", "RailGun3Mk1", 400, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.flashligh = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Flashlight", "Laser3BEAMMk1", 150, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.pulse_laser = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Pulse Laser", "Laser2PULSEMk1", 200, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.heavy_laser = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Heavy Laser", "HeavyLaser", 400, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.emp_cannon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("EMP Cannon", "EMP-Cannon", 200, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.nexus_link = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Nexus Link", "SpyTurret01", 400, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.hurricane = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Hurricane", "QuadMg1AAGun", 100, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.whirlwind = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Whirlwind", "QuadRotAAGun", 150, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.sunburst = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Sunburst", "Rocket-Sunburst", 200, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.avenger = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Avenger", "Missile-LtSAM", 200, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.flak_cannon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Flak Cannon", "AAGun2Mk1", 250, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vindicator = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Vindicator", "Missile-HvySAM", 300, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.strormbringer = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Stormbringer", "AAGunLaser", 500, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_machinegun = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Machinegun", "MG1-VTOL", 10, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_twin_machinegun = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Twin Machinegun", "MG2-VTOL", 25, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_heavy_machinegun = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Heavy Machinegun", "MG3-VTOL", 50, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_cannon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Cannon", "Cannon1-VTOL", 75, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_mini_rocket = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Mini-Rocket", "Rocket-VTOL-Pod", 75, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_assault_gun = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Assault Gun", "MG4ROTARY-VTOL", 100, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_lancer = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Lancer", "Rocket-VTOL-LtA-T", 100, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_assault_cannon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Assault Cannon", "Cannon5Vulcan-VTOL", 150, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_bunker_buster = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Bunker Buster", "Rocket-VTOL-BB", 150, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_flaslight = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Flashlight", "Laser3BEAM-VTOL", 150, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_hyper_velocity_cannon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Hyper Velocity Cannon", "Cannon4AUTO-VTOL", 175, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_pulse_laser = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Pulse Laser", "Laser2PULSE-VTOL", 200, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_emp_missile_launcher = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL EMP Missile Launcher", "Bomb6-VTOL-EMP", 225, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_tank_killer = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Tank Killer", "Rocket-VTOL-HvyA-T", 250, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_needle_gun = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Needle Gun", "RailGun1-VTOL", 250, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_rail_gun = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Rail Gun", "RailGun2-VTOL", 300, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_scourge_missile = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Scourge Missile", "Missile-VTOL-AT", 300, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_heavy_laser = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Heavy Laser", "HeavyLaser-VTOL", 400, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.cluster_bomb = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Cluster Bomb", "Bomb1-VTOL-LtHE", 150, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.phosphor_bomb = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Phospor Bomb", "Bomb3-VTOL-LtINC", 175, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.heap_bomb = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Heap Bomb", "Bomb2-VTOL-HvHE", 200, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.plasmite_bomb = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Plasmite Bomb", "Bomb5-VTOL-Plasmite", 225, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.thermite_bomb = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Thermite Bomb", "Bomb4-VTOL-HvyINC", 225, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.vtol_sunburst = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("VTOL Sunburst", "Rocket-VTOL-Sunburst", 150, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.laser_satellite = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Laser Satellite Command Post", "A0LasSatCommand", 1000, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.emp_mortar = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("EMP Mortar", "Emplacement-MortarEMP", 150, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.cannon_fortress = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Cannon Fortress", "X-Super-Cannon", 1000, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.heavy_rocket_bastion = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Heavy Rocket Bastion", "X-Super-Rocket", 1250, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.missile_fortress = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Missile Fortress", "X-Super-Missile", 1600, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.mass_driver = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.turret("Mass Driver", "X-Super-MassDriver", 1800, DROID_WEAPON, obj);
+  };
+
+  Command.prototype.gun = function(obj) {
     if (obj == null) {
       obj = {};
     }
@@ -1331,7 +1962,7 @@ Command = (function() {
     return obj;
   };
 
-  Command.prototype.truck = function(obj) {
+  Command.prototype.trucker = function(obj) {
     if (obj == null) {
       obj = {};
     }
@@ -1339,7 +1970,7 @@ Command = (function() {
     return obj;
   };
 
-  Command.prototype.gun = function(obj) {
+  Command.prototype.gunner = function(obj) {
     if (obj == null) {
       obj = {};
     }
@@ -2252,8 +2883,8 @@ Command.prototype.factory_commands = function() {
   var commands, gunner, truck;
   this.limit = 1;
   this.savings = 0;
-  truck = this.on_budget(this.manufacture(this.wheels(this.viper(this.trucker()))));
-  gunner = this.on_budget(this.manufacture(this.wheels(this.viper(this.gunner()))));
+  truck = this.on_budget(this.manufacture(this.wheels(this.viper(this.truck()))));
+  gunner = this.on_budget(this.manufacture(this.wheels(this.viper(this.gun()))));
   commands = [];
   commands.push(truck);
   12..times(function() {
@@ -2264,7 +2895,7 @@ Command.prototype.factory_commands = function() {
 };
 
 Command.prototype.now_with_truck = function(obj) {
-  return this.immediately(this.one(this.truck(this.maintains(obj))));
+  return this.immediately(this.one(this.trucker(this.maintains(obj))));
 };
 
 Command.prototype.derricks_commands = function() {
@@ -2291,7 +2922,7 @@ Command.prototype.scouts_commands = function() {
   _ref = this.resources;
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     derrick = _ref[_i];
-    commands.push(this.immediately(this.one(this.gun(this.scouts(this.at(derrick.x, derrick.y))))));
+    commands.push(this.immediately(this.one(this.gunner(this.scouts(this.at(derrick.x, derrick.y))))));
   }
   Scouter.bless(commands);
   commands.mod = 5;

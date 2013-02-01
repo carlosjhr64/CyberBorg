@@ -125,8 +125,8 @@ Command::factory_commands = () ->
   @limit = 1 # Group size limit
   @savings = 0 # TODO explain
   # The commands are...
-  truck = @on_budget @manufacture @wheels @viper @trucker()
-  gunner = @on_budget @manufacture @wheels @viper @gunner()
+  truck = @on_budget @manufacture @wheels @viper @truck()
+  gunner = @on_budget @manufacture @wheels @viper @gun()
   commands = []
   # ... 1 truck
   commands.push(truck)
@@ -136,7 +136,7 @@ Command::factory_commands = () ->
   WZArray.bless(commands)
 
 Command::now_with_truck = (obj) ->
-  @immediately @one @truck @maintains obj
+  @immediately @one @trucker @maintains obj
 Command::derricks_commands = () ->
   @limit = 3 # Group size limit
   @savings = 0 # TODO explain
@@ -155,7 +155,7 @@ Command::scouts_commands = () ->
   commands = WZArray.bless([])
   for derrick in @resources
     commands.push(
-      @immediately @one @gun @scouts @at derrick.x, derrick.y)
+      @immediately @one @gunner @scouts @at derrick.x, derrick.y)
   # Five derricks starting at derrick #3
   Scouter.bless(commands)
   commands.mod = 5
