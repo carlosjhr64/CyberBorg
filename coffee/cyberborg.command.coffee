@@ -63,121 +63,215 @@ class Command
   ### Base Structures ###
   #######################
 
-  structure: (structureid, cost, obj={}) ->
+  structure: (name, structureid, cost, obj={}) ->
+    obj.name = name
     obj.structure = structureid
     obj.cost = cost
     obj
 
-  command_center: (obj={}) -> @structure("A0CommandCentre", 100, obj)
-  power_generator: (obj={}) -> @structure("A0PowerGenerator", 50, obj)
-  power_module: (obj={}) -> @structure("A0PowMod1", 0, obj)
-  research_facility: (obj={}) -> @structure("A0ResearchFacility", 100, obj)
-  research_module: (obj={}) -> @structure("A0ResearchModule1", 100, obj)
-  light_factory: (obj={}) -> @structure("A0LightFactory", 100, obj)
-  factory_module: (obj={}) -> @structure("A0FacMod1", 100, obj)
-  cyborg_factory: (obj={}) -> @structure("A0CyborgFactory", 100, obj)
-  vtol_factory: (obj={}) -> @structure("A0VTolFactory1", 100, obj)
-  command_relay_center: (obj={}) -> @structure("A0ComDroidControl", 100, obj)
-  vtol_rearming_pad: (obj={}) -> @structure("A0VtolPad", 100, obj)
-  repair_facility: (obj={}) -> @structure("A0RepairCentre3", 100, obj)
-  oil_derrick: (obj={}) -> @structure("A0ResourceExtractor", 0, obj)
+  command_center: (obj={}) ->
+    @structure("Command Center", "A0CommandCentre", 100, obj)
+  power_generator: (obj={}) ->
+    @structure("Power Generator", "A0PowerGenerator", 50, obj)
+  power_module: (obj={}) ->
+    @structure("Power Module", "A0PowMod1", 0, obj)
+  research_facility: (obj={}) ->
+    @structure("Research Facility", "A0ResearchFacility", 100, obj)
+  research_module: (obj={}) ->
+    @structure("Research Module", "A0ResearchModule1", 100, obj)
+  light_factory: (obj={}) ->
+    @structure("Factory", "A0LightFactory", 100, obj)
+  factory_module: (obj={}) ->
+    @structure("Factory Module", "A0FacMod1", 100, obj)
+  cyborg_factory: (obj={}) ->
+    @structure("Cyborg Factory", "A0CyborgFactory", 100, obj)
+  vtol_factory: (obj={}) ->
+    @structure("VTOL Factory", "A0VTolFactory1", 100, obj)
+  command_relay_center: (obj={}) ->
+    @structure("Command Relay Center", "A0ComDroidControl", 100, obj)
+  vtol_rearming_pad: (obj={}) ->
+    @structure("VTOL Rearming Pad", "A0VtolPad", 100, obj)
+  repair_facility: (obj={}) ->
+    @structure("Repair Facility", "A0RepairCentre3", 100, obj)
+  oil_derrick: (obj={}) ->
+    @structure("Oil Derrick", "A0ResourceExtractor", 0, obj)
 
   ################
   ### Defenses ###
   ################
 
   # Walls
-  tank_traps: (obj={}) -> @structure("A0TankTrap", 15, obj)
-  hardcrete: (obj={}) -> @structure("A0HardcreteMk1Wall", 25, obj)
+  tank_traps: (obj={}) ->
+    @structure("Tank Traps", "A0TankTrap", 15, obj)
+  hardcrete: (obj={}) ->
+    @structure("Hardcrete Wall", "A0HardcreteMk1Wall", 25, obj)
 
   # Sensor structures
-  sensor_tower: (obj={}) -> @structure("Sys-SensoTower01", 60, obj)
-  radar_detector_tower: (obj={}) -> @structure("Sys-RadarDetector01", 100, obj)
-  cb_tower: (obj={}) -> @structure("Sys-CB-Tower01", 100, obj)
-  hardened_sensor: (obj={}) -> @structure("Sys-SensoTower02", 100, obj)
-  vtol_cb_tower: (obj={}) -> @structure("Sys-VTOL-CB-Tower01", 100, obj)
-  vtol_strike_tower: (obj={}) -> @structure("Sys-VTOL-RadarTower01", 100, obj)
-  wide_spectrum_sensor_tower: (obj={}) -> @structure("Sys-SensoTowerWS", 250, obj)
-  satellite_uplink_center: (obj={}) -> @structure("A0Sat-linkCentre", 1000, obj)
+  sensor_tower: (obj={}) ->
+    @structure("Sensor Tower", "Sys-SensoTower01", 60, obj)
+  radar_detector_tower: (obj={}) ->
+    @structure("Radar Detector Tower", "Sys-RadarDetector01", 100, obj)
+  cb_tower: (obj={}) ->
+     @structure("CB Tower", "Sys-CB-Tower01", 100, obj)
+  hardened_sensor: (obj={}) ->
+     @structure("Hardened Sensor Tower", "Sys-SensoTower02", 100, obj)
+  vtol_cb_tower: (obj={}) ->
+     @structure("VTOL CB Tower", "Sys-VTOL-CB-Tower01", 100, obj)
+  vtol_strike_tower: (obj={}) ->
+     @structure("VTOL Strike Tower", "Sys-VTOL-RadarTower01", 100, obj)
+  wide_spectrum_sensor_tower: (obj={}) ->
+     @structure("Wide Spectrum Sensor Tower", "Sys-SensoTowerWS", 250, obj)
+  satellite_uplink_center: (obj={}) ->
+     @structure("Satellite Uplink Center", "A0Sat-linkCentre", 1000, obj)
 
   # Weapons structures
 
   # Towers, emplacements, and Hardpoints.
-  machinegun_guard_tower: (obj={}) -> @structure("GuardTower1", 100, obj)
-  pulse_laser_tower: (obj={}) -> @structure("GuardTower-BeamLas", 200, obj)
-  needle_gun_tower: (obj={}) -> @structure("GuardTower-Rail1", 275, obj)
-  scourge_missile_tower: (obj={}) -> @structure("GuardTower-ATMiss", 325, obj)
-  mini_rocket_tower: (obj={}) -> @structure("GuardTower6", 100, obj)
-  lancer_tower: (obj={}) -> @structure("GuardTower5", 150, obj)
-  hyper_velocity_cannon: (obj={}) -> @structure("Emplacement-HPVcannon", 200, obj)
-  flashlight_emplacement: (obj={}) -> @structure("Emplacement-PrisLas", 275, obj)
-  tank_killer_emplacement: (obj={}) -> @structure("Emplacement-HvyATrocket", 275, obj)
-  plasma_cannon_emplacement: (obj={}) -> @structure("Emplacement-PlasmaCannon", 300, obj)
-  railgun_emplacement: (obj={}) -> @structure("Emplacement-Rail2", 350, obj)
-  gauss_cannon_emplacement: (obj={}) -> @structure("Emplacement-Rail3", 450, obj)
-  heavy_laser_emplacement: (obj={}) -> @structure("Emplacement-HeavyLaser", 500, obj)
-  heavy_machinegun_hardpoint: (obj={}) -> @structure("WallTower01", 100, obj)
-  light_cannon_hardpoint: (obj={}) -> @structure("WallTower02", 125, obj)
-  assault_gun_hardpoint: (obj={}) -> @structure("Wall-RotMg", 150, obj)
-  lancer_hardpoint: (obj={}) -> @structure("WallTower06", 175, obj)
-  medium_cannon_hardpoint: (obj={}) -> @structure("WallTower03", 200, obj)
-  hyper_velocity_cannon_hardpoint: (obj={}) -> @structure("WallTower-HPVcannon", 225, obj)
-  assault_cannon_hardpoint: (obj={}) -> @structure("Wall-VulcanCan", 250, obj)
-  heavy_cannon_hardpoint: (obj={}) -> @structure("WallTower04", 250, obj)
-  twin_assault_gun_hardpoint: (obj={}) -> @structure("WallTower-TwinAssaultGun", 250, obj)
-  pulse_laser_hardpoint: (obj={}) -> @structure("WallTower-PulseLas", 275, obj)
-  tank_killer_hardpoint: (obj={}) -> @structure("WallTower-HvATrocket", 275, obj)
-  emp_cannon_tower: (obj={}) -> @structure("WallTower-EMP", 350, obj)
-  scourge_missile_hardpoint: (obj={}) -> @structure("WallTower-Atmiss", 350, obj)
-  rail_gun_hardpoint: (obj={}) -> @structure("WallTower-Rail2", 350, obj)
-  gauss_cannon_hardpoint: (obj={}) -> @structure("WallTower-Rail3", 400, obj)
-  nexus_link_tower: (obj={}) -> @structure("Sys-SpyTower", 800, obj)
+  machinegun_guard_tower: (obj={}) ->
+    @structure("Machinegun Guard Tower", "GuardTower1", 100, obj)
+  pulse_laser_tower: (obj={}) ->
+    @structure("Pulse Laser Tower", "GuardTower-BeamLas", 200, obj)
+  needle_gun_tower: (obj={}) ->
+    @structure("Needle Gun Tower", "GuardTower-Rail1", 275, obj)
+  scourge_missile_tower: (obj={}) ->
+    @structure("Scourge Missile Tower", "GuardTower-ATMiss", 325, obj)
+  mini_rocket_tower: (obj={}) ->
+    @structure("Mini-Rocket Tower", "GuardTower6", 100, obj)
+  lancer_tower: (obj={}) ->
+    @structure("Lancer Tower", "GuardTower5", 150, obj)
+  hpv_emplacement: (obj={}) ->
+    @structure("Hyper Velocity Cannon Emplacement", "Emplacement-HPVcannon", 200, obj)
+  flashlight_emplacement: (obj={}) ->
+    @structure("Flashlight Emplacement", "Emplacement-PrisLas", 275, obj)
+  tank_killer_emplacement: (obj={}) ->
+    @structure("Tank Killer Emplacement", "Emplacement-HvyATrocket", 275, obj)
+  plasma_cannon_emplacement: (obj={}) ->
+    @structure("Plasma Cannon Emplacement", "Emplacement-PlasmaCannon", 300, obj)
+  railgun_emplacement: (obj={}) ->
+    @structure("Railgun Emplacement", "Emplacement-Rail2", 350, obj)
+  gauss_cannon_emplacement: (obj={}) ->
+    @structure("Gauss Cannon Emplacement", "Emplacement-Rail3", 450, obj)
+  heavy_laser_emplacement: (obj={}) ->
+    @structure("Heavy Laser Emplacement", "Emplacement-HeavyLaser", 500, obj)
+  heavy_machinegun_hardpoint: (obj={}) ->
+    @structure("Heavy Machinegun Hardpoint", "WallTower01", 100, obj)
+  light_cannon_hardpoint: (obj={}) ->
+    @structure("Light Cannon Hardpoint", "WallTower02", 125, obj)
+  assault_gun_hardpoint: (obj={}) ->
+    @structure("Assault Gun Hardpoint", "Wall-RotMg", 150, obj)
+  lancer_hardpoint: (obj={}) ->
+    @structure("Lancer Hardpoint", "WallTower06", 175, obj)
+  medium_cannon_hardpoint: (obj={}) ->
+    @structure("Medium Cannon Hardpoint", "WallTower03", 200, obj)
+  hpv_hardpoint: (obj={}) ->
+    @structure("Hyper Velocity Cannon Hardpoint", "WallTower-HPVcannon", 225, obj)
+  assault_cannon_hardpoint: (obj={}) ->
+    @structure("Assault Cannon Hardpoint", "Wall-VulcanCan", 250, obj)
+  heavy_cannon_hardpoint: (obj={}) ->
+    @structure("Heavy Cannon Hardpoint", "WallTower04", 250, obj)
+  twin_assault_gun_hardpoint: (obj={}) ->
+    @structure("Twin Assault Gun Hardpoint", "WallTower-TwinAssaultGun", 250, obj)
+  pulse_laser_hardpoint: (obj={}) ->
+    @structure("Pulse Laser Hardpoint", "WallTower-PulseLas", 275, obj)
+  tank_killer_hardpoint: (obj={}) ->
+    @structure("Tank Killer Hardpoint", "WallTower-HvATrocket", 275, obj)
+  emp_cannon_tower: (obj={}) ->
+    @structure("EMP Cannon Tower", "WallTower-EMP", 350, obj)
+  scourge_missile_hardpoint: (obj={}) ->
+    @structure("Scourge Missile Hardpoint", "WallTower-Atmiss", 350, obj)
+  rail_gun_hardpoint: (obj={}) ->
+    @structure("Rail Gun Hardpoint", "WallTower-Rail2", 350, obj)
+  gauss_cannon_hardpoint: (obj={}) ->
+    @structure("Gauss Cannon Hardpoint", "WallTower-Rail3", 400, obj)
+  nexus_link_tower: (obj={}) ->
+    @structure("Nexus Link Tower", "Sys-SpyTower", 800, obj)
 
   # Bunkers
-  flamer_bunker: (obj={}) -> @structure("PillBox5", 100, obj)
-  machinegun_bunker: (obj={}) -> @structure("PillBox1", 100, obj)
-  plasmite_flamer_bunker: (obj={}) -> @structure("Plasmite-flamer-bunker", 125, obj)
-  inferno_bunker: (obj={}) -> @structure("Tower-Projector", 125, obj)
-  light_cannon_bunker: (obj={}) -> @structure("PillBox4", 125, obj)
-  rotary_mg_bunker: (obj={}) -> @structure("Pillbox-RotMG", 150, obj)
-  twin_assaut_cannon_bunker: (obj={}) -> @structure("PillBox-Cannon6", 225, obj)
+  flamer_bunker: (obj={}) ->
+    @structure("Flamer Bunker", "PillBox5", 100, obj)
+  machinegun_bunker: (obj={}) ->
+    @structure("Machinegun Bunker", "PillBox1", 100, obj)
+  plasmite_flamer_bunker: (obj={}) ->
+    @structure("Plasmite Flamer Bunker", "Plasmite-flamer-bunker", 125, obj)
+  inferno_bunker: (obj={}) ->
+    @structure("Inferno Bunker", "Tower-Projector", 125, obj)
+  light_cannon_bunker: (obj={}) ->
+    @structure("Light Cannon Bunker", "PillBox4", 125, obj)
+  rotary_mg_bunker: (obj={}) ->
+    @structure("Rotary MG Bunker", "Pillbox-RotMG", 150, obj)
+  twin_assault_cannon_bunker: (obj={}) ->
+    @structure("Twin Assault Cannon Bunker", "PillBox-Cannon6", 225, obj)
 
   # Artillery
-  mortar_pit: (obj={}) -> @structure("Emplacement-MortarPit01", 125, obj)
-  incendiary_mortar_pit: (obj={}) -> @structure("Emplacement-MortarPit-Incenediary", 135, obj)
-  bombard_pit: (obj={}) -> @structure("Emplacement-MortarPit02", 150, obj)
-  pepperpot_pit: (obj={}) -> @structure("Emplacement-RotMor", 325, obj)
+  mortar_pit: (obj={}) ->
+    @structure("Mortar Pit", "Emplacement-MortarPit01", 125, obj)
+  incendiary_mortar_pit: (obj={}) ->
+    @structure("Incendiary Mortar Pit", "Emplacement-MortarPit-Incenediary", 135, obj)
+  bombard_pit: (obj={}) ->
+    @structure("Bombard Pit", "Emplacement-MortarPit02", 150, obj)
+  pepperpot_pit: (obj={}) ->
+    @structure("Pepperpot Pit", "Emplacement-RotMor", 325, obj)
   incendiary_howitzer_emplacement: (obj={}) ->
-    @structure("Emplacement-Howitzer-Incenediary", 325, obj)
-  howitzer_emplacement: (obj={}) -> @structure("Emplacement-Howitzer105", 0, obj)
-  ground_shaker_emplacement: (obj={}) -> @structure("Emplacement-Howitzer150", 425, obj)
-  hellstorm_emplacement: (obj={}) -> @structure("Emplacement-RotHow", 525, obj)
-  emp_mortar_pit: (obj={}) -> @structure("Emplacement-MortarEMP", 150, obj)
-  mini_roket_battery: (obj={}) -> @structure("Emplacement-MRL-pit", 125, obj)
-  ripple_rocket_battery: (obj={}) -> @structure("Emplacement-Rocket06-IDF", 325, obj)
-  seraph_missile_battery: (obj={}) -> @structure("Emplacement-MdART-pit", 450, obj)
-  archangel_missile_emplacement: (obj={}) -> @structure("Emplacement-HvART-pit", 525, obj)
+    @structure("Incendiary Howitzer Emplacement", "Emplacement-Howitzer-Incenediary", 325, obj)
+  howitzer_emplacement: (obj={}) ->
+    @structure("Howitzer Emplacement", "Emplacement-Howitzer105", 0, obj)
+  ground_shaker_emplacement: (obj={}) ->
+    @structure("Ground Shaker Emplacement", "Emplacement-Howitzer150", 425, obj)
+  hellstorm_emplacement: (obj={}) ->
+    @structure("Hellstorm Emplacement", "Emplacement-RotHow", 525, obj)
+  emp_mortar_pit: (obj={}) ->
+    @structure("EMP Mortar Pit", "Emplacement-MortarEMP", 150, obj)
+  mini_roket_battery: (obj={}) ->
+    @structure("Mini-Rocket Battery", "Emplacement-MRL-pit", 125, obj)
+  ripple_rocket_battery: (obj={}) ->
+    @structure("Ripple Rocket Battery", "Emplacement-Rocket06-IDF", 325, obj)
+  seraph_missile_battery: (obj={}) ->
+    @structure("Seraph Missile Battery", "Emplacement-MdART-pit", 450, obj)
+  archangel_missile_emplacement: (obj={}) ->
+    @structure("Archangel Missile Emplacement", "Emplacement-HvART-pit", 525, obj)
 
   # Anti-air structures
-  sunburst_site: (obj={}) -> @structure("P0-AASite-Sunburst", 250, obj)
-  hurricane_site: (obj={}) -> @structure("AASite-QuadMg1", 125, obj)
-  whirlwind_site: (obj={}) -> @structure("AASite-QuadRotMg", 175, obj)
-  avenger_site: (obj={}) -> @structure("P0-AASite-SAM1", 250, obj)
-  stormbringer_site: (obj={}) -> @structure("P0-AASite-Laser", 350, obj)
-  vindicator_site: (obj={}) -> @structure("P0-AASite-SAM2", 350, obj)
-  flak_cannon_emplacement: (obj={}) -> @structure("AASite-QuadBof", 300, obj)
-  vindicator_hardpoint: (obj={}) -> @structure("WallTower-SamHvy", 400, obj)
-  whirlwind_hardpoint: (obj={}) -> @structure("WallTower-QuadRotAAGun", 400, obj)
-  avenger_hardpoint: (obj={}) -> @structure("WallTower-SamSite", 400, obj)
-  flak_cannon_hardpoint: (obj={}) -> @structure("WallTower-DoubleAAGun", 450, obj)
+  sunburst_site: (obj={}) ->
+    @structure("Sunburst AA Site", "P0-AASite-Sunburst", 250, obj)
+  hurricane_site: (obj={}) ->
+    @structure("Hurricane AA Site", "AASite-QuadMg1", 125, obj)
+  whirlwind_site: (obj={}) ->
+    @structure("Whirlwind AA Site", "AASite-QuadRotMg", 175, obj)
+  avenger_site: (obj={}) ->
+    @structure("Avenger AA Site", "P0-AASite-SAM1", 250, obj)
+  stormbringer_site: (obj={}) ->
+    @structure("Stormbringer AA Site", "P0-AASite-Laser", 350, obj)
+  vindicator_site: (obj={}) ->
+    @structure("Vindicator SAM Site", "P0-AASite-SAM2", 350, obj)
+  flak_cannon_emplacement: (obj={}) ->
+    @structure("AA Flak Cannon Emplacement", "AASite-QuadBof", 300, obj)
+  vindicator_hardpoint: (obj={}) ->
+    @structure("Vindicator Hardpoint", "WallTower-SamHvy", 400, obj)
+  whirlwind_hardpoint: (obj={}) ->
+    @structure("Whirlwind Hardpoint", "WallTower-QuadRotAAGun", 400, obj)
+  avenger_hardpoint: (obj={}) ->
+    @structure("Avenger Hardpoint", "WallTower-SamSite", 400, obj)
+  flak_cannon_hardpoint: (obj={}) ->
+    @structure("AA Flak Cannon Hardpoint", "WallTower-DoubleAAGun", 450, obj)
 
-  ##############
+  # Weapons Structure-only // Superweapons
+  laser_satellite: (obj={}) ->
+    @turret("Laser Satellite Command Post", "A0LasSatCommand", 1000, DROID_WEAPON, obj)
+  cannon_fortress: (obj={}) ->
+    @turret("Cannon Fortress", "X-Super-Cannon", 1000, DROID_WEAPON, obj)
+  heavy_rocket_bastion: (obj={}) ->
+    @turret("Heavy Rocket Bastion", "X-Super-Rocket", 1250, DROID_WEAPON, obj)
+  missile_fortress: (obj={}) ->
+    @turret("Missile Fortress", "X-Super-Missile", 1600, DROID_WEAPON, obj)
+  mass_driver: (obj={}) ->
+    @turret("Mass Driver", "X-Super-MassDriver", 1800, DROID_WEAPON, obj)
+
+  ###############
   ### Turrets ###
-  ##############
+  ###############
 
   turret: (tname, turretid, tcost, dtype, obj={}) ->
-    obj.like = new RegExp(tname)
-    obj.name = tname
+    obj.tname = tname
     obj.turret = turretid
     obj.tcost = tcost
     obj.droid_type = dtype
@@ -236,7 +330,7 @@ class Command
     @turret("Medium Cannon", "Cannon2A-TMk1", 150, DROID_WEAPON, obj)
   assault_cannon: (obj={}) ->
     @turret("Assault Cannon", "Cannon5VulcanMk1", 150, DROID_WEAPON, obj)
-  hyper_velocity_cannon: (obj={}) ->
+  hpv: (obj={}) ->
     @turret("Hyper Velocity Cannon", "Cannon4AUTOMk1", 175, DROID_WEAPON, obj)
   heavy_cannon: (obj={}) ->
     @turret("Heavy Cannon", "Cannon375mmMk1", 250, DROID_WEAPON, obj)
@@ -350,7 +444,7 @@ class Command
     @turret("VTOL Bunker Buster", "Rocket-VTOL-BB", 150, DROID_WEAPON, obj)
   vtol_flaslight: (obj={}) ->
     @turret("VTOL Flashlight", "Laser3BEAM-VTOL", 150, DROID_WEAPON, obj)
-  vtol_hyper_velocity_cannon: (obj={}) ->
+  vtol_hpv: (obj={}) ->
     @turret("VTOL Hyper Velocity Cannon", "Cannon4AUTO-VTOL", 175, DROID_WEAPON, obj)
   vtol_pulse_laser: (obj={}) ->
     @turret("VTOL Pulse Laser", "Laser2PULSE-VTOL", 200, DROID_WEAPON, obj)
@@ -379,28 +473,16 @@ class Command
   thermite_bomb: (obj={}) ->
     @turret("Thermite Bomb", "Bomb4-VTOL-HvyINC", 225, DROID_WEAPON, obj)
 
- # Weapons Air-to-air
+  # Weapons Air-to-air
   vtol_sunburst: (obj={}) ->
     @turret("VTOL Sunburst", "Rocket-VTOL-Sunburst", 150, DROID_WEAPON, obj)
 
- # Weapons Structure-only
-  laser_satellite: (obj={}) ->
-    @turret("Laser Satellite Command Post", "A0LasSatCommand", 1000, DROID_WEAPON, obj)
-  cannon_fortress: (obj={}) ->
-    @turret("Cannon Fortress", "X-Super-Cannon", 1000, DROID_WEAPON, obj)
-  heavy_rocket_bastion: (obj={}) ->
-    @turret("Heavy Rocket Bastion", "X-Super-Rocket", 1250, DROID_WEAPON, obj)
-  missile_fortress: (obj={}) ->
-    @turret("Missile Fortress", "X-Super-Missile", 1600, DROID_WEAPON, obj)
-  mass_driver: (obj={}) ->
-    @turret("Mass Driver", "X-Super-MassDriver", 1800, DROID_WEAPON, obj)
-
-  gun: (obj={}) ->
-    obj.like = /Gun/
-    obj.name = "Gun"
-    obj.turret = ["MG3Mk1", "MG2Mk1", "MG1Mk1"]
-    obj.droid_type = DROID_WEAPON
-    obj
+  # TODO
+  #gun: (obj={}) ->
+  #  obj.name = "Gun"
+  #  obj.turret = ["MG3Mk1", "MG2Mk1", "MG1Mk1"]
+  #  obj.droid_type = DROID_WEAPON
+  #  obj
 
   ###############
   ### Cyborgs ###
@@ -435,6 +517,8 @@ class Command
   wyvern: (obj={}) -> @body("Wyvern", "Body13SUP", 156, obj)
   dragon: (obj={}) -> @body("Dragon", "Body14SUP", 182, obj)
 
+  transport: (obj={}) -> @body("Transport", "TransporterBody", 325, obj)
+
   ##################
   ### Propulsion ###
   ##################
@@ -468,15 +552,15 @@ class Command
     obj
 
   trucker: (obj={}) ->
-    obj.like = /Truck/
+    obj.like = /Truck$/
     obj
 
-  gunner: (obj={}) ->
-    obj.like = /Gun/
+  scouter: (obj={}) ->
+    obj.like = /^((Wheels)|(Hover))-((Viper)|(Bug))-.*Machinegun$/
     obj
 
   factory: (obj={}) ->
-    obj.like = /Factory/
+    obj.like = /^Factory$/
     obj
 
   ##############
@@ -504,6 +588,9 @@ class Command
     obj
 
   manufacture: (obj={}) ->
+    name = "#{obj.pname}-#{obj.bname}-#{obj.tname}"
+    name = "Truck" if name is "Wheels-Viper-Truck"
+    obj.name = "#{obj.pname}-#{obj.bname}-#{obj.tname}"
     cost = 100 # TODO
     if obj.body and obj.propulsion and obj.turret
       # makeTemplate... :-??
@@ -592,5 +679,4 @@ class Command
 ###############
 Command::maintains = Command::maintain
 Command::manufactures = Command::manufacture
-Command::trucks = Command::truck
 Command::scouts = Command::scout

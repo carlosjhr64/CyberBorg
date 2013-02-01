@@ -72,9 +72,9 @@ Ai::script = () ->
 # the AI guarantees that the first thing that happens
 # is that the base gets built.
 Command::with_three_trucks = (obj) ->
-  @with_help @immediately @three @trucks @maintain obj
+  @with_help @immediately @three @trucker @maintain obj
 Command::with_one_truck = (obj) ->
-  @on_budget @one @truck @maintains obj
+  @on_budget @one @trucker @maintains obj
 Command::base_commands = () ->
 
   @limit = 3 # Group size limit
@@ -89,32 +89,32 @@ Command::base_commands = () ->
 
   @limit = 1
   more = [
-    @on_surplus @one @truck @maintains @power_generator @at @x, @y
+    @on_surplus @one @trucker @maintains @power_generator @at @x, @y
     # Wait for power levels to come back up.
-    @pass @on_glut @none()
-    @on_budget @one @truck @maintains @research_facility @at @x-@s*@dx, @y
-    @on_budget @one @truck @maintains @power_generator @at @x-@s*@dx, @y+@s*@dy
+    #@pass @on_glut @none()
+    @on_budget @one @trucker @maintains @research_facility @at @x-@s*@dx, @y
+    @on_budget @one @trucker @maintains @power_generator @at @x-@s*@dx, @y+@s*@dy
     # Wait for power levels to come back up.
-    @pass @on_glut @none()
-    @on_budget @one @truck @maintains @research_facility @at @x, @y+@s*@dy
-    @on_budget @one @truck @maintains @power_generator @at @x+@s*@dx, @y+@s*@dy
+    #@pass @on_glut @none()
+    @on_budget @one @trucker @maintains @research_facility @at @x, @y+@s*@dy
+    @on_budget @one @trucker @maintains @power_generator @at @x+@s*@dx, @y+@s*@dy
   ]
   commands = commands.concat(more)
 
   if @horizontal
     more = [
-      @pass @on_glut @none()
+      #@pass @on_glut @none()
       @with_one_truck @research_facility @at @x+2*@s*@dx, @y+@s*@dy
       @with_one_truck @power_generator @at @x+2*@s*@dx, @y
-      @pass @on_glut @none()
+      #@pass @on_glut @none()
       @with_one_truck @research_facility @at @x+2*@s*@dx, @y-@s*@dy
     ]
   else
     more = [
-      @pass @on_glut @none()
+      #@pass @on_glut @none()
       @with_one_truck @research_facility @at @x+@s*@dx, @y+2*@s*@dy
       @with_one_truck @power_generator @at @x, @y+2*@s*@dy
-      @pass @on_glut @none()
+      #@pass @on_glut @none()
       @with_one_truck @research_facility @at @x-@s*@dx, @y+2*@s*@dy
     ]
   commands = commands.concat(more)
@@ -126,7 +126,7 @@ Command::factory_commands = () ->
   @savings = 0 # TODO explain
   # The commands are...
   truck = @on_budget @manufacture @wheels @viper @truck()
-  gunner = @on_budget @manufacture @wheels @viper @gun()
+  gunner = @on_budget @manufacture @wheels @viper @machinegun()
   commands = []
   # ... 1 truck
   commands.push(truck)
@@ -155,7 +155,7 @@ Command::scouts_commands = () ->
   commands = WZArray.bless([])
   for derrick in @resources
     commands.push(
-      @immediately @one @gunner @scouts @at derrick.x, derrick.y)
+      @immediately @one @scouter @scouts @at derrick.x, derrick.y)
   # Five derricks starting at derrick #3
   Scouter.bless(commands)
   commands.mod = 5
