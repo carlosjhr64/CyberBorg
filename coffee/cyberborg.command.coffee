@@ -612,13 +612,19 @@ class Command
     obj.order = DORDER_SCOUT
     obj
 
+  # Example:
+  # @pass @on_glut @none()
   pass: (obj={}) ->
     obj.cost = 0
     obj.order = CORDER_PASS
     # 1 just means success in this case. Normally,
     # it would be the number of units that succesfully executed the command.
-    obj.execute = (units) -> 1
-    obj.cid = null
+    obj.execute = (group) ->
+      if group.list.length >= obj.min
+        if first = group.list.first()
+          group.layoffs(first.command)
+        return 1
+      0
     obj
 
   #################
@@ -659,7 +665,7 @@ class Command
     obj
 
   on_income: (obj={}) ->
-    obj.power = -obj.cost/2
+    obj.power = -100
     obj
 
   on_budget: (obj={}) ->
@@ -667,11 +673,15 @@ class Command
     obj
 
   on_surplus: (obj={}) ->
-    obj.power = obj.cost
+    obj.power = 100
+    obj
+
+  on_plenty: (obj={}) ->
+    obj.power = 400
     obj
 
   on_glut: (obj={}) ->
-    obj.power = 3*obj.cost
+    obj.power = 1000
     obj
 
 ###############

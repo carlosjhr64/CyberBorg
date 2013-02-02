@@ -73,6 +73,8 @@ Ai::script = () ->
 # is that the base gets built.
 Command::with_three_trucks = (obj) ->
   @with_help @immediately @three @trucker @maintain obj
+Command::with_two_trucks = (obj) ->
+  @with_help @immediately @two @trucker @maintain obj
 Command::with_one_truck = (obj) ->
   @on_budget @one @trucker @maintains obj
 Command::base_commands = () ->
@@ -85,36 +87,40 @@ Command::base_commands = () ->
     @with_three_trucks @research_facility @at @x, @y-@s*@dy
     @with_three_trucks @command_center @at @x+@s*@dx, @y-@s*@dy
     @with_three_trucks @power_generator @at @x+@s*@dx, @y
+    @with_two_trucks @oil_derrick @at @resources[0].x, @resources[0].y
+    @with_two_trucks @oil_derrick @at @resources[1].x, @resources[1].y
+    @with_two_trucks @oil_derrick @at @resources[2].x, @resources[2].y
+    @with_two_trucks @oil_derrick @at @resources[3].x, @resources[3].y
   ]
 
   @limit = 1
   more = [
-    @on_surplus @one @trucker @maintains @power_generator @at @x, @y
+    @on_budget @one @trucker @maintains @power_generator @at @x, @y
     # Wait for power levels to come back up.
-    #@pass @on_glut @none()
-    @on_budget @one @trucker @maintains @research_facility @at @x-@s*@dx, @y
+    @pass @on_plenty @one @trucker()
+    @on_surplus @one @trucker @maintains @research_facility @at @x-@s*@dx, @y
     @on_budget @one @trucker @maintains @power_generator @at @x-@s*@dx, @y+@s*@dy
     # Wait for power levels to come back up.
-    #@pass @on_glut @none()
-    @on_budget @one @trucker @maintains @research_facility @at @x, @y+@s*@dy
+    @pass @on_plenty @none()
+    @on_surplus @one @trucker @maintains @research_facility @at @x, @y+@s*@dy
     @on_budget @one @trucker @maintains @power_generator @at @x+@s*@dx, @y+@s*@dy
   ]
   commands = commands.concat(more)
 
   if @horizontal
     more = [
-      #@pass @on_glut @none()
+      @pass @on_plenty @none()
       @with_one_truck @research_facility @at @x+2*@s*@dx, @y+@s*@dy
       @with_one_truck @power_generator @at @x+2*@s*@dx, @y
-      #@pass @on_glut @none()
+      @pass @on_plenty @none()
       @with_one_truck @research_facility @at @x+2*@s*@dx, @y-@s*@dy
     ]
   else
     more = [
-      #@pass @on_glut @none()
+      @pass @on_plenty @none()
       @with_one_truck @research_facility @at @x+@s*@dx, @y+2*@s*@dy
       @with_one_truck @power_generator @at @x, @y+2*@s*@dy
-      #@pass @on_glut @none()
+      @pass @on_plenty @none()
       @with_one_truck @research_facility @at @x-@s*@dx, @y+2*@s*@dy
     ]
   commands = commands.concat(more)
@@ -147,6 +153,7 @@ Command::derricks_commands = () ->
   Scouter.bless(commands)
   commands.mod = 8
   commands.offset = 0
+  4.times -> commands.next()
   commands
 
 Command::scouts_commands = () ->

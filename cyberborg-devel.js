@@ -2547,10 +2547,16 @@ Command = (function() {
     }
     obj.cost = 0;
     obj.order = CORDER_PASS;
-    obj.execute = function(units) {
-      return 1;
+    obj.execute = function(group) {
+      var first;
+      if (group.list.length >= obj.min) {
+        if (first = group.list.first()) {
+          group.layoffs(first.command);
+        }
+        return 1;
+      }
+      return 0;
     };
-    obj.cid = null;
     return obj;
   };
 
@@ -2615,7 +2621,7 @@ Command = (function() {
     if (obj == null) {
       obj = {};
     }
-    obj.power = -obj.cost / 2;
+    obj.power = -100;
     return obj;
   };
 
@@ -2631,7 +2637,15 @@ Command = (function() {
     if (obj == null) {
       obj = {};
     }
-    obj.power = obj.cost;
+    obj.power = 100;
+    return obj;
+  };
+
+  Command.prototype.on_plenty = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    obj.power = 400;
     return obj;
   };
 
@@ -2639,7 +2653,7 @@ Command = (function() {
     if (obj == null) {
       obj = {};
     }
-    obj.power = 3 * obj.cost;
+    obj.power = 1000;
     return obj;
   };
 
@@ -2665,7 +2679,7 @@ Gotcha = (function() {
 
   Gotcha.prototype.start = function(event) {
     var droid, research, structure;
-    Trace.out("Power level: " + this.ai.power + " in " + event.name);
+    Trace.out("Power level: " + this.ai.power + "  Event: " + event.name + "  Time: " + gameTime);
     if (structure = event.structure) {
       Trace.out("\t" + (structure.namexy()) + "\tCost: " + structure.cost);
     }
@@ -3340,6 +3354,10 @@ Command.prototype.with_three_trucks = function(obj) {
   return this.with_help(this.immediately(this.three(this.trucker(this.maintain(obj)))));
 };
 
+Command.prototype.with_two_trucks = function(obj) {
+  return this.with_help(this.immediately(this.two(this.trucker(this.maintain(obj)))));
+};
+
 Command.prototype.with_one_truck = function(obj) {
   return this.on_budget(this.one(this.trucker(this.maintains(obj))));
 };
@@ -3348,14 +3366,14 @@ Command.prototype.base_commands = function() {
   var commands, more;
   this.limit = 3;
   this.savings = 400;
-  commands = [this.with_three_trucks(this.light_factory(this.at(this.x - this.s * this.dx, this.y - this.s * this.dy))), this.with_three_trucks(this.research_facility(this.at(this.x, this.y - this.s * this.dy))), this.with_three_trucks(this.command_center(this.at(this.x + this.s * this.dx, this.y - this.s * this.dy))), this.with_three_trucks(this.power_generator(this.at(this.x + this.s * this.dx, this.y)))];
+  commands = [this.with_three_trucks(this.light_factory(this.at(this.x - this.s * this.dx, this.y - this.s * this.dy))), this.with_three_trucks(this.research_facility(this.at(this.x, this.y - this.s * this.dy))), this.with_three_trucks(this.command_center(this.at(this.x + this.s * this.dx, this.y - this.s * this.dy))), this.with_three_trucks(this.power_generator(this.at(this.x + this.s * this.dx, this.y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[0].x, this.resources[0].y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[1].x, this.resources[1].y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[2].x, this.resources[2].y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[3].x, this.resources[3].y)))];
   this.limit = 1;
-  more = [this.on_surplus(this.one(this.trucker(this.maintains(this.power_generator(this.at(this.x, this.y)))))), this.on_budget(this.one(this.trucker(this.maintains(this.research_facility(this.at(this.x - this.s * this.dx, this.y)))))), this.on_budget(this.one(this.trucker(this.maintains(this.power_generator(this.at(this.x - this.s * this.dx, this.y + this.s * this.dy)))))), this.on_budget(this.one(this.trucker(this.maintains(this.research_facility(this.at(this.x, this.y + this.s * this.dy)))))), this.on_budget(this.one(this.trucker(this.maintains(this.power_generator(this.at(this.x + this.s * this.dx, this.y + this.s * this.dy))))))];
+  more = [this.on_budget(this.one(this.trucker(this.maintains(this.power_generator(this.at(this.x, this.y)))))), this.pass(this.on_plenty(this.one(this.trucker()))), this.on_surplus(this.one(this.trucker(this.maintains(this.research_facility(this.at(this.x - this.s * this.dx, this.y)))))), this.on_budget(this.one(this.trucker(this.maintains(this.power_generator(this.at(this.x - this.s * this.dx, this.y + this.s * this.dy)))))), this.pass(this.on_plenty(this.none())), this.on_surplus(this.one(this.trucker(this.maintains(this.research_facility(this.at(this.x, this.y + this.s * this.dy)))))), this.on_budget(this.one(this.trucker(this.maintains(this.power_generator(this.at(this.x + this.s * this.dx, this.y + this.s * this.dy))))))];
   commands = commands.concat(more);
   if (this.horizontal) {
-    more = [this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y + this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x + 2 * this.s * this.dx, this.y))), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y - this.s * this.dy)))];
+    more = [this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y + this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x + 2 * this.s * this.dx, this.y))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y - this.s * this.dy)))];
   } else {
-    more = [this.with_one_truck(this.research_facility(this.at(this.x + this.s * this.dx, this.y + 2 * this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x, this.y + 2 * this.s * this.dy))), this.with_one_truck(this.research_facility(this.at(this.x - this.s * this.dx, this.y + 2 * this.s * this.dy)))];
+    more = [this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + this.s * this.dx, this.y + 2 * this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x, this.y + 2 * this.s * this.dy))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x - this.s * this.dx, this.y + 2 * this.s * this.dy)))];
   }
   commands = commands.concat(more);
   return WZArray.bless(commands);
@@ -3393,6 +3411,9 @@ Command.prototype.derricks_commands = function() {
   Scouter.bless(commands);
   commands.mod = 8;
   commands.offset = 0;
+  4..times(function() {
+    return commands.next();
+  });
   return commands;
 };
 
