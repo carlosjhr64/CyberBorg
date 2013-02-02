@@ -2411,13 +2411,13 @@ Command = (function() {
   */
 
 
-  Command.prototype.body = function(bname, bodyid, cost, obj) {
+  Command.prototype.body = function(bname, bodyid, bcost, obj) {
     if (obj == null) {
       obj = {};
     }
     obj.body = bodyid;
     obj.bname = bname;
-    obj.bcost = cost;
+    obj.bcost = bcost;
     return obj;
   };
 
@@ -2587,6 +2587,30 @@ Command = (function() {
   */
 
 
+  Command.prototype.like = function(input, obj) {
+    var name;
+    if (obj == null) {
+      obj = {};
+    }
+    if (name = input.name) {
+      obj.like = new RegExp(name);
+      return obj;
+    }
+    if (name = input.pname) {
+      obj.like = new RegExp("^" + name);
+      return obj;
+    }
+    if (name = input.bname) {
+      obj.like = new RegExp("^" + name);
+      return obj;
+    }
+    if (name = input.tname) {
+      obj.like = new RegExp("^" + name);
+      return obj;
+    }
+    return null;
+  };
+
   Command.prototype.none = function(obj) {
     if (obj == null) {
       obj = {};
@@ -2612,14 +2636,6 @@ Command = (function() {
       obj = {};
     }
     obj.like = /^((Wheels)|(Hover))-((Viper)|(Bug))-.*Machinegun$/;
-    return obj;
-  };
-
-  Command.prototype.factory = function(obj) {
-    if (obj == null) {
-      obj = {};
-    }
-    obj.like = /^Factory$/;
     return obj;
   };
 
@@ -2659,22 +2675,18 @@ Command = (function() {
   };
 
   Command.prototype.manufacture = function(obj) {
-    var cost, name;
+    var name;
     if (obj == null) {
       obj = {};
     }
+    obj.order = FORDER_MANUFACTURE;
+    obj.like = /Factory/;
     name = "" + obj.pname + "-" + obj.bname + "-" + obj.tname;
     if (name === "Wheels-Viper-Truck") {
       name = "Truck";
     }
     obj.name = name;
-    cost = 100;
-    if (obj.body && obj.propulsion && obj.turret) {
-      cost = 100;
-    }
-    obj.order = FORDER_MANUFACTURE;
-    obj.like = /Factory/;
-    obj.cost = cost;
+    obj.cost = (obj.pcost * obj.bcost) + obj.tcost;
     return obj;
   };
 

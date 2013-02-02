@@ -1,23 +1,3 @@
-# ***Order Attributes***
-# order:     order number
-# like:      the unit name pattern
-# power:     minimum power b/4 starting
-# cost:      the power cost of the command
-# limit:     the maximum group size
-# min:       minimum number of units required to execute command.
-# max:       maximum allowed number of units to execute command.
-# help:      the number of helping units the job is willing to take.
-# at:        preferred location (and direction).
-# structure: structure to be built
-# research:  technology to be researched
-# body:
-# propulsion:
-# turret:
-# cid:       the command id is set at the time the command is given.
-# { name: min: max: order: employ: at: ... }
-
-# CyberBorg::base_commands = (reserve, resources) ->
-
 class Command
   @to_at = (o) -> {x: o.x.to_i(), y: o.y.to_i()}
 
@@ -69,60 +49,60 @@ class Command
     obj.cost = cost
     obj
 
-  command_center: (obj={}) ->
-    @structure("Command Center", "A0CommandCentre", 100, obj)
-  power_generator: (obj={}) ->
-    @structure("Power Generator", "A0PowerGenerator", 50, obj)
-  power_module: (obj={}) ->
-    @structure("Power Module", "A0PowMod1", 0, obj)
-  research_facility: (obj={}) ->
-    @structure("Research Facility", "A0ResearchFacility", 100, obj)
-  research_module: (obj={}) ->
-    @structure("Research Module", "A0ResearchModule1", 100, obj)
-  light_factory: (obj={}) ->
-    @structure("Factory", "A0LightFactory", 100, obj)
-  factory_module: (obj={}) ->
-    @structure("Factory Module", "A0FacMod1", 100, obj)
-  cyborg_factory: (obj={}) ->
-    @structure("Cyborg Factory", "A0CyborgFactory", 100, obj)
-  vtol_factory: (obj={}) ->
-    @structure("VTOL Factory", "A0VTolFactory1", 100, obj)
-  command_relay_center: (obj={}) ->
-    @structure("Command Relay Center", "A0ComDroidControl", 100, obj)
-  vtol_rearming_pad: (obj={}) ->
-    @structure("VTOL Rearming Pad", "A0VtolPad", 100, obj)
-  repair_facility: (obj={}) ->
-    @structure("Repair Facility", "A0RepairCentre3", 100, obj)
-  oil_derrick: (obj={}) ->
-    @structure("Oil Derrick", "A0ResourceExtractor", 0, obj)
+  command_center: (obj={}) -> @structure(
+    "Command Center", "A0CommandCentre", 100, obj)
+  power_generator: (obj={}) -> @structure(
+    "Power Generator", "A0PowerGenerator", 50, obj)
+  power_module: (obj={}) -> @structure(
+    "Power Module", "A0PowMod1", 0, obj)
+  research_facility: (obj={}) -> @structure(
+    "Research Facility", "A0ResearchFacility", 100, obj)
+  research_module: (obj={}) -> @structure(
+    "Research Module", "A0ResearchModule1", 100, obj)
+  light_factory: (obj={}) -> @structure(
+    "Factory", "A0LightFactory", 100, obj)
+  factory_module: (obj={}) -> @structure(
+    "Factory Module", "A0FacMod1", 100, obj)
+  cyborg_factory: (obj={}) -> @structure(
+    "Cyborg Factory", "A0CyborgFactory", 100, obj)
+  vtol_factory: (obj={}) -> @structure(
+    "VTOL Factory", "A0VTolFactory1", 100, obj)
+  command_relay_center: (obj={}) -> @structure(
+    "Command Relay Center", "A0ComDroidControl", 100, obj)
+  vtol_rearming_pad: (obj={}) -> @structure(
+    "VTOL Rearming Pad", "A0VtolPad", 100, obj)
+  repair_facility: (obj={}) -> @structure(
+    "Repair Facility", "A0RepairCentre3", 100, obj)
+  oil_derrick: (obj={}) -> @structure(
+    "Oil Derrick", "A0ResourceExtractor", 0, obj)
 
   ################
   ### Defenses ###
   ################
 
   # Walls
-  tank_traps: (obj={}) ->
-    @structure("Tank Traps", "A0TankTrap", 15, obj)
-  hardcrete: (obj={}) ->
-    @structure("Hardcrete Wall", "A0HardcreteMk1Wall", 25, obj)
+  tank_traps: (obj={}) -> @structure(
+    "Tank Traps", "A0TankTrap", 15, obj)
+  hardcrete: (obj={}) -> @structure(
+    "Hardcrete Wall", "A0HardcreteMk1Wall", 25, obj)
 
   # Sensor structures
-  sensor_tower: (obj={}) ->
-    @structure("Sensor Tower", "Sys-SensoTower01", 60, obj)
-  radar_detector_tower: (obj={}) ->
-    @structure("Radar Detector Tower", "Sys-RadarDetector01", 100, obj)
-  cb_tower: (obj={}) ->
-    @structure("CB Tower", "Sys-CB-Tower01", 100, obj)
-  hardened_sensor: (obj={}) ->
-    @structure("Hardened Sensor Tower", "Sys-SensoTower02", 100, obj)
-  vtol_cb_tower: (obj={}) ->
-    @structure("VTOL CB Tower", "Sys-VTOL-CB-Tower01", 100, obj)
-  vtol_strike_tower: (obj={}) ->
-    @structure("VTOL Strike Tower", "Sys-VTOL-RadarTower01", 100, obj)
-  wide_spectrum_sensor_tower: (obj={}) ->
-    @structure("Wide Spectrum Sensor Tower", "Sys-SensoTowerWS", 250, obj)
-  satellite_uplink_center: (obj={}) ->
-    @structure("Satellite Uplink Center", "A0Sat-linkCentre", 1000, obj)
+  sensor_tower: (obj={}) -> @structure(
+    "Sensor Tower", "Sys-SensoTower01", 60, obj)
+  radar_detector_tower: (obj={}) -> @structure(
+    "Radar Detector Tower", "Sys-RadarDetector01", 100, obj)
+  cb_tower: (obj={}) -> @structure(
+    "CB Tower", "Sys-CB-Tower01", 100, obj)
+  hardened_sensor: (obj={}) -> @structure(
+    "Hardened Sensor Tower", "Sys-SensoTower02", 100, obj)
+  vtol_cb_tower: (obj={}) -> @structure(
+    "VTOL CB Tower", "Sys-VTOL-CB-Tower01", 100, obj)
+  vtol_strike_tower: (obj={}) -> @structure(
+    "VTOL Strike Tower", "Sys-VTOL-RadarTower01", 100, obj)
+  wide_spectrum_sensor_tower: (obj={}) -> @structure(
+    "Wide Spectrum Sensor Tower", "Sys-SensoTowerWS", 250, obj)
+  satellite_uplink_center: (obj={}) -> @structure(
+    "Satellite Uplink Center", "A0Sat-linkCentre", 1000, obj)
 
   # Weapons structures
 
@@ -279,74 +259,74 @@ class Command
     obj
 
   # Systems Truck
-  truck: (obj={}) ->
-    @turret("Truck", "Spade1Mk1", 17, DROID_CONSTRUCT, obj)
+  truck: (obj={}) -> @turret(
+    "Truck", "Spade1Mk1", 17, DROID_CONSTRUCT, obj)
 
   # Systems Repair
-  repair: (obj={}) ->
-    @turret("Repair", "LightRepair1", 50, DROID_REPAIR, obj)
-  heavy_repair: (obj={}) ->
-    @turret("Heavy Repair", "HeavyRepair", 70, DROID_REPAIR, obj)
+  repair: (obj={}) -> @turret(
+    "Repair", "LightRepair1", 50, DROID_REPAIR, obj)
+  heavy_repair: (obj={}) -> @turret(
+    "Heavy Repair", "HeavyRepair", 70, DROID_REPAIR, obj)
 
   # Systems Sensors
-  wide_spectrum: (obj={}) ->
-    @turret("Wide Spectrum", "Sensor-WideSpec", 5, DROID_SENSOR, obj)
-  cb_radar: (obj={}) ->
-    @turret("CB Radar", "Sys-CBTurret01", 20, DROID_SENSOR, obj)
-  radar_detector: (obj={}) ->
-    @turret("Radar Detector", "RadarDetector", 20, DROID_SENSOR, obj)
-  sensor: (obj={}) ->
-    @turret("Sensor", "SensorTurret1Mk1", 20, DROID_SENSOR, obj)
-  vtol_cb_radar: (obj={}) ->
-    @turret("VTOL CB Radar", "Sys-VTOLCBTurret01", 20, DROID_SENSOR, obj)
-  vtol_strike: (obj={}) ->
-    @turret("VTOL Strike", "Sys-VstrikeTurret01", 20, DROID_SENSOR, obj)
+  wide_spectrum: (obj={}) -> @turret(
+    "Wide Spectrum", "Sensor-WideSpec", 5, DROID_SENSOR, obj)
+  cb_radar: (obj={}) -> @turret(
+    "CB Radar", "Sys-CBTurret01", 20, DROID_SENSOR, obj)
+  radar_detector: (obj={}) -> @turret(
+    "Radar Detector", "RadarDetector", 20, DROID_SENSOR, obj)
+  sensor: (obj={}) -> @turret(
+    "Sensor", "SensorTurret1Mk1", 20, DROID_SENSOR, obj)
+  vtol_cb_radar: (obj={}) -> @turret(
+    "VTOL CB Radar", "Sys-VTOLCBTurret01", 20, DROID_SENSOR, obj)
+  vtol_strike: (obj={}) -> @turret(
+    "VTOL Strike", "Sys-VstrikeTurret01", 20, DROID_SENSOR, obj)
 
   # Systems Command
-  command1: (obj={}) ->
-    @turret("Command 1", "CommandTurret1", 250, DROID_COMMAND, obj)
-  command2: (obj={}) ->
-    @turret("Command 2", "CommandTurret2", 750, DROID_COMMAND, obj)
-  command3: (obj={}) ->
-    @turret("Command 3", "CommandTurret3", 1250, DROID_COMMAND, obj)
-  command4: (obj={}) ->
-    @turret("Command 4", "CommandTurret4", 1750, DROID_COMMAND, obj)
+  command1: (obj={}) -> @turret(
+    "Command 1", "CommandTurret1", 250, DROID_COMMAND, obj)
+  command2: (obj={}) -> @turret(
+    "Command 2", "CommandTurret2", 750, DROID_COMMAND, obj)
+  command3: (obj={}) -> @turret(
+    "Command 3", "CommandTurret3", 1250, DROID_COMMAND, obj)
+  command4: (obj={}) -> @turret(
+    "Command 4", "CommandTurret4", 1750, DROID_COMMAND, obj)
 
   # Weapons Machineguns
-  machinegun: (obj={}) ->
-    @turret("Machinegun", "MG1Mk1", 10, DROID_WEAPON, obj)
-  twin_machinegun: (obj={}) ->
-    @turret("Twin Machinegun", "MG2Mk1", 25, DROID_WEAPON, obj)
-  heavy_machinegun: (obj={}) ->
-    @turret("Heavy Machinegun", "MG3Mk1", 50, DROID_WEAPON, obj)
-  assault_gun: (obj={}) ->
-    @turret("Assault Gun", "MG4ROTARYMk1", 100, DROID_WEAPON, obj)
-  twin_assault_gun: (obj={}) ->
-    @turret("Twin Assault Gun", "MG5TWINROTARY", 100, DROID_WEAPON, obj)
+  machinegun: (obj={}) -> @turret(
+    "Machinegun", "MG1Mk1", 10, DROID_WEAPON, obj)
+  twin_machinegun: (obj={}) -> @turret(
+    "Twin Machinegun", "MG2Mk1", 25, DROID_WEAPON, obj)
+  heavy_machinegun: (obj={}) -> @turret(
+    "Heavy Machinegun", "MG3Mk1", 50, DROID_WEAPON, obj)
+  assault_gun: (obj={}) -> @turret(
+    "Assault Gun", "MG4ROTARYMk1", 100, DROID_WEAPON, obj)
+  twin_assault_gun: (obj={}) -> @turret(
+    "Twin Assault Gun", "MG5TWINROTARY", 100, DROID_WEAPON, obj)
 
   # Weapons Cannons
-  light_cannon: (obj={}) ->
-    @turret("Light Cannon", "Cannon1Mk1", 75, DROID_WEAPON, obj)
-  medium_cannon: (obj={}) ->
-    @turret("Medium Cannon", "Cannon2A-TMk1", 150, DROID_WEAPON, obj)
-  assault_cannon: (obj={}) ->
-    @turret("Assault Cannon", "Cannon5VulcanMk1", 150, DROID_WEAPON, obj)
-  hpv: (obj={}) ->
-    @turret("Hyper Velocity Cannon", "Cannon4AUTOMk1", 175, DROID_WEAPON, obj)
-  heavy_cannon: (obj={}) ->
-    @turret("Heavy Cannon", "Cannon375mmMk1", 250, DROID_WEAPON, obj)
-  twin_assault_cannon: (obj={}) ->
-    @turret("Twin Assault Cannon", "Cannon6TwinAslt", 250, DROID_WEAPON, obj)
-  plasma_cannon: (obj={}) ->
-    @turret("Plasma Cannon", "Laser4-PlasmaCannon", 750, DROID_WEAPON, obj)
+  light_cannon: (obj={}) -> @turret(
+    "Light Cannon", "Cannon1Mk1", 75, DROID_WEAPON, obj)
+  medium_cannon: (obj={}) -> @turret(
+    "Medium Cannon", "Cannon2A-TMk1", 150, DROID_WEAPON, obj)
+  assault_cannon: (obj={}) -> @turret(
+    "Assault Cannon", "Cannon5VulcanMk1", 150, DROID_WEAPON, obj)
+  hpv: (obj={}) -> @turret(
+    "Hyper Velocity Cannon", "Cannon4AUTOMk1", 175, DROID_WEAPON, obj)
+  heavy_cannon: (obj={}) -> @turret(
+    "Heavy Cannon", "Cannon375mmMk1", 250, DROID_WEAPON, obj)
+  twin_assault_cannon: (obj={}) -> @turret(
+    "Twin Assault Cannon", "Cannon6TwinAslt", 250, DROID_WEAPON, obj)
+  plasma_cannon: (obj={}) -> @turret(
+    "Plasma Cannon", "Laser4-PlasmaCannon", 750, DROID_WEAPON, obj)
 
   # Weapons Flamers
-  flamer: (obj={}) ->
-    @turret("Flamer", "Flame1Mk1", 40, DROID_WEAPON, obj)
-  inferno: (obj={}) ->
-    @turret("Inferno", "Flame2", 80, DROID_WEAPON, obj)
-  plasmite_flamer: (obj={}) ->
-    @turret("Plasmite Flamer", "PlasmiteFlamer", 80, DROID_WEAPON, obj)
+  flamer: (obj={}) -> @turret(
+    "Flamer", "Flame1Mk1", 40, DROID_WEAPON, obj)
+  inferno: (obj={}) -> @turret(
+    "Inferno", "Flame2", 80, DROID_WEAPON, obj)
+  plasmite_flamer: (obj={}) -> @turret(
+    "Plasmite Flamer", "PlasmiteFlamer", 80, DROID_WEAPON, obj)
 
   # Weapons Mortars and Howitzers
   mortart: (obj={}) -> @turret(
@@ -489,64 +469,64 @@ class Command
     obj
 
   # Systems cyborgs
-  combat_engineer: (obj={}) ->
-    @cyborg("Combat Engineer", "Cyb-ComEng", 10, obj)
-  cyborg_mechanic: (obj={}) ->
-    @cyborg("Cyborg Mechanic", "Cyb-Mechanic", 35, obj)
+  combat_engineer: (obj={}) -> @cyborg(
+    "Combat Engineer", "Cyb-ComEng", 10, obj)
+  cyborg_mechanic: (obj={}) -> @cyborg(
+    "Cyborg Mechanic", "Cyb-Mechanic", 35, obj)
 
   # Weapons cyborgs
-  machinegunner: (obj={}) ->
-    @cyborg("Machinegunner", "Cyb-Chain-GROUND", 40, obj)
-  cyborg_flamer: (obj={}) ->
-    @cyborg("Cyborg Flamer", "Cyb-Flamer-GROUND", 50, obj)
-  heavy_gunner: (obj={}) ->
-    @cyborg("Heavy Gunner", "Cyb-Cannon-GROUND", 60, obj)
-  grenadier: (obj={}) ->
-    @cyborg("Granadier", "Cyb-Gren", 80, obj)
-  thermite_flamer: (obj={}) ->
-    @cyborg("Thermite Flamer", "Cyb-Thermite", 80, obj)
-  assault_gunner: (obj={}) ->
-    @cyborg("Assault Gunner", "Cyb-RotMG-GROUND", 90, obj)
-  flashlight_gunner: (obj={}) ->
-    @cyborg("Flashlight Gunner", "Cyb-Laser1-GROUND", 100, obj)
-  lancer: (obj={}) ->
-    @cyborg("Lancer", "Cyb-Rocket-GROUND", 125, obj)
-  needle_gunner: (obj={}) ->
-    @cyborg("Needle Gunner", "Cyb-Rail1-GROUND", 160, obj)
-  scourge: (obj={}) ->
-    @cyborg("Scourge", "Cyb-Atmiss-GROUND", 250, obj)
+  machinegunner: (obj={}) -> @cyborg(
+    "Machinegunner", "Cyb-Chain-GROUND", 40, obj)
+  cyborg_flamer: (obj={}) -> @cyborg(
+    "Cyborg Flamer", "Cyb-Flamer-GROUND", 50, obj)
+  heavy_gunner: (obj={}) -> @cyborg(
+    "Heavy Gunner", "Cyb-Cannon-GROUND", 60, obj)
+  grenadier: (obj={}) -> @cyborg(
+    "Granadier", "Cyb-Gren", 80, obj)
+  thermite_flamer: (obj={}) -> @cyborg(
+    "Thermite Flamer", "Cyb-Thermite", 80, obj)
+  assault_gunner: (obj={}) -> @cyborg(
+    "Assault Gunner", "Cyb-RotMG-GROUND", 90, obj)
+  flashlight_gunner: (obj={}) -> @cyborg(
+    "Flashlight Gunner", "Cyb-Laser1-GROUND", 100, obj)
+  lancer: (obj={}) -> @cyborg(
+    "Lancer", "Cyb-Rocket-GROUND", 125, obj)
+  needle_gunner: (obj={}) -> @cyborg(
+    "Needle Gunner", "Cyb-Rail1-GROUND", 160, obj)
+  scourge: (obj={}) -> @cyborg(
+    "Scourge", "Cyb-Atmiss-GROUND", 250, obj)
   # Weapons super cyborgs
-  super_heavy_gunner: (obj={}) ->
-    @cyborg("Super Heavy-Gunner", "Cyb-Hvy-Mcannon", 75, obj)
-  super_auto_cannon: (obj={}) ->
-    @cyborg("Super Auto-Cannon Cyborg", "Cyb-Hvy-Acannon", 125, obj)
-  super_hpv: (obj={}) ->
-    @cyborg("Super HPV Cyborg", "Cyb-Hvy-HPV", 150, obj)
-  super_pulse_laser: (obj={}) ->
-    @cyborg("Super Pulse Laser Cyborg", "Cyb-Hvy-PulseLsr", 150, obj)
-  super_scourge: (obj={}) ->
-    @cyborg("Super Scourge Cyborg", "Cyb-Hvy-A-T", 235, obj)
-  super_rail_gunner: (obj={}) ->
-    @cyborg("Super Rail-Gunner", "Cyb-Hvy-RailGunner", 240, obj)
-  super_tank_killer: (obj={}) ->
-    @cyborg("Super Tank-Killer Cyborg", "Cyb-Hvy-TK", 250, obj)
+  super_heavy_gunner: (obj={}) -> @cyborg(
+    "Super Heavy-Gunner", "Cyb-Hvy-Mcannon", 75, obj)
+  super_auto_cannon: (obj={}) -> @cyborg(
+    "Super Auto-Cannon Cyborg", "Cyb-Hvy-Acannon", 125, obj)
+  super_hpv: (obj={}) -> @cyborg(
+    "Super HPV Cyborg", "Cyb-Hvy-HPV", 150, obj)
+  super_pulse_laser: (obj={}) -> @cyborg(
+    "Super Pulse Laser Cyborg", "Cyb-Hvy-PulseLsr", 150, obj)
+  super_scourge: (obj={}) -> @cyborg(
+    "Super Scourge Cyborg", "Cyb-Hvy-A-T", 235, obj)
+  super_rail_gunner: (obj={}) -> @cyborg(
+    "Super Rail-Gunner", "Cyb-Hvy-RailGunner", 240, obj)
+  super_tank_killer: (obj={}) -> @cyborg(
+    "Super Tank-Killer Cyborg", "Cyb-Hvy-TK", 250, obj)
 
   ##################
   ### Transports ###
   ##################
 
   # Transport
-  cyborg_transport: (obj={}) ->
-    @cyborg("Cyborg Transport", "Transporter", 50, obj)
+  cyborg_transport: (obj={}) -> @cyborg(
+    "Cyborg Transport", "Transporter", 50, obj)
 
   ##############
   ### Bodies ###
   ##############
 
-  body: (bname, bodyid, cost, obj={}) ->
+  body: (bname, bodyid, bcost, obj={}) ->
     obj.body = bodyid
     obj.bname = bname
-    obj.bcost = cost
+    obj.bcost = bcost
     obj
 
   viper: (obj={}) -> @body("Viper", "Body1REC", 30, obj)
@@ -606,6 +586,21 @@ class Command
   ### Who? ###
   ############
 
+  like: (input, obj={}) ->
+    if name = input.name
+      obj.like = new RegExp(name)
+      return obj
+    if name = input.pname
+      obj.like = new RegExp("^#{name}")
+      return obj
+    if name = input.bname
+      obj.like = new RegExp("^#{name}")
+      return obj
+    if name = input.tname
+      obj.like = new RegExp("^#{name}")
+      return obj
+    null
+
   none: (obj={}) ->
     obj.like = /none/
     obj.limit = 0
@@ -620,10 +615,6 @@ class Command
 
   scouter: (obj={}) ->
     obj.like = /^((Wheels)|(Hover))-((Viper)|(Bug))-.*Machinegun$/
-    obj
-
-  factory: (obj={}) ->
-    obj.like = /^Factory$/
     obj
 
   ##############
@@ -651,16 +642,12 @@ class Command
     obj
 
   manufacture: (obj={}) ->
+    obj.order = FORDER_MANUFACTURE
+    obj.like = /Factory/
     name = "#{obj.pname}-#{obj.bname}-#{obj.tname}"
     name = "Truck" if name is "Wheels-Viper-Truck"
     obj.name = name
-    cost = 100 # TODO
-    if obj.body and obj.propulsion and obj.turret
-      # makeTemplate... :-??
-      cost = 100
-    obj.order = FORDER_MANUFACTURE
-    obj.like = /Factory/
-    obj.cost = cost
+    obj.cost = (obj.pcost * obj.bcost) + obj.tcost
     obj
 
   maintain: (obj={}) ->
