@@ -3,7 +3,8 @@ class Gotcha
   constructor: (@ai) ->
 
   start: (event) ->
-    Trace.out "Power level: #{@ai.power}  Event: #{event.name}  Time: #{gameTime}"
+    Trace.out "Power level: #{@ai.power}  Event: #{event.name}  " +
+    "Time: #{gameTime}"
     if structure = event.structure
       Trace.out "\t#{structure.namexy()}\tCost: #{structure.cost}"
     if research = event.research

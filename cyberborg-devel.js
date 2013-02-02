@@ -2253,6 +2253,160 @@ Command = (function() {
   */
 
 
+  Command.prototype.cyborg = function(name, cyborgid, cost, obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    obj.name = name;
+    obj.cyborgid = cyborgid;
+    obj.cost = cost;
+    return obj;
+  };
+
+  Command.prototype.combat_engineer = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Combat Engineer", "Cyb-ComEng", 10, obj);
+  };
+
+  Command.prototype.cyborg_mechanic = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Cyborg Mechanic", "Cyb-Mechanic", 35, obj);
+  };
+
+  Command.prototype.machinegunner = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Machinegunner", "Cyb-Chain-GROUND", 40, obj);
+  };
+
+  Command.prototype.cyborg_flamer = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Cyborg Flamer", "Cyb-Flamer-GROUND", 50, obj);
+  };
+
+  Command.prototype.heavy_gunner = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Heavy Gunner", "Cyb-Cannon-GROUND", 60, obj);
+  };
+
+  Command.prototype.grenadier = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Granadier", "Cyb-Gren", 80, obj);
+  };
+
+  Command.prototype.thermite_flamer = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Thermite Flamer", "Cyb-Thermite", 80, obj);
+  };
+
+  Command.prototype.assault_gunner = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Assault Gunner", "Cyb-RotMG-GROUND", 90, obj);
+  };
+
+  Command.prototype.flashlight_gunner = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Flashlight Gunner", "Cyb-Laser1-GROUND", 100, obj);
+  };
+
+  Command.prototype.lancer = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Lancer", "Cyb-Rocket-GROUND", 125, obj);
+  };
+
+  Command.prototype.needle_gunner = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Needle Gunner", "Cyb-Rail1-GROUND", 160, obj);
+  };
+
+  Command.prototype.scourge = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Scourge", "Cyb-Atmiss-GROUND", 250, obj);
+  };
+
+  Command.prototype.super_heavy_gunner = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Super Heavy-Gunner", "Cyb-Hvy-Mcannon", 75, obj);
+  };
+
+  Command.prototype.super_auto_cannon = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Super Auto-Cannon Cyborg", "Cyb-Hvy-Acannon", 125, obj);
+  };
+
+  Command.prototype.super_hpv = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Super HPV Cyborg", "Cyb-Hvy-HPV", 150, obj);
+  };
+
+  Command.prototype.super_pulse_laser = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Super Pulse Laser Cyborg", "Cyb-Hvy-PulseLsr", 150, obj);
+  };
+
+  Command.prototype.super_scourge = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Super Scourge Cyborg", "Cyb-Hvy-A-T", 235, obj);
+  };
+
+  Command.prototype.super_rail_gunner = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Super Rail-Gunner", "Cyb-Hvy-RailGunner", 240, obj);
+  };
+
+  Command.prototype.super_tank_killer = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Super Tank-Killer Cyborg", "Cyb-Hvy-TK", 250, obj);
+  };
+
+  /* Transports
+  */
+
+
+  Command.prototype.cyborg_transport = function(obj) {
+    if (obj == null) {
+      obj = {};
+    }
+    return this.cyborg("Cyborg Transport", "Transporter", 50, obj);
+  };
+
   /* Bodies
   */
 
@@ -2422,6 +2576,10 @@ Command = (function() {
   };
 
   /* Research
+  */
+
+
+  /* Designs
   */
 
 
@@ -2679,7 +2837,7 @@ Gotcha = (function() {
 
   Gotcha.prototype.start = function(event) {
     var droid, research, structure;
-    Trace.out("Power level: " + this.ai.power + "  Event: " + event.name + "  Time: " + gameTime);
+    Trace.out(("Power level: " + this.ai.power + "  Event: " + event.name + "  ") + ("Time: " + gameTime));
     if (structure = event.structure) {
       Trace.out("\t" + (structure.namexy()) + "\tCost: " + structure.cost);
     }
@@ -3368,7 +3526,7 @@ Command.prototype.base_commands = function() {
   this.savings = 400;
   commands = [this.with_three_trucks(this.light_factory(this.at(this.x - this.s * this.dx, this.y - this.s * this.dy))), this.with_three_trucks(this.research_facility(this.at(this.x, this.y - this.s * this.dy))), this.with_three_trucks(this.command_center(this.at(this.x + this.s * this.dx, this.y - this.s * this.dy))), this.with_three_trucks(this.power_generator(this.at(this.x + this.s * this.dx, this.y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[0].x, this.resources[0].y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[1].x, this.resources[1].y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[2].x, this.resources[2].y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[3].x, this.resources[3].y)))];
   this.limit = 1;
-  more = [this.on_budget(this.one(this.trucker(this.maintains(this.power_generator(this.at(this.x, this.y)))))), this.pass(this.on_plenty(this.one(this.trucker()))), this.on_surplus(this.one(this.trucker(this.maintains(this.research_facility(this.at(this.x - this.s * this.dx, this.y)))))), this.on_budget(this.one(this.trucker(this.maintains(this.power_generator(this.at(this.x - this.s * this.dx, this.y + this.s * this.dy)))))), this.pass(this.on_plenty(this.none())), this.on_surplus(this.one(this.trucker(this.maintains(this.research_facility(this.at(this.x, this.y + this.s * this.dy)))))), this.on_budget(this.one(this.trucker(this.maintains(this.power_generator(this.at(this.x + this.s * this.dx, this.y + this.s * this.dy))))))];
+  more = [this.on_budget(this.one(this.trucker(this.maintains(this.power_generator(this.at(this.x, this.y)))))), this.pass(this.on_plenty(this.one(this.trucker()))), this.on_surplus(this.one(this.trucker(this.maintains(this.research_facility(this.at(this.x - this.s * this.dx, this.y)))))), this.with_one_truck(this.power_generator(this.at(this.x - this.s * this.dx, this.y + this.s * this.dy))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x, this.y + this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x + this.s * this.dx, this.y + this.s * this.dy)))];
   commands = commands.concat(more);
   if (this.horizontal) {
     more = [this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y + this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x + 2 * this.s * this.dx, this.y))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y - this.s * this.dy)))];
