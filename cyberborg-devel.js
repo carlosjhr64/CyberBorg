@@ -2509,7 +2509,7 @@ Command = (function() {
     if (name === "Wheels-Viper-Truck") {
       name = "Truck";
     }
-    obj.name = "" + obj.pname + "-" + obj.bname + "-" + obj.tname;
+    obj.name = name;
     cost = 100;
     if (obj.body && obj.propulsion && obj.turret) {
       cost = 100;

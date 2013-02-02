@@ -590,7 +590,7 @@ class Command
   manufacture: (obj={}) ->
     name = "#{obj.pname}-#{obj.bname}-#{obj.tname}"
     name = "Truck" if name is "Wheels-Viper-Truck"
-    obj.name = "#{obj.pname}-#{obj.bname}-#{obj.tname}"
+    obj.name = name
     cost = 100 # TODO
     if obj.body and obj.propulsion and obj.turret
       # makeTemplate... :-??
