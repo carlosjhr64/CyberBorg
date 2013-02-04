@@ -48,7 +48,7 @@ class WZObject
     # @status = obj.status
     # @modules = obj.modules
 
-  namexy: () -> "#{@name}(#{@x},#{@y})"
+  namexy: () -> "#{@name}(#{@id}:#{@x},#{@y})"
 
   position: () -> x: @x, y: @y
 

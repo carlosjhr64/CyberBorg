@@ -10538,7 +10538,7 @@ WZObject = (function() {
   };
 
   WZObject.prototype.namexy = function() {
-    return "" + this.name + "(" + this.x + "," + this.y + ")";
+    return "" + this.name + "(" + this.id + ":" + this.x + "," + this.y + ")";
   };
 
   WZObject.prototype.position = function() {
@@ -11238,8 +11238,8 @@ Group = (function() {
   };
 
   Group.prototype.order_units = function(command) {
-    var cid, count, unit, units, _i, _len;
-    count = 0;
+    var cid, executers, unit, units, _i, _len;
+    executers = WZArray.bless([]);
     if (units = this.units(command)) {
       cid = Group.cid();
       for (_i = 0, _len = units.length; _i < _len; _i++) {
@@ -11247,28 +11247,31 @@ Group = (function() {
         if (unit.executes(command)) {
           unit.command = command;
           this.add(unit);
-          count += 1;
+          executers.push(unit);
         }
       }
-      if (count) {
+      if (executers.length) {
         command.cid = cid;
       }
     }
-    return count;
+    return executers;
   };
 
   Group.prototype.execute = function(command) {
-    var count;
-    count = this.order_units(command);
+    var executers;
+    executers = this.order_units(command);
     if (command.execute != null) {
       try {
-        count = command.execute(this);
+        return command.execute(executers, this);
       } catch (error) {
         Trace.red(error);
-        count = 0;
+        if (command.cid != null) {
+          this.layoffs(command);
+        }
+        return 0;
       }
     }
-    return count;
+    return executers.length;
   };
 
   return Group;
@@ -13134,10 +13137,10 @@ Command = (function() {
     }
     obj.cost = 0;
     obj.order = CORDER_PASS;
-    obj.execute = function(group) {
+    obj.execute = function(executers, group) {
       var first;
-      if (group.list.length >= obj.min) {
-        if (first = group.list.first()) {
+      if (executers.length >= obj.min) {
+        if (first = executers.first()) {
           group.layoffs(first.command);
         }
         return 1;
@@ -13266,7 +13269,7 @@ Gotcha = (function() {
 
   Gotcha.prototype.start = function(event) {
     var droid, research, structure;
-    Trace.out(("Power level: " + this.ai.power + "  Event: " + event.name + "  ") + ("Time: " + gameTime));
+    Trace.out(("Power: " + this.ai.power + "  Event: " + event.name + "  ") + ("Time: " + gameTime));
     if (structure = event.structure) {
       Trace.out("\t" + (structure.namexy()) + "\tCost: " + structure.cost);
     }

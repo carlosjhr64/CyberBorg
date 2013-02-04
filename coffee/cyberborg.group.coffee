@@ -61,26 +61,27 @@ class Group
     return units
 
   order_units: (command) ->
-    count = 0
+    executers = WZArray.bless([])
     if units = @units(command)
       cid = Group.cid() # A unique command id.
       for unit in units
         if unit.executes(command)
           unit.command = command
           @add(unit)
-          count += 1
-      command.cid = cid if count
-    count
+          executers.push(unit)
+      command.cid = cid if executers.length # > 0 :)
+    executers
 
   execute: (command) ->
-    count = @order_units(command)
+    executers = @order_units(command)
     # Does the command have it's own execute?
     if command.execute?
       # b/c we now execute volatile code,
       # we enclose it in a try/catch block.
       try
-        count = command.execute(@)
+        return command.execute(executers, @)
       catch error
         Trace.red error
-        count = 0
-    return count
+        @layoffs(command) if command.cid?
+        return 0
+    return executers.length

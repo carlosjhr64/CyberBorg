@@ -669,9 +669,9 @@ class Command
     obj.order = CORDER_PASS
     # 1 just means success in this case. Normally,
     # it would be the number of units that succesfully executed the command.
-    obj.execute = (group) ->
-      if group.list.length >= obj.min
-        if first = group.list.first()
+    obj.execute = (executers, group) ->
+      if executers.length >= obj.min
+        if first = executers.first()
           group.layoffs(first.command)
         return 1
       0
