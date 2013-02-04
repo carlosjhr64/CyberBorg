@@ -78,20 +78,45 @@ Command::with_two_trucks = (obj) ->
 Command::with_one_truck = (obj) ->
   @on_budget @one @trucker @maintains obj
 Command::base_commands = () ->
-
   @limit = 3 # Group size limit
-  @savings = 400 # TODO explain
-  commands = [
-    # Build up the initial base as fast a posible
-    @with_three_trucks @light_factory @at @x-@s*@dx, @y-@s*@dy
-    @with_three_trucks @research_facility @at @x, @y-@s*@dy
-    @with_three_trucks @command_center @at @x+@s*@dx, @y-@s*@dy
+  # savings is a way to signal that we want to ensure
+  # completion of a set of projects without other projects
+  # taking up the required resources.
+  energy_cost = @power_generator().cost + 4*@oil_derrick().cost
+  factory_cost = @light_factory().cost
+  research_cost = @research_facility().cost
+  hq_cost = @command_center().cost
+  @savings = energy_cost + factory_cost + research_cost + hq_cost
+  # First to ensure is income...
+  energy_build = [
     @with_three_trucks @power_generator @at @x+@s*@dx, @y
     @with_two_trucks @oil_derrick @at @resources[0].x, @resources[0].y
     @with_two_trucks @oil_derrick @at @resources[1].x, @resources[1].y
     @with_two_trucks @oil_derrick @at @resources[2].x, @resources[2].y
     @with_two_trucks @oil_derrick @at @resources[3].x, @resources[3].y
   ]
+  # Next is factory to build trucks
+  factory_build = [
+    @with_three_trucks @light_factory @at @x-@s*@dx, @y-@s*@dy
+  ]
+  # Then research
+  research_build = [
+    @with_three_trucks @research_facility @at @x, @y-@s*@dy
+  ]
+  # Finally HQ
+  hq_build = [
+    @with_three_trucks @command_center @at @x+@s*@dx, @y-@s*@dy
+  ]
+  # The optimal build sequence depends on how much power we have to start
+  commands = null
+  if @power <= energy_cost + factory_cost
+    commands = energy_build.concat(factory_build).concat(research_build).concat(hq_build)
+  else if @power <= energy_cost + factory_cost + research_cost
+    commands = factory_build.concat(energy_build).concat(research_build).concat(hq_build)
+  else if @power <= energy_cost + factory_cost + research_cost + hq_cost
+    commands = factory_build.concat(research_build).concat(energy_build).concat(hq_build)
+  else
+    commands = factory_build.concat(research_build).concat(hq_build).concat(energy_build)
 
   @limit = 1
   more = [
@@ -129,7 +154,7 @@ Command::base_commands = () ->
 
 Command::factory_commands = () ->
   @limit = 1 # Group size limit
-  @savings = 0 # TODO explain
+  @savings = 0
   # The commands are...
   truck = @on_budget @manufacture @wheels @viper @truck()
   gunner = @on_budget @manufacture @wheels @viper @machinegun()
@@ -145,7 +170,7 @@ Command::now_with_truck = (obj) ->
   @immediately @one @trucker @maintains obj
 Command::derricks_commands = () ->
   @limit = 3 # Group size limit
-  @savings = 0 # TODO explain
+  @savings = 0
   commands = WZArray.bless([])
   for derrick in @resources
     commands.push(@now_with_truck @oil_derrick @at derrick.x, derrick.y)
@@ -158,7 +183,7 @@ Command::derricks_commands = () ->
 
 Command::scouts_commands = () ->
   @limit = 12 # Group size limit
-  @savings = 0 # TODO explain
+  @savings = 0
   commands = WZArray.bless([])
   for derrick in @resources
     commands.push(
@@ -171,7 +196,7 @@ Command::scouts_commands = () ->
 
 Command::lab_commands = () ->
   @limit = 5 # Group size limit
-  @savings = 0 # TODO explain
+  @savings = 0
   commands = [
     @pursue('R-Wpn-MG1Mk1', 1)			# Machine Gun
     @pursue('R-Wpn-MG2Mk1', 37)			# Dual Machine Gun

@@ -1,8 +1,11 @@
 class Command
   @to_at = (o) -> {x: o.x.to_i(), y: o.y.to_i()}
 
-  # @savings is... TODO
+  # See *script*'s Command::base_commands for an explanation of @savings.
   constructor: (@limit=0, @savings=0) ->
+    # Presumably, the initial amount of power at game start.
+    @power = CyberBorg.get_power()
+
     # Center point of our trucks.
     # ie. (10.5,236)
     @tc = Command.to_at Groups.RESERVE.trucks().center()
@@ -653,6 +656,7 @@ class Command
   maintain: (obj={}) ->
     if @savings > 0
       @savings -= obj.cost
+      @savings = 0 if @savings < 0
     obj.order = DORDER_MAINTAIN
     obj.savings = @savings
     obj

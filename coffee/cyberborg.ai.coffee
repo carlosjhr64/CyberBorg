@@ -12,7 +12,7 @@ class Ai
     @gotcha = new Gotcha(@)
 
   update: (event) ->
-    @power = playerPower(me)
+    @power = CyberBorg.get_power()
     GROUPS.update()
     @gotcha.start(event)	if Trace.on
 

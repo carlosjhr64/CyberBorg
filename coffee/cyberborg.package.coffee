@@ -129,6 +129,8 @@ class CyberBorg
         positions.push(pos) unless list.collision(pos)
     positions
 
+  @get_power = () -> playerPower(me)
+
 # This is to keep with the WZ JS API's way...
 # Globals for ME STUFF order numbers.
 DORDER_MAINTAIN    = CyberBorg.ORDER_MAP.indexOf('DORDER_MAINTAIN')
