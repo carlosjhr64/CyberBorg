@@ -1,4 +1,5 @@
 ./bin/cofcomp ./cyberborg-devel.js			\
+	./coffee/cyberborg.data.coffee			\
 	./coffee/cyberborg.number.coffee		\
 	./coffee/cyberborg.trace.coffee			\
 	./coffee/cyberborg.wzobject.coffee		\

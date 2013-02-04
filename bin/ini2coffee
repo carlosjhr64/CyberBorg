@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+
+def get_data()
+  obj = nil
+  while line = $stdin.gets
+    line.strip!
+    next if line =~/^;/
+    unless line == ''
+      if line =~ /^\s*\[(.+)\]\s*$/
+        key = $1
+        yield(obj) if obj
+        obj = {}
+        obj[:strid] = key
+      elsif line =~ /^\s*([\w\-]+)\s*=\s*(\S.*?)\s*$/
+        key, value = $1, $2.strip
+        key = key.gsub(/\W+/,'_').downcase
+        if value =~ /^-?\d+(\.\d+)?$/
+          obj[:"#{key}"] = value.to_f
+        else
+          value.sub!(/^["'*\s]+/,'')
+          value.sub!(/[*'"\s]+$/,'')
+          obj[:"#{key}"] = value
+        end
+      else
+        raise "WUT???: \"#{line}\""
+      end
+    end
+  end
+end
+
+def quoted(value)
+  if value.kind_of?(Numeric)
+    return " #{value}"
+  elsif value=~/,/
+    str = "\n"
+    str +=  <<COFFEE
+        [
+COFFEE
+    value.split(/\s*,\s*/).each do |v|
+      str += <<COFFEE
+          "#{v}"
+COFFEE
+    end
+    str += "        ]"
+    return str
+  end
+  return " \"#{value}\""
+end
+
+puts <<COFFEE
+class IniData
+  DATA = [
+COFFEE
+get_data() do |obj|
+  puts <<COFFEE
+    {
+COFFEE
+  obj.sort.each do |key,value|
+    puts <<COFFEE
+      #{key}:#{quoted(value)}
+COFFEE
+  end
+  puts <<COFFEE
+    }
+COFFEE
+end
+puts <<COFFEE
+  ]
+COFFEE
