@@ -17081,8 +17081,8 @@ Command.prototype.base_commands = function() {
   }
   for (_i = 0, _len = commands.length; _i < _len; _i++) {
     command = commands[_i];
-    command.savings = savings;
     savings -= command.cost;
+    command.savings = savings;
   }
   this.savings = 0;
   this.limit = 1;

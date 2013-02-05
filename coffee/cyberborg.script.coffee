@@ -119,8 +119,8 @@ Command::base_commands = () ->
     commands = factory_build.concat(research_build).concat(hq_build).concat(energy_build)
   # OK, we need to reset savings now that we have the build order
   for command in commands
-    command.savings = savings
     savings -= command.cost
+    command.savings = savings
 
   @savings = 0
   @limit = 1
