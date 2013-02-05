@@ -86,7 +86,7 @@ Command::base_commands = () ->
   factory_cost = @light_factory().cost
   research_cost = @research_facility().cost
   hq_cost = @command_center().cost
-  @savings = energy_cost + factory_cost + research_cost + hq_cost
+  savings = energy_cost + factory_cost + research_cost + hq_cost
   # First to ensure is income...
   energy_build = [
     @with_three_trucks @power_generator @at @x+@s*@dx, @y
@@ -117,7 +117,12 @@ Command::base_commands = () ->
     commands = factory_build.concat(research_build).concat(energy_build).concat(hq_build)
   else
     commands = factory_build.concat(research_build).concat(hq_build).concat(energy_build)
+  # OK, we need to reset savings now that we have the build order
+  for command in commands
+    command.savings = savings
+    savings -= command.cost
 
+  @savings = 0
   @limit = 1
   more = [
     @with_one_truck @power_generator @at @x, @y
