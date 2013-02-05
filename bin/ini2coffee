@@ -48,8 +48,8 @@ COFFEE
 end
 
 puts <<COFFEE
-class IniData
-  DATA = [
+class Ini
+  @DATA = [
 COFFEE
 get_data() do |obj|
   puts <<COFFEE
@@ -66,4 +66,9 @@ COFFEE
 end
 puts <<COFFEE
   ]
+
+  @strid = (strid) ->
+    for obj in Ini.DATA
+      return obj if obj.strid is strid
+    return null
 COFFEE

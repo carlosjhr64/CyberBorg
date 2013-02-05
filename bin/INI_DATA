@@ -1,9 +1,9 @@
-WZ2100="/home/carrot/Git/warzone2100/warzone2100-g.i.t"
 cat \
-$WZ2100/data/mp/stats/propulsion.ini \
-$WZ2100/data/mp/stats/body.ini \
-$WZ2100/data/mp/stats/weapons.ini \
-$WZ2100/data/mp/stats/research.ini \
+./stats/structures.ini \
+./stats/propulsion.ini \
+./stats/body.ini \
+./stats/weapons.ini \
+./stats/research.ini \
 | \
 ./bin/ini2coffee \
 > \

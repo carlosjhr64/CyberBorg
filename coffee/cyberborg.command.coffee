@@ -47,6 +47,9 @@ class Command
   #######################
 
   structure: (name, structureid, cost, obj={}) ->
+    if data = Ini.strid(structureid)
+      if build_power = data.buildpower
+        cost = build_power
     obj.name = name
     obj.structure = structureid
     obj.cost = cost

@@ -1,5 +1,3239 @@
-class IniData
-  DATA = [
+class Ini
+  @DATA = [
+    {
+      armour: 6.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 10.0
+      buildpower: 0.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "SOFT"
+      strid: "A0ADemolishStructure"
+      structuremodel: "icdozer.PIE"
+      type: "DEMOLISH"
+      unused: 1.0
+      weapons: 0.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 10.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "BUNKER"
+      strid: "A0BaBaBunker"
+      structuremodel: "blbrbbnk.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 5.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 300.0
+      buildpoints: 3.0
+      buildpower: 20.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 0.0
+      sensorkey: "ZNULLSENSOR"
+      strength: "SOFT"
+      strid: "A0BabaCornerWall"
+      structuremodel: "BLBRBCR1.PIE"
+      type: "CORNER WALL"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 5.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 2.0
+      bodypoints: 400.0
+      buildpoints: 1.0
+      buildpower: 20.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "ZNULLSENSOR"
+      strength: "MEDIUM"
+      strid: "A0BaBaFactory"
+      structuremodel: "BLBRBFAC.PIE"
+      type: "FACTORY"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 7.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 10.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0BaBaFlameTower"
+      structuremodel: "Blbrtowf.pie"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 7.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 10.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0BaBaGunTower"
+      structuremodel: "BLBRBTW1.PIE"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 7.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 10.0
+      buildpower: 20.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0BaBaGunTowerEND"
+      structuremodel: "Blbrbtw2.PIE"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 7.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 300.0
+      buildpoints: 10.0
+      buildpower: 10.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 0.0
+      sensorkey: "BaBaSensor"
+      strength: "SOFT"
+      strid: "A0BaBaHorizontalWall"
+      structuremodel: "BLBRBWLH.PIE"
+      type: "WALL"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 500.0
+      buildpoints: 1.0
+      buildpower: 10.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0BaBaMortarPit"
+      structuremodel: "BLBRMRTP.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 5.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 1.0
+      buildpower: 10.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "BaBaSensor"
+      strength: "SOFT"
+      strid: "A0BaBaPowerGenerator"
+      structuremodel: "BLBRBGEN.PIE"
+      type: "POWER GENERATOR"
+      unused: 1.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 500.0
+      buildpoints: 1.0
+      buildpower: 10.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0BaBaRocketPit"
+      structuremodel: "EXROCKET.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 500.0
+      buildpoints: 1.0
+      buildpower: 10.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0BaBaRocketPitAT"
+      structuremodel: "EXROCKET.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 5.0
+      buildpower: 10.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "TowerSensor"
+      strength: "MEDIUM"
+      strid: "A0CannonTower"
+      structuremodel: "BLBRTOWR.PIE"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 2.0
+      basemodel: "BLBDRDCM.pie"
+      basewidth: 2.0
+      bodypoints: 1000.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 300.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "A0ComDroidControl"
+      structuremodel: "bldrdcm0.pie"
+      type: "COMMAND RELAY"
+      unused: 1.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 2.0
+      basemodel: "blbhq.pie"
+      basewidth: 2.0
+      bodypoints: 1000.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 3.0
+      resistance: 300.0
+      sensorkey: "CCSensor"
+      strength: "HARD"
+      strid: "A0CommandCentre"
+      structuremodel: "blhq.pie"
+      type: "HQ"
+      unused: 1.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 2.0
+      basemodel: "blbhq.pie"
+      basewidth: 2.0
+      bodypoints: 1000.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 3.0
+      resistance: 300.0
+      sensorkey: "CCSensor"
+      strength: "HARD"
+      strid: "A0CommandCentreCO"
+      structuremodel: "blhq3.pie"
+      type: "HQ"
+      unused: 1.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 2.0
+      basemodel: "blbhq.pie"
+      basewidth: 2.0
+      bodypoints: 1000.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 3.0
+      resistance: 300.0
+      sensorkey: "CCSensor"
+      strength: "HARD"
+      strid: "A0CommandCentreNE"
+      structuremodel: "blhq4.pie"
+      type: "HQ"
+      unused: 1.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 2.0
+      basemodel: "blbhq.pie"
+      basewidth: 2.0
+      bodypoints: 1000.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 3.0
+      resistance: 300.0
+      sensorkey: "CCSensor"
+      strength: "HARD"
+      strid: "A0CommandCentreNP"
+      structuremodel: "blhq2.pie"
+      type: "HQ"
+      unused: 1.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 2.0
+      basemodel: "blbcfact.pie"
+      basewidth: 1.0
+      bodypoints: 1000.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0CyborgFactory"
+      structuremodel: "blcfact1.pie"
+      type: "CYBORG FACTORY"
+      unused: 20.0
+      weapons: 0.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 3.0
+      basemodel: 0.0
+      basewidth: 3.0
+      bodypoints: 500.0
+      buildpoints: 250.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0FacMod1"
+      structuremodel: "blfact1.pie"
+      type: "FACTORY MODULE"
+      unused: 30.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 125.0
+      buildpower: 25.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 0.0
+      sensorkey: "ZNULLSENSOR"
+      strength: "HARD"
+      strid: "A0HardcreteMk1CWall"
+      structuremodel: "BLWALLC1.pie"
+      type: "CORNER WALL"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 250.0
+      buildpower: 75.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 0.0
+      sensorkey: "ZNULLSENSOR"
+      strength: "HARD"
+      strid: "A0HardcreteMk1Gate"
+      structuremodel: "blgateh.pie@blgateh_x.pie@blgateh_t.pie@blgateh_l.pie"
+      type: "GATE"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 125.0
+      buildpower: 25.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 0.0
+      sensorkey: "ZNULLSENSOR"
+      strength: "HARD"
+      strid: "A0HardcreteMk1Wall"
+      structuremodel: "blwallh.pie@blwallc1.pie@blwallh_t.pie@blwallh_l.pie"
+      type: "WALL"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 16.0
+      basebreadth: 2.0
+      basemodel: 0.0
+      basewidth: 2.0
+      bodypoints: 1000.0
+      buildpoints: 2500.0
+      buildpower: 1000.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 0.0
+      sensorkey: 0.0
+      strength: "MEDIUM"
+      strid: "A0LasSatCommand"
+      structuremodel: "milasbas.pie"
+      type: "DOOR"
+      unused: 0.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 3.0
+      basemodel: "blbfact.pie"
+      basewidth: 3.0
+      bodypoints: 1000.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 3.0
+      resistance: 150.0
+      sensorkey: "BaBaSensor"
+      strength: "MEDIUM"
+      strid: "A0LightFactory"
+      structuremodel: "blfact0.pie@factory_module1.pie@blfact1.pie@factory_module2.pie@blfact2.pie"
+      type: "FACTORY"
+      unused: 20.0
+      weapons: 0.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 2.0
+      basemodel: "blbpower.pie"
+      basewidth: 2.0
+      bodypoints: 1000.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 300.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0PowerGenerator"
+      structuremodel: "blpower0.pie@power_module4.pie@blpower4.pie"
+      type: "POWER GENERATOR"
+      unused: 10.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 2.0
+      basemodel: 0.0
+      basewidth: 2.0
+      bodypoints: 1000.0
+      buildpoints: 250.0
+      buildpower: 0.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0PowMod1"
+      structuremodel: "blpower4.pie"
+      type: "POWER MODULE"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: "BLBGEN.PIE"
+      basewidth: 1.0
+      bodypoints: 1000.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "RepairCentre"
+      functions: 1.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0RepairCentre3"
+      structuremodel: "BLRPAIR3.PIE"
+      type: "REPAIR FACILITY"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 2.0
+      basemodel: "blbresch.pie"
+      basewidth: 2.0
+      bodypoints: 800.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0ResearchFacility"
+      structuremodel: "blresch0.pie@research_module4.pie@blresch4.pie"
+      type: "RESEARCH"
+      unused: 10.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 2.0
+      basemodel: 0.0
+      basewidth: 2.0
+      bodypoints: 800.0
+      buildpoints: 250.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0ResearchModule1"
+      structuremodel: "blresch4.pie"
+      type: "RESEARCH MODULE"
+      unused: 5.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 5.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 100.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0ResourceExtractor"
+      structuremodel: "BLDERIK.PIE"
+      type: "RESOURCE EXTRACTOR"
+      unused: 1.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 2.0
+      basemodel: 0.0
+      basewidth: 2.0
+      bodypoints: 1600.0
+      buildpoints: 1250.0
+      buildpower: 1000.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 0.0
+      sensorkey: "UplinkSensor"
+      strength: "MEDIUM"
+      strid: "A0Sat-linkCentre"
+      structuremodel: "miupbase.PIE"
+      type: "SAT UPLINK"
+      unused: 1.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 200.0
+      buildpoints: 40.0
+      buildpower: 15.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 1.0
+      resistance: 0.0
+      sensorkey: "ZNULLSENSOR"
+      strength: "HARD"
+      strid: "A0TankTrap"
+      structuremodel: "MITRAP2.PIE"
+      type: "WALL"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 3.0
+      basemodel: "blbfact.pie"
+      basewidth: 3.0
+      bodypoints: 500.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 3.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0VTolFactory1"
+      structuremodel: "blvfact0.pie@vtolfactory_module1.pie@blvfact1.pie@vtolfactory_module2.pie@blvfact2.pie"
+      type: "VTOL FACTORY"
+      unused: 20.0
+      weapons: 0.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: "blbgen.pie"
+      basewidth: 1.0
+      bodypoints: 300.0
+      buildpoints: 300.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "A0VtolPad"
+      structuremodel: "blvtolpd.pie"
+      type: "REARM PAD"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 300.0
+      buildpower: 300.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "AASite-QuadBof"
+      structuremodel: "Blaamnt2.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 250.0
+      buildpower: 125.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "AASite-QuadMg1"
+      structuremodel: "Blaamnt1.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 275.0
+      buildpower: 175.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "AASite-QuadRotMg"
+      structuremodel: "Blaamnt1.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 450.0
+      buildpower: 250.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "NavGunSensor"
+      strength: "MEDIUM"
+      strid: "P0-AASite-Sunburst"
+      structuremodel: "Blaamnt1.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "CO-Tower-HvATRkt"
+      structuremodel: "BLGUARD2.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "CO-Tower-HVCan"
+      structuremodel: "BLGUARD2.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "CO-Tower-HvFlame"
+      structuremodel: "BLHARDPT.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "CO-Tower-LtATRkt"
+      structuremodel: "blguardn.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "CO-Tower-MdCan"
+      structuremodel: "BLGUARD2.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "CO-Tower-MG3"
+      structuremodel: "blguardn.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "CO-Tower-RotMG"
+      structuremodel: "blguardn.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "CO-WallTower-HvCan"
+      structuremodel: "BLGUARD2.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "CO-WallTower-RotCan"
+      structuremodel: "BLGUARD2.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 500.0
+      buildpoints: 125.0
+      buildpower: 25.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 0.0
+      sensorkey: "ZNULLSENSOR"
+      strength: "HARD"
+      strid: "CollectiveCWall"
+      structuremodel: "BLWALLC2.pie"
+      type: "CORNER WALL"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 500.0
+      buildpoints: 125.0
+      buildpower: 25.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 0.0
+      sensorkey: "ZNULLSENSOR"
+      strength: "HARD"
+      strid: "CollectiveWall"
+      structuremodel: "BLWALL2.pie"
+      type: "WALL"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 500.0
+      buildpower: 50.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 0.0
+      sensorkey: "ZNULLSENSOR"
+      strength: "SOFT"
+      strid: "CoolingTower"
+      structuremodel: "micool.PIE"
+      type: "DEFENSE"
+      unused: 10.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 400.0
+      buildpower: 500.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-HeavyLaser"
+      structuremodel: "BLHARDPT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 550.0
+      buildpower: 400.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-Howitzer-Incenediary"
+      structuremodel: "Blhowmnt.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 550.0
+      buildpower: 325.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-Howitzer105"
+      structuremodel: "Blhowmnt.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 600.0
+      buildpower: 425.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-Howitzer150"
+      structuremodel: "Blhowmnt.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 400.0
+      buildpower: 200.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-HPVcannon"
+      structuremodel: "Blhowmnt.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 675.0
+      buildpower: 525.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-HvART-pit"
+      structuremodel: "BLHARDPT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 500.0
+      buildpower: 275.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-HvyATrocket"
+      structuremodel: "Blhowmnt.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 600.0
+      buildpower: 450.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-MdART-pit"
+      structuremodel: "BLHARDPT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 300.0
+      buildpoints: 450.0
+      buildpower: 150.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "Emplacement-MortarEMP"
+      structuremodel: "BLMRTPIT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 300.0
+      buildpoints: 425.0
+      buildpower: 170.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "Emplacement-MortarPit-Incenediary"
+      structuremodel: "BLMRTPIT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 300.0
+      buildpoints: 400.0
+      buildpower: 125.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "Emplacement-MortarPit01"
+      structuremodel: "BLMRTPIT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 300.0
+      buildpoints: 450.0
+      buildpower: 150.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "Emplacement-MortarPit02"
+      structuremodel: "BLMRTPIT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 400.0
+      buildpower: 125.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-MRL-pit"
+      structuremodel: "BLHARDPT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 400.0
+      buildpower: 300.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-PlasmaCannon"
+      structuremodel: "BLHARDPT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 450.0
+      buildpower: 275.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-PrisLas"
+      structuremodel: "BLHARDPT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 400.0
+      buildpower: 225.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-PulseLaser"
+      structuremodel: "BLHARDPT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 500.0
+      buildpower: 350.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-Rail2"
+      structuremodel: "BLHARDPT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 600.0
+      buildpower: 450.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-Rail3"
+      structuremodel: "BLHARDPT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 500.0
+      buildpower: 325.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-Rocket06-IDF"
+      structuremodel: "Blhowmnt.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 650.0
+      buildpower: 525.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Emplacement-RotHow"
+      structuremodel: "BLHOWMNT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 300.0
+      buildpoints: 500.0
+      buildpower: 325.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "Emplacement-RotMor"
+      structuremodel: "BLMRTPIT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 450.0
+      buildpower: 325.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "TowerSensor"
+      strength: "MEDIUM"
+      strid: "GuardTower-ATMiss"
+      structuremodel: "BLGUARDR.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 400.0
+      buildpower: 200.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "TowerSensor"
+      strength: "MEDIUM"
+      strid: "GuardTower-BeamLas"
+      structuremodel: "BLGUARDR.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 400.0
+      buildpower: 275.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "TowerSensor"
+      strength: "MEDIUM"
+      strid: "GuardTower-Rail1"
+      structuremodel: "BLGUARDR.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 400.0
+      buildpower: 150.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "TowerSensor"
+      strength: "MEDIUM"
+      strid: "GuardTower-RotMg"
+      structuremodel: "blguardr.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 450.0
+      buildpoints: 300.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "TowerSensor"
+      strength: "MEDIUM"
+      strid: "GuardTower1"
+      structuremodel: "BLGUARDM.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 450.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "TowerSensor"
+      strength: "MEDIUM"
+      strid: "GuardTower2"
+      structuremodel: "BLGUARDM.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "TowerSensor"
+      strength: "MEDIUM"
+      strid: "GuardTower3"
+      structuremodel: "BLGUARDR.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "TowerSensor"
+      strength: "MEDIUM"
+      strid: "GuardTower4"
+      structuremodel: "BLGUARDR.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 350.0
+      buildpower: 150.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "TowerSensor"
+      strength: "MEDIUM"
+      strid: "GuardTower5"
+      structuremodel: "BLGUARDR.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "TowerSensor"
+      strength: "MEDIUM"
+      strid: "GuardTower6"
+      structuremodel: "BLGUARDR.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 5.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 5.0
+      buildpower: 5.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 0.0
+      sensorkey: "BaBaSensor"
+      strength: "MEDIUM"
+      strid: "LookOutTower"
+      structuremodel: "blbrlook.PIE"
+      type: "CORNER WALL"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 500.0
+      buildpoints: 125.0
+      buildpower: 25.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 0.0
+      sensorkey: "ZNULLSENSOR"
+      strength: "HARD"
+      strid: "NEXUSCWall"
+      structuremodel: "BLWALLC3.pie"
+      type: "CORNER WALL"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 500.0
+      buildpoints: 125.0
+      buildpower: 25.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 2.0
+      resistance: 0.0
+      sensorkey: "ZNULLSENSOR"
+      strength: "HARD"
+      strid: "NEXUSWall"
+      structuremodel: "BLWALL3.pie"
+      type: "WALL"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 2.0
+      basemodel: 0.0
+      basewidth: 2.0
+      bodypoints: 700.0
+      buildpoints: 500.0
+      buildpower: 50.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 0.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "NuclearReactor"
+      structuremodel: "minuke.PIE"
+      type: "DEFENSE"
+      unused: 10.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 999.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 1998.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 1.0
+      resistance: 0.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "BUNKER"
+      strid: "NX-ANTI-SATSite"
+      structuremodel: "blmssilo.pie"
+      type: "MISSILE SILO"
+      unused: 1.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 1.0
+      resistance: 0.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "BUNKER"
+      strid: "NX-CruiseSite"
+      structuremodel: "blbunkms.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "NavGunSensor"
+      strength: "HARD"
+      strid: "NX-Emp-MedArtMiss-Pit"
+      structuremodel: "BLHARDPT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "NavGunSensor"
+      strength: "HARD"
+      strid: "NX-Emp-MultiArtMiss-Pit"
+      structuremodel: "BLHARDPT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "NavGunSensor"
+      strength: "HARD"
+      strid: "NX-Emp-Plasma-Pit"
+      structuremodel: "Blaamnt2.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 400.0
+      buildpower: 40.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "NavGunSensor"
+      strength: "MEDIUM"
+      strid: "NX-Tower-ATMiss"
+      structuremodel: "Blgrdnex.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 400.0
+      buildpower: 40.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "NavGunSensor"
+      strength: "MEDIUM"
+      strid: "NX-Tower-PulseLas"
+      structuremodel: "Blgrdnex.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 400.0
+      buildpower: 40.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "NavGunSensor"
+      strength: "MEDIUM"
+      strid: "NX-Tower-Rail1"
+      structuremodel: "Blgrdnex.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "NavGunSensor"
+      strength: "HARD"
+      strid: "NX-WallTower-BeamLas"
+      structuremodel: "BLGUARD3.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "NavGunSensor"
+      strength: "HARD"
+      strid: "NX-WallTower-Rail2"
+      structuremodel: "BLGUARD3.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "NavGunSensor"
+      strength: "HARD"
+      strid: "NX-WallTower-Rail3"
+      structuremodel: "BLGUARD3.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 550.0
+      buildpower: 350.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "NavGunSensor"
+      strength: "HARD"
+      strid: "P0-AASite-Laser"
+      structuremodel: "Blaamnt2.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 400.0
+      buildpoints: 450.0
+      buildpower: 250.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "NavGunSensor"
+      strength: "HARD"
+      strid: "P0-AASite-SAM1"
+      structuremodel: "Blaamnt1.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 550.0
+      buildpower: 350.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "NavGunSensor"
+      strength: "HARD"
+      strid: "P0-AASite-SAM2"
+      structuremodel: "Blaamnt2.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 500.0
+      buildpower: 225.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "BUNKER"
+      strid: "PillBox-Cannon6"
+      structuremodel: "Blcanpil.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 400.0
+      buildpower: 150.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "BUNKER"
+      strid: "Pillbox-RotMG"
+      structuremodel: "blpilbox.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "BUNKER"
+      strid: "PillBox1"
+      structuremodel: "blpilbox.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "BUNKER"
+      strid: "PillBox2"
+      structuremodel: "blpilbox.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "BUNKER"
+      strid: "PillBox3"
+      structuremodel: "blpilbox.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 400.0
+      buildpower: 125.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "BUNKER"
+      strid: "PillBox4"
+      structuremodel: "Blcanpil.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "BUNKER"
+      strid: "PillBox5"
+      structuremodel: "Blcanpil.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 400.0
+      buildpower: 150.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "BUNKER"
+      strid: "PillBox6"
+      structuremodel: "Blcanpil.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 400.0
+      buildpower: 125.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "BUNKER"
+      strid: "Plasmite-flamer-bunker"
+      structuremodel: "Blcanpil.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 150.0
+      sensorkey: "Sys-CBTower01"
+      strength: "HARD"
+      strid: "Sys-CB-Tower01"
+      structuremodel: "BLGUARDR.pie"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 0.0
+      sensorkey: "NavGunSensor"
+      strength: "HARD"
+      strid: "Sys-NEXUSLinkTOW"
+      structuremodel: "Blgrdnex.PIE"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 150.0
+      sensorkey: "Sys-CBTower01"
+      strength: "HARD"
+      strid: "Sys-NX-CBTower"
+      structuremodel: "Blgrdnex.PIE"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 150.0
+      sensorkey: "SensorTower2Mk1"
+      strength: "HARD"
+      strid: "Sys-NX-SensorTower"
+      structuremodel: "Blgrdnex.PIE"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 150.0
+      sensorkey: "Sys-VTOLCBTower01"
+      strength: "HARD"
+      strid: "Sys-NX-VTOL-CB-Tow"
+      structuremodel: "Blgrdnex.PIE"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 150.0
+      sensorkey: "Sys-VTOLRadarTower01"
+      strength: "HARD"
+      strid: "Sys-NX-VTOL-RadTow"
+      structuremodel: "Blgrdnex.PIE"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 450.0
+      buildpoints: 300.0
+      buildpower: 60.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 150.0
+      sensorkey: "SensorTurret1Mk1"
+      strength: "MEDIUM"
+      strid: "Sys-SensoTower01"
+      structuremodel: "BLGUARDM.PIE"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 150.0
+      sensorkey: "SensorTower2Mk1"
+      strength: "HARD"
+      strid: "Sys-SensoTower02"
+      structuremodel: "BLGUARDR.pie"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 800.0
+      buildpower: 250.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 150.0
+      sensorkey: "Sensor-WideSpec"
+      strength: "HARD"
+      strid: "Sys-SensoTowerWS"
+      structuremodel: "BLGUARDR.pie"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 1600.0
+      buildpower: 800.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Sys-SpyTower"
+      structuremodel: "BLGUARDR.pie"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 150.0
+      sensorkey: "Sys-VTOLCBTower01"
+      strength: "HARD"
+      strid: "Sys-VTOL-CB-Tower01"
+      structuremodel: "BLGUARDR.pie"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 150.0
+      sensorkey: "Sys-VTOLRadarTower01"
+      strength: "HARD"
+      strid: "Sys-VTOL-RadarTower01"
+      structuremodel: "BLGUARDR.pie"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 200.0
+      buildpoints: 200.0
+      buildpower: 15.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 0.0
+      sensorkey: "ZNULLSENSOR"
+      strength: "HARD"
+      strid: "TankTrapC"
+      structuremodel: "MITRAP2.PIE"
+      type: "CORNER WALL"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 400.0
+      buildpower: 125.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "BUNKER"
+      strid: "Tower-Projector"
+      structuremodel: "Blcanpil.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 20.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 700.0
+      buildpoints: 100.0
+      buildpower: 125.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "BUNKER"
+      strid: "Tower-RotMg"
+      structuremodel: "blcanpil.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 100.0
+      buildpower: 225.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "Tower-VulcanCan"
+      structuremodel: "BLGUARDR.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 2.0
+      basemodel: 0.0
+      basewidth: 2.0
+      bodypoints: 1000.0
+      buildpoints: 500.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 1.0
+      height: 3.0
+      resistance: 0.0
+      sensorkey: "UplinkSensor"
+      strength: "MEDIUM"
+      strid: "UplinkCentre"
+      structuremodel: "miupbase.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 150.0
+      buildpower: 150.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Wall-RotMg"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 250.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "Wall-VulcanCan"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 350.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower-Atmiss"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 450.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower-DoubleAAGun"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 350.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower-EMP"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 225.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower-HPVcannon"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 275.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower-HvATrocket"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 150.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 1.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower-Projector"
+      structuremodel: "BLHARDPT.PIE"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 275.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower-PulseLas"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 400.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower-QuadRotAAGun"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 350.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower-Rail2"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 400.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower-Rail3"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 400.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower-SamHvy"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 400.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower-SamSite"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 250.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower-TwinAssaultGun"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower01"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 125.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower02"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 200.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower03"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 250.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower04"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower05"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 800.0
+      buildpoints: 400.0
+      buildpower: 175.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "HARD"
+      strid: "WallTower06"
+      structuremodel: "BLGUARD1.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 12.0
+      basebreadth: 3.0
+      basemodel: 0.0
+      basewidth: 3.0
+      bodypoints: 600.0
+      buildpoints: 10.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 0.0
+      sensorkey: "ZNULLSENSOR"
+      strength: "BUNKER"
+      strid: "WreckedTransporter"
+      structuremodel: "drtrans.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 0.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 2.0
+      basemodel: 0.0
+      basewidth: 2.0
+      bodypoints: 3200.0
+      buildpoints: 1600.0
+      buildpower: 900.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 100.0
+      sensorkey: "FortressSensor"
+      strength: "HARD"
+      strid: "X-Super-Cannon"
+      structuremodel: "STWPFCAN.PIE"
+      type: "DOOR"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 2.0
+      basemodel: 0.0
+      basewidth: 2.0
+      bodypoints: 3200.0
+      buildpoints: 1600.0
+      buildpower: 1800.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 100.0
+      sensorkey: "FortressSensor"
+      strength: "HARD"
+      strid: "X-Super-MassDriver"
+      structuremodel: "STWPFCAN.PIE"
+      type: "DOOR"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 2.0
+      basemodel: 0.0
+      basewidth: 2.0
+      bodypoints: 3200.0
+      buildpoints: 1600.0
+      buildpower: 1600.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 100.0
+      sensorkey: "FortressSensor"
+      strength: "HARD"
+      strid: "X-Super-Missile"
+      structuremodel: "STWPFCAN.PIE"
+      type: "DOOR"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 2.0
+      basemodel: 0.0
+      basewidth: 2.0
+      bodypoints: 3200.0
+      buildpoints: 1600.0
+      buildpower: 1250.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 3.0
+      resistance: 100.0
+      sensorkey: "FortressSensor"
+      strength: "HARD"
+      strid: "X-Super-Rocket"
+      structuremodel: "STWPFCAN.PIE"
+      type: "DOOR"
+      unused: 1.0
+      weapons: 1.0
+      weaponslots: 1.0
+    }
+    {
+      armour: 15.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 600.0
+      buildpoints: 400.0
+      buildpower: 100.0
+      ecmkey: "ZNULLECM"
+      functions: 0.0
+      height: 2.0
+      resistance: 150.0
+      sensorkey: "RadarDetector"
+      strength: "MEDIUM"
+      strid: "Sys-RadarDetector01"
+      structuremodel: "BLGUARDR.pie"
+      type: "DEFENSE"
+      unused: 1.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
+    {
+      armour: 10.0
+      basebreadth: 1.0
+      basemodel: 0.0
+      basewidth: 1.0
+      bodypoints: 300.0
+      buildpoints: 300.0
+      buildpower: 60.0
+      ecmkey: "ECM1TurretMk1"
+      functions: 0.0
+      height: 3.0
+      resistance: 150.0
+      sensorkey: "DefaultSensor1Mk1"
+      strength: "MEDIUM"
+      strid: "ECM1PylonMk1"
+      structuremodel: "blguardr.pie"
+      type: "DEFENSE"
+      unused: 0.0
+      weapons: 0.0
+      weaponslots: 0.0
+    }
     {
       buildpoints: 0.0
       buildpower: 0.0
@@ -11824,3 +15058,8 @@ class IniData
       strid: "R-Sys-RadarDetector01"
     }
   ]
+
+  @strid = (strid) ->
+    for obj in Ini.DATA
+      return obj if obj.strid is strid
+    return null

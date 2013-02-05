@@ -1,0 +1,8 @@
+WZ2100="/home/carrot/Git/warzone2100/warzone2100-g.i.t"
+cp \
+$WZ2100/data/mp/stats/propulsion.ini \
+$WZ2100/data/mp/stats/body.ini \
+$WZ2100/data/mp/stats/weapons.ini \
+$WZ2100/data/mp/stats/research.ini \
+$WZ2100/data/mp/stats/structures.txt \
+./stats/

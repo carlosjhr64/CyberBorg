@@ -1,9 +1,9 @@
 ./bin/cofcomp ./cyberborg-devel.js			\
-	./coffee/cyberborg.data.coffee			\
 	./coffee/cyberborg.number.coffee		\
 	./coffee/cyberborg.trace.coffee			\
 	./coffee/cyberborg.wzobject.coffee		\
 	./coffee/cyberborg.wzarray.coffee		\
+	./coffee/cyberborg.data.coffee			\
 	./coffee/cyberborg.group.coffee			\
 	./coffee/cyberborg.package.coffee		\
 	./coffee/cyberborg.command.coffee		\

@@ -120,10 +120,10 @@ Command::base_commands = () ->
 
   @limit = 1
   more = [
-    @on_budget @one @trucker @maintains @power_generator @at @x, @y
+    @with_one_truck @power_generator @at @x, @y
     # Wait for power levels to come back up.
     @pass @on_plenty @one @trucker()
-    @on_surplus @one @trucker @maintains @research_facility @at @x-@s*@dx, @y
+    @with_one_truck @research_facility @at @x-@s*@dx, @y
     @with_one_truck @power_generator @at @x-@s*@dx, @y+@s*@dy
     # Wait for power levels to come back up.
     @pass @on_plenty @none()

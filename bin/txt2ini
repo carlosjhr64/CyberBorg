@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+if line = $stdin.gets
+  #line = line.strip
+  puts ";INI file by txt2ini."
+  attributes = line.split(/,/).map{|x| x.strip.gsub(/\W/,'')}
+  length = attributes.length
+  while line = $stdin.gets
+    #line = line.strip
+    values = line.split(/,/).map{|x| x.strip}
+    raise "bad entry" unless values.length == length
+    puts
+    puts "[#{values.first}]"
+    1.upto(length-1) do |i|
+      value = values[i]
+      attribute = attributes[i]
+      if value =~ /^\d+(\.\d+)?$/
+        puts "#{attribute} = #{value}"
+      else
+        puts "#{attribute} = \"#{value}\""
+      end
+    end
+  end
+end
