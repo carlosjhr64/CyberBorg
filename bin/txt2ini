@@ -2,7 +2,12 @@
 if line = $stdin.gets
   #line = line.strip
   puts ";INI file by txt2ini."
-  attributes = line.split(/,/).map{|x| x.strip.gsub(/\W/,'')}
+  attributes = line.split(/,/).map{|x|
+    x=x.strip.split(/\s+/)
+    y=x.shift
+    # cammelCasing :))
+    y.downcase + x.map{|x| x.capitalize}.join('')
+  }
   length = attributes.length
   while line = $stdin.gets
     #line = line.strip
