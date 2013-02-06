@@ -43,6 +43,8 @@ Trace = (function() {
     return Trace.on = previous_state;
   };
 
+  Trace.debug = Trace.red;
+
   Trace.green = function(message) {
     if (Trace.on) {
       return this.out("\u001b[1;32m" + message + "\u001b[0m");
@@ -16299,15 +16301,45 @@ Command = (function() {
   */
 
 
-  Command.prototype.pursue = function(research, cost, obj) {
+  Command.rms_cost_of = function(research) {
+    var cost, count, data, requiredresearch, rms, strid, _i, _len, _ref;
+    cost = 100;
+    data = Ini.strid(research);
+    if (cost = data != null ? data.researchpower : void 0) {
+      if (requiredresearch = data.requiredresearch) {
+        if (typeof requiredresearch === "string") {
+          requiredresearch = [requiredresearch];
+        }
+        rms = cost * cost;
+        count = 1;
+        for (_i = 0, _len = requiredresearch.length; _i < _len; _i++) {
+          strid = requiredresearch[_i];
+          if (cost = (_ref = Ini.strid(strid)) != null ? _ref.researchpower : void 0) {
+            rms += cost * cost;
+            count += 1;
+          } else {
+            Trace.red("Warning: could not get data on " + strid);
+          }
+        }
+        cost = Math.sqrt(rms / count).to_i();
+      }
+    } else {
+      Trace.red("Warning: Could not get data on " + research);
+    }
+    return cost;
+  };
+
+  Command.prototype.pursue = function(research, obj) {
+    var cost;
     if (obj == null) {
       obj = {};
     }
     obj.research = research;
+    cost = Command.rms_cost_of(research);
+    obj.cost = cost;
     obj.order = LORDER_RESEARCH;
     obj.like = /Research Facility/;
     obj.power = 0;
-    obj.cost = cost;
     obj.limit = this.limit;
     obj.min = 1;
     obj.max = 1;
@@ -17274,6 +17306,6 @@ Command.prototype.lab_commands = function() {
   var commands;
   this.limit = 5;
   this.savings = 0;
-  commands = [this.pursue('R-Wpn-MG1Mk1', 1), this.pursue('R-Wpn-MG2Mk1', 37), this.pursue('R-Struc-PowerModuleMk1', 37), this.pursue('R-Wpn-MG3Mk1', 75), this.pursue('R-Struc-RepairFacility', 75), this.pursue('R-Defense-Tower01', 18), this.pursue('R-Defense-WallTower02', 75), this.pursue('R-Defense-AASite-QuadMg1', 112), this.pursue('R-Vehicle-Body04', 75), this.pursue('R-Vehicle-Prop-VTOL', 100), this.pursue('R-Struc-VTOLFactory', 100), this.pursue('R-Wpn-Bomb01', 100)];
+  commands = [this.pursue('R-Wpn-MG1Mk1'), this.pursue('R-Wpn-MG2Mk1'), this.pursue('R-Struc-PowerModuleMk1'), this.pursue('R-Wpn-MG3Mk1'), this.pursue('R-Struc-RepairFacility'), this.pursue('R-Defense-Tower01'), this.pursue('R-Defense-WallTower02'), this.pursue('R-Defense-AASite-QuadMg1'), this.pursue('R-Vehicle-Body04'), this.pursue('R-Vehicle-Prop-VTOL'), this.pursue('R-Struc-VTOLFactory'), this.pursue('R-Wpn-Bomb01')];
   return WZArray.bless(commands);
 };

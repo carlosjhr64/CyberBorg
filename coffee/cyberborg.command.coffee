@@ -566,12 +566,32 @@ class Command
   ### Orders ###
   ##############
 
-  pursue: (research, cost, obj={}) ->
+  @rms_cost_of = (research)->
+    cost = 100 # default
+    data = Ini.strid(research)
+    if cost = data?.researchpower
+      if requiredresearch = data.requiredresearch
+        requiredresearch = [requiredresearch] if typeof(requiredresearch) is "string"
+        rms = cost*cost
+        count = 1
+        for strid in requiredresearch
+          if cost = Ini.strid(strid)?.researchpower
+            rms += cost*cost
+            count += 1
+          else
+            Trace.red "Warning: could not get data on #{strid}"
+        cost = Math.sqrt(rms/count).to_i()
+    else
+      Trace.red "Warning: Could not get data on #{research}"
+    cost
+
+  pursue: (research, obj={}) ->
     obj.research = research
+    cost = Command.rms_cost_of(research)
+    obj.cost = cost
     obj.order = LORDER_RESEARCH
     obj.like = /Research Facility/
     obj.power = 0 # This just means we've not gone negative.
-    obj.cost = cost
     obj.limit = @limit
     obj.min = 1
     obj.max = 1

@@ -19,6 +19,7 @@ class Trace
       Trace.on = true # regarless of previous state.
       @out "\u001b[1;31m#{message}\u001b[0m"
     Trace.on = previous_state
+  @debug = @red # Alias
 
   @green = (message) ->
     @out "\u001b[1;32m#{message}\u001b[0m" if Trace.on
