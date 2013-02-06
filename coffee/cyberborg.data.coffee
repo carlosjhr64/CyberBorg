@@ -4144,6 +4144,119 @@ class Ini
       weight: 100.0
     }
     {
+      bodypoints: 0.0
+      buildpoints: 0.0
+      buildpower: 0.0
+      constructpoints: 0.0
+      designable: 0.0
+      mountmodel: "TRLCON.PIE"
+      name: "Z NULL CONSTRUCT"
+      sensormodel: "TRLCON.PIE"
+      strid: "ZNULLCONSTRUCT"
+      weight: 0.0
+    }
+    {
+      bodypoints: 25.0
+      buildpoints: 85.0
+      buildpower: 17.0
+      constructpoints: 8.0
+      designable: 1.0
+      name: "Truck"
+      sensormodel: "TRLCON.PIE"
+      strid: "Spade1Mk1"
+      weight: 800.0
+    }
+    {
+      bodypoints: 35.0
+      buildpoints: 65.0
+      buildpower: 10.0
+      constructpoints: 5.0
+      designable: 0.0
+      mountmodel: "cybody.pie"
+      name: "Combat Engineer"
+      sensormodel: "cy_con.pie"
+      strid: "CyborgSpade"
+      weight: 150.0
+    }
+    {
+      buildpoints: 0.0
+      buildpower: 0.0
+      designable: 0.0
+      location: "DEFAULT"
+      name: "Z NULL REPAIR"
+      repairarmour: 0.0
+      repairpoints: 0.0
+      strid: "ZNULLREPAIR"
+      time: 100.0
+      weight: 0.0
+    }
+    {
+      buildpoints: 0.0
+      buildpower: 0.0
+      designable: 0.0
+      location: "DEFAULT"
+      name: "NEXUSrepair"
+      repairarmour: 1.0
+      repairpoints: 100.0
+      strid: "NEXUSrepair"
+      time: 100.0
+      weight: 0.0
+    }
+    {
+      buildpoints: 250.0
+      buildpower: 50.0
+      designable: 1.0
+      location: "TURRET"
+      model: "GNMREPAR.PIE"
+      mountmodel: "TRMECM1.PIE"
+      name: "Repair Turret"
+      repairarmour: 0.0
+      repairpoints: 15.0
+      strid: "LightRepair1"
+      time: 7.0
+      weight: 800.0
+    }
+    {
+      buildpoints: 300.0
+      buildpower: 70.0
+      designable: 1.0
+      location: "TURRET"
+      model: "GNMREPR2.PIE"
+      mountmodel: "TRMECM1.PIE"
+      name: "Heavy Repair Turret"
+      repairarmour: 0.0
+      repairpoints: 30.0
+      strid: "HeavyRepair"
+      time: 7.0
+      weight: 3000.0
+    }
+    {
+      buildpoints: 100.0
+      buildpower: 35.0
+      designable: 0.0
+      location: "TURRET"
+      model: "cy_rep.pie"
+      mountmodel: "cybody.pie"
+      name: "Cyborg Mechanic"
+      repairarmour: 0.0
+      repairpoints: 10.0
+      strid: "CyborgRepair"
+      time: 7.0
+      weight: 150.0
+    }
+    {
+      buildpoints: 0.0
+      buildpower: 0.0
+      designable: 0.0
+      location: "DEFAULT"
+      name: "Auto Repair"
+      repairarmour: 1.0
+      repairpoints: 100.0
+      strid: "AutoRepair"
+      time: 75.0
+      weight: 0.0
+    }
+    {
       body: 0.0
       buildpoints: 250.0
       buildpower: 0.0

@@ -4676,6 +4676,110 @@ Ini = (function() {
       weaponslots: 1.0,
       weight: 100.0
     }, {
+      bodypoints: 0.0,
+      buildpoints: 0.0,
+      buildpower: 0.0,
+      constructpoints: 0.0,
+      designable: 0.0,
+      mountmodel: "TRLCON.PIE",
+      name: "Z NULL CONSTRUCT",
+      sensormodel: "TRLCON.PIE",
+      strid: "ZNULLCONSTRUCT",
+      weight: 0.0
+    }, {
+      bodypoints: 25.0,
+      buildpoints: 85.0,
+      buildpower: 17.0,
+      constructpoints: 8.0,
+      designable: 1.0,
+      name: "Truck",
+      sensormodel: "TRLCON.PIE",
+      strid: "Spade1Mk1",
+      weight: 800.0
+    }, {
+      bodypoints: 35.0,
+      buildpoints: 65.0,
+      buildpower: 10.0,
+      constructpoints: 5.0,
+      designable: 0.0,
+      mountmodel: "cybody.pie",
+      name: "Combat Engineer",
+      sensormodel: "cy_con.pie",
+      strid: "CyborgSpade",
+      weight: 150.0
+    }, {
+      buildpoints: 0.0,
+      buildpower: 0.0,
+      designable: 0.0,
+      location: "DEFAULT",
+      name: "Z NULL REPAIR",
+      repairarmour: 0.0,
+      repairpoints: 0.0,
+      strid: "ZNULLREPAIR",
+      time: 100.0,
+      weight: 0.0
+    }, {
+      buildpoints: 0.0,
+      buildpower: 0.0,
+      designable: 0.0,
+      location: "DEFAULT",
+      name: "NEXUSrepair",
+      repairarmour: 1.0,
+      repairpoints: 100.0,
+      strid: "NEXUSrepair",
+      time: 100.0,
+      weight: 0.0
+    }, {
+      buildpoints: 250.0,
+      buildpower: 50.0,
+      designable: 1.0,
+      location: "TURRET",
+      model: "GNMREPAR.PIE",
+      mountmodel: "TRMECM1.PIE",
+      name: "Repair Turret",
+      repairarmour: 0.0,
+      repairpoints: 15.0,
+      strid: "LightRepair1",
+      time: 7.0,
+      weight: 800.0
+    }, {
+      buildpoints: 300.0,
+      buildpower: 70.0,
+      designable: 1.0,
+      location: "TURRET",
+      model: "GNMREPR2.PIE",
+      mountmodel: "TRMECM1.PIE",
+      name: "Heavy Repair Turret",
+      repairarmour: 0.0,
+      repairpoints: 30.0,
+      strid: "HeavyRepair",
+      time: 7.0,
+      weight: 3000.0
+    }, {
+      buildpoints: 100.0,
+      buildpower: 35.0,
+      designable: 0.0,
+      location: "TURRET",
+      model: "cy_rep.pie",
+      mountmodel: "cybody.pie",
+      name: "Cyborg Mechanic",
+      repairarmour: 0.0,
+      repairpoints: 10.0,
+      strid: "CyborgRepair",
+      time: 7.0,
+      weight: 150.0
+    }, {
+      buildpoints: 0.0,
+      buildpower: 0.0,
+      designable: 0.0,
+      location: "DEFAULT",
+      name: "Auto Repair",
+      repairarmour: 1.0,
+      repairpoints: 100.0,
+      strid: "AutoRepair",
+      time: 75.0,
+      weight: 0.0
+    }, {
       body: 0.0,
       buildpoints: 250.0,
       buildpower: 0.0,
@@ -14532,19 +14636,13 @@ Command = (function() {
   */
 
 
-  Command.prototype.structure = function(name, structureid, cost, obj) {
-    var build_power, data;
+  Command.prototype.structure = function(name, structureid, obj) {
     if (obj == null) {
       obj = {};
     }
-    if (data = Ini.strid(structureid)) {
-      if (build_power = data.buildpower) {
-        cost = build_power;
-      }
-    }
     obj.name = name;
     obj.structure = structureid;
-    obj.cost = cost;
+    obj.cost = Ini.strid(structureid).buildpower;
     return obj;
   };
 
@@ -14552,91 +14650,91 @@ Command = (function() {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Command Center", "A0CommandCentre", 100, obj);
+    return this.structure("Command Center", "A0CommandCentre", obj);
   };
 
   Command.prototype.power_generator = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Power Generator", "A0PowerGenerator", 50, obj);
+    return this.structure("Power Generator", "A0PowerGenerator", obj);
   };
 
   Command.prototype.power_module = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Power Module", "A0PowMod1", 0, obj);
+    return this.structure("Power Module", "A0PowMod1", obj);
   };
 
   Command.prototype.research_facility = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Research Facility", "A0ResearchFacility", 100, obj);
+    return this.structure("Research Facility", "A0ResearchFacility", obj);
   };
 
   Command.prototype.research_module = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Research Module", "A0ResearchModule1", 100, obj);
+    return this.structure("Research Module", "A0ResearchModule1", obj);
   };
 
   Command.prototype.light_factory = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Factory", "A0LightFactory", 100, obj);
+    return this.structure("Factory", "A0LightFactory", obj);
   };
 
   Command.prototype.factory_module = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Factory Module", "A0FacMod1", 100, obj);
+    return this.structure("Factory Module", "A0FacMod1", obj);
   };
 
   Command.prototype.cyborg_factory = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Cyborg Factory", "A0CyborgFactory", 100, obj);
+    return this.structure("Cyborg Factory", "A0CyborgFactory", obj);
   };
 
   Command.prototype.vtol_factory = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("VTOL Factory", "A0VTolFactory1", 100, obj);
+    return this.structure("VTOL Factory", "A0VTolFactory1", obj);
   };
 
   Command.prototype.command_relay_center = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Command Relay Center", "A0ComDroidControl", 100, obj);
+    return this.structure("Command Relay Center", "A0ComDroidControl", obj);
   };
 
   Command.prototype.vtol_rearming_pad = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("VTOL Rearming Pad", "A0VtolPad", 100, obj);
+    return this.structure("VTOL Rearming Pad", "A0VtolPad", obj);
   };
 
   Command.prototype.repair_facility = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Repair Facility", "A0RepairCentre3", 100, obj);
+    return this.structure("Repair Facility", "A0RepairCentre3", obj);
   };
 
   Command.prototype.oil_derrick = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Oil Derrick", "A0ResourceExtractor", 0, obj);
+    return this.structure("Oil Derrick", "A0ResourceExtractor", obj);
   };
 
   /* Defenses
@@ -14647,539 +14745,541 @@ Command = (function() {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Tank Traps", "A0TankTrap", 15, obj);
+    return this.structure("Tank Traps", "A0TankTrap", obj);
   };
 
   Command.prototype.hardcrete = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Hardcrete Wall", "A0HardcreteMk1Wall", 25, obj);
+    return this.structure("Hardcrete Wall", "A0HardcreteMk1Wall", obj);
   };
 
   Command.prototype.sensor_tower = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Sensor Tower", "Sys-SensoTower01", 60, obj);
+    return this.structure("Sensor Tower", "Sys-SensoTower01", obj);
   };
 
   Command.prototype.radar_detector_tower = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Radar Detector Tower", "Sys-RadarDetector01", 100, obj);
+    return this.structure("Radar Detector Tower", "Sys-RadarDetector01", obj);
   };
 
   Command.prototype.cb_tower = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("CB Tower", "Sys-CB-Tower01", 100, obj);
+    return this.structure("CB Tower", "Sys-CB-Tower01", obj);
   };
 
   Command.prototype.hardened_sensor = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Hardened Sensor Tower", "Sys-SensoTower02", 100, obj);
+    return this.structure("Hardened Sensor Tower", "Sys-SensoTower02", obj);
   };
 
   Command.prototype.vtol_cb_tower = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("VTOL CB Tower", "Sys-VTOL-CB-Tower01", 100, obj);
+    return this.structure("VTOL CB Tower", "Sys-VTOL-CB-Tower01", obj);
   };
 
   Command.prototype.vtol_strike_tower = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("VTOL Strike Tower", "Sys-VTOL-RadarTower01", 100, obj);
+    return this.structure("VTOL Strike Tower", "Sys-VTOL-RadarTower01", obj);
   };
 
   Command.prototype.wide_spectrum_sensor_tower = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Wide Spectrum Sensor Tower", "Sys-SensoTowerWS", 250, obj);
+    return this.structure("Wide Spectrum Sensor Tower", "Sys-SensoTowerWS", obj);
   };
 
   Command.prototype.satellite_uplink_center = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Satellite Uplink Center", "A0Sat-linkCentre", 1000, obj);
+    return this.structure("Satellite Uplink Center", "A0Sat-linkCentre", obj);
   };
 
   Command.prototype.machinegun_guard_tower = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Machinegun Guard Tower", "GuardTower1", 100, obj);
+    return this.structure("Machinegun Guard Tower", "GuardTower1", obj);
   };
 
   Command.prototype.pulse_laser_tower = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Pulse Laser Tower", "GuardTower-BeamLas", 200, obj);
+    return this.structure("Pulse Laser Tower", "GuardTower-BeamLas", obj);
   };
 
   Command.prototype.needle_gun_tower = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Needle Gun Tower", "GuardTower-Rail1", 275, obj);
+    return this.structure("Needle Gun Tower", "GuardTower-Rail1", obj);
   };
 
   Command.prototype.scourge_missile_tower = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Scourge Missile Tower", "GuardTower-ATMiss", 325, obj);
+    return this.structure("Scourge Missile Tower", "GuardTower-ATMiss", obj);
   };
 
   Command.prototype.mini_rocket_tower = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Mini-Rocket Tower", "GuardTower6", 100, obj);
+    return this.structure("Mini-Rocket Tower", "GuardTower6", obj);
   };
 
   Command.prototype.lancer_tower = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Lancer Tower", "GuardTower5", 150, obj);
+    return this.structure("Lancer Tower", "GuardTower5", obj);
   };
 
   Command.prototype.hpv_emplacement = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Hyper Velocity Cannon Emplacement", "Emplacement-HPVcannon", 200, obj);
+    return this.structure("Hyper Velocity Cannon Emplacement", "Emplacement-HPVcannon", obj);
   };
 
   Command.prototype.flashlight_emplacement = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Flashlight Emplacement", "Emplacement-PrisLas", 275, obj);
+    return this.structure("Flashlight Emplacement", "Emplacement-PrisLas", obj);
   };
 
   Command.prototype.tank_killer_emplacement = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Tank Killer Emplacement", "Emplacement-HvyATrocket", 275, obj);
+    return this.structure("Tank Killer Emplacement", "Emplacement-HvyATrocket", obj);
   };
 
   Command.prototype.plasma_cannon_emplacement = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Plasma Cannon Emplacement", "Emplacement-PlasmaCannon", 300, obj);
+    return this.structure("Plasma Cannon Emplacement", "Emplacement-PlasmaCannon", obj);
   };
 
   Command.prototype.railgun_emplacement = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Railgun Emplacement", "Emplacement-Rail2", 350, obj);
+    return this.structure("Railgun Emplacement", "Emplacement-Rail2", obj);
   };
 
   Command.prototype.gauss_cannon_emplacement = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Gauss Cannon Emplacement", "Emplacement-Rail3", 450, obj);
+    return this.structure("Gauss Cannon Emplacement", "Emplacement-Rail3", obj);
   };
 
   Command.prototype.heavy_laser_emplacement = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Heavy Laser Emplacement", "Emplacement-HeavyLaser", 500, obj);
+    return this.structure("Heavy Laser Emplacement", "Emplacement-HeavyLaser", obj);
   };
 
   Command.prototype.heavy_machinegun_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Heavy Machinegun Hardpoint", "WallTower01", 100, obj);
+    return this.structure("Heavy Machinegun Hardpoint", "WallTower01", obj);
   };
 
   Command.prototype.light_cannon_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Light Cannon Hardpoint", "WallTower02", 125, obj);
+    return this.structure("Light Cannon Hardpoint", "WallTower02", obj);
   };
 
   Command.prototype.assault_gun_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Assault Gun Hardpoint", "Wall-RotMg", 150, obj);
+    return this.structure("Assault Gun Hardpoint", "Wall-RotMg", obj);
   };
 
   Command.prototype.lancer_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Lancer Hardpoint", "WallTower06", 175, obj);
+    return this.structure("Lancer Hardpoint", "WallTower06", obj);
   };
 
   Command.prototype.medium_cannon_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Medium Cannon Hardpoint", "WallTower03", 200, obj);
+    return this.structure("Medium Cannon Hardpoint", "WallTower03", obj);
   };
 
   Command.prototype.hpv_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Hyper Velocity Cannon Hardpoint", "WallTower-HPVcannon", 225, obj);
+    return this.structure("Hyper Velocity Cannon Hardpoint", "WallTower-HPVcannon", obj);
   };
 
   Command.prototype.assault_cannon_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Assault Cannon Hardpoint", "Wall-VulcanCan", 250, obj);
+    return this.structure("Assault Cannon Hardpoint", "Wall-VulcanCan", obj);
   };
 
   Command.prototype.heavy_cannon_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Heavy Cannon Hardpoint", "WallTower04", 250, obj);
+    return this.structure("Heavy Cannon Hardpoint", "WallTower04", obj);
   };
 
   Command.prototype.twin_assault_gun_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Twin Assault Gun Hardpoint", "WallTower-TwinAssaultGun", 250, obj);
+    return this.structure("Twin Assault Gun Hardpoint", "WallTower-TwinAssaultGun", obj);
   };
 
   Command.prototype.pulse_laser_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Pulse Laser Hardpoint", "WallTower-PulseLas", 275, obj);
+    return this.structure("Pulse Laser Hardpoint", "WallTower-PulseLas", obj);
   };
 
   Command.prototype.tank_killer_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Tank Killer Hardpoint", "WallTower-HvATrocket", 275, obj);
+    return this.structure("Tank Killer Hardpoint", "WallTower-HvATrocket", obj);
   };
 
   Command.prototype.emp_cannon_tower = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("EMP Cannon Tower", "WallTower-EMP", 350, obj);
+    return this.structure("EMP Cannon Tower", "WallTower-EMP", obj);
   };
 
   Command.prototype.scourge_missile_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Scourge Missile Hardpoint", "WallTower-Atmiss", 350, obj);
+    return this.structure("Scourge Missile Hardpoint", "WallTower-Atmiss", obj);
   };
 
   Command.prototype.rail_gun_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Rail Gun Hardpoint", "WallTower-Rail2", 350, obj);
+    return this.structure("Rail Gun Hardpoint", "WallTower-Rail2", obj);
   };
 
   Command.prototype.gauss_cannon_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Gauss Cannon Hardpoint", "WallTower-Rail3", 400, obj);
+    return this.structure("Gauss Cannon Hardpoint", "WallTower-Rail3", obj);
   };
 
   Command.prototype.nexus_link_tower = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Nexus Link Tower", "Sys-SpyTower", 800, obj);
+    return this.structure("Nexus Link Tower", "Sys-SpyTower", obj);
   };
 
   Command.prototype.flamer_bunker = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Flamer Bunker", "PillBox5", 100, obj);
+    return this.structure("Flamer Bunker", "PillBox5", obj);
   };
 
   Command.prototype.machinegun_bunker = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Machinegun Bunker", "PillBox1", 100, obj);
+    return this.structure("Machinegun Bunker", "PillBox1", obj);
   };
 
   Command.prototype.plasmite_flamer_bunker = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Plasmite Flamer Bunker", "Plasmite-flamer-bunker", 125, obj);
+    return this.structure("Plasmite Flamer Bunker", "Plasmite-flamer-bunker", obj);
   };
 
   Command.prototype.inferno_bunker = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Inferno Bunker", "Tower-Projector", 125, obj);
+    return this.structure("Inferno Bunker", "Tower-Projector", obj);
   };
 
   Command.prototype.light_cannon_bunker = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Light Cannon Bunker", "PillBox4", 125, obj);
+    return this.structure("Light Cannon Bunker", "PillBox4", obj);
   };
 
   Command.prototype.rotary_mg_bunker = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Rotary MG Bunker", "Pillbox-RotMG", 150, obj);
+    return this.structure("Rotary MG Bunker", "Pillbox-RotMG", obj);
   };
 
   Command.prototype.twin_assault_cannon_bunker = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Twin Assault Cannon Bunker", "PillBox-Cannon6", 225, obj);
+    return this.structure("Twin Assault Cannon Bunker", "PillBox-Cannon6", obj);
   };
 
   Command.prototype.mortar_pit = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Mortar Pit", "Emplacement-MortarPit01", 125, obj);
+    return this.structure("Mortar Pit", "Emplacement-MortarPit01", obj);
   };
 
   Command.prototype.incendiary_mortar_pit = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Incendiary Mortar Pit", "Emplacement-MortarPit-Incenediary", 135, obj);
+    return this.structure("Incendiary Mortar Pit", "Emplacement-MortarPit-Incenediary", obj);
   };
 
   Command.prototype.bombard_pit = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Bombard Pit", "Emplacement-MortarPit02", 150, obj);
+    return this.structure("Bombard Pit", "Emplacement-MortarPit02", obj);
   };
 
   Command.prototype.pepperpot_pit = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Pepperpot Pit", "Emplacement-RotMor", 325, obj);
+    return this.structure("Pepperpot Pit", "Emplacement-RotMor", obj);
   };
 
   Command.prototype.incendiary_howitzer_emplacement = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Incendiary Howitzer Emplacement", "Emplacement-Howitzer-Incenediary", 325, obj);
+    return this.structure("Incendiary Howitzer Emplacement", "Emplacement-Howitzer-Incenediary", obj);
   };
 
   Command.prototype.howitzer_emplacement = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Howitzer Emplacement", "Emplacement-Howitzer105", 0, obj);
+    return this.structure("Howitzer Emplacement", "Emplacement-Howitzer105", obj);
   };
 
   Command.prototype.ground_shaker_emplacement = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Ground Shaker Emplacement", "Emplacement-Howitzer150", 425, obj);
+    return this.structure("Ground Shaker Emplacement", "Emplacement-Howitzer150", obj);
   };
 
   Command.prototype.hellstorm_emplacement = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Hellstorm Emplacement", "Emplacement-RotHow", 525, obj);
+    return this.structure("Hellstorm Emplacement", "Emplacement-RotHow", obj);
   };
 
   Command.prototype.emp_mortar_pit = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("EMP Mortar Pit", "Emplacement-MortarEMP", 150, obj);
+    return this.structure("EMP Mortar Pit", "Emplacement-MortarEMP", obj);
   };
 
   Command.prototype.mini_roket_battery = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Mini-Rocket Battery", "Emplacement-MRL-pit", 125, obj);
+    return this.structure("Mini-Rocket Battery", "Emplacement-MRL-pit", obj);
   };
 
   Command.prototype.ripple_rocket_battery = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Ripple Rocket Battery", "Emplacement-Rocket06-IDF", 325, obj);
+    return this.structure("Ripple Rocket Battery", "Emplacement-Rocket06-IDF", obj);
   };
 
   Command.prototype.seraph_missile_battery = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Seraph Missile Battery", "Emplacement-MdART-pit", 450, obj);
+    return this.structure("Seraph Missile Battery", "Emplacement-MdART-pit", obj);
   };
 
   Command.prototype.archangel_missile_emplacement = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Archangel Missile Emplacement", "Emplacement-HvART-pit", 525, obj);
+    return this.structure("Archangel Missile Emplacement", "Emplacement-HvART-pit", obj);
   };
 
   Command.prototype.sunburst_site = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Sunburst AA Site", "P0-AASite-Sunburst", 250, obj);
+    return this.structure("Sunburst AA Site", "P0-AASite-Sunburst", obj);
   };
 
   Command.prototype.hurricane_site = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Hurricane AA Site", "AASite-QuadMg1", 125, obj);
+    return this.structure("Hurricane AA Site", "AASite-QuadMg1", obj);
   };
 
   Command.prototype.whirlwind_site = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Whirlwind AA Site", "AASite-QuadRotMg", 175, obj);
+    return this.structure("Whirlwind AA Site", "AASite-QuadRotMg", obj);
   };
 
   Command.prototype.avenger_site = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Avenger AA Site", "P0-AASite-SAM1", 250, obj);
+    return this.structure("Avenger AA Site", "P0-AASite-SAM1", obj);
   };
 
   Command.prototype.stormbringer_site = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Stormbringer AA Site", "P0-AASite-Laser", 350, obj);
+    return this.structure("Stormbringer AA Site", "P0-AASite-Laser", obj);
   };
 
   Command.prototype.vindicator_site = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Vindicator SAM Site", "P0-AASite-SAM2", 350, obj);
+    return this.structure("Vindicator SAM Site", "P0-AASite-SAM2", obj);
   };
 
   Command.prototype.flak_cannon_emplacement = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("AA Flak Cannon Emplacement", "AASite-QuadBof", 300, obj);
+    return this.structure("AA Flak Cannon Emplacement", "AASite-QuadBof", obj);
   };
 
   Command.prototype.vindicator_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Vindicator Hardpoint", "WallTower-SamHvy", 400, obj);
+    return this.structure("Vindicator Hardpoint", "WallTower-SamHvy", obj);
   };
 
   Command.prototype.whirlwind_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Whirlwind Hardpoint", "WallTower-QuadRotAAGun", 400, obj);
+    return this.structure("Whirlwind Hardpoint", "WallTower-QuadRotAAGun", obj);
   };
 
   Command.prototype.avenger_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("Avenger Hardpoint", "WallTower-SamSite", 400, obj);
+    return this.structure("Avenger Hardpoint", "WallTower-SamSite", obj);
   };
 
   Command.prototype.flak_cannon_hardpoint = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.structure("AA Flak Cannon Hardpoint", "WallTower-DoubleAAGun", 450, obj);
+    return this.structure("AA Flak Cannon Hardpoint", "WallTower-DoubleAAGun", obj);
   };
 
   Command.prototype.laser_satellite = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Laser Satellite Command Post", "A0LasSatCommand", 1000, DROID_WEAPON, obj);
+    return this.structure("Laser Satellite Command Post", "A0LasSatCommand", obj);
   };
 
   Command.prototype.cannon_fortress = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Cannon Fortress", "X-Super-Cannon", 1000, DROID_WEAPON, obj);
+    return this.structure("Cannon Fortress", "X-Super-Cannon", obj);
   };
 
   Command.prototype.heavy_rocket_bastion = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Heavy Rocket Bastion", "X-Super-Rocket", 1250, DROID_WEAPON, obj);
+    return this.structure("Heavy Rocket Bastion", "X-Super-Rocket", obj);
   };
 
   Command.prototype.missile_fortress = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Missile Fortress", "X-Super-Missile", 1600, DROID_WEAPON, obj);
+    return this.structure("Missile Fortress", "X-Super-Missile", obj);
   };
 
   Command.prototype.mass_driver = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Mass Driver", "X-Super-MassDriver", 1800, DROID_WEAPON, obj);
+    return this.structure("Mass Driver", "X-Super-MassDriver", obj);
   };
 
   /* Turrets
   */
 
 
-  Command.prototype.turret = function(tname, turretid, tcost, dtype, obj) {
+  Command.prototype.turret = function(turretid, dtype, obj) {
+    var data;
     if (obj == null) {
       obj = {};
     }
-    obj.tname = tname;
     obj.turret = turretid;
-    obj.tcost = tcost;
     obj.droid_type = dtype;
+    data = Ini.strid(turretid);
+    obj.tname = data.name;
+    obj.tcost = data.buildpower;
     return obj;
   };
 
@@ -15187,588 +15287,588 @@ Command = (function() {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Truck", "Spade1Mk1", 17, DROID_CONSTRUCT, obj);
+    return this.turret("Spade1Mk1", DROID_CONSTRUCT, obj);
   };
 
   Command.prototype.repair = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Repair", "LightRepair1", 50, DROID_REPAIR, obj);
+    return this.turret("LightRepair1", DROID_REPAIR, obj);
   };
 
   Command.prototype.heavy_repair = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Heavy Repair", "HeavyRepair", 70, DROID_REPAIR, obj);
+    return this.turret("HeavyRepair", DROID_REPAIR, obj);
   };
 
   Command.prototype.wide_spectrum = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Wide Spectrum", "Sensor-WideSpec", 5, DROID_SENSOR, obj);
+    return this.turret("Sensor-WideSpec", DROID_SENSOR, obj);
   };
 
   Command.prototype.cb_radar = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("CB Radar", "Sys-CBTurret01", 20, DROID_SENSOR, obj);
+    return this.turret("Sys-CBTurret01", DROID_SENSOR, obj);
   };
 
   Command.prototype.radar_detector = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Radar Detector", "RadarDetector", 20, DROID_SENSOR, obj);
+    return this.turret("RadarDetector", DROID_SENSOR, obj);
   };
 
   Command.prototype.sensor = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Sensor", "SensorTurret1Mk1", 20, DROID_SENSOR, obj);
+    return this.turret("SensorTurret1Mk1", DROID_SENSOR, obj);
   };
 
   Command.prototype.vtol_cb_radar = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL CB Radar", "Sys-VTOLCBTurret01", 20, DROID_SENSOR, obj);
+    return this.turret("Sys-VTOLCBTurret01", DROID_SENSOR, obj);
   };
 
   Command.prototype.vtol_strike = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Strike", "Sys-VstrikeTurret01", 20, DROID_SENSOR, obj);
+    return this.turret("Sys-VstrikeTurret01", DROID_SENSOR, obj);
   };
 
   Command.prototype.command1 = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Command 1", "CommandTurret1", 250, DROID_COMMAND, obj);
+    return this.turret("CommandTurret1", DROID_COMMAND, obj);
   };
 
   Command.prototype.command2 = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Command 2", "CommandTurret2", 750, DROID_COMMAND, obj);
+    return this.turret("CommandTurret2", DROID_COMMAND, obj);
   };
 
   Command.prototype.command3 = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Command 3", "CommandTurret3", 1250, DROID_COMMAND, obj);
+    return this.turret("CommandTurret3", DROID_COMMAND, obj);
   };
 
   Command.prototype.command4 = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Command 4", "CommandTurret4", 1750, DROID_COMMAND, obj);
+    return this.turret("CommandTurret4", DROID_COMMAND, obj);
   };
 
   Command.prototype.machinegun = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Machinegun", "MG1Mk1", 10, DROID_WEAPON, obj);
+    return this.turret("MG1Mk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.twin_machinegun = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Twin Machinegun", "MG2Mk1", 25, DROID_WEAPON, obj);
+    return this.turret("MG2Mk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.heavy_machinegun = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Heavy Machinegun", "MG3Mk1", 50, DROID_WEAPON, obj);
+    return this.turret("MG3Mk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.assault_gun = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Assault Gun", "MG4ROTARYMk1", 100, DROID_WEAPON, obj);
+    return this.turret("MG4ROTARYMk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.twin_assault_gun = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Twin Assault Gun", "MG5TWINROTARY", 100, DROID_WEAPON, obj);
+    return this.turret("MG5TWINROTARY", DROID_WEAPON, obj);
   };
 
   Command.prototype.light_cannon = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Light Cannon", "Cannon1Mk1", 75, DROID_WEAPON, obj);
+    return this.turret("Cannon1Mk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.medium_cannon = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Medium Cannon", "Cannon2A-TMk1", 150, DROID_WEAPON, obj);
+    return this.turret("Cannon2A-TMk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.assault_cannon = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Assault Cannon", "Cannon5VulcanMk1", 150, DROID_WEAPON, obj);
+    return this.turret("Cannon5VulcanMk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.hpv = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Hyper Velocity Cannon", "Cannon4AUTOMk1", 175, DROID_WEAPON, obj);
+    return this.turret("Cannon4AUTOMk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.heavy_cannon = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Heavy Cannon", "Cannon375mmMk1", 250, DROID_WEAPON, obj);
+    return this.turret("Cannon375mmMk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.twin_assault_cannon = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Twin Assault Cannon", "Cannon6TwinAslt", 250, DROID_WEAPON, obj);
+    return this.turret("Cannon6TwinAslt", DROID_WEAPON, obj);
   };
 
   Command.prototype.plasma_cannon = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Plasma Cannon", "Laser4-PlasmaCannon", 750, DROID_WEAPON, obj);
+    return this.turret("Laser4-PlasmaCannon", DROID_WEAPON, obj);
   };
 
   Command.prototype.flamer = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Flamer", "Flame1Mk1", 40, DROID_WEAPON, obj);
+    return this.turret("Flame1Mk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.inferno = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Inferno", "Flame2", 80, DROID_WEAPON, obj);
+    return this.turret("Flame2", DROID_WEAPON, obj);
   };
 
   Command.prototype.plasmite_flamer = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Plasmite Flamer", "PlasmiteFlamer", 80, DROID_WEAPON, obj);
+    return this.turret("PlasmiteFlamer", DROID_WEAPON, obj);
   };
 
   Command.prototype.mortart = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Mortar", "Mortar1Mk1", 100, DROID_WEAPON, obj);
+    return this.turret("Mortar1Mk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.incendiary_mortar = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Incendiary Mortar", "Mortar-Incenediary", 150, DROID_WEAPON, obj);
+    return this.turret("Mortar-Incenediary", DROID_WEAPON, obj);
   };
 
   Command.prototype.bombard = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Bombard", "Mortar2Mk1", 200, DROID_WEAPON, obj);
+    return this.turret("Mortar2Mk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.pepperpot = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Pepperpot", "Mortar3ROTARYMk1", 300, DROID_WEAPON, obj);
+    return this.turret("Mortar3ROTARYMk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.howitzer = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Howitzer", "Howitzer105Mk1", 250, DROID_WEAPON, obj);
+    return this.turret("Howitzer105Mk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.incendiary_howitzer = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Incendiary Howitzer", "Howitzer-Incenediary", 250, DROID_WEAPON, obj);
+    return this.turret("Howitzer-Incenediary", DROID_WEAPON, obj);
   };
 
   Command.prototype.ground_shaker = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Ground Shaker", "Howitzer150Mk1", 350, DROID_WEAPON, obj);
+    return this.turret("Howitzer150Mk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.hellstorm = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Hellstorm", "Howitzer03-Rot", 400, DROID_WEAPON, obj);
+    return this.turret("Howitzer03-Rot", DROID_WEAPON, obj);
   };
 
   Command.prototype.mini_rocket_pod = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Mini-Rocket Pod", "Rocket-Pod", 75, DROID_WEAPON, obj);
+    return this.turret("Rocket-Pod", DROID_WEAPON, obj);
   };
 
   Command.prototype.mini_rocket_array = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Mini-Rocket Array", "Rocket-MRL", 100, DROID_WEAPON, obj);
+    return this.turret("Rocket-MRL", DROID_WEAPON, obj);
   };
 
   Command.prototype.bunker_buster = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Bunker Buster", "Rocket-BB", 150, DROID_WEAPON, obj);
+    return this.turret("Rocket-BB", DROID_WEAPON, obj);
   };
 
   Command.prototype.lancer = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Lancer", "Rocket-LtA-T", 150, DROID_WEAPON, obj);
+    return this.turret("Rocket-LtA-T", DROID_WEAPON, obj);
   };
 
   Command.prototype.tank_killer = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Tank Killer", "Rocket-HvyA-T", 200, DROID_WEAPON, obj);
+    return this.turret("Rocket-HvyA-T", DROID_WEAPON, obj);
   };
 
   Command.prototype.ripple_rockets = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Ripple Rockets", "Rocket-IDF", 300, DROID_WEAPON, obj);
+    return this.turret("Rocket-IDF", DROID_WEAPON, obj);
   };
 
   Command.prototype.scourge_missile = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Scourge Missile", "Missile-A-T", 300, DROID_WEAPON, obj);
+    return this.turret("Missile-A-T", DROID_WEAPON, obj);
   };
 
   Command.prototype.seraph_missile_array = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Seraph Missile Array", "Missile-MdArt", 400, DROID_WEAPON, obj);
+    return this.turret("Missile-MdArt", DROID_WEAPON, obj);
   };
 
   Command.prototype.archangel_missile = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Archangel Missile", "Missile-HvyArt", 500, DROID_WEAPON, obj);
+    return this.turret("Missile-HvyArt", DROID_WEAPON, obj);
   };
 
   Command.prototype.needle_gun = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Needle Gun", "RailGun1Mk1", 250, DROID_WEAPON, obj);
+    return this.turret("RailGun1Mk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.rail_gun = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Rail Gun", "RailGun2Mk1", 300, DROID_WEAPON, obj);
+    return this.turret("RailGun2Mk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.gauss_cannon = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Gauss Cannon", "RailGun3Mk1", 400, DROID_WEAPON, obj);
+    return this.turret("RailGun3Mk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.flashligh = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Flashlight", "Laser3BEAMMk1", 150, DROID_WEAPON, obj);
+    return this.turret("Laser3BEAMMk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.pulse_laser = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Pulse Laser", "Laser2PULSEMk1", 200, DROID_WEAPON, obj);
+    return this.turret("Laser2PULSEMk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.heavy_laser = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Heavy Laser", "HeavyLaser", 400, DROID_WEAPON, obj);
+    return this.turret("HeavyLaser", DROID_WEAPON, obj);
   };
 
   Command.prototype.emp_cannon = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("EMP Cannon", "EMP-Cannon", 200, DROID_WEAPON, obj);
+    return this.turret("EMP-Cannon", DROID_WEAPON, obj);
   };
 
   Command.prototype.nexus_link = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Nexus Link", "SpyTurret01", 400, DROID_WEAPON, obj);
+    return this.turret("SpyTurret01", DROID_WEAPON, obj);
   };
 
   Command.prototype.hurricane = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Hurricane", "QuadMg1AAGun", 100, DROID_WEAPON, obj);
+    return this.turret("QuadMg1AAGun", DROID_WEAPON, obj);
   };
 
   Command.prototype.whirlwind = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Whirlwind", "QuadRotAAGun", 150, DROID_WEAPON, obj);
+    return this.turret("QuadRotAAGun", DROID_WEAPON, obj);
   };
 
   Command.prototype.sunburst = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Sunburst", "Rocket-Sunburst", 200, DROID_WEAPON, obj);
+    return this.turret("Rocket-Sunburst", DROID_WEAPON, obj);
   };
 
   Command.prototype.avenger = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Avenger", "Missile-LtSAM", 200, DROID_WEAPON, obj);
+    return this.turret("Missile-LtSAM", DROID_WEAPON, obj);
   };
 
   Command.prototype.flak_cannon = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Flak Cannon", "AAGun2Mk1", 250, DROID_WEAPON, obj);
+    return this.turret("AAGun2Mk1", DROID_WEAPON, obj);
   };
 
   Command.prototype.vindicator = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Vindicator", "Missile-HvySAM", 300, DROID_WEAPON, obj);
+    return this.turret("Missile-HvySAM", DROID_WEAPON, obj);
   };
 
   Command.prototype.strormbringer = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Stormbringer", "AAGunLaser", 500, DROID_WEAPON, obj);
+    return this.turret("AAGunLaser", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_machinegun = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Machinegun", "MG1-VTOL", 10, DROID_WEAPON, obj);
+    return this.turret("MG1-VTOL", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_twin_machinegun = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Twin Machinegun", "MG2-VTOL", 25, DROID_WEAPON, obj);
+    return this.turret("MG2-VTOL", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_heavy_machinegun = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Heavy Machinegun", "MG3-VTOL", 50, DROID_WEAPON, obj);
+    return this.turret("MG3-VTOL", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_cannon = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Cannon", "Cannon1-VTOL", 75, DROID_WEAPON, obj);
+    return this.turret("Cannon1-VTOL", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_mini_rocket = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Mini-Rocket", "Rocket-VTOL-Pod", 75, DROID_WEAPON, obj);
+    return this.turret("Rocket-VTOL-Pod", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_assault_gun = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Assault Gun", "MG4ROTARY-VTOL", 100, DROID_WEAPON, obj);
+    return this.turret("MG4ROTARY-VTOL", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_lancer = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Lancer", "Rocket-VTOL-LtA-T", 100, DROID_WEAPON, obj);
+    return this.turret("Rocket-VTOL-LtA-T", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_assault_cannon = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Assault Cannon", "Cannon5Vulcan-VTOL", 150, DROID_WEAPON, obj);
+    return this.turret("Cannon5Vulcan-VTOL", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_bunker_buster = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Bunker Buster", "Rocket-VTOL-BB", 150, DROID_WEAPON, obj);
+    return this.turret("Rocket-VTOL-BB", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_flaslight = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Flashlight", "Laser3BEAM-VTOL", 150, DROID_WEAPON, obj);
+    return this.turret("Laser3BEAM-VTOL", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_hpv = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Hyper Velocity Cannon", "Cannon4AUTO-VTOL", 175, DROID_WEAPON, obj);
+    return this.turret("Cannon4AUTO-VTOL", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_pulse_laser = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Pulse Laser", "Laser2PULSE-VTOL", 200, DROID_WEAPON, obj);
+    return this.turret("Laser2PULSE-VTOL", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_emp_missile_launcher = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL EMP Missile Launcher", "Bomb6-VTOL-EMP", 225, DROID_WEAPON, obj);
+    return this.turret("Bomb6-VTOL-EMP", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_tank_killer = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Tank Killer", "Rocket-VTOL-HvyA-T", 250, DROID_WEAPON, obj);
+    return this.turret("Rocket-VTOL-HvyA-T", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_needle_gun = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Needle Gun", "RailGun1-VTOL", 250, DROID_WEAPON, obj);
+    return this.turret("RailGun1-VTOL", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_rail_gun = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Rail Gun", "RailGun2-VTOL", 300, DROID_WEAPON, obj);
+    return this.turret("RailGun2-VTOL", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_scourge_missile = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Scourge Missile", "Missile-VTOL-AT", 300, DROID_WEAPON, obj);
+    return this.turret("Missile-VTOL-AT", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_heavy_laser = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Heavy Laser", "HeavyLaser-VTOL", 400, DROID_WEAPON, obj);
+    return this.turret("HeavyLaser-VTOL", DROID_WEAPON, obj);
   };
 
   Command.prototype.cluster_bomb = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Cluster Bomb", "Bomb1-VTOL-LtHE", 150, DROID_WEAPON, obj);
+    return this.turret("Bomb1-VTOL-LtHE", DROID_WEAPON, obj);
   };
 
   Command.prototype.phosphor_bomb = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Phospor Bomb", "Bomb3-VTOL-LtINC", 175, DROID_WEAPON, obj);
+    return this.turret("Bomb3-VTOL-LtINC", DROID_WEAPON, obj);
   };
 
   Command.prototype.heap_bomb = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Heap Bomb", "Bomb2-VTOL-HvHE", 200, DROID_WEAPON, obj);
+    return this.turret("Bomb2-VTOL-HvHE", DROID_WEAPON, obj);
   };
 
   Command.prototype.plasmite_bomb = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Plasmite Bomb", "Bomb5-VTOL-Plasmite", 225, DROID_WEAPON, obj);
+    return this.turret("Bomb5-VTOL-Plasmite", DROID_WEAPON, obj);
   };
 
   Command.prototype.thermite_bomb = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("Thermite Bomb", "Bomb4-VTOL-HvyINC", 225, DROID_WEAPON, obj);
+    return this.turret("Bomb4-VTOL-HvyINC", DROID_WEAPON, obj);
   };
 
   Command.prototype.vtol_sunburst = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.turret("VTOL Sunburst", "Rocket-VTOL-Sunburst", 150, DROID_WEAPON, obj);
+    return this.turret("Rocket-VTOL-Sunburst", DROID_WEAPON, obj);
   };
 
   /* Cyborgs
@@ -15933,13 +16033,15 @@ Command = (function() {
   */
 
 
-  Command.prototype.body = function(bname, bodyid, bcost, obj) {
+  Command.prototype.body = function(bodyid, obj) {
+    var data;
     if (obj == null) {
       obj = {};
     }
     obj.body = bodyid;
-    obj.bname = bname;
-    obj.bcost = bcost;
+    data = Ini.strid(bodyid);
+    obj.bname = data.name;
+    obj.bcost = data.buildpower;
     return obj;
   };
 
@@ -15947,118 +16049,120 @@ Command = (function() {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Viper", "Body1REC", 30, obj);
+    return this.body("Body1REC", obj);
   };
 
   Command.prototype.cobra = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Cobra", "Body5REC", 46, obj);
+    return this.body("Body5REC", obj);
   };
 
   Command.prototype.python = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Python", "Body11ABT", 60, obj);
+    return this.body("Body11ABT", obj);
   };
 
   Command.prototype.bug = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Bug", "Body4ABT", 25, obj);
+    return this.body("Body4ABT", obj);
   };
 
   Command.prototype.scorpion = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Scorpion", "Body8MBT", 39, obj);
+    return this.body("Body8MBT", obj);
   };
 
   Command.prototype.mantis = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Mantis", "Body12SUP", 52, obj);
+    return this.body("Body12SUP", obj);
   };
 
   Command.prototype.leopard = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Leopard", "Body2SUP", 41, obj);
+    return this.body("Body2SUP", obj);
   };
 
   Command.prototype.panther = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Panther", "Body6SUPP", 57, obj);
+    return this.body("Body6SUPP", obj);
   };
 
   Command.prototype.tiger = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Tiger", "Body9REC", 71, obj);
+    return this.body("Body9REC", obj);
   };
 
   Command.prototype.retaliation = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Retaliation", "Body3MBT", 68, obj);
+    return this.body("Body3MBT", obj);
   };
 
   Command.prototype.retribution = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Retribution", "Body7ABT", 100, obj);
+    return this.body("Body7ABT", obj);
   };
 
   Command.prototype.vengeance = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Vengeance", "Body10MBT", 130, obj);
+    return this.body("Body10MBT", obj);
   };
 
   Command.prototype.wyvern = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Wyvern", "Body13SUP", 156, obj);
+    return this.body("Body13SUP", obj);
   };
 
   Command.prototype.dragon = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Dragon", "Body14SUP", 182, obj);
+    return this.body("Body14SUP", obj);
   };
 
   Command.prototype.transport = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.body("Transport", "TransporterBody", 325, obj);
+    return this.body("TransporterBody", obj);
   };
 
   /* Propulsion
   */
 
 
-  Command.prototype.propulsion = function(pname, propulsionid, pcost, obj) {
+  Command.prototype.propulsion = function(propulsionid, obj) {
+    var data;
     if (obj == null) {
       obj = {};
     }
-    obj.pname = pname;
     obj.propulsion = propulsionid;
-    obj.pcost = pcost;
+    data = Ini.strid(propulsionid);
+    obj.pname = data.name;
+    obj.pcost = data.buildpower;
     return obj;
   };
 
@@ -16066,35 +16170,35 @@ Command = (function() {
     if (obj == null) {
       obj = {};
     }
-    return this.propulsion("Wheels", "wheeled01", 1.5, obj);
+    return this.propulsion("wheeled01", obj);
   };
 
   Command.prototype.half_tracks = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.propulsion("Half-tracks", "HalfTrack", 1.75, obj);
+    return this.propulsion("HalfTrack", obj);
   };
 
   Command.prototype.hover = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.propulsion("Hover", "hover01", 2.0, obj);
+    return this.propulsion("hover01", obj);
   };
 
   Command.prototype.tracks = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.propulsion("Tracks", "tracked", 2.25, obj);
+    return this.propulsion("tracked", obj);
   };
 
   Command.prototype.vtol = function(obj) {
     if (obj == null) {
       obj = {};
     }
-    return this.propulsion("VTOL", "V-Tol", 2.50, obj);
+    return this.propulsion("V-Tol", obj);
   };
 
   /* Research

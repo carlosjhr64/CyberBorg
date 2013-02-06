@@ -110,13 +110,17 @@ Command::base_commands = () ->
   # The optimal build sequence depends on how much power we have to start
   commands = null
   if @power <= energy_cost + factory_cost
-    commands = energy_build.concat(factory_build).concat(research_build).concat(hq_build)
+    commands =
+    energy_build.concat(factory_build).concat(research_build).concat(hq_build)
   else if @power <= energy_cost + factory_cost + research_cost
-    commands = factory_build.concat(energy_build).concat(research_build).concat(hq_build)
+    commands =
+    factory_build.concat(energy_build).concat(research_build).concat(hq_build)
   else if @power <= energy_cost + factory_cost + research_cost + hq_cost
-    commands = factory_build.concat(research_build).concat(energy_build).concat(hq_build)
+    commands =
+    factory_build.concat(research_build).concat(energy_build).concat(hq_build)
   else
-    commands = factory_build.concat(research_build).concat(hq_build).concat(energy_build)
+    commands =
+    factory_build.concat(research_build).concat(hq_build).concat(energy_build)
   # OK, we need to reset savings now that we have the build order
   for command in commands
     savings -= command.cost

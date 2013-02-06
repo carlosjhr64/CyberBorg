@@ -2,6 +2,8 @@ cat \
 ./stats/structures.ini \
 ./stats/propulsion.ini \
 ./stats/body.ini \
+./stats/construction.ini \
+./stats/repair.ini \
 ./stats/weapons.ini \
 ./stats/research.ini \
 | \
