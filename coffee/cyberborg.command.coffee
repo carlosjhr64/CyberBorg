@@ -256,128 +256,141 @@ class Command
 
   turret: (turretid, dtype, obj={}) ->
     obj.turret = turretid
-    obj.droid_type = dtype
     # The rest we can get from Ini.
     data = Ini.strid(turretid)
     obj.tname = data.name
     obj.tcost = data.buildpower
+    if data.weaponclass?
+      if data.weaponsubclass is "COMMAND"
+        obj.droid_type = DROID_COMMAND
+      else
+        obj.droid_type = DROID_WEAPON
+    else if data.constructpoints?
+      obj.droid_type = DROID_CONSTRUCT
+    else if data.repairpoints?
+      obj.droid_type = DROID_REPAIR
+    else if data.sensorkey?
+      obj.droid_type = DROID_SENSOR
+    else
+      Trace.red "Warning: Could not determine droid_type"
+      obj.droid_type = DROID_ANY
     obj
 
   # Systems Truck
-  truck: (obj={}) -> @turret("Spade1Mk1", DROID_CONSTRUCT, obj)
+  truck: (obj={}) -> @turret("Spade1Mk1", obj)
 
   # Systems Repair
-  repair: (obj={}) -> @turret("LightRepair1", DROID_REPAIR, obj)
-  heavy_repair: (obj={}) -> @turret("HeavyRepair", DROID_REPAIR, obj)
+  repair: (obj={}) -> @turret("LightRepair1", obj)
+  heavy_repair: (obj={}) -> @turret("HeavyRepair", obj)
 
   # Systems Sensors
-  wide_spectrum: (obj={}) -> @turret("Sensor-WideSpec", DROID_SENSOR, obj)
-  cb_radar: (obj={}) -> @turret("Sys-CBTurret01", DROID_SENSOR, obj)
-  radar_detector: (obj={}) -> @turret("RadarDetector", DROID_SENSOR, obj)
-  sensor: (obj={}) -> @turret("SensorTurret1Mk1", DROID_SENSOR, obj)
-  vtol_cb_radar: (obj={}) -> @turret("Sys-VTOLCBTurret01", DROID_SENSOR, obj)
-  vtol_strike: (obj={}) -> @turret("Sys-VstrikeTurret01", DROID_SENSOR, obj)
+  wide_spectrum: (obj={}) -> @turret("Sensor-WideSpec", obj)
+  cb_radar: (obj={}) -> @turret("Sys-CBTurret01", obj)
+  radar_detector: (obj={}) -> @turret("RadarDetector", obj)
+  sensor: (obj={}) -> @turret("SensorTurret1Mk1", obj)
+  vtol_cb_radar: (obj={}) -> @turret("Sys-VTOLCBTurret01", obj)
+  vtol_strike: (obj={}) -> @turret("Sys-VstrikeTurret01", obj)
 
   # Systems Command
-  command1: (obj={}) -> @turret("CommandTurret1", DROID_COMMAND, obj)
-  command2: (obj={}) -> @turret("CommandTurret2", DROID_COMMAND, obj)
-  command3: (obj={}) -> @turret("CommandTurret3", DROID_COMMAND, obj)
-  command4: (obj={}) -> @turret("CommandTurret4", DROID_COMMAND, obj)
+  command1: (obj={}) -> @turret("CommandTurret1", obj)
+  command2: (obj={}) -> @turret("CommandTurret2", obj)
+  command3: (obj={}) -> @turret("CommandTurret3", obj)
+  command4: (obj={}) -> @turret("CommandTurret4", obj)
 
   # Weapons Machineguns
-  machinegun: (obj={}) -> @turret("MG1Mk1", DROID_WEAPON, obj)
-  twin_machinegun: (obj={}) -> @turret("MG2Mk1", DROID_WEAPON, obj)
-  heavy_machinegun: (obj={}) -> @turret("MG3Mk1", DROID_WEAPON, obj)
-  assault_gun: (obj={}) -> @turret("MG4ROTARYMk1", DROID_WEAPON, obj)
-  twin_assault_gun: (obj={}) -> @turret("MG5TWINROTARY", DROID_WEAPON, obj)
+  machinegun: (obj={}) -> @turret("MG1Mk1", obj)
+  twin_machinegun: (obj={}) -> @turret("MG2Mk1", obj)
+  heavy_machinegun: (obj={}) -> @turret("MG3Mk1", obj)
+  assault_gun: (obj={}) -> @turret("MG4ROTARYMk1", obj)
+  twin_assault_gun: (obj={}) -> @turret("MG5TWINROTARY", obj)
 
   # Weapons Cannons
-  light_cannon: (obj={}) -> @turret("Cannon1Mk1", DROID_WEAPON, obj)
-  medium_cannon: (obj={}) -> @turret("Cannon2A-TMk1", DROID_WEAPON, obj)
-  assault_cannon: (obj={}) -> @turret("Cannon5VulcanMk1", DROID_WEAPON, obj)
-  hpv: (obj={}) -> @turret("Cannon4AUTOMk1", DROID_WEAPON, obj)
-  heavy_cannon: (obj={}) -> @turret("Cannon375mmMk1", DROID_WEAPON, obj)
-  twin_assault_cannon: (obj={}) -> @turret("Cannon6TwinAslt", DROID_WEAPON, obj)
-  plasma_cannon: (obj={}) -> @turret("Laser4-PlasmaCannon", DROID_WEAPON, obj)
+  light_cannon: (obj={}) -> @turret("Cannon1Mk1", obj)
+  medium_cannon: (obj={}) -> @turret("Cannon2A-TMk1", obj)
+  assault_cannon: (obj={}) -> @turret("Cannon5VulcanMk1", obj)
+  hpv: (obj={}) -> @turret("Cannon4AUTOMk1", obj)
+  heavy_cannon: (obj={}) -> @turret("Cannon375mmMk1", obj)
+  twin_assault_cannon: (obj={}) -> @turret("Cannon6TwinAslt", obj)
+  plasma_cannon: (obj={}) -> @turret("Laser4-PlasmaCannon", obj)
 
   # Weapons Flamers
-  flamer: (obj={}) -> @turret("Flame1Mk1", DROID_WEAPON, obj)
-  inferno: (obj={}) -> @turret("Flame2", DROID_WEAPON, obj)
-  plasmite_flamer: (obj={}) -> @turret("PlasmiteFlamer", DROID_WEAPON, obj)
+  flamer: (obj={}) -> @turret("Flame1Mk1", obj)
+  inferno: (obj={}) -> @turret("Flame2", obj)
+  plasmite_flamer: (obj={}) -> @turret("PlasmiteFlamer", obj)
 
   # Weapons Mortars and Howitzers
-  mortart: (obj={}) -> @turret("Mortar1Mk1", DROID_WEAPON, obj)
-  incendiary_mortar: (obj={}) -> @turret("Mortar-Incenediary", DROID_WEAPON, obj)
-  bombard: (obj={}) -> @turret("Mortar2Mk1", DROID_WEAPON, obj)
-  pepperpot: (obj={}) -> @turret("Mortar3ROTARYMk1", DROID_WEAPON, obj)
-  howitzer: (obj={}) -> @turret("Howitzer105Mk1", DROID_WEAPON, obj)
-  incendiary_howitzer: (obj={}) -> @turret("Howitzer-Incenediary", DROID_WEAPON, obj)
-  ground_shaker: (obj={}) -> @turret("Howitzer150Mk1", DROID_WEAPON, obj)
-  hellstorm: (obj={}) -> @turret("Howitzer03-Rot", DROID_WEAPON, obj)
+  mortart: (obj={}) -> @turret("Mortar1Mk1", obj)
+  incendiary_mortar: (obj={}) -> @turret("Mortar-Incenediary", obj)
+  bombard: (obj={}) -> @turret("Mortar2Mk1", obj)
+  pepperpot: (obj={}) -> @turret("Mortar3ROTARYMk1", obj)
+  howitzer: (obj={}) -> @turret("Howitzer105Mk1", obj)
+  incendiary_howitzer: (obj={}) -> @turret("Howitzer-Incenediary", obj)
+  ground_shaker: (obj={}) -> @turret("Howitzer150Mk1", obj)
+  hellstorm: (obj={}) -> @turret("Howitzer03-Rot", obj)
 
   # Weapons Rockets and Missiles
-  mini_rocket_pod: (obj={}) -> @turret("Rocket-Pod", DROID_WEAPON, obj)
-  mini_rocket_array: (obj={}) -> @turret("Rocket-MRL", DROID_WEAPON, obj)
-  bunker_buster: (obj={}) -> @turret("Rocket-BB", DROID_WEAPON, obj)
-  lancer: (obj={}) -> @turret("Rocket-LtA-T", DROID_WEAPON, obj)
-  tank_killer: (obj={}) -> @turret("Rocket-HvyA-T", DROID_WEAPON, obj)
-  ripple_rockets: (obj={}) -> @turret("Rocket-IDF", DROID_WEAPON, obj)
-  scourge_missile: (obj={}) -> @turret("Missile-A-T", DROID_WEAPON, obj)
-  seraph_missile_array: (obj={}) -> @turret("Missile-MdArt", DROID_WEAPON, obj)
-  archangel_missile: (obj={}) -> @turret("Missile-HvyArt", DROID_WEAPON, obj)
+  mini_rocket_pod: (obj={}) -> @turret("Rocket-Pod", obj)
+  mini_rocket_array: (obj={}) -> @turret("Rocket-MRL", obj)
+  bunker_buster: (obj={}) -> @turret("Rocket-BB", obj)
+  lancer: (obj={}) -> @turret("Rocket-LtA-T", obj)
+  tank_killer: (obj={}) -> @turret("Rocket-HvyA-T", obj)
+  ripple_rockets: (obj={}) -> @turret("Rocket-IDF", obj)
+  scourge_missile: (obj={}) -> @turret("Missile-A-T", obj)
+  seraph_missile_array: (obj={}) -> @turret("Missile-MdArt", obj)
+  archangel_missile: (obj={}) -> @turret("Missile-HvyArt", obj)
 
   # Weapons Rail Guns
-  needle_gun: (obj={}) -> @turret("RailGun1Mk1", DROID_WEAPON, obj)
-  rail_gun: (obj={}) -> @turret("RailGun2Mk1", DROID_WEAPON, obj)
-  gauss_cannon: (obj={}) -> @turret("RailGun3Mk1", DROID_WEAPON, obj)
+  needle_gun: (obj={}) -> @turret("RailGun1Mk1", obj)
+  rail_gun: (obj={}) -> @turret("RailGun2Mk1", obj)
+  gauss_cannon: (obj={}) -> @turret("RailGun3Mk1", obj)
 
   # Weapons Lasers
-  flashligh: (obj={}) -> @turret("Laser3BEAMMk1", DROID_WEAPON, obj)
-  pulse_laser: (obj={}) -> @turret("Laser2PULSEMk1", DROID_WEAPON, obj)
-  heavy_laser: (obj={}) -> @turret("HeavyLaser", DROID_WEAPON, obj)
+  flashligh: (obj={}) -> @turret("Laser3BEAMMk1", obj)
+  pulse_laser: (obj={}) -> @turret("Laser2PULSEMk1", obj)
+  heavy_laser: (obj={}) -> @turret("HeavyLaser", obj)
 
   # Weapons Electronic
-  emp_cannon: (obj={}) -> @turret("EMP-Cannon", DROID_WEAPON, obj)
-  nexus_link: (obj={}) -> @turret("SpyTurret01", DROID_WEAPON, obj)
+  emp_cannon: (obj={}) -> @turret("EMP-Cannon", obj)
+  nexus_link: (obj={}) -> @turret("SpyTurret01", obj)
 
   # Weapons Anti-air
-  hurricane: (obj={}) -> @turret("QuadMg1AAGun", DROID_WEAPON, obj)
-  whirlwind: (obj={}) -> @turret("QuadRotAAGun", DROID_WEAPON, obj)
-  sunburst: (obj={}) -> @turret("Rocket-Sunburst", DROID_WEAPON, obj)
-  avenger: (obj={}) -> @turret("Missile-LtSAM", DROID_WEAPON, obj)
-  flak_cannon: (obj={}) -> @turret("AAGun2Mk1", DROID_WEAPON, obj)
-  vindicator: (obj={}) -> @turret("Missile-HvySAM", DROID_WEAPON, obj)
-  strormbringer: (obj={}) -> @turret("AAGunLaser", DROID_WEAPON, obj)
+  hurricane: (obj={}) -> @turret("QuadMg1AAGun", obj)
+  whirlwind: (obj={}) -> @turret("QuadRotAAGun", obj)
+  sunburst: (obj={}) -> @turret("Rocket-Sunburst", obj)
+  avenger: (obj={}) -> @turret("Missile-LtSAM", obj)
+  flak_cannon: (obj={}) -> @turret("AAGun2Mk1", obj)
+  vindicator: (obj={}) -> @turret("Missile-HvySAM", obj)
+  strormbringer: (obj={}) -> @turret("AAGunLaser", obj)
 
  # VTOL Weapons
-  vtol_machinegun: (obj={}) -> @turret("MG1-VTOL", DROID_WEAPON, obj)
-  vtol_twin_machinegun: (obj={}) -> @turret("MG2-VTOL", DROID_WEAPON, obj)
-  vtol_heavy_machinegun: (obj={}) -> @turret("MG3-VTOL", DROID_WEAPON, obj)
-  vtol_cannon: (obj={}) -> @turret("Cannon1-VTOL", DROID_WEAPON, obj)
-  vtol_mini_rocket: (obj={}) -> @turret("Rocket-VTOL-Pod", DROID_WEAPON, obj)
-  vtol_assault_gun: (obj={}) -> @turret("MG4ROTARY-VTOL", DROID_WEAPON, obj)
-  vtol_lancer: (obj={}) -> @turret("Rocket-VTOL-LtA-T", DROID_WEAPON, obj)
-  vtol_assault_cannon: (obj={}) -> @turret("Cannon5Vulcan-VTOL", DROID_WEAPON, obj)
-  vtol_bunker_buster: (obj={}) -> @turret("Rocket-VTOL-BB", DROID_WEAPON, obj)
-  vtol_flaslight: (obj={}) -> @turret("Laser3BEAM-VTOL", DROID_WEAPON, obj)
-  vtol_hpv: (obj={}) -> @turret("Cannon4AUTO-VTOL", DROID_WEAPON, obj)
-  vtol_pulse_laser: (obj={}) -> @turret("Laser2PULSE-VTOL", DROID_WEAPON, obj)
-  vtol_emp_missile_launcher: (obj={}) -> @turret("Bomb6-VTOL-EMP", DROID_WEAPON, obj)
-  vtol_tank_killer: (obj={}) -> @turret("Rocket-VTOL-HvyA-T", DROID_WEAPON, obj)
-  vtol_needle_gun: (obj={}) -> @turret("RailGun1-VTOL", DROID_WEAPON, obj)
-  vtol_rail_gun: (obj={}) -> @turret("RailGun2-VTOL", DROID_WEAPON, obj)
-  vtol_scourge_missile: (obj={}) -> @turret("Missile-VTOL-AT", DROID_WEAPON, obj)
-  vtol_heavy_laser: (obj={}) -> @turret("HeavyLaser-VTOL", DROID_WEAPON, obj)
+  vtol_machinegun: (obj={}) -> @turret("MG1-VTOL", obj)
+  vtol_twin_machinegun: (obj={}) -> @turret("MG2-VTOL", obj)
+  vtol_heavy_machinegun: (obj={}) -> @turret("MG3-VTOL", obj)
+  vtol_cannon: (obj={}) -> @turret("Cannon1-VTOL", obj)
+  vtol_mini_rocket: (obj={}) -> @turret("Rocket-VTOL-Pod", obj)
+  vtol_assault_gun: (obj={}) -> @turret("MG4ROTARY-VTOL", obj)
+  vtol_lancer: (obj={}) -> @turret("Rocket-VTOL-LtA-T", obj)
+  vtol_assault_cannon: (obj={}) -> @turret("Cannon5Vulcan-VTOL", obj)
+  vtol_bunker_buster: (obj={}) -> @turret("Rocket-VTOL-BB", obj)
+  vtol_flaslight: (obj={}) -> @turret("Laser3BEAM-VTOL", obj)
+  vtol_hpv: (obj={}) -> @turret("Cannon4AUTO-VTOL", obj)
+  vtol_pulse_laser: (obj={}) -> @turret("Laser2PULSE-VTOL", obj)
+  vtol_emp_missile_launcher: (obj={}) -> @turret("Bomb6-VTOL-EMP", obj)
+  vtol_tank_killer: (obj={}) -> @turret("Rocket-VTOL-HvyA-T", obj)
+  vtol_needle_gun: (obj={}) -> @turret("RailGun1-VTOL", obj)
+  vtol_rail_gun: (obj={}) -> @turret("RailGun2-VTOL", obj)
+  vtol_scourge_missile: (obj={}) -> @turret("Missile-VTOL-AT", obj)
+  vtol_heavy_laser: (obj={}) -> @turret("HeavyLaser-VTOL", obj)
 
   # Weapons Bombs
-  cluster_bomb: (obj={}) -> @turret("Bomb1-VTOL-LtHE", DROID_WEAPON, obj)
-  phosphor_bomb: (obj={}) -> @turret("Bomb3-VTOL-LtINC", DROID_WEAPON, obj)
-  heap_bomb: (obj={}) -> @turret("Bomb2-VTOL-HvHE", DROID_WEAPON, obj)
-  plasmite_bomb: (obj={}) -> @turret("Bomb5-VTOL-Plasmite", DROID_WEAPON, obj)
-  thermite_bomb: (obj={}) -> @turret("Bomb4-VTOL-HvyINC", DROID_WEAPON, obj)
+  cluster_bomb: (obj={}) -> @turret("Bomb1-VTOL-LtHE", obj)
+  phosphor_bomb: (obj={}) -> @turret("Bomb3-VTOL-LtINC", obj)
+  heap_bomb: (obj={}) -> @turret("Bomb2-VTOL-HvHE", obj)
+  plasmite_bomb: (obj={}) -> @turret("Bomb5-VTOL-Plasmite", obj)
+  thermite_bomb: (obj={}) -> @turret("Bomb4-VTOL-HvyINC", obj)
 
   # Weapons Air-to-air
-  vtol_sunburst: (obj={}) -> @turret("Rocket-VTOL-Sunburst", DROID_WEAPON, obj)
+  vtol_sunburst: (obj={}) -> @turret("Rocket-VTOL-Sunburst", obj)
 
   ###############
   ### Cyborgs ###
