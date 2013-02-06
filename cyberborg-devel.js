@@ -16872,10 +16872,6 @@ Ai = (function() {
         if (!(this.hq || this.allowed_hqless(command))) {
           break;
         }
-        if (name === FACTORIES) {
-          Trace.red("Factory trace");
-          this.gotcha.command(command);
-        }
         this.power -= command.cost;
         if (!(this.has(command.power) && group.execute(command))) {
           if (command.savings != null) {
