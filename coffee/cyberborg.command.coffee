@@ -571,7 +571,7 @@ class Command
     name = "#{obj.pname}-#{obj.bname}-#{obj.tname}"
     name = "Truck" if name is "Wheels-Viper-Truck"
     obj.name = name
-    obj.cost = (obj.pcost * obj.bcost) + obj.tcost
+    obj.cost = ((1.0 + obj.pcost/100.0) * obj.bcost) + obj.tcost
     obj
 
   maintain: (obj={}) ->

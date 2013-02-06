@@ -16312,7 +16312,7 @@ Command = (function() {
       name = "Truck";
     }
     obj.name = name;
-    obj.cost = (obj.pcost * obj.bcost) + obj.tcost;
+    obj.cost = ((1.0 + obj.pcost / 100.0) * obj.bcost) + obj.tcost;
     return obj;
   };
 
@@ -16871,6 +16871,10 @@ Ai = (function() {
       while (command = commands.next()) {
         if (!(this.hq || this.allowed_hqless(command))) {
           break;
+        }
+        if (name === FACTORIES) {
+          Trace.red("Factory trace");
+          this.gotcha.command(command);
         }
         this.power -= command.cost;
         if (!(this.has(command.power) && group.execute(command))) {
