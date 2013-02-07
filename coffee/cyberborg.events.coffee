@@ -95,10 +95,8 @@ eventObjectSeen = (sensor, object) ->
   obj =
     name: 'ObjectSeen'
     sensor: found.object
-    groups: found.group
+    group: found.group
     object: new WZObject(object)
-  unless object.name is "Oil Derrick" or object.name is "Truck"
-    Trace.debug "Object Seen: #{object.name}"
   #AI.events(obj)
 
 ###

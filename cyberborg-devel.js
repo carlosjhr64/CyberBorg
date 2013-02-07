@@ -17084,15 +17084,12 @@ eventStructureBuilt = function(structure, droid) {
 eventObjectSeen = function(sensor, object) {
   var found, obj;
   found = GROUPS.finds(sensor);
-  obj = {
+  return obj = {
     name: 'ObjectSeen',
     sensor: found.object,
-    groups: found.group,
+    group: found.group,
     object: new WZObject(object)
   };
-  if (!(object.name === "Oil Derrick" || object.name === "Truck")) {
-    return Trace.debug("Object Seen: " + object.name);
-  }
 };
 
 /*
