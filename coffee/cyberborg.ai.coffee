@@ -9,6 +9,8 @@ class Ai
     @power = null # Used to keep track of power consumption.
     # Stalled units waiting for enough power to continue their command
     @stalled = []
+    @dead = []
+    @resurrects = {}
     @gotcha = new Gotcha(@)
 
   update: (event) ->
@@ -85,9 +87,13 @@ class Ai
     # There might be other stuff to do...
     # The object has been removed from the group already.
     # We're given object and group as reference.
-    if object.player is me and object.type is STRUCTURE
-      switch object.stattype
-        when HQ then @hq = false
+    if object.player is me
+      switch object.type
+        when STRUCTURE
+          switch object.stattype
+            when HQ then @hq = false
+        when DROID
+          @dead.push(object)
 
   #  When a droid is built, it triggers a droid built event and
   #  eventDroidBuilt(a WZ2100 JS API) is called.
@@ -222,11 +228,39 @@ class Ai
         stalled.push(unit)
     @stalled = stalled
 
+  executes: (group, command) ->
+    # We regardless deduct the command cost from available power b/c
+    # we want to make the lower ranks aware of the power
+    # actually available for them... that we're saving toward this
+    # command's goals.
+    @power -= command.cost
+    unless @has(command.power) and group.execute(command)
+      # If we are not able to execute the command,
+      # deduct additional amount we want to save for.
+      @power -= command.savings if command.savings?
+      return false
+    @gotcha.command(command) if Trace.on
+    true
+
+  resurrection: () ->
+    dead = []
+    for droid in @dead
+      if group_command = @resurrects[droid.name]
+        if @executes(group_command...)
+          Trace.blue "Resurrection!" if Trace.on
+        else
+          dead.push(droid)
+      else
+        Trace.red "Error: no resurrection command for #{droid.name}."
+    @dead = dead
+
   # This is the work horse of the AI.
   # We iterate through all the groups,
   # higher ranks first,
   # and let them execute commands as they can.
   group_executions: (event) ->
+    # Resurection orders are of highest rank in this AI.
+    @resurrection()
     for group in GROUPS
       name = group.name
       # For the sake of fairness to the human player,
@@ -237,17 +271,11 @@ class Ai
       commands = group.commands
       while command = commands.next()
         break unless @hq or @allowed_hqless(command)
-        # We regardless deduct the command cost from available power b/c
-        # we want to make the lower ranks aware of the power
-        # actually available for them... that we're saving toward this
-        # command's goals.
-        @power -= command.cost
-        unless @has(command.power) and group.execute(command)
-          # If we are not able to execute the command,
-          # deduct additional amount we want to save for.
-          @power -= command.savings if command.savings?
+        unless @executes(group, command)
           commands.revert()
           break
         @gotcha.command(command) if Trace.on
-    # For now, stalled units will be consider of lowest rank...
+        if command.order is FORDER_MANUFACTURE
+          @resurrects[command.name] = [group, command]
+    # Stalled units are consider of lowest rank...
     @stalled_units() # have any stalled unit try to execute their command.

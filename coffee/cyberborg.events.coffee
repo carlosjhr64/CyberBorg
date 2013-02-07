@@ -90,6 +90,17 @@ eventStructureBuilt = (structure, droid) ->
     group: found.group
   AI.events(obj)
 
+eventObjectSeen = (sensor, object) ->
+  found = GROUPS.finds(sensor)
+  obj =
+    name: 'ObjectSeen'
+    sensor: found.object
+    groups: found.group
+    object: new WZObject(object)
+  unless object.name is "Oil Derrick" or object.name is "Truck"
+    Trace.debug "Object Seen: #{object.name}"
+  #AI.events(obj)
+
 ###
 eventAttacked = (victim, attacker) ->
   obj =
@@ -157,13 +168,6 @@ eventLaunchTransporter = () ->
 
 eventMissionTimeout = () ->
   obj = name: 'MissionTimeout'
-  AI.events(obj)
-
-eventObjectSeen = (sensor, object) ->
-  obj =
-    name: 'ObjectSeen'
-    sensor: new WZObject(sensor)
-    object: new WZObject(object)
   AI.events(obj)
 
 eventObjectTransfer = () ->
