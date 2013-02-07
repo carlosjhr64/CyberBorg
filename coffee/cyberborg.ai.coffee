@@ -32,6 +32,8 @@ class Ai
         @researched(event.research, event.structure, event.group)
       when 'Destroyed'
         @destroyed(event.object, event.group)
+      when 'ObjectSeen'
+        @objectSeen(event.sensor, event.object, event.group)
       when 'Chat'
         @chat(event.sender, event.to, event.message)
       # We should catch all possibilities, but in case we missed something...
@@ -195,6 +197,21 @@ class Ai
     group.layoffs(droid.command) if droid.command
     # Anything else?  :)
     @helping(droid)
+
+  objectSeen: (sensor, object, group) ->
+    # These should be short oppotunity orders...
+    if object.droidType is DROID_CONSTRUCT and
+    sensor.droidType is DROID_WEAPON
+      orderDroidObj(sensor, DORDER_ATTACK, object)
+      if Trace.on
+        Trace.blue "#{sensor.namexy()} attacks #{object.namexy()}"
+    else if object.stattype is OIL_DRUM
+      orderDroidObj(sensor, DORDER_RECOVER, object)
+      if Trace.on
+        Trace.blue "#{sensor.namexy()} recovers #{object.namexy()}"
+    else
+      if Trace.on
+        Trace.out "#{sensor.namexy()} spies #{object.namexy()}"
 
   has: (power) ->
     if power?

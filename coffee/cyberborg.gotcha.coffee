@@ -51,11 +51,10 @@ class Gotcha
 
   # Re-issue command
   working: (droid, command = droid.command) ->
-    centreView(droid.x, droid.y) if Trace.on
     if droid.executes(command)
       order = command.order
       if Trace.on
-        Trace.green "\tRe-issued " +
+        Trace.blue "\tRe-issued " +
         "#{order.order_map()}, ##{order}, to #{droid.name}."
     else
       Trace.red("\t#{droid.name} is a lazy bum!")
@@ -95,7 +94,6 @@ class Gotcha
       @bug_report("Rogue", droid, event) if Trace.on
       command = droid.command
       if command?.order is 28
-        centreView(droid.x, droid.y) if Trace.on
         @working(droid, command)
       else
         order = droid.order.order_map()

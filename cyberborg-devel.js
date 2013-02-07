@@ -16593,13 +16593,10 @@ Gotcha = (function() {
     if (command == null) {
       command = droid.command;
     }
-    if (Trace.on) {
-      centreView(droid.x, droid.y);
-    }
     if (droid.executes(command)) {
       order = command.order;
       if (Trace.on) {
-        return Trace.green("\tRe-issued " + ("" + (order.order_map()) + ", #" + order + ", to " + droid.name + "."));
+        return Trace.blue("\tRe-issued " + ("" + (order.order_map()) + ", #" + order + ", to " + droid.name + "."));
       }
     } else {
       return Trace.red("\t" + droid.name + " is a lazy bum!");
@@ -16662,9 +16659,6 @@ Gotcha = (function() {
       }
       command = droid.command;
       if ((command != null ? command.order : void 0) === 28) {
-        if (Trace.on) {
-          centreView(droid.x, droid.y);
-        }
         this.working(droid, command);
       } else {
         order = droid.order.order_map();
@@ -16734,6 +16728,8 @@ Ai = (function() {
         return this.researched(event.research, event.structure, event.group);
       case 'Destroyed':
         return this.destroyed(event.object, event.group);
+      case 'ObjectSeen':
+        return this.objectSeen(event.sensor, event.object, event.group);
       case 'Chat':
         return this.chat(event.sender, event.to, event.message);
       default:
@@ -16878,6 +16874,24 @@ Ai = (function() {
       group.layoffs(droid.command);
     }
     return this.helping(droid);
+  };
+
+  Ai.prototype.objectSeen = function(sensor, object, group) {
+    if (object.droidType === DROID_CONSTRUCT && sensor.droidType === DROID_WEAPON) {
+      orderDroidObj(sensor, DORDER_ATTACK, object);
+      if (Trace.on) {
+        return Trace.blue("" + (sensor.namexy()) + " attacks " + (object.namexy()));
+      }
+    } else if (object.stattype === OIL_DRUM) {
+      orderDroidObj(sensor, DORDER_RECOVER, object);
+      if (Trace.on) {
+        return Trace.blue("" + (sensor.namexy()) + " recovers " + (object.namexy()));
+      }
+    } else {
+      if (Trace.on) {
+        return Trace.out("" + (sensor.namexy()) + " spies " + (object.namexy()));
+      }
+    }
   };
 
   Ai.prototype.has = function(power) {
@@ -17084,12 +17098,13 @@ eventStructureBuilt = function(structure, droid) {
 eventObjectSeen = function(sensor, object) {
   var found, obj;
   found = GROUPS.finds(sensor);
-  return obj = {
+  obj = {
     name: 'ObjectSeen',
     sensor: found.object,
     group: found.group,
     object: new WZObject(object)
   };
+  return AI.events(obj);
 };
 
 /*
