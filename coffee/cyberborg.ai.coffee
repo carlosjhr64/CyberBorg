@@ -11,6 +11,7 @@ class Ai
     @stalled = []
     @dead = []
     @resurrects = {}
+    @location = new Location()
     @gotcha = new Gotcha(@)
 
   update: (event) ->
@@ -85,6 +86,12 @@ class Ai
     # There may be ongoing jobs so let's see what available.
     @helping(droid)
 
+  location_costs: (at, cost=at.cost) ->
+    # Want cummulative costs
+    cost = (@location.value(at) || 0.0) + cost
+    Trace.out "Cummulative costs at #{at.x},#{at.y} are $#{cost}." if Trace.on
+    @location.value(at, cost)
+
   destroyed: (object, group) ->
     # There might be other stuff to do...
     # The object has been removed from the group already.
@@ -92,10 +99,13 @@ class Ai
     if object.player is me
       switch object.type
         when STRUCTURE
+          @location_costs(object)
           switch object.stattype
             when HQ then @hq = false
         when DROID
           @dead.push(object)
+          if at = object.command?.at
+            @location_costs(at, object.cost)
 
   #  When a droid is built, it triggers a droid built event and
   #  eventDroidBuilt(a WZ2100 JS API) is called.
@@ -287,7 +297,13 @@ class Ai
       continue unless @hq or @base_group(name)
       commands = group.commands
       while command = commands.next()
-        break unless @hq or @allowed_hqless(command)
+        if at = command.at
+          # Enemy has made this location too expensive, so skip it?
+          # TODO threshold value changes with time
+          continue if @location.value(at) > 500
+        unless @hq or @allowed_hqless(command)
+          commands.revert()
+          break
         unless @executes(group, command)
           commands.revert()
           break

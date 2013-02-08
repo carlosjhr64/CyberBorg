@@ -69,7 +69,7 @@ Location = (function() {
     this.position = {};
   }
 
-  Location.prototype.picked = function(at, position) {
+  Location.prototype.value = function(at, position) {
     var key;
     key = "" + at.x + "." + at.y;
     if (position) {
@@ -81,7 +81,7 @@ Location = (function() {
   Location.location = new Location();
 
   Location.picked = function(at, position) {
-    return this.location.picked(at, position);
+    return this.location.value(at, position);
   };
 
   return Location;
@@ -89,8 +89,6 @@ Location = (function() {
 })();
 
 WZObject = (function() {
-
-  WZObject.location = new Location();
 
   function WZObject(object) {
     this.copy(object);
@@ -16703,6 +16701,7 @@ Ai = (function() {
     this.stalled = [];
     this.dead = [];
     this.resurrects = {};
+    this.location = new Location();
     this.gotcha = new Gotcha(this);
   }
 
@@ -16768,17 +16767,33 @@ Ai = (function() {
     return this.helping(droid);
   };
 
+  Ai.prototype.location_costs = function(at, cost) {
+    if (cost == null) {
+      cost = at.cost;
+    }
+    cost = (this.location.value(at) || 0.0) + cost;
+    if (Trace.on) {
+      Trace.out("Cummulative costs at " + at.x + "," + at.y + " are $" + cost + ".");
+    }
+    return this.location.value(at, cost);
+  };
+
   Ai.prototype.destroyed = function(object, group) {
+    var at, _ref;
     if (object.player === me) {
       switch (object.type) {
         case STRUCTURE:
+          this.location_costs(object);
           switch (object.stattype) {
             case HQ:
               return this.hq = false;
           }
           break;
         case DROID:
-          return this.dead.push(object);
+          this.dead.push(object);
+          if (at = (_ref = object.command) != null ? _ref.at : void 0) {
+            return this.location_costs(at, object.cost);
+          }
       }
     }
   };
@@ -16964,7 +16979,7 @@ Ai = (function() {
   };
 
   Ai.prototype.group_executions = function(event) {
-    var command, commands, group, name, _i, _len;
+    var at, command, commands, group, name, _i, _len;
     this.resurrection();
     for (_i = 0, _len = GROUPS.length; _i < _len; _i++) {
       group = GROUPS[_i];
@@ -16974,7 +16989,13 @@ Ai = (function() {
       }
       commands = group.commands;
       while (command = commands.next()) {
+        if (at = command.at) {
+          if (this.location.value(at) > 500) {
+            continue;
+          }
+        }
         if (!(this.hq || this.allowed_hqless(command))) {
+          commands.revert();
           break;
         }
         if (!this.executes(group, command)) {

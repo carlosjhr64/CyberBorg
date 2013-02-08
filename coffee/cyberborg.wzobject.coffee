@@ -9,19 +9,17 @@ class Location
   # chose for a build.  Care should be taken that
   # the hash value remains valid.
   # Usually the value will remain valid, though.
-  picked: (at, position) ->
+  value: (at, position) ->
     key = "#{at.x}.#{at.y}"
     if position
       @position[key] = position
     @position[key]
 
   @location = new Location()
-  @picked = (at, position) -> @location.picked(at, position)
+  @picked = (at, position) -> @location.value(at, position)
 
 # Warzone 2100 Objects
 class WZObject
-  @location = new Location()
-
   constructor: (object) ->
     @copy(object)
     @is_wzobject = true

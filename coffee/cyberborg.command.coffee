@@ -571,7 +571,8 @@ class Command
     data = Ini.strid(research)
     if cost = data?.researchpower
       if requiredresearch = data.requiredresearch
-        requiredresearch = [requiredresearch] if typeof(requiredresearch) is "string"
+        if typeof(requiredresearch) is "string"
+          requiredresearch = [requiredresearch]
         rms = cost*cost
         count = 1
         for strid in requiredresearch
