@@ -63,7 +63,7 @@ class WZObject
     false
 
   repair_structure: (built) ->
-    if built.health < 99 #%
+    unless built.health is 100 #%
       if orderDroidObj(@, DORDER_REPAIR, built)
         @order = DORDER_REPAIR
         return true

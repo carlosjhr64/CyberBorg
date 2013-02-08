@@ -154,7 +154,7 @@ WZObject = (function() {
   };
 
   WZObject.prototype.repair_structure = function(built) {
-    if (built.health < 99) {
+    if (built.health !== 100) {
       if (orderDroidObj(this, DORDER_REPAIR, built)) {
         this.order = DORDER_REPAIR;
         return true;
