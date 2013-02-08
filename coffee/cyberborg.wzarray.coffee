@@ -253,6 +253,15 @@ class Groups
     for object in Groups.RESERVE
       object.update() if object.game_time < gameTime
 
+  count: (test_of) ->
+    n = 0
+    for group in @
+      for object in group.list
+        n += 1 if test_of(object)
+    for object in Groups.RESERVE
+      n += 1 if test_of(object)
+    return n
+
   for_all: (test_of) ->
     list = []
     for group in @

@@ -34,6 +34,17 @@ Ai::allowed_hqless = (command) ->
       return true
   return false
 
+# Unacceptable losses threshold for an area.
+Ai::too_dangerous = () ->
+  threshold = powerType/7.0
+  m1 = 1.0 * GROUPS.count((object) -> object.stattype is RESOURCE_EXTRACTOR)
+  m2 = 4.0 * GROUPS.count((object) -> object.stattype is POWER_GEN)
+  m = m1
+  m = m2 if m1 > m2
+  m = 0.5 if m < 1.0
+  threshold = m*threshold
+  return threshold
+
 Ai::script = () ->
   # We'll create many groups besides the reserve, and
   # we'll keep them in cyberBorg.groups.

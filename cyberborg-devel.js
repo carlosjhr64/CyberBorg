@@ -636,6 +636,29 @@ Groups = (function() {
     return _results;
   };
 
+  Groups.prototype.count = function(test_of) {
+    var group, n, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
+    n = 0;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      group = this[_i];
+      _ref = group.list;
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        object = _ref[_j];
+        if (test_of(object)) {
+          n += 1;
+        }
+      }
+    }
+    _ref1 = Groups.RESERVE;
+    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+      object = _ref1[_k];
+      if (test_of(object)) {
+        n += 1;
+      }
+    }
+    return n;
+  };
+
   Groups.prototype.for_all = function(test_of) {
     var group, list, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
     list = [];
@@ -16415,7 +16438,7 @@ Command = (function() {
     obj.limit = this.limit;
     obj.min = 1;
     obj.max = 3;
-    obj.help = 0;
+    obj.help = 3;
     return obj;
   };
 
@@ -16426,7 +16449,7 @@ Command = (function() {
     obj.limit = this.limit;
     obj.min = 1;
     obj.max = 2;
-    obj.help = 0;
+    obj.help = 2;
     return obj;
   };
 
@@ -16437,7 +16460,7 @@ Command = (function() {
     obj.limit = this.limit;
     obj.min = 1;
     obj.max = 1;
-    obj.help = 0;
+    obj.help = 1;
     return obj;
   };
 
@@ -16558,10 +16581,10 @@ Gotcha = (function() {
     var at, command, corder, dorder, group, object, order, _ref;
     order = droid.order;
     dorder = droid.dorder;
-    Trace.out("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\t");
-    Trace.out("\t\tevent: " + event.name);
-    Trace.out("\t\torder: " + order + " => " + (order.order_map()));
-    Trace.out("\t\tdorder: " + dorder + " => " + (dorder.order_map()));
+    Trace.out(("" + label + ":\t" + (droid.namexy()) + "\t") + ("id:" + droid.id + "\thealth:" + droid.health));
+    Trace.out("\tevent: " + event.name);
+    Trace.out("\torder: " + order + " => " + (order.order_map()));
+    Trace.out("\tdorder: " + dorder + " => " + (dorder.order_map()));
     if (command = droid.command) {
       corder = command.order;
       Trace.out("\t\t" + (corder.order_map()) + "\t#" + corder + "\tcid:" + command.cid);
@@ -16635,12 +16658,18 @@ Gotcha = (function() {
     return count;
   };
 
+  Gotcha.routed = function(order) {
+    return [0, DORDER_RTB, DORDER_RTR, DORDER_RECYCLE].indexOf(order) > WZArray.NONE;
+  };
+
   Gotcha.prototype.rogue = function(event) {
     var command, corder, count, dorder, droid, order, rogue, _i, _len, _ref, _ref1, _ref2;
     count = 0;
     rogue = function(object) {
+      var order;
       if (object.command != null) {
-        if (!((object.order === 0) || (object.order === object.dorder))) {
+        order = object.order;
+        if (!((order === object.dorder) || Gotcha.routed(order))) {
           return true;
         }
       }
@@ -16703,6 +16732,9 @@ Ai = (function() {
     this.resurrects = {};
     this.location = new Location();
     this.gotcha = new Gotcha(this);
+    this.recycle_on_damage = 50.0;
+    this.repair_on_damage = 75.0;
+    this.repair_available = false;
   }
 
   Ai.prototype.update = function(event) {
@@ -16978,9 +17010,50 @@ Ai = (function() {
     return this.dead = dead;
   };
 
+  Ai.prototype.routing = function() {
+    var droid, _i, _len, _ref, _results;
+    _ref = GROUPS.for_all(function(object) {
+      return object.type === DROID;
+    });
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      droid = _ref[_i];
+      if (this.repair_available) {
+        if (droid.health < this.repair_on_damage) {
+          if (orderDroid(droid, DORDER_RTR)) {
+            if (Trace.on) {
+              _results.push(Trace.blue("" + (droid.namexy()) + " to repair."));
+            } else {
+              _results.push(void 0);
+            }
+          } else {
+            _results.push(void 0);
+          }
+        } else {
+          _results.push(void 0);
+        }
+      } else if (droid.health < this.recycle_on_damage) {
+        if (orderDroid(droid, DORDER_RECYCLE)) {
+          if (Trace.on) {
+            _results.push(Trace.blue("" + (droid.namexy()) + " to recycle."));
+          } else {
+            _results.push(void 0);
+          }
+        } else {
+          _results.push(void 0);
+        }
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  };
+
   Ai.prototype.group_executions = function(event) {
-    var at, command, commands, group, name, _i, _len;
+    var at, command, commands, group, name, too_dangerous, _i, _len;
     this.resurrection();
+    this.routing();
+    too_dangerous = this.too_dangerous();
     for (_i = 0, _len = GROUPS.length; _i < _len; _i++) {
       group = GROUPS[_i];
       name = group.name;
@@ -16990,7 +17063,7 @@ Ai = (function() {
       commands = group.commands;
       while (command = commands.next()) {
         if (at = command.at) {
-          if (this.location.value(at) > 500) {
+          if (this.location.value(at) > too_dangerous) {
             continue;
           }
         }
@@ -17267,6 +17340,26 @@ Ai.prototype.allowed_hqless = function(command) {
       return true;
   }
   return false;
+};
+
+Ai.prototype.too_dangerous = function() {
+  var m, m1, m2, threshold;
+  threshold = powerType / 7.0;
+  m1 = 1.0 * GROUPS.count(function(object) {
+    return object.stattype === RESOURCE_EXTRACTOR;
+  });
+  m2 = 4.0 * GROUPS.count(function(object) {
+    return object.stattype === POWER_GEN;
+  });
+  m = m1;
+  if (m1 > m2) {
+    m = m2;
+  }
+  if (m < 1.0) {
+    m = 0.5;
+  }
+  threshold = m * threshold;
+  return threshold;
 };
 
 Ai.prototype.script = function() {

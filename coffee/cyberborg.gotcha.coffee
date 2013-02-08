@@ -29,10 +29,11 @@ class Gotcha
   bug_report: (label, droid, event) ->
     order = droid.order
     dorder = droid.dorder
-    Trace.out "#{label}:\t#{droid.namexy()}\tid:#{droid.id}\t"
-    Trace.out "\t\tevent: #{event.name}"
-    Trace.out "\t\torder: #{order} => #{order.order_map()}"
-    Trace.out "\t\tdorder: #{dorder} => #{dorder.order_map()}"
+    Trace.out "#{label}:\t#{droid.namexy()}\t" +
+    "id:#{droid.id}\thealth:#{droid.health}"
+    Trace.out "\tevent: #{event.name}"
+    Trace.out "\torder: #{order} => #{order.order_map()}"
+    Trace.out "\tdorder: #{dorder} => #{dorder.order_map()}"
     if command = droid.command
       corder = command.order
       Trace.out "\t\t#{corder.order_map()}\t##{corder}\tcid:#{command.cid}"
@@ -80,13 +81,21 @@ class Gotcha
       @working(droid)
     return count
 
+  @routed = (order) ->
+    [ 0
+      DORDER_RTB
+      DORDER_RTR
+      DORDER_RECYCLE
+    ].indexOf(order) > WZArray.NONE
+
   # Report droids under command which are acting their own...
   rogue: (event) ->
     count = 0
     rogue = (object) ->
       if object.command?
+        order = object.order
         # Units under command not idle but acting on different orders
-        unless (object.order is 0) or (object.order is object.dorder)
+        unless (order is object.dorder) or Gotcha.routed(order)
           return true
       return false
     for droid in GROUPS.for_all((object) -> rogue(object))

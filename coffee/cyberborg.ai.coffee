@@ -13,6 +13,9 @@ class Ai
     @resurrects = {}
     @location = new Location()
     @gotcha = new Gotcha(@)
+    @recycle_on_damage = 50.0
+    @repair_on_damage = 75.0
+    @repair_available = false
 
   update: (event) ->
     @power = CyberBorg.get_power()
@@ -281,6 +284,18 @@ class Ai
         Trace.red "Error: no resurrection command for #{droid.name}."
     @dead = dead
 
+  routing: () ->
+    for droid in GROUPS.for_all((object) -> object.type is DROID)
+      # These route orders are not given as part of a group.
+      # Rallying possible?
+      if @repair_available
+        if droid.health < @repair_on_damage
+          if orderDroid(droid, DORDER_RTR)
+            Trace.blue "#{droid.namexy()} to repair." if Trace.on
+      else if droid.health < @recycle_on_damage
+        if orderDroid(droid, DORDER_RECYCLE)
+          Trace.blue "#{droid.namexy()} to recycle." if Trace.on
+
   # This is the work horse of the AI.
   # We iterate through all the groups,
   # higher ranks first,
@@ -288,6 +303,9 @@ class Ai
   group_executions: (event) ->
     # Resurection orders are of highest rank in this AI.
     @resurrection()
+    # This AI will order heavily damaged units to repair/recycle
+    @routing()
+    too_dangerous = @too_dangerous()
     for group in GROUPS
       name = group.name
       # For the sake of fairness to the human player,
@@ -299,8 +317,7 @@ class Ai
       while command = commands.next()
         if at = command.at
           # Enemy has made this location too expensive, so skip it?
-          # TODO threshold value changes with time
-          continue if @location.value(at) > 500
+          continue if @location.value(at) > too_dangerous
         unless @hq or @allowed_hqless(command)
           commands.revert()
           break

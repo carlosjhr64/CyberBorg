@@ -644,21 +644,21 @@ class Command
     obj.limit = @limit # maximum group size
     obj.min = 1 # it will execute the command only with at least this amount
     obj.max = 3 # it will execute the command with no more than this amount
-    obj.help = 0
+    obj.help = 3
     obj
 
   two: (obj={}) ->
     obj.limit = @limit # maximum group size
     obj.min = 1
     obj.max = 2
-    obj.help = 0
+    obj.help = 2
     obj
 
   one: (obj={}) ->
     obj.limit = @limit # maximum group size
     obj.min = 1
     obj.max = 1
-    obj.help = 0
+    obj.help = 1
     obj
 
   with_help: (obj={}) ->
