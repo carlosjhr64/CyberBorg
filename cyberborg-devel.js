@@ -109,14 +109,19 @@ WZObject = (function() {
 
   WZObject.prototype.update = function() {
     var obj, order;
-    obj = objFromId(this);
-    this.x = obj.x;
-    this.y = obj.y;
-    this.selected = obj.selected;
-    this.health = obj.health;
-    order = obj.order;
-    if (order != null) {
-      return this.order = order;
+    try {
+      obj = objFromId(this);
+      this.x = obj.x;
+      this.y = obj.y;
+      this.selected = obj.selected;
+      this.health = obj.health;
+      order = obj.order;
+      if (order != null) {
+        return this.order = order;
+      }
+    } catch (error) {
+      Trace.red("Error updating " + (this.namexy()) + ", health:" + this.health + "%.");
+      return Trace.red(error);
     }
   };
 
@@ -16732,8 +16737,8 @@ Ai = (function() {
     this.resurrects = {};
     this.location = new Location();
     this.gotcha = new Gotcha(this);
-    this.recycle_on_damage = 50.0;
-    this.repair_on_damage = 75.0;
+    this.recycle_on_damage = 33.3;
+    this.repair_on_damage = 66.6;
     this.repair_available = false;
     this.chances = 10.0;
     this.forget = 2.0;

@@ -30,21 +30,25 @@ class WZObject
     @[key] = object[key] for key of object
 
   update: () ->
-    obj = objFromId(@)
-    @x = obj.x
-    @y = obj.y
-    # todo: z currently not used
-    #@z = obj.x
-    @selected = obj.selected
-    @health = obj.health
-    # todo: experience currently not used.
-    # @experience = obj.experience
-    # todo: try not to rely on order updates
-    order = obj.order
-    @order = order if order?
-    # todo: we should be able to maintain status and modules
-    # @status = obj.status
-    # @modules = obj.modules
+    try
+      obj = objFromId(@)
+      @x = obj.x
+      @y = obj.y
+      # todo: z currently not used
+      #@z = obj.x
+      @selected = obj.selected
+      @health = obj.health
+      # todo: experience currently not used.
+      # @experience = obj.experience
+      # todo: try not to rely on order updates
+      order = obj.order
+      @order = order if order?
+      # todo: we should be able to maintain status and modules
+      # @status = obj.status
+      # @modules = obj.modules
+    catch error
+      Trace.red "Error updating #{@namexy()}, health:#{@health}%."
+      Trace.red error
 
   namexy: () -> "#{@name}(#{@id}:#{@x},#{@y})"
 

@@ -13,8 +13,8 @@ class Ai
     @resurrects = {}
     @location = new Location()
     @gotcha = new Gotcha(@)
-    @recycle_on_damage = 50.0
-    @repair_on_damage = 75.0
+    @recycle_on_damage = 33.3
+    @repair_on_damage = 66.6
     @repair_available = false
     # Aproximately one in chances of doing something dangerous.
     @chances = 10.0
