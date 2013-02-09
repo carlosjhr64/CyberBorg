@@ -3,22 +3,21 @@ var Gotcha;
 
 Gotcha = (function() {
 
-  function Gotcha(ai, trace) {
+  function Gotcha(ai) {
     this.ai = ai;
-    this.trace = trace != null ? trace : this.ai.trace;
   }
 
   Gotcha.prototype.start = function(event) {
     var droid, research, structure;
-    this.trace.out("Power level: " + this.ai.power + " in " + event.name);
+    Trace.out(("Power: " + this.ai.power + "  Event: " + event.name + "  ") + ("Time: " + gameTime));
     if (structure = event.structure) {
-      this.trace.out("\t" + (structure.namexy()) + "\tCost: " + structure.cost);
+      Trace.out("\t" + (structure.namexy()) + "\tCost: " + structure.cost);
     }
     if (research = event.research) {
-      this.trace.out("\t" + event.research.name + "\tCost: " + research.power);
+      Trace.out("\t" + event.research.name + "\tCost: " + research.power);
     }
     if (droid = event.droid) {
-      return this.trace.out("\t" + (droid.namexy()) + "\tID:" + droid.id + "\tCost: " + droid.cost);
+      return Trace.out("\t" + (droid.namexy()) + "\tID:" + droid.id + "\tCost: " + droid.cost);
     }
   };
 
@@ -38,38 +37,38 @@ Gotcha = (function() {
           keyvals.push("" + key + ":" + command[key]);
       }
     }
-    return this.trace.blue(keyvals.sort().join(' '));
+    return Trace.blue(keyvals.sort().join(' '));
   };
 
   Gotcha.prototype.bug_report = function(label, droid, event) {
     var at, command, corder, dorder, group, object, order, _ref;
     order = droid.order;
     dorder = droid.dorder;
-    this.trace.out("" + label + ":\t" + (droid.namexy()) + "\tid:" + droid.id + "\t");
-    this.trace.out("\t\tevent: " + event.name);
-    this.trace.out("\t\torder: " + order + " => " + (order.order_map()));
-    this.trace.out("\t\tdorder: " + dorder + " => " + (dorder.order_map()));
+    Trace.out(("" + label + ":\t" + (droid.namexy()) + "\t") + ("id:" + droid.id + "\thealth:" + droid.health));
+    Trace.out("\tevent: " + event.name);
+    Trace.out("\torder: " + order + " => " + (order.order_map()));
+    Trace.out("\tdorder: " + dorder + " => " + (dorder.order_map()));
     if (command = droid.command) {
       corder = command.order;
-      this.trace.out("\t\t" + (corder.order_map()) + "\t#" + corder + "\tcid:" + command.cid);
+      Trace.out("\t\t" + (corder.order_map()) + "\t#" + corder + "\tcid:" + command.cid);
       if (command.structure) {
-        this.trace.out("\t\tstructure:" + command.structure);
+        Trace.out("\t\tstructure:" + command.structure);
       }
       if (at = command.at) {
-        this.trace.out("\t\tat:(" + at.x + "," + at.y + ")");
+        Trace.out("\t\tat:(" + at.x + "," + at.y + ")");
       }
       if (order === 0) {
-        this.trace.out("\t\tBUG: Quitter.");
+        Trace.out("\t\tBUG: Quitter.");
       } else {
         if (order !== droid.dorder) {
-          this.trace.out("\t\tBUG: Order changed.");
+          Trace.out("\t\tBUG: Order changed.");
         }
       }
     }
     if (event.name === 'Destroyed') {
       group = (_ref = event.group) != null ? _ref.name : void 0;
       object = event.object.namexy();
-      return this.trace.out("\t\t" + group + "'s " + object + " destroyed.");
+      return Trace.out("\t\t" + group + "'s " + object + " destroyed.");
     }
   };
 
@@ -78,29 +77,26 @@ Gotcha = (function() {
     if (command == null) {
       command = droid.command;
     }
-    if (this.trace.on) {
-      centreView(droid.x, droid.y);
-    }
     if (droid.executes(command)) {
       order = command.order;
-      if (this.trace.on) {
-        return this.trace.green("\tRe-issued " + ("" + (order.order_map()) + ", #" + order + ", to " + droid.name + "."));
+      if (Trace.on) {
+        return Trace.blue("\tRe-issued " + ("" + (order.order_map()) + ", #" + order + ", to " + droid.name + "."));
       }
     } else {
-      return this.trace.red("\t" + droid.name + " is a lazy bum!");
+      return Trace.red("\t" + droid.name + " is a lazy bum!");
     }
   };
 
   Gotcha.prototype.selected = function(event) {
     var count, droid, _i, _len, _ref;
     count = 0;
-    _ref = this.ai.groups.for_all(function(object) {
+    _ref = GROUPS.for_all(function(object) {
       return object.selected;
     });
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       droid = _ref[_i];
       count += 1;
-      if (this.trace.on) {
+      if (Trace.on) {
         this.bug_report("Selected", droid, event);
       }
     }
@@ -113,11 +109,11 @@ Gotcha = (function() {
     is_quitter = function(object) {
       return object.order === 0 && (object.command != null);
     };
-    _ref = this.ai.groups.for_all(is_quitter);
+    _ref = GROUPS.for_all(is_quitter);
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       droid = _ref[_i];
       count += 1;
-      if (this.trace.on) {
+      if (Trace.on) {
         this.bug_report("Quitter", droid, event);
       }
       this.working(droid);
@@ -125,34 +121,41 @@ Gotcha = (function() {
     return count;
   };
 
+  Gotcha.routed = function(order) {
+    return [0, DORDER_RTB, DORDER_RTR, DORDER_RECYCLE].indexOf(order) > WZArray.NONE;
+  };
+
   Gotcha.prototype.rogue = function(event) {
-    var command, count, droid, rogue, _i, _len, _ref;
+    var command, corder, count, dorder, droid, order, rogue, _i, _len, _ref, _ref1, _ref2;
     count = 0;
     rogue = function(object) {
+      var order;
       if (object.command != null) {
-        if (!((object.order === 0) || (object.order === object.dorder))) {
+        order = object.order;
+        if (!((order === object.dorder) || Gotcha.routed(order))) {
           return true;
         }
       }
       return false;
     };
-    _ref = this.ai.groups.for_all(function(object) {
+    _ref = GROUPS.for_all(function(object) {
       return rogue(object);
     });
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       droid = _ref[_i];
       count += 1;
-      if (this.trace.on) {
+      if (Trace.on) {
         this.bug_report("Rogue", droid, event);
       }
       command = droid.command;
       if ((command != null ? command.order : void 0) === 28) {
-        if (this.trace.on) {
-          centreView(droid.x, droid.y);
-        }
         this.working(droid, command);
       } else {
-        this.trace.red("\tUncaught rogue case.");
+        order = droid.order.order_map();
+        Trace.red("\tUncaught rogue case: " + (droid.namexy()) + " " + order + ".");
+        dorder = (_ref1 = droid.dorder) != null ? _ref1.order_map() : void 0;
+        corder = (_ref2 = droid.corder) != null ? _ref2.order_map() : void 0;
+        Trace.red("\t\tWanted " + corder + " => " + dorder + ".");
       }
     }
     return count;
@@ -161,20 +164,20 @@ Gotcha = (function() {
   Gotcha.prototype.end = function(event) {
     var count, counts;
     counts = count = 0;
-    if (count = this.selected(event) && this.trace.on) {
+    if (count = this.selected(event) && Trace.on) {
       counts += count;
-      this.trace.out("");
+      Trace.out("");
     }
-    if (count = this.idle(event) && this.trace.on) {
+    if (count = this.idle(event) && Trace.on) {
       counts += count;
-      this.trace.out("");
+      Trace.out("");
     }
-    if (count = this.rogue(event) && this.trace.on) {
+    if (count = this.rogue(event) && Trace.on) {
       counts += count;
-      this.trace.out("");
+      Trace.out("");
     }
-    if (this.trace.on && counts) {
-      return this.trace.out("");
+    if (Trace.on && counts) {
+      return Trace.out("");
     }
   };
 

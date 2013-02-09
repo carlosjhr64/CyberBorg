@@ -16,6 +16,10 @@ class Ai
     @recycle_on_damage = 50.0
     @repair_on_damage = 75.0
     @repair_available = false
+    # Aproximately one in chances of doing something dangerous.
+    @chances = 10.0
+    # By how much do we forget danger?
+    @forget = 2.0
 
   update: (event) ->
     @power = CyberBorg.get_power()
@@ -149,13 +153,15 @@ class Ai
         # In reloads.js, I have code that can be safely edited and reloaded
         # while in play.  Mostly contains tracing, but also contains in play
         # bug fixes.
-        when 'reload' then include("multiplay/skirmish/cyberborg-reloads.js")
+        when 'reload'
+          include("multiplay/skirmish/cyberborg-reloads.js")
+          console "Reloaded cyberborg-reloads."
         # Toggle tracing
         when 'trace'
           Trace.green("Tracing off.") if Trace.on
           Trace.on = !Trace.on
           Trace.green("Tracing on.") if Trace.on
-        else console("What?")
+        #else console("What?")
 
   # Lists the units in the group by name, position, 'n stuff.
   report: (who) ->
@@ -317,7 +323,14 @@ class Ai
       while command = commands.next()
         if at = command.at
           # Enemy has made this location too expensive, so skip it?
-          continue if @location.value(at) > too_dangerous
+          danger = @location.value(at)
+          if danger > too_dangerous
+            # Give it a chance, about 1 in 10, of doing something dangerous.
+            # This avoids loops of not doing anything.
+            if Math.random() > too_dangerous / (@chances*danger)
+              continue
+            else
+              @location.value(at, danger/@forget)
         unless @hq or @allowed_hqless(command)
           commands.revert()
           break

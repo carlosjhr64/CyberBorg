@@ -16735,6 +16735,8 @@ Ai = (function() {
     this.recycle_on_damage = 50.0;
     this.repair_on_damage = 75.0;
     this.repair_available = false;
+    this.chances = 10.0;
+    this.forget = 2.0;
   }
 
   Ai.prototype.update = function(event) {
@@ -16864,7 +16866,8 @@ Ai = (function() {
         case 'report':
           return this.report(words[1]);
         case 'reload':
-          return include("multiplay/skirmish/cyberborg-reloads.js");
+          include("multiplay/skirmish/cyberborg-reloads.js");
+          return console("Reloaded cyberborg-reloads.");
         case 'trace':
           if (Trace.on) {
             Trace.green("Tracing off.");
@@ -16873,9 +16876,6 @@ Ai = (function() {
           if (Trace.on) {
             return Trace.green("Tracing on.");
           }
-          break;
-        default:
-          return console("What?");
       }
     }
   };
@@ -17050,7 +17050,7 @@ Ai = (function() {
   };
 
   Ai.prototype.group_executions = function(event) {
-    var at, command, commands, group, name, too_dangerous, _i, _len;
+    var at, command, commands, danger, group, name, too_dangerous, _i, _len;
     this.resurrection();
     this.routing();
     too_dangerous = this.too_dangerous();
@@ -17063,8 +17063,13 @@ Ai = (function() {
       commands = group.commands;
       while (command = commands.next()) {
         if (at = command.at) {
-          if (this.location.value(at) > too_dangerous) {
-            continue;
+          danger = this.location.value(at);
+          if (danger > too_dangerous) {
+            if (Math.random() > too_dangerous / (this.chances * danger)) {
+              continue;
+            } else {
+              this.location.value(at, danger / this.forget);
+            }
           }
         }
         if (!(this.hq || this.allowed_hqless(command))) {
