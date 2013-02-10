@@ -46,11 +46,15 @@ Gotcha = (function() {
     dorder = droid.dorder;
     Trace.out(("" + label + ":\t" + (droid.namexy()) + "\t") + ("id:" + droid.id + "\thealth:" + droid.health));
     Trace.out("\tevent: " + event.name);
-    Trace.out("\torder: " + order + " => " + (order.order_map()));
-    Trace.out("\tdorder: " + dorder + " => " + (dorder.order_map()));
+    if (order != null) {
+      Trace.out("\torder: " + order + " => " + (order.order_map()));
+    }
+    if (dorder != null) {
+      Trace.out("\tdorder: " + dorder + " => " + (dorder.order_map()));
+    }
     if (command = droid.command) {
       corder = command.order;
-      Trace.out("\t\t" + (corder.order_map()) + "\t#" + corder + "\tcid:" + command.cid);
+      Trace.out("\t\t" + (corder != null ? corder.order_map() : void 0) + "\t#" + corder + "\tcid:" + command.cid);
       if (command.structure) {
         Trace.out("\t\tstructure:" + command.structure);
       }

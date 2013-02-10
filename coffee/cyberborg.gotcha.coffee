@@ -32,11 +32,11 @@ class Gotcha
     Trace.out "#{label}:\t#{droid.namexy()}\t" +
     "id:#{droid.id}\thealth:#{droid.health}"
     Trace.out "\tevent: #{event.name}"
-    Trace.out "\torder: #{order} => #{order.order_map()}"
-    Trace.out "\tdorder: #{dorder} => #{dorder.order_map()}"
+    Trace.out "\torder: #{order} => #{order.order_map()}" if order?
+    Trace.out "\tdorder: #{dorder} => #{dorder.order_map()}" if dorder?
     if command = droid.command
       corder = command.order
-      Trace.out "\t\t#{corder.order_map()}\t##{corder}\tcid:#{command.cid}"
+      Trace.out "\t\t#{corder?.order_map()}\t##{corder}\tcid:#{command.cid}"
       if command.structure
         Trace.out "\t\tstructure:#{command.structure}"
       if at = command.at

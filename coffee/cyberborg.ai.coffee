@@ -13,13 +13,13 @@ class Ai
     @resurrects = {}
     @location = new Location()
     @gotcha = new Gotcha(@)
-    @recycle_on_damage = 33.3
-    @repair_on_damage = 66.6
+    @recycle_on_damage = 50.0
+    @repair_on_damage = 50.0
     @repair_available = false
     # Aproximately one in chances of doing something dangerous.
     @chances = 10.0
     # By how much do we forget danger?
-    @forget = 2.0
+    @forget = 0.9
 
   update: (event) ->
     @power = CyberBorg.get_power()
@@ -96,8 +96,11 @@ class Ai
   location_costs: (at, cost=at.cost) ->
     # Want cummulative costs
     cost = (@location.value(at) || 0.0) + cost
-    Trace.out "Cummulative costs at #{at.x},#{at.y} are $#{cost}." if Trace.on
     @location.value(at, cost)
+    if Trace.on
+      Trace.out "Cummulative costs at #{at.x},#{at.y} are $#{cost}."
+      if cost > @too_dangerous()
+        Trace.green "\tArea is now set as dangerous!"
 
   destroyed: (object, group) ->
     # There might be other stuff to do...
@@ -325,12 +328,17 @@ class Ai
           # Enemy has made this location too expensive, so skip it?
           danger = @location.value(at)
           if danger > too_dangerous
-            # Give it a chance, about 1 in 10, of doing something dangerous.
-            # This avoids loops of not doing anything.
+            # Give it a chance, about 1 in chances, of doing something dangerous.
+            # This also avoids loops of not doing anything.
             if Math.random() > too_dangerous / (@chances*danger)
               continue
             else
-              @location.value(at, danger/@forget)
+              danger = @forget * danger
+              @location.value(at, danger)
+              if Trace.on
+                Trace.out "Bravely decided to go to danger area #{at.x},#{at.y}"
+                if danger < too_dangerous
+                  Trace.green "\tRe-classifying area as OK for now."
         unless @hq or @allowed_hqless(command)
           commands.revert()
           break

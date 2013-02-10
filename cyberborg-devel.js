@@ -16252,6 +16252,54 @@ Command = (function() {
   */
 
 
+  Command.max_of = function(items) {
+    var cost, item, max, _i, _len;
+    max = 0;
+    if (typeof items === "string") {
+      items = [items];
+    }
+    for (_i = 0, _len = items.length; _i < _len; _i++) {
+      item = items[_i];
+      cost = Ini.strid(item).buildpower;
+      if (cost > max) {
+        max = cost;
+      }
+    }
+    return max;
+  };
+
+  Command.min_of = function(items) {
+    var cost, item, min, _i, _len;
+    min = 999999999;
+    if (typeof items === "string") {
+      items = [items];
+    }
+    for (_i = 0, _len = items.length; _i < _len; _i++) {
+      item = items[_i];
+      cost = Ini.strid(item).buildpower;
+      if (cost < min) {
+        min = cost;
+      }
+    }
+    return min;
+  };
+
+  Command.max_cost_of = function(obj) {
+    var body, propulsion, turret;
+    turret = Command.max_of(obj.turret);
+    body = Command.max_of(obj.body);
+    propulsion = Command.max_of(obj.propulsion);
+    return turret + body + propulsion;
+  };
+
+  Command.min_cost_of = function(obj) {
+    var body, propulsion, turret;
+    turret = Command.min_of(obj.turret);
+    body = Command.min_of(obj.body);
+    propulsion = Command.min_of(obj.propulsion);
+    return turret + body + propulsion;
+  };
+
   /* Who?
   */
 
@@ -16292,22 +16340,6 @@ Command = (function() {
     return obj;
   };
 
-  Command.prototype.trucker = function(obj) {
-    if (obj == null) {
-      obj = {};
-    }
-    obj.like = /Truck$/;
-    return obj;
-  };
-
-  Command.prototype.scouter = function(obj) {
-    if (obj == null) {
-      obj = {};
-    }
-    obj.like = /^((Wheels)|(Hover))-((Viper)|(Bug))-.*Machinegun$/;
-    return obj;
-  };
-
   /* Where?
   */
 
@@ -16327,7 +16359,7 @@ Command = (function() {
   */
 
 
-  Command.rms_cost_of = function(research) {
+  Command.rms_cost_of_research = function(research) {
     var cost, count, data, requiredresearch, rms, strid, _i, _len, _ref;
     cost = 100;
     data = Ini.strid(research);
@@ -16361,7 +16393,7 @@ Command = (function() {
       obj = {};
     }
     obj.research = research;
-    cost = Command.rms_cost_of(research);
+    cost = Command.rms_cost_of_research(research);
     obj.cost = cost;
     obj.order = LORDER_RESEARCH;
     obj.like = /Research Facility/;
@@ -16380,12 +16412,16 @@ Command = (function() {
     }
     obj.order = FORDER_MANUFACTURE;
     obj.like = /Factory/;
-    name = "" + obj.pname + "-" + obj.bname + "-" + obj.tname;
-    if (name === "Wheels-Viper-Truck") {
-      name = "Truck";
+    if (!obj.name) {
+      name = "" + obj.pname + "-" + obj.bname + "-" + obj.tname;
+      if (name === "Wheels-Viper-Truck") {
+        name = "Truck";
+      }
+      obj.name = name;
     }
-    obj.name = name;
-    obj.cost = ((1.0 + obj.pcost / 100.0) * obj.bcost) + obj.tcost;
+    if (!obj.cost) {
+      obj.cost = ((1.0 + obj.pcost / 100.0) * obj.bcost) + obj.tcost;
+    }
     return obj;
   };
 
@@ -16443,7 +16479,7 @@ Command = (function() {
     obj.limit = this.limit;
     obj.min = 1;
     obj.max = 3;
-    obj.help = 3;
+    obj.help = 1;
     return obj;
   };
 
@@ -16454,7 +16490,7 @@ Command = (function() {
     obj.limit = this.limit;
     obj.min = 1;
     obj.max = 2;
-    obj.help = 2;
+    obj.help = 1;
     return obj;
   };
 
@@ -16588,11 +16624,15 @@ Gotcha = (function() {
     dorder = droid.dorder;
     Trace.out(("" + label + ":\t" + (droid.namexy()) + "\t") + ("id:" + droid.id + "\thealth:" + droid.health));
     Trace.out("\tevent: " + event.name);
-    Trace.out("\torder: " + order + " => " + (order.order_map()));
-    Trace.out("\tdorder: " + dorder + " => " + (dorder.order_map()));
+    if (order != null) {
+      Trace.out("\torder: " + order + " => " + (order.order_map()));
+    }
+    if (dorder != null) {
+      Trace.out("\tdorder: " + dorder + " => " + (dorder.order_map()));
+    }
     if (command = droid.command) {
       corder = command.order;
-      Trace.out("\t\t" + (corder.order_map()) + "\t#" + corder + "\tcid:" + command.cid);
+      Trace.out("\t\t" + (corder != null ? corder.order_map() : void 0) + "\t#" + corder + "\tcid:" + command.cid);
       if (command.structure) {
         Trace.out("\t\tstructure:" + command.structure);
       }
@@ -16737,11 +16777,11 @@ Ai = (function() {
     this.resurrects = {};
     this.location = new Location();
     this.gotcha = new Gotcha(this);
-    this.recycle_on_damage = 33.3;
-    this.repair_on_damage = 66.6;
+    this.recycle_on_damage = 50.0;
+    this.repair_on_damage = 50.0;
     this.repair_available = false;
     this.chances = 10.0;
-    this.forget = 2.0;
+    this.forget = 0.9;
   }
 
   Ai.prototype.update = function(event) {
@@ -16811,10 +16851,13 @@ Ai = (function() {
       cost = at.cost;
     }
     cost = (this.location.value(at) || 0.0) + cost;
+    this.location.value(at, cost);
     if (Trace.on) {
       Trace.out("Cummulative costs at " + at.x + "," + at.y + " are $" + cost + ".");
+      if (cost > this.too_dangerous()) {
+        return Trace.green("\tArea is now set as dangerous!");
+      }
     }
-    return this.location.value(at, cost);
   };
 
   Ai.prototype.destroyed = function(object, group) {
@@ -17073,7 +17116,14 @@ Ai = (function() {
             if (Math.random() > too_dangerous / (this.chances * danger)) {
               continue;
             } else {
-              this.location.value(at, danger / this.forget);
+              danger = this.forget * danger;
+              this.location.value(at, danger);
+              if (Trace.on) {
+                Trace.out("Bravely decided to go to danger area " + at.x + "," + at.y);
+                if (danger < too_dangerous) {
+                  Trace.green("\tRe-classifying area as OK for now.");
+                }
+              }
             }
           }
         }
@@ -17382,6 +17432,35 @@ Ai.prototype.script = function() {
   return GROUPS.add_group(SCOUTS, commands.scouts_commands());
 };
 
+Command.prototype.trucker = function(obj) {
+  if (obj == null) {
+    obj = {};
+  }
+  obj.like = /Truck$/;
+  return obj;
+};
+
+Command.prototype.scouter = function(obj) {
+  if (obj == null) {
+    obj = {};
+  }
+  obj.like = /^Fastgun$/;
+  return obj;
+};
+
+Command.prototype.fastgun = function(obj) {
+  if (obj == null) {
+    obj = {};
+  }
+  obj.name = "Fastgun";
+  obj.turret = ["MG2Mk1", "MG1Mk1"];
+  obj.body = ["Body4ABT", "Body1REC"];
+  obj.propulsion = ["hover01", "wheeled01"];
+  obj.cost = Command.min_cost_of(obj);
+  obj.droid_type = DROID_WEAPON;
+  return obj;
+};
+
 Command.prototype.with_three_trucks = function(obj) {
   return this.with_help(this.immediately(this.three(this.trucker(this.maintain(obj)))));
 };
@@ -17435,15 +17514,15 @@ Command.prototype.base_commands = function() {
 };
 
 Command.prototype.factory_commands = function() {
-  var commands, gunner, truck;
+  var commands, fastgun, truck;
   this.limit = 1;
   this.savings = 0;
   truck = this.on_budget(this.manufacture(this.wheels(this.viper(this.truck()))));
-  gunner = this.on_budget(this.manufacture(this.wheels(this.viper(this.machinegun()))));
+  fastgun = this.on_budget(this.manufacture(this.fastgun()));
   commands = [];
   commands.push(truck);
   12..times(function() {
-    return commands.push(gunner);
+    return commands.push(fastgun);
   });
   commands.push(truck);
   return WZArray.bless(commands);
@@ -17464,7 +17543,7 @@ Command.prototype.derricks_commands = function() {
     commands.push(this.now_with_truck(this.oil_derrick(this.at(derrick.x, derrick.y))));
   }
   Scouter.bless(commands);
-  commands.mod = 8;
+  commands.mod = 12;
   commands.offset = 0;
   4..times(function() {
     return commands.next();
@@ -17483,8 +17562,11 @@ Command.prototype.scouts_commands = function() {
     commands.push(this.immediately(this.one(this.scouter(this.scouts(this.at(derrick.x, derrick.y))))));
   }
   Scouter.bless(commands);
-  commands.mod = 5;
-  commands.offset = 3;
+  commands.mod = 12;
+  commands.offset = 0;
+  3..times(function() {
+    return commands.next();
+  });
   return commands;
 };
 
@@ -17492,6 +17574,6 @@ Command.prototype.lab_commands = function() {
   var commands;
   this.limit = 5;
   this.savings = 0;
-  commands = [this.pursue('R-Wpn-MG1Mk1'), this.pursue('R-Wpn-MG2Mk1'), this.pursue('R-Struc-PowerModuleMk1'), this.pursue('R-Wpn-MG3Mk1'), this.pursue('R-Struc-RepairFacility'), this.pursue('R-Defense-Tower01'), this.pursue('R-Defense-WallTower02'), this.pursue('R-Defense-AASite-QuadMg1'), this.pursue('R-Vehicle-Body04'), this.pursue('R-Vehicle-Prop-VTOL'), this.pursue('R-Struc-VTOLFactory'), this.pursue('R-Wpn-Bomb01')];
+  commands = [this.pursue('R-Wpn-MG1Mk1'), this.pursue('R-Wpn-MG2Mk1'), this.pursue('R-Vehicle-Prop-Hover'), this.pursue('R-Vehicle-Body04'), this.pursue('R-Struc-PowerModuleMk1'), this.pursue('R-Wpn-MG3Mk1'), this.pursue('R-Struc-RepairFacility'), this.pursue('R-Defense-Tower01'), this.pursue('R-Defense-WallTower02'), this.pursue('R-Defense-AASite-QuadMg1'), this.pursue('R-Vehicle-Prop-VTOL'), this.pursue('R-Struc-VTOLFactory'), this.pursue('R-Wpn-Bomb01')];
   return WZArray.bless(commands);
 };

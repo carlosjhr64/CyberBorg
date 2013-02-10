@@ -77,6 +77,23 @@ Ai::script = () ->
   GROUPS.add_group(DERRICKS, commands.derricks_commands())
   GROUPS.add_group(SCOUTS, commands.scouts_commands())
 
+Command::trucker = (obj={}) ->
+  obj.like = /Truck$/
+  obj
+
+Command::scouter = (obj={}) ->
+  obj.like = /^Fastgun$/
+  obj
+
+Command::fastgun = (obj={}) ->
+  obj.name = "Fastgun"
+  obj.turret = ["MG2Mk1", "MG1Mk1"]
+  obj.body = ["Body4ABT", "Body1REC"]
+  obj.propulsion = ["hover01", "wheeled01"]
+  obj.cost = Command.min_cost_of(obj)
+  obj.droid_type = DROID_WEAPON
+  obj
+
 # Our first concern is our base.
 # We'll build it up and here forth react to events in the game.
 # With only two trucks (usually) to start and base group with first dibs,
@@ -177,12 +194,12 @@ Command::factory_commands = () ->
   @savings = 0
   # The commands are...
   truck = @on_budget @manufacture @wheels @viper @truck()
-  gunner = @on_budget @manufacture @wheels @viper @machinegun()
+  fastgun = @on_budget @manufacture @fastgun()
   commands = []
   # ... 1 truck
   commands.push(truck)
   # ... 12 machine gunners
-  12.times -> commands.push(gunner)
+  12.times -> commands.push(fastgun)
   commands.push(truck)
   WZArray.bless(commands)
 
@@ -194,9 +211,10 @@ Command::derricks_commands = () ->
   commands = WZArray.bless([])
   for derrick in @resources
     commands.push(@now_with_truck @oil_derrick @at derrick.x, derrick.y)
-  # Eight derricks starting from derrick #0
+  # Twelve derricks from derrick #0, starting four times next.
+  # The initial four derricks built by Base group.
   Scouter.bless(commands)
-  commands.mod = 8
+  commands.mod = 12
   commands.offset = 0
   4.times -> commands.next()
   commands
@@ -208,10 +226,13 @@ Command::scouts_commands = () ->
   for derrick in @resources
     commands.push(
       @immediately @one @scouter @scouts @at derrick.x, derrick.y)
-  # Five derricks starting at derrick #3
+  # Twelve derricks from derrick #0, starting off 3 times next.
+  # We start by defending the fourth derrick forward while
+  # the initial 4 are being built.
   Scouter.bless(commands)
-  commands.mod = 5
-  commands.offset = 3
+  commands.mod = 12
+  commands.offset = 0
+  3.times -> commands.next()
   commands
 
 Command::lab_commands = () ->
@@ -220,13 +241,14 @@ Command::lab_commands = () ->
   commands = [
     @pursue('R-Wpn-MG1Mk1')		# Machine Gun
     @pursue('R-Wpn-MG2Mk1')		# Dual Machine Gun
+    @pursue('R-Vehicle-Prop-Hover')	# Hovercraft
+    @pursue('R-Vehicle-Body04')		# Bug Body
     @pursue('R-Struc-PowerModuleMk1')	# Power Module
     @pursue('R-Wpn-MG3Mk1')		# Heavy Machine Gun
     @pursue('R-Struc-RepairFacility')	# Repair Facility
     @pursue('R-Defense-Tower01')	# MG Tower
     @pursue('R-Defense-WallTower02')	# Ligh Cannon Hardpoint
     @pursue('R-Defense-AASite-QuadMg1')	# AA
-    @pursue('R-Vehicle-Body04')		# Bug Body
     @pursue('R-Vehicle-Prop-VTOL')	# Vtol
     @pursue('R-Struc-VTOLFactory')	# Vtol Factory
     @pursue('R-Wpn-Bomb01')		# Vtol Bomb

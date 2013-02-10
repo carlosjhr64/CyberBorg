@@ -511,13 +511,35 @@ class Command
   ### Designs ####
   ################
 
-  # TODO
-  #gun: (obj={}) ->
-  #  obj.name = "Gun"
-  #  obj.turret = ["MG3Mk1", "MG2Mk1", "MG1Mk1"]
-  #  obj.droid_type = DROID_WEAPON
-  #  obj
+  @max_of = (items) ->
+    max = 0
+    if typeof(items) is "string"
+      items = [items]
+    for item in items
+      cost = Ini.strid(item).buildpower
+      max = cost if cost > max
+    max
 
+  @min_of = (items) ->
+    min = 999999999 # Big big big
+    if typeof(items) is "string"
+      items = [items]
+    for item in items
+      cost = Ini.strid(item).buildpower
+      min = cost if cost < min
+    min
+
+  @max_cost_of = (obj) ->
+    turret = Command.max_of(obj.turret)
+    body = Command.max_of(obj.body)
+    propulsion = Command.max_of(obj.propulsion)
+    turret + body + propulsion
+
+  @min_cost_of = (obj) ->
+    turret = Command.min_of(obj.turret)
+    body = Command.min_of(obj.body)
+    propulsion = Command.min_of(obj.propulsion)
+    turret + body + propulsion
 
   ############
   ### Who? ###
@@ -546,14 +568,6 @@ class Command
     obj.help = 0
     obj
 
-  trucker: (obj={}) ->
-    obj.like = /Truck$/
-    obj
-
-  scouter: (obj={}) ->
-    obj.like = /^((Wheels)|(Hover))-((Viper)|(Bug))-.*Machinegun$/
-    obj
-
   ##############
   ### Where? ###
   ##############
@@ -566,7 +580,7 @@ class Command
   ### Orders ###
   ##############
 
-  @rms_cost_of = (research)->
+  @rms_cost_of_research = (research)->
     cost = 100 # default
     data = Ini.strid(research)
     if cost = data?.researchpower
@@ -588,7 +602,7 @@ class Command
 
   pursue: (research, obj={}) ->
     obj.research = research
-    cost = Command.rms_cost_of(research)
+    cost = Command.rms_cost_of_research(research)
     obj.cost = cost
     obj.order = LORDER_RESEARCH
     obj.like = /Research Facility/
@@ -602,10 +616,12 @@ class Command
   manufacture: (obj={}) ->
     obj.order = FORDER_MANUFACTURE
     obj.like = /Factory/
-    name = "#{obj.pname}-#{obj.bname}-#{obj.tname}"
-    name = "Truck" if name is "Wheels-Viper-Truck"
-    obj.name = name
-    obj.cost = ((1.0 + obj.pcost/100.0) * obj.bcost) + obj.tcost
+    unless obj.name
+      name = "#{obj.pname}-#{obj.bname}-#{obj.tname}"
+      name = "Truck" if name is "Wheels-Viper-Truck"
+      obj.name = name
+    unless obj.cost
+      obj.cost = ((1.0 + obj.pcost/100.0) * obj.bcost) + obj.tcost
     obj
 
   maintain: (obj={}) ->
@@ -644,14 +660,14 @@ class Command
     obj.limit = @limit # maximum group size
     obj.min = 1 # it will execute the command only with at least this amount
     obj.max = 3 # it will execute the command with no more than this amount
-    obj.help = 3
+    obj.help = 1
     obj
 
   two: (obj={}) ->
     obj.limit = @limit # maximum group size
     obj.min = 1
     obj.max = 2
-    obj.help = 2
+    obj.help = 1
     obj
 
   one: (obj={}) ->
