@@ -11,6 +11,12 @@ class Gotcha
       Trace.out "\t#{event.research.name}\tCost: #{research.power}"
     if droid = event.droid
       Trace.out "\t#{droid.namexy()}\tID:#{droid.id}\tCost: #{droid.cost}"
+    position = @ai.location.position
+    too_dangerous = @ai.too_dangerous()
+    for coordinate of position
+      danger_level = position[coordinate]
+      if danger_level > too_dangerous
+        Trace.out "Danger area: #{coordinate} #{danger_level.to_i()}"
 
   command: (command) ->
     keyvals = []

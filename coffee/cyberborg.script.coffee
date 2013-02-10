@@ -36,7 +36,7 @@ Ai::allowed_hqless = (command) ->
 
 # Unacceptable losses threshold for an area.
 Ai::too_dangerous = () ->
-  threshold = powerType/8.0
+  threshold = @power_type_factor * powerType
   m1 = 1.0 * GROUPS.count((object) -> object.stattype is RESOURCE_EXTRACTOR)
   m2 = 4.0 * GROUPS.count((object) -> object.stattype is POWER_GEN)
   m = m1
@@ -115,7 +115,8 @@ Command::base_commands = () ->
   factory_cost = @light_factory().cost
   research_cost = @research_facility().cost
   hq_cost = @command_center().cost
-  savings = energy_cost + factory_cost + research_cost + hq_cost + generator_cost
+  savings = energy_cost + factory_cost + research_cost + hq_cost +
+  generator_cost
   # First to ensure is income...
   energy_build = [
     @with_two_trucks @power_generator @at @x+@s*@dx, @y
@@ -160,8 +161,9 @@ Command::base_commands = () ->
   for command in commands
     savings -= command.cost
     command.savings = savings
-  # There's an unusual race condition bug that may occur while building derricks.
-  # Need to find the maximum value of savings under that condition.
+  # There's an unusual race condition bug that may occur
+  # while building derricks.  Need to find the maximum value of
+  # savings under that condition.
   max_savings = 0
   for command in commands
     if command.structure is "A0ResourceExtractor"

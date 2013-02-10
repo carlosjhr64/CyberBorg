@@ -10,7 +10,7 @@ class Location
   # the hash value remains valid.
   # Usually the value will remain valid, though.
   value: (at, position) ->
-    key = "#{at.x}.#{at.y}"
+    key = "#{at.x},#{at.y}"
     if position
       @position[key] = position
     @position[key]

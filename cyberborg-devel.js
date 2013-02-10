@@ -71,7 +71,7 @@ Location = (function() {
 
   Location.prototype.value = function(at, position) {
     var key;
-    key = "" + at.x + "." + at.y;
+    key = "" + at.x + "," + at.y;
     if (position) {
       this.position[key] = position;
     }
@@ -16590,7 +16590,7 @@ Gotcha = (function() {
   }
 
   Gotcha.prototype.start = function(event) {
-    var droid, research, structure;
+    var coordinate, danger_level, droid, position, research, structure, too_dangerous, _results;
     Trace.out(("Power: " + this.ai.power + "  Event: " + event.name + "  ") + ("Time: " + gameTime));
     if (structure = event.structure) {
       Trace.out("\t" + (structure.namexy()) + "\tCost: " + structure.cost);
@@ -16599,8 +16599,20 @@ Gotcha = (function() {
       Trace.out("\t" + event.research.name + "\tCost: " + research.power);
     }
     if (droid = event.droid) {
-      return Trace.out("\t" + (droid.namexy()) + "\tID:" + droid.id + "\tCost: " + droid.cost);
+      Trace.out("\t" + (droid.namexy()) + "\tID:" + droid.id + "\tCost: " + droid.cost);
     }
+    position = this.ai.location.position;
+    too_dangerous = this.ai.too_dangerous();
+    _results = [];
+    for (coordinate in position) {
+      danger_level = position[coordinate];
+      if (danger_level > too_dangerous) {
+        _results.push(Trace.out("Danger area: " + coordinate + " " + (danger_level.to_i())));
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
   };
 
   Gotcha.prototype.command = function(command) {
@@ -16785,7 +16797,7 @@ Ai = (function() {
     this.repair_on_damage = 50.0;
     this.repair_available = false;
     this.chances = 10.0;
-    this.forget = 0.9;
+    this.power_type_factor = 1.0 / 8.0;
   }
 
   Ai.prototype.update = function(event) {
@@ -17117,13 +17129,9 @@ Ai = (function() {
             if (Math.random() > too_dangerous / (this.chances * danger)) {
               continue;
             } else {
-              danger = this.forget * danger;
-              this.location.value(at, danger);
+              this.location.value(at, 0);
               if (Trace.on) {
-                Trace.out("Bravely decided to go to danger area " + at.x + "," + at.y);
-                if (danger < too_dangerous) {
-                  Trace.green("\tRe-classifying area as OK for now.");
-                }
+                Trace.green("Re-clasifying area " + at.x + "," + at.y + " as OK.");
               }
             }
           }
@@ -17402,7 +17410,7 @@ Ai.prototype.allowed_hqless = function(command) {
 
 Ai.prototype.too_dangerous = function() {
   var m, m1, m2, threshold;
-  threshold = powerType / 8.0;
+  threshold = this.power_type_factor * powerType;
   m1 = 1.0 * GROUPS.count(function(object) {
     return object.stattype === RESOURCE_EXTRACTOR;
   });
