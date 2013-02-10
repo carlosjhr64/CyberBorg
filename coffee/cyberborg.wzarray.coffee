@@ -5,6 +5,7 @@
 # There are some really common hacks on Array, we'll make'em on Array itself.
 Array::first = ()-> @[0]
 Array::last = ()-> @[@length-1]
+Array::penultima = ()-> @[@length-2]
 Array::shuffle = -> @sort -> 0.5 - Math.random()
 
 #####################

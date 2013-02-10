@@ -345,7 +345,6 @@ class Ai
         unless @executes(group, command)
           commands.revert()
           break
-        @gotcha.command(command) if Trace.on
         if command.order is FORDER_MANUFACTURE
           @resurrects[command.name] = [group, command]
     # Stalled units are consider of lowest rank...

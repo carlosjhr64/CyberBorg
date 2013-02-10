@@ -36,7 +36,7 @@ Ai::allowed_hqless = (command) ->
 
 # Unacceptable losses threshold for an area.
 Ai::too_dangerous = () ->
-  threshold = powerType/7.0
+  threshold = powerType/8.0
   m1 = 1.0 * GROUPS.count((object) -> object.stattype is RESOURCE_EXTRACTOR)
   m2 = 4.0 * GROUPS.count((object) -> object.stattype is POWER_GEN)
   m = m1
@@ -100,9 +100,9 @@ Command::fastgun = (obj={}) ->
 # the AI guarantees that the first thing that happens
 # is that the base gets built.
 Command::with_three_trucks = (obj) ->
-  @with_help @immediately @three @trucker @maintain obj
+  @with_help @on_budget @three @trucker @maintain obj
 Command::with_two_trucks = (obj) ->
-  @with_help @immediately @two @trucker @maintain obj
+  @with_help @on_budget @two @trucker @maintain obj
 Command::with_one_truck = (obj) ->
   @on_budget @one @trucker @maintains obj
 Command::base_commands = () ->
@@ -110,14 +110,15 @@ Command::base_commands = () ->
   # savings is a way to signal that we want to ensure
   # completion of a set of projects without other projects
   # taking up the required resources.
-  energy_cost = @power_generator().cost + 4*@oil_derrick().cost
+  generator_cost = @power_generator().cost
+  energy_cost = generator_cost + 4*@oil_derrick().cost
   factory_cost = @light_factory().cost
   research_cost = @research_facility().cost
   hq_cost = @command_center().cost
-  savings = energy_cost + factory_cost + research_cost + hq_cost
+  savings = energy_cost + factory_cost + research_cost + hq_cost + generator_cost
   # First to ensure is income...
   energy_build = [
-    @with_three_trucks @power_generator @at @x+@s*@dx, @y
+    @with_two_trucks @power_generator @at @x+@s*@dx, @y
     @with_two_trucks @oil_derrick @at @resources[0].x, @resources[0].y
     @with_two_trucks @oil_derrick @at @resources[1].x, @resources[1].y
     @with_two_trucks @oil_derrick @at @resources[2].x, @resources[2].y
@@ -131,9 +132,13 @@ Command::base_commands = () ->
   research_build = [
     @with_three_trucks @research_facility @at @x, @y-@s*@dy
   ]
-  # Finally HQ
+  # Then HQ
   hq_build = [
     @with_three_trucks @command_center @at @x+@s*@dx, @y-@s*@dy
+  ]
+  # And finally one more generator
+  generator_build = [
+    @with_two_trucks @power_generator @at @x, @y
   ]
   # The optimal build sequence depends on how much power we have to start
   commands = null
@@ -149,15 +154,29 @@ Command::base_commands = () ->
   else
     commands =
     factory_build.concat(research_build).concat(hq_build).concat(energy_build)
+  # Next, the extra generator
+  commands = commands.concat(generator_build)
   # OK, we need to reset savings now that we have the build order
   for command in commands
     savings -= command.cost
     command.savings = savings
+  # There's an unusual race condition bug that may occur while building derricks.
+  # Need to find the maximum value of savings under that condition.
+  max_savings = 0
+  for command in commands
+    if command.structure is "A0ResourceExtractor"
+      savings = command.savings
+      max_savings = savings if savings > max_savings
+  for command in commands
+    if command.structure is "A0ResourceExtractor"
+      command.savings = max_savings
+  penultima = commands.penultima()
+  last = commands.last()
+  last.savings = penultima.savings - last.cost
 
   @savings = 0
   @limit = 1
   more = [
-    @with_one_truck @power_generator @at @x, @y
     # Wait for power levels to come back up.
     @pass @on_plenty @one @trucker()
     @with_one_truck @research_facility @at @x-@s*@dx, @y
