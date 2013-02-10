@@ -9,10 +9,10 @@ class Location
   # chose for a build.  Care should be taken that
   # the hash value remains valid.
   # Usually the value will remain valid, though.
-  value: (at, position) ->
+  value: (at, value) ->
     key = "#{at.x},#{at.y}"
-    if position
-      @position[key] = position
+    if value?
+      @position[key] = value
     @position[key]
 
   @location = new Location()

@@ -17,8 +17,8 @@ class Ai
     @repair_on_damage = 50.0
     @repair_available = false
     # Aproximately one in chances of doing something dangerous.
-    @chances = 10.0
-    @power_type_factor = 1.0/8.0
+    @chances = 12.0
+    @power_type_factor = 1.0/16.0
 
   update: (event) ->
     @power = CyberBorg.get_power()
@@ -99,7 +99,7 @@ class Ai
     if Trace.on
       Trace.out "Cummulative costs at #{at.x},#{at.y} are $#{cost}."
       if cost > @too_dangerous()
-        Trace.green "\tArea is now set as dangerous!"
+        Trace.green "Area is now set as dangerous!"
 
   destroyed: (object, group) ->
     # There might be other stuff to do...
@@ -135,6 +135,10 @@ class Ai
   helping: (unit) ->
     for group in GROUPS
       command = group.commands.current()
+      if at = command?.at # debug
+        if danger_level = @location.value(at)
+          if danger_level > @too_dangerous()
+            continue # command location too dangerous!
       cid = command?.cid
       # So for each ongoing job, check if it'll take the droid.
       if cid and (help_wanted = command.help) and command.like.test(unit.name)

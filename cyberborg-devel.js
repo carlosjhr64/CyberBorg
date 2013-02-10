@@ -69,11 +69,11 @@ Location = (function() {
     this.position = {};
   }
 
-  Location.prototype.value = function(at, position) {
+  Location.prototype.value = function(at, value) {
     var key;
     key = "" + at.x + "," + at.y;
-    if (position) {
-      this.position[key] = position;
+    if (value != null) {
+      this.position[key] = value;
     }
     return this.position[key];
   };
@@ -16796,8 +16796,8 @@ Ai = (function() {
     this.recycle_on_damage = 50.0;
     this.repair_on_damage = 50.0;
     this.repair_available = false;
-    this.chances = 10.0;
-    this.power_type_factor = 1.0 / 8.0;
+    this.chances = 12.0;
+    this.power_type_factor = 1.0 / 16.0;
   }
 
   Ai.prototype.update = function(event) {
@@ -16871,7 +16871,7 @@ Ai = (function() {
     if (Trace.on) {
       Trace.out("Cummulative costs at " + at.x + "," + at.y + " are $" + cost + ".");
       if (cost > this.too_dangerous()) {
-        return Trace.green("\tArea is now set as dangerous!");
+        return Trace.green("Area is now set as dangerous!");
       }
     }
   };
@@ -16905,10 +16905,17 @@ Ai = (function() {
   };
 
   Ai.prototype.helping = function(unit) {
-    var cid, command, employed, group, help_wanted, _i, _len;
+    var at, cid, command, danger_level, employed, group, help_wanted, _i, _len;
     for (_i = 0, _len = GROUPS.length; _i < _len; _i++) {
       group = GROUPS[_i];
       command = group.commands.current();
+      if (at = command != null ? command.at : void 0) {
+        if (danger_level = this.location.value(at)) {
+          if (danger_level > this.too_dangerous()) {
+            continue;
+          }
+        }
+      }
       cid = command != null ? command.cid : void 0;
       if (cid && (help_wanted = command.help) && command.like.test(unit.name)) {
         employed = group.list.counts_in_cid(cid);
@@ -17549,7 +17556,7 @@ Command.prototype.factory_commands = function() {
   fastgun = this.on_budget(this.manufacture(this.fastgun()));
   commands = [];
   commands.push(truck);
-  12..times(function() {
+  4..times(function() {
     return commands.push(fastgun);
   });
   commands.push(truck);

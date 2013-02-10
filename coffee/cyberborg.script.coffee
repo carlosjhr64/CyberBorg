@@ -220,7 +220,7 @@ Command::factory_commands = () ->
   # ... 1 truck
   commands.push(truck)
   # ... 12 machine gunners
-  12.times -> commands.push(fastgun)
+  4.times -> commands.push(fastgun)
   commands.push(truck)
   WZArray.bless(commands)
 
