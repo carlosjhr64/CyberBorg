@@ -153,14 +153,8 @@ class Ai
     if sender is me
       switch words[0]
         when 'report' then @report(words[1])
-        # In reloads.js, I have code that can be safely edited and reloaded
-        # while in play.  Mostly contains tracing, but also contains in play
-        # bug fixes.
-        when 'reload'
-          include("multiplay/skirmish/cyberborg-reloads.js")
-          console "Reloaded cyberborg-reloads."
-        # Toggle tracing
         when 'trace'
+          # Toggle tracing
           Trace.green("Tracing off.") if Trace.on
           Trace.on = !Trace.on
           Trace.green("Tracing on.") if Trace.on

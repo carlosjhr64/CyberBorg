@@ -8,8 +8,8 @@ Gotcha = (function() {
   }
 
   Gotcha.prototype.start = function(event) {
-    var droid, research, structure;
-    Trace.out(("Power: " + this.ai.power + "  Event: " + event.name + "  ") + ("Time: " + gameTime));
+    var danger, droid, k, pos, research, structure, too_dangerous, _results;
+    Trace.out(("*Power*: " + this.ai.power + "  Event: " + event.name + "  ") + ("Time: " + gameTime));
     if (structure = event.structure) {
       Trace.out("\t" + (structure.namexy()) + "\tCost: " + structure.cost);
     }
@@ -17,8 +17,21 @@ Gotcha = (function() {
       Trace.out("\t" + event.research.name + "\tCost: " + research.power);
     }
     if (droid = event.droid) {
-      return Trace.out("\t" + (droid.namexy()) + "\tID:" + droid.id + "\tCost: " + droid.cost);
+      Trace.out("\t" + (droid.namexy()) + "\tID:" + droid.id + "\tCost: " + droid.cost);
     }
+    pos = this.ai.location.positions;
+    Trace.out("\tDanger areas:");
+    too_dangerous = ai.too_dangerous();
+    _results = [];
+    for (k in pos) {
+      danger = pos[k];
+      if (danger > too_dangerous) {
+        _results.push(Trace.out("\t\t" + k + "\t" + (danger.to_i())));
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
   };
 
   Gotcha.prototype.command = function(command) {

@@ -16917,9 +16917,6 @@ Ai = (function() {
       switch (words[0]) {
         case 'report':
           return this.report(words[1]);
-        case 'reload':
-          include("multiplay/skirmish/cyberborg-reloads.js");
-          return console("Reloaded cyberborg-reloads.");
         case 'trace':
           if (Trace.on) {
             Trace.green("Tracing off.");
