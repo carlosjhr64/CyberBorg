@@ -60,7 +60,7 @@ class Gotcha
   working: (droid, command = droid.command) ->
     if at = command.at
       if @ai.dangerous(at)
-        GROUPS.find(droid).group.layoffs(command)
+        GROUPS.finds(droid).group.layoffs(command)
         return
     if droid.executes(command)
       order = command.order
