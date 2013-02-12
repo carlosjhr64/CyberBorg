@@ -19,8 +19,10 @@ class Ai
     # Aproximately one in chances of doing something dangerous.
     @chances = 12.0
     @power_type_factor = 1.0/16.0
+    @too_dangerous = @too_dangerous_level()
 
   update: (event) ->
+    @too_dangerous = @too_dangerous_level()
     @power = CyberBorg.get_power()
     GROUPS.update()
     @gotcha.start(event)	if Trace.on
@@ -98,7 +100,7 @@ class Ai
     @location.value(at, cost)
     if Trace.on
       Trace.out "Cummulative costs at #{at.x},#{at.y} are $#{cost}."
-      if cost > @too_dangerous()
+      if cost > @too_dangerous
         Trace.green "Area is now set as dangerous!"
 
   destroyed: (object, group) ->
@@ -106,13 +108,14 @@ class Ai
     # The object has been removed from the group already.
     # We're given object and group as reference.
     if object.player is me
+      if @resurrects[object.name]?
+        @dead.push(object)
       switch object.type
         when STRUCTURE
           @location_costs(object)
           switch object.stattype
             when HQ then @hq = false
         when DROID
-          @dead.push(object)
           if at = object.command?.at
             @location_costs(at, object.cost)
 
@@ -135,10 +138,8 @@ class Ai
   helping: (unit) ->
     for group in GROUPS
       command = group.commands.current()
-      if at = command?.at # debug
-        if danger_level = @location.value(at)
-          if danger_level > @too_dangerous()
-            continue # command location too dangerous!
+      if at = command?.at
+        continue if @dangerous(at)
       cid = command?.cid
       # So for each ongoing job, check if it'll take the droid.
       if cid and (help_wanted = command.help) and command.like.test(unit.name)
@@ -280,14 +281,15 @@ class Ai
 
   resurrection: () ->
     dead = []
-    for droid in @dead
-      if group_command = @resurrects[droid.name]
+    for object in @dead
+      name = object.name
+      if group_command = @resurrects[name]
         if @executes(group_command...)
           Trace.blue "Resurrection!" if Trace.on
         else
-          dead.push(droid)
+          dead.push(object)
       else
-        Trace.red "Error: no resurrection command for #{droid.name}."
+        Trace.red "Error: no resurrection command for #{name}."
     @dead = dead
 
   routing: () ->
@@ -302,6 +304,21 @@ class Ai
         if orderDroid(droid, DORDER_RECYCLE)
           Trace.blue "#{droid.namexy()} to recycle." if Trace.on
 
+  dangerous: (at) ->
+    # Enemy has made this location too expensive, so skip it?
+    if danger = @location.value(at)
+      if danger > @too_dangerous
+        # Give it a chance, about 1 in chances,
+        # of doing something dangerous.
+        # This also avoids loops of not doing anything.
+        if Math.random() > @too_dangerous / (@chances*danger)
+          return true
+        else
+          @location.value(at, 0)
+          if Trace.on
+            Trace.green "Re-classifying area #{at.x},#{at.y} as OK."
+    false
+
   # This is the work horse of the AI.
   # We iterate through all the groups,
   # higher ranks first,
@@ -311,7 +328,6 @@ class Ai
     @resurrection()
     # This AI will order heavily damaged units to repair/recycle
     @routing()
-    too_dangerous = @too_dangerous()
     for group in GROUPS
       name = group.name
       # For the sake of fairness to the human player,
@@ -322,25 +338,15 @@ class Ai
       commands = group.commands
       while command = commands.next()
         if at = command.at
-          # Enemy has made this location too expensive, so skip it?
-          danger = @location.value(at)
-          if danger > too_dangerous
-            # Give it a chance, about 1 in chances,
-            # of doing something dangerous.
-            # This also avoids loops of not doing anything.
-            if Math.random() > too_dangerous / (@chances*danger)
-              continue
-            else
-              @location.value(at, 0)
-              if Trace.on
-                Trace.green "Re-clasifying area #{at.x},#{at.y} as OK."
+          continue if @dangerous(at)
         unless @hq or @allowed_hqless(command)
           commands.revert()
           break
         unless @executes(group, command)
           commands.revert()
           break
-        if command.order is FORDER_MANUFACTURE
-          @resurrects[command.name] = [group, command]
+        if command.order is FORDER_MANUFACTURE and
+        name = command.name
+          @resurrects[name] = [group, command]
     # Stalled units are consider of lowest rank...
     @stalled_units() # have any stalled unit try to execute their command.

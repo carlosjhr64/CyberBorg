@@ -16602,7 +16602,7 @@ Gotcha = (function() {
       Trace.out("\t" + (droid.namexy()) + "\tID:" + droid.id + "\tCost: " + droid.cost);
     }
     position = this.ai.location.position;
-    too_dangerous = this.ai.too_dangerous();
+    too_dangerous = this.ai.too_dangerous_level();
     _results = [];
     for (coordinate in position) {
       danger_level = position[coordinate];
@@ -16671,9 +16671,15 @@ Gotcha = (function() {
   };
 
   Gotcha.prototype.working = function(droid, command) {
-    var order;
+    var at, order;
     if (command == null) {
       command = droid.command;
+    }
+    if (at = command.at) {
+      if (this.ai.dangerous(at)) {
+        GROUPS.find(droid).layoffs(command);
+        return;
+      }
     }
     if (droid.executes(command)) {
       order = command.order;
@@ -16798,9 +16804,11 @@ Ai = (function() {
     this.repair_available = false;
     this.chances = 12.0;
     this.power_type_factor = 1.0 / 16.0;
+    this.too_dangerous = this.too_dangerous_level();
   }
 
   Ai.prototype.update = function(event) {
+    this.too_dangerous = this.too_dangerous_level();
     this.power = CyberBorg.get_power();
     GROUPS.update();
     if (Trace.on) {
@@ -16870,7 +16878,7 @@ Ai = (function() {
     this.location.value(at, cost);
     if (Trace.on) {
       Trace.out("Cummulative costs at " + at.x + "," + at.y + " are $" + cost + ".");
-      if (cost > this.too_dangerous()) {
+      if (cost > this.too_dangerous) {
         return Trace.green("Area is now set as dangerous!");
       }
     }
@@ -16879,6 +16887,9 @@ Ai = (function() {
   Ai.prototype.destroyed = function(object, group) {
     var at, _ref;
     if (object.player === me) {
+      if (this.resurrects[object.name] != null) {
+        this.dead.push(object);
+      }
       switch (object.type) {
         case STRUCTURE:
           this.location_costs(object);
@@ -16888,7 +16899,6 @@ Ai = (function() {
           }
           break;
         case DROID:
-          this.dead.push(object);
           if (at = (_ref = object.command) != null ? _ref.at : void 0) {
             return this.location_costs(at, object.cost);
           }
@@ -16905,15 +16915,13 @@ Ai = (function() {
   };
 
   Ai.prototype.helping = function(unit) {
-    var at, cid, command, danger_level, employed, group, help_wanted, _i, _len;
+    var at, cid, command, employed, group, help_wanted, _i, _len;
     for (_i = 0, _len = GROUPS.length; _i < _len; _i++) {
       group = GROUPS[_i];
       command = group.commands.current();
       if (at = command != null ? command.at : void 0) {
-        if (danger_level = this.location.value(at)) {
-          if (danger_level > this.too_dangerous()) {
-            continue;
-          }
+        if (this.dangerous(at)) {
+          continue;
         }
       }
       cid = command != null ? command.cid : void 0;
@@ -17058,21 +17066,22 @@ Ai = (function() {
   };
 
   Ai.prototype.resurrection = function() {
-    var dead, droid, group_command, _i, _len, _ref;
+    var dead, group_command, name, object, _i, _len, _ref;
     dead = [];
     _ref = this.dead;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      droid = _ref[_i];
-      if (group_command = this.resurrects[droid.name]) {
+      object = _ref[_i];
+      name = object.name;
+      if (group_command = this.resurrects[name]) {
         if (this.executes.apply(this, group_command)) {
           if (Trace.on) {
             Trace.blue("Resurrection!");
           }
         } else {
-          dead.push(droid);
+          dead.push(object);
         }
       } else {
-        Trace.red("Error: no resurrection command for " + droid.name + ".");
+        Trace.red("Error: no resurrection command for " + name + ".");
       }
     }
     return this.dead = dead;
@@ -17117,11 +17126,27 @@ Ai = (function() {
     return _results;
   };
 
+  Ai.prototype.dangerous = function(at) {
+    var danger;
+    if (danger = this.location.value(at)) {
+      if (danger > this.too_dangerous) {
+        if (Math.random() > this.too_dangerous / (this.chances * danger)) {
+          return true;
+        } else {
+          this.location.value(at, 0);
+          if (Trace.on) {
+            Trace.green("Re-classifying area " + at.x + "," + at.y + " as OK.");
+          }
+        }
+      }
+    }
+    return false;
+  };
+
   Ai.prototype.group_executions = function(event) {
-    var at, command, commands, danger, group, name, too_dangerous, _i, _len;
+    var at, command, commands, group, name, _i, _len;
     this.resurrection();
     this.routing();
-    too_dangerous = this.too_dangerous();
     for (_i = 0, _len = GROUPS.length; _i < _len; _i++) {
       group = GROUPS[_i];
       name = group.name;
@@ -17131,16 +17156,8 @@ Ai = (function() {
       commands = group.commands;
       while (command = commands.next()) {
         if (at = command.at) {
-          danger = this.location.value(at);
-          if (danger > too_dangerous) {
-            if (Math.random() > too_dangerous / (this.chances * danger)) {
-              continue;
-            } else {
-              this.location.value(at, 0);
-              if (Trace.on) {
-                Trace.green("Re-clasifying area " + at.x + "," + at.y + " as OK.");
-              }
-            }
+          if (this.dangerous(at)) {
+            continue;
           }
         }
         if (!(this.hq || this.allowed_hqless(command))) {
@@ -17151,8 +17168,8 @@ Ai = (function() {
           commands.revert();
           break;
         }
-        if (command.order === FORDER_MANUFACTURE) {
-          this.resurrects[command.name] = [group, command];
+        if (command.order === FORDER_MANUFACTURE && (name = command.name)) {
+          this.resurrects[name] = [group, command];
         }
       }
     }
@@ -17162,6 +17179,244 @@ Ai = (function() {
   return Ai;
 
 })();
+
+BASE = 'Base';
+
+FACTORIES = 'Factories';
+
+LABS = 'Labs';
+
+DERRICKS = 'Derricks';
+
+SCOUTS = 'Scouts';
+
+Ai.prototype.base_group = function(name) {
+  var base, _i, _len, _ref;
+  _ref = [BASE, FACTORIES, LABS];
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    base = _ref[_i];
+    if (name === base) {
+      return true;
+    }
+  }
+  return false;
+};
+
+Ai.prototype.allowed_hqless = function(command) {
+  switch (command.order) {
+    case FORDER_MANUFACTURE:
+      if (command.droid_type === DROID_CONSTRUCT) {
+        return true;
+      }
+      break;
+    case LORDER_RESEARCH:
+      if (!/Defense/.test(command.research)) {
+        return true;
+      }
+      break;
+    default:
+      return true;
+  }
+  return false;
+};
+
+Ai.prototype.too_dangerous_level = function() {
+  var m, m1, m2, threshold;
+  threshold = this.power_type_factor * powerType;
+  m1 = 1.0 * GROUPS.count(function(object) {
+    return object.stattype === RESOURCE_EXTRACTOR;
+  });
+  m2 = 4.0 * GROUPS.count(function(object) {
+    return object.stattype === POWER_GEN;
+  });
+  m = m1;
+  if (m1 > m2) {
+    m = m2;
+  }
+  if (m < 1.0) {
+    m = 0.5;
+  }
+  threshold = m * threshold;
+  return threshold;
+};
+
+Ai.prototype.script = function() {
+  var commands;
+  commands = new Command();
+  GROUPS.add_group(BASE, commands.base_commands());
+  GROUPS.add_group(FACTORIES, commands.factory_commands());
+  GROUPS.add_group(LABS, commands.lab_commands());
+  GROUPS.add_group(DERRICKS, commands.derricks_commands());
+  return GROUPS.add_group(SCOUTS, commands.scouts_commands());
+};
+
+Command.prototype.trucker = function(obj) {
+  if (obj == null) {
+    obj = {};
+  }
+  obj.like = /Truck$/;
+  return obj;
+};
+
+Command.prototype.scouter = function(obj) {
+  if (obj == null) {
+    obj = {};
+  }
+  obj.like = /^Fastgun$/;
+  return obj;
+};
+
+Command.prototype.fastgun = function(obj) {
+  if (obj == null) {
+    obj = {};
+  }
+  obj.name = "Fastgun";
+  obj.turret = ["MG2Mk1", "MG1Mk1"];
+  obj.body = ["Body4ABT", "Body1REC"];
+  obj.propulsion = ["hover01", "wheeled01"];
+  obj.cost = Command.min_cost_of(obj);
+  obj.droid_type = DROID_WEAPON;
+  return obj;
+};
+
+Command.prototype.with_three_trucks = function(obj) {
+  return this.with_help(this.on_budget(this.three(this.trucker(this.maintain(obj)))));
+};
+
+Command.prototype.with_two_trucks = function(obj) {
+  return this.with_help(this.on_budget(this.two(this.trucker(this.maintain(obj)))));
+};
+
+Command.prototype.with_one_truck = function(obj) {
+  return this.on_budget(this.one(this.trucker(this.maintains(obj))));
+};
+
+Command.prototype.base_commands = function() {
+  var command, commands, energy_build, energy_cost, factory_build, factory_cost, generator_build, generator_cost, hq_build, hq_cost, last, max_savings, more, penultima, research_build, research_cost, savings, _i, _j, _k, _len, _len1, _len2;
+  this.limit = 3;
+  generator_cost = this.power_generator().cost;
+  energy_cost = generator_cost + 4 * this.oil_derrick().cost;
+  factory_cost = this.light_factory().cost;
+  research_cost = this.research_facility().cost;
+  hq_cost = this.command_center().cost;
+  savings = energy_cost + factory_cost + research_cost + hq_cost + generator_cost;
+  energy_build = [this.with_two_trucks(this.power_generator(this.at(this.x + this.s * this.dx, this.y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[0].x, this.resources[0].y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[1].x, this.resources[1].y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[2].x, this.resources[2].y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[3].x, this.resources[3].y)))];
+  factory_build = [this.with_three_trucks(this.light_factory(this.at(this.x - this.s * this.dx, this.y - this.s * this.dy)))];
+  research_build = [this.with_three_trucks(this.research_facility(this.at(this.x, this.y - this.s * this.dy)))];
+  hq_build = [this.with_three_trucks(this.command_center(this.at(this.x + this.s * this.dx, this.y - this.s * this.dy)))];
+  generator_build = [this.with_two_trucks(this.power_generator(this.at(this.x, this.y)))];
+  commands = null;
+  if (this.power <= energy_cost + factory_cost) {
+    commands = energy_build.concat(factory_build).concat(research_build).concat(hq_build);
+  } else if (this.power <= energy_cost + factory_cost + research_cost) {
+    commands = factory_build.concat(energy_build).concat(research_build).concat(hq_build);
+  } else if (this.power <= energy_cost + factory_cost + research_cost + hq_cost) {
+    commands = factory_build.concat(research_build).concat(energy_build).concat(hq_build);
+  } else {
+    commands = factory_build.concat(research_build).concat(hq_build).concat(energy_build);
+  }
+  commands = commands.concat(generator_build);
+  for (_i = 0, _len = commands.length; _i < _len; _i++) {
+    command = commands[_i];
+    savings -= command.cost;
+    command.savings = savings;
+  }
+  max_savings = 0;
+  for (_j = 0, _len1 = commands.length; _j < _len1; _j++) {
+    command = commands[_j];
+    if (command.structure === "A0ResourceExtractor") {
+      savings = command.savings;
+      if (savings > max_savings) {
+        max_savings = savings;
+      }
+    }
+  }
+  for (_k = 0, _len2 = commands.length; _k < _len2; _k++) {
+    command = commands[_k];
+    if (command.structure === "A0ResourceExtractor") {
+      command.savings = max_savings;
+    }
+  }
+  penultima = commands.penultima();
+  last = commands.last();
+  last.savings = penultima.savings - last.cost;
+  this.savings = 0;
+  this.limit = 1;
+  more = [this.pass(this.on_plenty(this.one(this.trucker()))), this.with_one_truck(this.research_facility(this.at(this.x - this.s * this.dx, this.y))), this.with_one_truck(this.power_generator(this.at(this.x - this.s * this.dx, this.y + this.s * this.dy))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x, this.y + this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x + this.s * this.dx, this.y + this.s * this.dy)))];
+  commands = commands.concat(more);
+  if (this.horizontal) {
+    more = [this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y + this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x + 2 * this.s * this.dx, this.y))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y - this.s * this.dy)))];
+  } else {
+    more = [this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + this.s * this.dx, this.y + 2 * this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x, this.y + 2 * this.s * this.dy))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x - this.s * this.dx, this.y + 2 * this.s * this.dy)))];
+  }
+  commands = commands.concat(more);
+  return WZArray.bless(commands);
+};
+
+Command.prototype.factory_commands = function() {
+  var commands, fastgun, truck;
+  this.limit = 1;
+  this.savings = 0;
+  truck = this.on_budget(this.manufacture(this.wheels(this.viper(this.truck()))));
+  fastgun = this.on_budget(this.manufacture(this.fastgun()));
+  commands = [];
+  commands.push(truck);
+  4..times(function() {
+    return commands.push(fastgun);
+  });
+  commands.push(truck);
+  return WZArray.bless(commands);
+};
+
+Command.prototype.now_with_truck = function(obj) {
+  return this.immediately(this.one(this.trucker(this.maintains(obj))));
+};
+
+Command.prototype.derricks_commands = function() {
+  var commands, derrick, _i, _len, _ref;
+  this.limit = 3;
+  this.savings = 0;
+  commands = WZArray.bless([]);
+  _ref = this.resources;
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    derrick = _ref[_i];
+    commands.push(this.now_with_truck(this.oil_derrick(this.at(derrick.x, derrick.y))));
+  }
+  Scouter.bless(commands);
+  commands.mod = 12;
+  commands.offset = 0;
+  4..times(function() {
+    return commands.next();
+  });
+  return commands;
+};
+
+Command.prototype.scouts_commands = function() {
+  var commands, derrick, _i, _len, _ref;
+  this.limit = 12;
+  this.savings = 0;
+  commands = WZArray.bless([]);
+  _ref = this.resources;
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    derrick = _ref[_i];
+    commands.push(this.immediately(this.one(this.scouter(this.scouts(this.at(derrick.x, derrick.y))))));
+  }
+  Scouter.bless(commands);
+  commands.mod = 12;
+  commands.offset = 0;
+  3..times(function() {
+    return commands.next();
+  });
+  return commands;
+};
+
+Command.prototype.lab_commands = function() {
+  var commands;
+  this.limit = 5;
+  this.savings = 0;
+  commands = [this.pursue('R-Wpn-MG1Mk1'), this.pursue('R-Wpn-MG2Mk1'), this.pursue('R-Vehicle-Prop-Hover'), this.pursue('R-Vehicle-Body04'), this.pursue('R-Struc-PowerModuleMk1'), this.pursue('R-Wpn-MG3Mk1'), this.pursue('R-Struc-RepairFacility'), this.pursue('R-Defense-Tower01'), this.pursue('R-Defense-WallTower02'), this.pursue('R-Defense-AASite-QuadMg1'), this.pursue('R-Vehicle-Prop-VTOL'), this.pursue('R-Struc-VTOLFactory'), this.pursue('R-Wpn-Bomb01')];
+  return WZArray.bless(commands);
+};
 
 /*
  Here I have here listed all of the events documented by
@@ -17374,241 +17629,3 @@ eventVideoDone = () ->
   AI.events(obj)
 */
 
-
-BASE = 'Base';
-
-FACTORIES = 'Factories';
-
-LABS = 'Labs';
-
-DERRICKS = 'Derricks';
-
-SCOUTS = 'Scouts';
-
-Ai.prototype.base_group = function(name) {
-  var base, _i, _len, _ref;
-  _ref = [BASE, FACTORIES, LABS];
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    base = _ref[_i];
-    if (name === base) {
-      return true;
-    }
-  }
-  return false;
-};
-
-Ai.prototype.allowed_hqless = function(command) {
-  switch (command.order) {
-    case FORDER_MANUFACTURE:
-      if (command.droid_type === DROID_CONSTRUCT) {
-        return true;
-      }
-      break;
-    case LORDER_RESEARCH:
-      if (!/Defense/.test(command.research)) {
-        return true;
-      }
-      break;
-    default:
-      return true;
-  }
-  return false;
-};
-
-Ai.prototype.too_dangerous = function() {
-  var m, m1, m2, threshold;
-  threshold = this.power_type_factor * powerType;
-  m1 = 1.0 * GROUPS.count(function(object) {
-    return object.stattype === RESOURCE_EXTRACTOR;
-  });
-  m2 = 4.0 * GROUPS.count(function(object) {
-    return object.stattype === POWER_GEN;
-  });
-  m = m1;
-  if (m1 > m2) {
-    m = m2;
-  }
-  if (m < 1.0) {
-    m = 0.5;
-  }
-  threshold = m * threshold;
-  return threshold;
-};
-
-Ai.prototype.script = function() {
-  var commands;
-  commands = new Command();
-  GROUPS.add_group(BASE, commands.base_commands());
-  GROUPS.add_group(FACTORIES, commands.factory_commands());
-  GROUPS.add_group(LABS, commands.lab_commands());
-  GROUPS.add_group(DERRICKS, commands.derricks_commands());
-  return GROUPS.add_group(SCOUTS, commands.scouts_commands());
-};
-
-Command.prototype.trucker = function(obj) {
-  if (obj == null) {
-    obj = {};
-  }
-  obj.like = /Truck$/;
-  return obj;
-};
-
-Command.prototype.scouter = function(obj) {
-  if (obj == null) {
-    obj = {};
-  }
-  obj.like = /^Fastgun$/;
-  return obj;
-};
-
-Command.prototype.fastgun = function(obj) {
-  if (obj == null) {
-    obj = {};
-  }
-  obj.name = "Fastgun";
-  obj.turret = ["MG2Mk1", "MG1Mk1"];
-  obj.body = ["Body4ABT", "Body1REC"];
-  obj.propulsion = ["hover01", "wheeled01"];
-  obj.cost = Command.min_cost_of(obj);
-  obj.droid_type = DROID_WEAPON;
-  return obj;
-};
-
-Command.prototype.with_three_trucks = function(obj) {
-  return this.with_help(this.on_budget(this.three(this.trucker(this.maintain(obj)))));
-};
-
-Command.prototype.with_two_trucks = function(obj) {
-  return this.with_help(this.on_budget(this.two(this.trucker(this.maintain(obj)))));
-};
-
-Command.prototype.with_one_truck = function(obj) {
-  return this.on_budget(this.one(this.trucker(this.maintains(obj))));
-};
-
-Command.prototype.base_commands = function() {
-  var command, commands, energy_build, energy_cost, factory_build, factory_cost, generator_build, generator_cost, hq_build, hq_cost, last, max_savings, more, penultima, research_build, research_cost, savings, _i, _j, _k, _len, _len1, _len2;
-  this.limit = 3;
-  generator_cost = this.power_generator().cost;
-  energy_cost = generator_cost + 4 * this.oil_derrick().cost;
-  factory_cost = this.light_factory().cost;
-  research_cost = this.research_facility().cost;
-  hq_cost = this.command_center().cost;
-  savings = energy_cost + factory_cost + research_cost + hq_cost + generator_cost;
-  energy_build = [this.with_two_trucks(this.power_generator(this.at(this.x + this.s * this.dx, this.y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[0].x, this.resources[0].y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[1].x, this.resources[1].y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[2].x, this.resources[2].y))), this.with_two_trucks(this.oil_derrick(this.at(this.resources[3].x, this.resources[3].y)))];
-  factory_build = [this.with_three_trucks(this.light_factory(this.at(this.x - this.s * this.dx, this.y - this.s * this.dy)))];
-  research_build = [this.with_three_trucks(this.research_facility(this.at(this.x, this.y - this.s * this.dy)))];
-  hq_build = [this.with_three_trucks(this.command_center(this.at(this.x + this.s * this.dx, this.y - this.s * this.dy)))];
-  generator_build = [this.with_two_trucks(this.power_generator(this.at(this.x, this.y)))];
-  commands = null;
-  if (this.power <= energy_cost + factory_cost) {
-    commands = energy_build.concat(factory_build).concat(research_build).concat(hq_build);
-  } else if (this.power <= energy_cost + factory_cost + research_cost) {
-    commands = factory_build.concat(energy_build).concat(research_build).concat(hq_build);
-  } else if (this.power <= energy_cost + factory_cost + research_cost + hq_cost) {
-    commands = factory_build.concat(research_build).concat(energy_build).concat(hq_build);
-  } else {
-    commands = factory_build.concat(research_build).concat(hq_build).concat(energy_build);
-  }
-  commands = commands.concat(generator_build);
-  for (_i = 0, _len = commands.length; _i < _len; _i++) {
-    command = commands[_i];
-    savings -= command.cost;
-    command.savings = savings;
-  }
-  max_savings = 0;
-  for (_j = 0, _len1 = commands.length; _j < _len1; _j++) {
-    command = commands[_j];
-    if (command.structure === "A0ResourceExtractor") {
-      savings = command.savings;
-      if (savings > max_savings) {
-        max_savings = savings;
-      }
-    }
-  }
-  for (_k = 0, _len2 = commands.length; _k < _len2; _k++) {
-    command = commands[_k];
-    if (command.structure === "A0ResourceExtractor") {
-      command.savings = max_savings;
-    }
-  }
-  penultima = commands.penultima();
-  last = commands.last();
-  last.savings = penultima.savings - last.cost;
-  this.savings = 0;
-  this.limit = 1;
-  more = [this.pass(this.on_plenty(this.one(this.trucker()))), this.with_one_truck(this.research_facility(this.at(this.x - this.s * this.dx, this.y))), this.with_one_truck(this.power_generator(this.at(this.x - this.s * this.dx, this.y + this.s * this.dy))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x, this.y + this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x + this.s * this.dx, this.y + this.s * this.dy)))];
-  commands = commands.concat(more);
-  if (this.horizontal) {
-    more = [this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y + this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x + 2 * this.s * this.dx, this.y))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y - this.s * this.dy)))];
-  } else {
-    more = [this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + this.s * this.dx, this.y + 2 * this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x, this.y + 2 * this.s * this.dy))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x - this.s * this.dx, this.y + 2 * this.s * this.dy)))];
-  }
-  commands = commands.concat(more);
-  return WZArray.bless(commands);
-};
-
-Command.prototype.factory_commands = function() {
-  var commands, fastgun, truck;
-  this.limit = 1;
-  this.savings = 0;
-  truck = this.on_budget(this.manufacture(this.wheels(this.viper(this.truck()))));
-  fastgun = this.on_budget(this.manufacture(this.fastgun()));
-  commands = [];
-  commands.push(truck);
-  4..times(function() {
-    return commands.push(fastgun);
-  });
-  commands.push(truck);
-  return WZArray.bless(commands);
-};
-
-Command.prototype.now_with_truck = function(obj) {
-  return this.immediately(this.one(this.trucker(this.maintains(obj))));
-};
-
-Command.prototype.derricks_commands = function() {
-  var commands, derrick, _i, _len, _ref;
-  this.limit = 3;
-  this.savings = 0;
-  commands = WZArray.bless([]);
-  _ref = this.resources;
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    derrick = _ref[_i];
-    commands.push(this.now_with_truck(this.oil_derrick(this.at(derrick.x, derrick.y))));
-  }
-  Scouter.bless(commands);
-  commands.mod = 12;
-  commands.offset = 0;
-  4..times(function() {
-    return commands.next();
-  });
-  return commands;
-};
-
-Command.prototype.scouts_commands = function() {
-  var commands, derrick, _i, _len, _ref;
-  this.limit = 12;
-  this.savings = 0;
-  commands = WZArray.bless([]);
-  _ref = this.resources;
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    derrick = _ref[_i];
-    commands.push(this.immediately(this.one(this.scouter(this.scouts(this.at(derrick.x, derrick.y))))));
-  }
-  Scouter.bless(commands);
-  commands.mod = 12;
-  commands.offset = 0;
-  3..times(function() {
-    return commands.next();
-  });
-  return commands;
-};
-
-Command.prototype.lab_commands = function() {
-  var commands;
-  this.limit = 5;
-  this.savings = 0;
-  commands = [this.pursue('R-Wpn-MG1Mk1'), this.pursue('R-Wpn-MG2Mk1'), this.pursue('R-Vehicle-Prop-Hover'), this.pursue('R-Vehicle-Body04'), this.pursue('R-Struc-PowerModuleMk1'), this.pursue('R-Wpn-MG3Mk1'), this.pursue('R-Struc-RepairFacility'), this.pursue('R-Defense-Tower01'), this.pursue('R-Defense-WallTower02'), this.pursue('R-Defense-AASite-QuadMg1'), this.pursue('R-Vehicle-Prop-VTOL'), this.pursue('R-Struc-VTOLFactory'), this.pursue('R-Wpn-Bomb01')];
-  return WZArray.bless(commands);
-};

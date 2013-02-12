@@ -12,7 +12,7 @@ class Gotcha
     if droid = event.droid
       Trace.out "\t#{droid.namexy()}\tID:#{droid.id}\tCost: #{droid.cost}"
     position = @ai.location.position
-    too_dangerous = @ai.too_dangerous()
+    too_dangerous = @ai.too_dangerous_level()
     for coordinate of position
       danger_level = position[coordinate]
       if danger_level > too_dangerous
@@ -58,6 +58,10 @@ class Gotcha
 
   # Re-issue command
   working: (droid, command = droid.command) ->
+    if at = command.at
+      if @ai.dangerous(at)
+        GROUPS.find(droid).layoffs(command)
+        return
     if droid.executes(command)
       order = command.order
       if Trace.on

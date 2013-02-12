@@ -35,7 +35,7 @@ Ai::allowed_hqless = (command) ->
   return false
 
 # Unacceptable losses threshold for an area.
-Ai::too_dangerous = () ->
+Ai::too_dangerous_level = () ->
   threshold = @power_type_factor * powerType
   m1 = 1.0 * GROUPS.count((object) -> object.stattype is RESOURCE_EXTRACTOR)
   m2 = 4.0 * GROUPS.count((object) -> object.stattype is POWER_GEN)
