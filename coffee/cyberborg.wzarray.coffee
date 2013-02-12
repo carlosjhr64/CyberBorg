@@ -254,6 +254,14 @@ class Groups
     for object in Groups.RESERVE
       object.update() if object.game_time < gameTime
 
+  exist: (test_of) ->
+    for group in @
+      for object in group.list
+        return true if test_of(object)
+    for object in Groups.RESERVE
+      return true if test_of(object)
+    false
+
   count: (test_of) ->
     n = 0
     for group in @

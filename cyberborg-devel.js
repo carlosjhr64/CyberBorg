@@ -645,6 +645,28 @@ Groups = (function() {
     return _results;
   };
 
+  Groups.prototype.exist = function(test_of) {
+    var group, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      group = this[_i];
+      _ref = group.list;
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        object = _ref[_j];
+        if (test_of(object)) {
+          return true;
+        }
+      }
+    }
+    _ref1 = Groups.RESERVE;
+    for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+      object = _ref1[_k];
+      if (test_of(object)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   Groups.prototype.count = function(test_of) {
     var group, n, object, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
     n = 0;
