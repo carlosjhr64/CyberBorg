@@ -16677,7 +16677,7 @@ Gotcha = (function() {
     }
     if (at = command.at) {
       if (this.ai.dangerous(at)) {
-        GROUPS.find(droid).layoffs(command);
+        GROUPS.find(droid).group.layoffs(command);
         return;
       }
     }
