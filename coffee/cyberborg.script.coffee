@@ -139,7 +139,7 @@ Command::base_commands = () ->
   ]
   # And finally one more generator
   generator_build = [
-    @with_two_trucks @power_generator @at @x, @y
+    @with_one_truck @power_generator @at @x, @y
   ]
   # The optimal build sequence depends on how much power we have to start
   commands = null
