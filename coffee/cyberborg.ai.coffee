@@ -355,8 +355,9 @@ class Ai
           if order is FORDER_MANUFACTURE
             @resurrects[name] = [group, command]
           else if order is DORDER_MAINTAIN
-            if at = Location.picked(command.at)
-              name = WZObject.namexy(name, at.x, at.y)
-              @resurrects[name] = [group, command]
+            at = command.at
+            pos = at unless pos = Location.picked(at)
+            name = WZObject.namexy(name, pos.x, pos.y)
+            @resurrects[name] = [group, command]
     # Stalled units are consider of lowest rank...
     @stalled_units() # have any stalled unit try to execute their command.

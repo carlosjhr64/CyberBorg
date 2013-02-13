@@ -17178,7 +17178,7 @@ Ai = (function() {
   };
 
   Ai.prototype.group_executions = function(event) {
-    var at, command, commands, group, name, order, _i, _len;
+    var at, command, commands, group, name, order, pos, _i, _len;
     this.resurrection();
     this.routing();
     for (_i = 0, _len = GROUPS.length; _i < _len; _i++) {
@@ -17205,10 +17205,12 @@ Ai = (function() {
           if (order === FORDER_MANUFACTURE) {
             this.resurrects[name] = [group, command];
           } else if (order === DORDER_MAINTAIN) {
-            if (at = Location.picked(command.at)) {
-              name = WZObject.namexy(name, at.x, at.y);
-              this.resurrects[name] = [group, command];
+            at = command.at;
+            if (!(pos = Location.picked(at))) {
+              pos = at;
             }
+            name = WZObject.namexy(name, pos.x, pos.y);
+            this.resurrects[name] = [group, command];
           }
         }
       }
