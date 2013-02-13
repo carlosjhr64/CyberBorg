@@ -5,10 +5,15 @@ Check the commands for errors.  :-??
 Dericks/Scouts group should push forward once it's
 territory has been secured.
 
-Find a way to estimate costs.
-makeTemplate currently returns null if droid is not available to build.
 
 DONE:
+
+2012.02.13
+
+Find a way to estimate costs.
+makeTemplate currently returns null if droid is not available to build.
+	Using ini files to create the *data* file.
+	I'm able to query it for most any information about game objects.
 
 2012.01.30
 

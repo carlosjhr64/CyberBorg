@@ -58,10 +58,9 @@ class Gotcha
 
   # Re-issue command
   working: (droid, command = droid.command) ->
-    if at = command.at
-      if @ai.dangerous(at)
-        GROUPS.finds(droid).group.layoffs(command)
-        return
+    if @ai.dangerous(command)
+      GROUPS.finds(droid).group.layoffs(command)
+      return
     if droid.executes(command)
       order = command.order
       if Trace.on

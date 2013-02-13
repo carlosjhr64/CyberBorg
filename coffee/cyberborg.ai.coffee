@@ -108,14 +108,16 @@ class Ai
     # The object has been removed from the group already.
     # We're given object and group as reference.
     if object.player is me
-      if @resurrects[object.name]?
-        @dead.push(object)
       switch object.type
         when STRUCTURE
+          if @resurrects[object.namexy()]?
+            @dead.push(object)
           @location_costs(object)
           switch object.stattype
             when HQ then @hq = false
         when DROID
+          if @resurrects[object.name]?
+            @dead.push(object)
           if at = object.command?.at
             @location_costs(at, object.cost)
 
@@ -138,11 +140,10 @@ class Ai
   helping: (unit) ->
     for group in GROUPS
       command = group.commands.current()
-      if at = command?.at
-        continue if @dangerous(at)
       cid = command?.cid
       # So for each ongoing job, check if it'll take the droid.
       if cid and (help_wanted = command.help) and command.like.test(unit.name)
+        continue if @dangerous(command)
         employed = group.list.counts_in_cid(cid)
         if employed < help_wanted and unit.executes(command)
           unit.command = command
@@ -283,7 +284,10 @@ class Ai
     dead = []
     for object in @dead
       name = object.name
+      if object.type is STRUCTURE
+        name = WZObject.namexy(name, object.x, object.y)
       if group_command = @resurrects[name]
+        continue if @dangerous(group_command.last())
         if @executes(group_command...)
           Trace.blue "Resurrection!" if Trace.on
         else
@@ -304,8 +308,10 @@ class Ai
         if orderDroid(droid, DORDER_RECYCLE)
           Trace.blue "#{droid.namexy()} to recycle." if Trace.on
 
-  dangerous: (at) ->
+  dangerous: (command) ->
     # Enemy has made this location too expensive, so skip it?
+    unless at = command.at
+      return false
     if danger = @location.value(at)
       if danger > @too_dangerous
         # Give it a chance, about 1 in chances,
@@ -337,16 +343,20 @@ class Ai
       continue unless @hq or @base_group(name)
       commands = group.commands
       while command = commands.next()
-        if at = command.at
-          continue if @dangerous(at)
+        continue if @dangerous(command)
         unless @hq or @allowed_hqless(command)
           commands.revert()
           break
         unless @executes(group, command)
           commands.revert()
           break
-        if command.order is FORDER_MANUFACTURE and
-        name = command.name
-          @resurrects[name] = [group, command]
+        if name = command.name
+          order = command.order
+          if order is FORDER_MANUFACTURE
+            @resurrects[name] = [group, command]
+          else if order is DORDER_MAINTAIN
+            if at = Location.picked(command.at)
+              name = WZObject.namexy(name, at.x, at.y)
+              @resurrects[name] = [group, command]
     # Stalled units are consider of lowest rank...
     @stalled_units() # have any stalled unit try to execute their command.

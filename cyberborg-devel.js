@@ -125,8 +125,12 @@ WZObject = (function() {
     }
   };
 
+  WZObject.namexy = function(name, x, y) {
+    return "" + name + ":" + x + "," + y;
+  };
+
   WZObject.prototype.namexy = function() {
-    return "" + this.name + "(" + this.id + ":" + this.x + "," + this.y + ")";
+    return WZObject.namexy(this.name, this.x, this.y);
   };
 
   WZObject.prototype.position = function() {
@@ -16693,15 +16697,13 @@ Gotcha = (function() {
   };
 
   Gotcha.prototype.working = function(droid, command) {
-    var at, order;
+    var order;
     if (command == null) {
       command = droid.command;
     }
-    if (at = command.at) {
-      if (this.ai.dangerous(at)) {
-        GROUPS.finds(droid).group.layoffs(command);
-        return;
-      }
+    if (this.ai.dangerous(command)) {
+      GROUPS.finds(droid).group.layoffs(command);
+      return;
     }
     if (droid.executes(command)) {
       order = command.order;
@@ -16909,11 +16911,11 @@ Ai = (function() {
   Ai.prototype.destroyed = function(object, group) {
     var at, _ref;
     if (object.player === me) {
-      if (this.resurrects[object.name] != null) {
-        this.dead.push(object);
-      }
       switch (object.type) {
         case STRUCTURE:
+          if (this.resurrects[object.namexy()] != null) {
+            this.dead.push(object);
+          }
           this.location_costs(object);
           switch (object.stattype) {
             case HQ:
@@ -16921,6 +16923,9 @@ Ai = (function() {
           }
           break;
         case DROID:
+          if (this.resurrects[object.name] != null) {
+            this.dead.push(object);
+          }
           if (at = (_ref = object.command) != null ? _ref.at : void 0) {
             return this.location_costs(at, object.cost);
           }
@@ -16937,17 +16942,15 @@ Ai = (function() {
   };
 
   Ai.prototype.helping = function(unit) {
-    var at, cid, command, employed, group, help_wanted, _i, _len;
+    var cid, command, employed, group, help_wanted, _i, _len;
     for (_i = 0, _len = GROUPS.length; _i < _len; _i++) {
       group = GROUPS[_i];
       command = group.commands.current();
-      if (at = command != null ? command.at : void 0) {
-        if (this.dangerous(at)) {
-          continue;
-        }
-      }
       cid = command != null ? command.cid : void 0;
       if (cid && (help_wanted = command.help) && command.like.test(unit.name)) {
+        if (this.dangerous(command)) {
+          continue;
+        }
         employed = group.list.counts_in_cid(cid);
         if (employed < help_wanted && unit.executes(command)) {
           unit.command = command;
@@ -17094,7 +17097,13 @@ Ai = (function() {
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       object = _ref[_i];
       name = object.name;
+      if (object.type === STRUCTURE) {
+        name = WZObject.namexy(name, object.x, object.y);
+      }
       if (group_command = this.resurrects[name]) {
+        if (this.dangerous(group_command.last())) {
+          continue;
+        }
         if (this.executes.apply(this, group_command)) {
           if (Trace.on) {
             Trace.blue("Resurrection!");
@@ -17148,8 +17157,11 @@ Ai = (function() {
     return _results;
   };
 
-  Ai.prototype.dangerous = function(at) {
-    var danger;
+  Ai.prototype.dangerous = function(command) {
+    var at, danger;
+    if (!(at = command.at)) {
+      return false;
+    }
     if (danger = this.location.value(at)) {
       if (danger > this.too_dangerous) {
         if (Math.random() > this.too_dangerous / (this.chances * danger)) {
@@ -17166,7 +17178,7 @@ Ai = (function() {
   };
 
   Ai.prototype.group_executions = function(event) {
-    var at, command, commands, group, name, _i, _len;
+    var at, command, commands, group, name, order, _i, _len;
     this.resurrection();
     this.routing();
     for (_i = 0, _len = GROUPS.length; _i < _len; _i++) {
@@ -17177,10 +17189,8 @@ Ai = (function() {
       }
       commands = group.commands;
       while (command = commands.next()) {
-        if (at = command.at) {
-          if (this.dangerous(at)) {
-            continue;
-          }
+        if (this.dangerous(command)) {
+          continue;
         }
         if (!(this.hq || this.allowed_hqless(command))) {
           commands.revert();
@@ -17190,8 +17200,16 @@ Ai = (function() {
           commands.revert();
           break;
         }
-        if (command.order === FORDER_MANUFACTURE && (name = command.name)) {
-          this.resurrects[name] = [group, command];
+        if (name = command.name) {
+          order = command.order;
+          if (order === FORDER_MANUFACTURE) {
+            this.resurrects[name] = [group, command];
+          } else if (order === DORDER_MAINTAIN) {
+            if (at = Location.picked(command.at)) {
+              name = WZObject.namexy(name, at.x, at.y);
+              this.resurrects[name] = [group, command];
+            }
+          }
         }
       }
     }

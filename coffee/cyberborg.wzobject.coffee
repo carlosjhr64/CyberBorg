@@ -50,7 +50,8 @@ class WZObject
       Trace.red "Error updating #{@namexy()}, health:#{@health}%."
       Trace.red error
 
-  namexy: () -> "#{@name}(#{@id}:#{@x},#{@y})"
+  @namexy = (name, x, y) -> "#{name}:#{x},#{y}"
+  namexy: () -> WZObject.namexy(@name, @x, @y)
 
   position: () -> x: @x, y: @y
 
