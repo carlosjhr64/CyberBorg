@@ -17319,6 +17319,19 @@ Command.prototype.fastgun = function(obj) {
   return obj;
 };
 
+Command.prototype.fasttruck = function(obj) {
+  if (obj == null) {
+    obj = {};
+  }
+  obj.name = "Truck";
+  obj.turret = 'Spade1Mk1';
+  obj.body = ["Body4ABT", "Body1REC"];
+  obj.propulsion = ["hover01", "wheeled01"];
+  obj.cost = Command.min_cost_of(obj);
+  obj.droid_type = DROID_CONSTRUCT;
+  return obj;
+};
+
 Command.prototype.with_three_trucks = function(obj) {
   return this.with_help(this.on_budget(this.three(this.trucker(this.maintain(obj)))));
 };
@@ -17397,7 +17410,7 @@ Command.prototype.factory_commands = function() {
   var commands, fastgun, truck;
   this.limit = 1;
   this.savings = 0;
-  truck = this.on_budget(this.manufacture(this.wheels(this.viper(this.truck()))));
+  truck = this.on_budget(this.manufacture(this.wheels(this.viper(this.fasttruck()))));
   fastgun = this.on_budget(this.manufacture(this.fastgun()));
   commands = [];
   commands.push(truck);

@@ -94,6 +94,15 @@ Command::fastgun = (obj={}) ->
   obj.droid_type = DROID_WEAPON
   obj
 
+Command::fasttruck = (obj={}) ->
+  obj.name = "Truck"
+  obj.turret = 'Spade1Mk1'
+  obj.body = ["Body4ABT", "Body1REC"]
+  obj.propulsion = ["hover01", "wheeled01"]
+  obj.cost = Command.min_cost_of(obj)
+  obj.droid_type = DROID_CONSTRUCT
+  obj
+
 # Our first concern is our base.
 # We'll build it up and here forth react to events in the game.
 # With only two trucks (usually) to start and base group with first dibs,
@@ -214,7 +223,7 @@ Command::factory_commands = () ->
   @limit = 1 # Group size limit
   @savings = 0
   # The commands are...
-  truck = @on_budget @manufacture @wheels @viper @truck()
+  truck = @on_budget @manufacture @wheels @viper @fasttruck()
   fastgun = @on_budget @manufacture @fastgun()
   commands = []
   # ... 1 truck
