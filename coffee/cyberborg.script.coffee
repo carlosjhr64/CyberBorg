@@ -223,7 +223,7 @@ Command::factory_commands = () ->
   @limit = 1 # Group size limit
   @savings = 0
   # The commands are...
-  truck = @on_budget @manufacture @wheels @viper @fasttruck()
+  truck = @on_budget @manufacture @fasttruck()
   fastgun = @on_budget @manufacture @fastgun()
   commands = []
   # ... 1 truck

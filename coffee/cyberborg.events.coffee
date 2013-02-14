@@ -99,13 +99,16 @@ eventObjectSeen = (sensor, object) ->
     object: new WZObject(object)
   AI.events(obj)
 
-###
 eventAttacked = (victim, attacker) ->
+  found = GROUPS.finds(victim)
   obj =
     name: 'Attacked'
-    victim: new WZObject(victim)
+    victim: found.object
+    group: found.group
     attacker: new WZObject(attacker)
   AI.events(obj)
+
+###
 
 eventAttackedUnthrottled = (victim, attacker) ->
   obj =

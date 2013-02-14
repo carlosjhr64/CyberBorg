@@ -90,6 +90,12 @@ class Gotcha
       @working(droid)
     return count
 
+  @initiative = (order) ->
+    [ DORDER_ATTACK
+      DORDER_RECOVER
+      DORDER_MOVE
+    ].indexOf(order) > WZArray.NONE
+
   @routed = (order) ->
     [ 0
       DORDER_RTB
@@ -104,14 +110,14 @@ class Gotcha
       if object.command?
         order = object.order
         # Units under command not idle but acting on different orders
-        unless (order is object.dorder) or Gotcha.routed(order)
+        unless (order is object.dorder) or Gotcha.routed(order) or Gotcha.initiative(order)
           return true
       return false
     for droid in GROUPS.for_all((object) -> rogue(object))
       count += 1
       @bug_report("Rogue", droid, event) if Trace.on
       command = droid.command
-      if command?.order is 28
+      if command?.order is DORDER_SCOUT
         @working(droid, command)
       else
         order = droid.order.order_map()

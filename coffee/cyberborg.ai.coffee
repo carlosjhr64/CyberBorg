@@ -43,6 +43,8 @@ class Ai
         @destroyed(event.object, event.group)
       when 'ObjectSeen'
         @objectSeen(event.sensor, event.object, event.group)
+      when 'Attacked'
+        @attacked(event.victim, event.attacker, event.group)
       when 'Chat'
         @chat(event.sender, event.to, event.message)
       # We should catch all possibilities, but in case we missed something...
@@ -219,13 +221,17 @@ class Ai
     # Anything else?  :)
     @helping(droid)
 
+  @nearest_weapons_droids = (object) ->
+    GROUPS.for_all((obj) -> obj.droidType is DROID_WEAPON).nearest(object)[0..2]
+
   objectSeen: (sensor, object, group) ->
     # These should be short oppotunity orders...
-    if object.droidType is DROID_CONSTRUCT and
-    sensor.droidType is DROID_WEAPON
-      orderDroidObj(sensor, DORDER_ATTACK, object)
+    if object.droidType is DROID_CONSTRUCT
+      attackers = Ai.nearest_weapons_droids(object)
+      for attacker in attackers
+        orderDroidObj(attacker, DORDER_ATTACK, object)
       if Trace.on
-        Trace.blue "#{sensor.namexy()} attacks #{object.namexy()}"
+        Trace.blue "#{attackers.length} attacking seen #{object.namexy()}"
     else if object.stattype is OIL_DRUM
       orderDroidObj(sensor, DORDER_RECOVER, object)
       if Trace.on
@@ -233,6 +239,27 @@ class Ai
     else
       if Trace.on
         Trace.out "#{sensor.namexy()} spies #{object.namexy()}"
+
+
+  attacked: (victim, attacker, group) ->
+    defenders = Ai.nearest_weapons_droids(attacker)
+    for defender in Ai.nearest_weapons_droids(attacker)
+      orderDroidObj(defender, DORDER_ATTACK, attacker)
+    if victim.type is DROID
+      if first = defenders.first()
+        # Move towards nearest defender
+        x = ((first.x + victim.x)/2.0).to_i()
+        y = ((first.y + victim.y)/2.0).to_i()
+        orderDroidLoc(victim, DORDER_MOVE, x, y)
+      else
+        # Move away from attacker
+        x = victim.x
+        x = ((x - attacker.x)/2.0).to_i() + x
+        x = victim.y
+        y = ((y - attacker.y)/2.0).to_i() + y
+        orderDroidLoc(victim, DORDER_MOVE, x, y)
+    if Trace.on
+      Trace.blue "#{defenders.length} attacking #{attacker.namexy()}"
 
   has: (power) ->
     if power?
