@@ -249,18 +249,20 @@ class Ai
       # Tactic 1: Move away from attacker
       vx = victim.x
       vy = victim.y
-      x = ((vx - attacker.x)/2.0).to_i() + vx
-      y = ((vy - attacker.y)/2.0).to_i() + vy
+      ax = attacker.x
+      ay = attacker.y
+      x = ((vx - ax)/2.0).to_i() + vx
+      y = ((vy - ay)/2.0).to_i() + vy
       # If there are defenders...
       if first = defenders.first()
         # Tactic 2: Move towards nearest defender
         x2 = ((first.x + vx)/2.0).to_i()
         y2 = ((first.y + vy)/2.0).to_i()
-        # Pick the tactic that places you farthest away
-        dx = vx - x
-        dy = vy - y
-        dx2 = vx - x2
-        dy2 = vy - y2
+        # Pick the tactic that places you farthest away from attacker!
+        dx = ax - x
+        dy = ay - y
+        dx2 = ax - x2
+        dy2 = ay - y2
         if dx2*dx2+dy2*dy2 > dx*dx+dy*dy
           x = x2
           y = y2

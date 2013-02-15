@@ -17060,7 +17060,7 @@ Ai = (function() {
   };
 
   Ai.prototype.attacked = function(victim, attacker, group) {
-    var defender, defenders, dx, dx2, dy, dy2, first, vx, vy, x, x2, y, y2, _i, _len, _ref;
+    var ax, ay, defender, defenders, dx, dx2, dy, dy2, first, vx, vy, x, x2, y, y2, _i, _len, _ref;
     defenders = Ai.nearest_weapons_droids(attacker);
     _ref = Ai.nearest_weapons_droids(attacker);
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -17070,15 +17070,17 @@ Ai = (function() {
     if (victim.type === DROID) {
       vx = victim.x;
       vy = victim.y;
-      x = ((vx - attacker.x) / 2.0).to_i() + vx;
-      y = ((vy - attacker.y) / 2.0).to_i() + vy;
+      ax = attacker.x;
+      ay = attacker.y;
+      x = ((vx - ax) / 2.0).to_i() + vx;
+      y = ((vy - ay) / 2.0).to_i() + vy;
       if (first = defenders.first()) {
         x2 = ((first.x + vx) / 2.0).to_i();
         y2 = ((first.y + vy) / 2.0).to_i();
-        dx = vx - x;
-        dy = vy - y;
-        dx2 = vx - x2;
-        dy2 = vy - y2;
+        dx = ax - x;
+        dy = ay - y;
+        dx2 = ax - x2;
+        dy2 = ay - y2;
         if (dx2 * dx2 + dy2 * dy2 > dx * dx + dy * dy) {
           x = x2;
           y = y2;
