@@ -17061,6 +17061,9 @@ Ai = (function() {
 
   Ai.prototype.attacked = function(victim, attacker, group) {
     var ax, ay, defender, defenders, dx, dx2, dy, dy2, first, vx, vy, x, x2, y, y2, _i, _len, _ref;
+    if (group == null) {
+      Trace.red("" + (victim.namexy()) + " not in a group");
+    }
     defenders = Ai.nearest_weapons_droids(attacker);
     _ref = Ai.nearest_weapons_droids(attacker);
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -17636,12 +17639,18 @@ eventObjectSeen = function(sensor, object) {
 };
 
 eventAttacked = function(victim, attacker) {
-  var found, obj;
-  found = GROUPS.finds(victim);
+  var found, group, obj;
+  group = null;
+  if (found = GROUPS.finds(victim)) {
+    victim = found.object;
+    group = found.group;
+  } else {
+    victim = new WZObject(victim);
+  }
   obj = {
     name: 'Attacked',
-    victim: found.object,
-    group: found.group,
+    victim: victim,
+    group: group,
     attacker: new WZObject(attacker)
   };
   return AI.events(obj);

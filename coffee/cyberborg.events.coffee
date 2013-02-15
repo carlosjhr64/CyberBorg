@@ -100,11 +100,18 @@ eventObjectSeen = (sensor, object) ->
   AI.events(obj)
 
 eventAttacked = (victim, attacker) ->
-  found = GROUPS.finds(victim)
+  group = null
+  if found = GROUPS.finds(victim)
+    victim = found.object
+    group = found.group
+  else
+    # I presume this happens if attacked prior to being finnished.
+    # Structures are added to groups after they're built.
+    victim = new WZObject(victim)
   obj =
     name: 'Attacked'
-    victim: found.object
-    group: found.group
+    victim: victim
+    group: group
     attacker: new WZObject(attacker)
   AI.events(obj)
 

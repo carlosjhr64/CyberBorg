@@ -242,6 +242,8 @@ class Ai
 
 
   attacked: (victim, attacker, group) ->
+    unless group?
+      Trace.red "#{victim.namexy()} not in a group"
     defenders = Ai.nearest_weapons_droids(attacker)
     for defender in Ai.nearest_weapons_droids(attacker)
       orderDroidObj(defender, DORDER_ATTACK, attacker)
