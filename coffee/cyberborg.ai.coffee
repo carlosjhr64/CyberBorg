@@ -246,18 +246,25 @@ class Ai
     for defender in Ai.nearest_weapons_droids(attacker)
       orderDroidObj(defender, DORDER_ATTACK, attacker)
     if victim.type is DROID
+      # Tactic 1: Move away from attacker
+      vx = victim.x
+      vy = victim.y
+      x = ((vx - attacker.x)/2.0).to_i() + vx
+      y = ((vy - attacker.y)/2.0).to_i() + vy
+      # If there are defenders...
       if first = defenders.first()
-        # Move towards nearest defender
-        x = ((first.x + victim.x)/2.0).to_i()
-        y = ((first.y + victim.y)/2.0).to_i()
-        orderDroidLoc(victim, DORDER_MOVE, x, y)
-      else
-        # Move away from attacker
-        x = victim.x
-        x = ((x - attacker.x)/2.0).to_i() + x
-        x = victim.y
-        y = ((y - attacker.y)/2.0).to_i() + y
-        orderDroidLoc(victim, DORDER_MOVE, x, y)
+        # Tactic 2: Move towards nearest defender
+        x2 = ((first.x + vx)/2.0).to_i()
+        y2 = ((first.y + vy)/2.0).to_i()
+        # Pick the tactic that places you farthest away
+        dx = vx - x
+        dy = vy - y
+        dx2 = vx - x2
+        dy2 = vy - y2
+        if dx2*dx2+dy2*dy2 > dx*dx+dy*dy
+          x = x2
+          y = y2
+      orderDroidLoc(victim, DORDER_MOVE, x, y)
     if Trace.on
       Trace.blue "#{defenders.length} attacking #{attacker.namexy()}"
 
