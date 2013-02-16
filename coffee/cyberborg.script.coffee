@@ -42,7 +42,7 @@ Ai::too_dangerous_level = () ->
   m = m1
   m = m2 if m1 > m2
   m = 0.5 if m < 1.0
-  threshold = m*threshold
+  threshold = Math.sqrt(m)*threshold
   return threshold
 
 Ai::script = () ->

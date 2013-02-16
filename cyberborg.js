@@ -16831,12 +16831,13 @@ Ai = (function() {
     this.repair_on_damage = 50.0;
     this.repair_available = false;
     this.chances = 12.0;
-    this.power_type_factor = 1.0 / 16.0;
+    this.power_type_factor = 1.0 / 4.0;
     this.too_dangerous = this.too_dangerous_level();
   }
 
   Ai.prototype.update = function(event) {
     this.too_dangerous = this.too_dangerous_level();
+    Trace.debug("Too Dangerous Level is " + this.too_dangerous);
     this.power = CyberBorg.get_power();
     GROUPS.update();
     if (Trace.on) {

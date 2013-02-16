@@ -16831,7 +16831,7 @@ Ai = (function() {
     this.repair_on_damage = 50.0;
     this.repair_available = false;
     this.chances = 12.0;
-    this.power_type_factor = 1.0 / 16.0;
+    this.power_type_factor = 1.0 / 2.0;
     this.too_dangerous = this.too_dangerous_level();
   }
 
@@ -17332,7 +17332,7 @@ Ai.prototype.too_dangerous_level = function() {
   if (m < 1.0) {
     m = 0.5;
   }
-  threshold = m * threshold;
+  threshold = Math.sqrt(m) * threshold;
   return threshold;
 };
 
