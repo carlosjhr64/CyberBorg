@@ -16830,7 +16830,7 @@ Ai = (function() {
     this.recycle_on_damage = 50.0;
     this.repair_on_damage = 50.0;
     this.repair_available = false;
-    this.chances = 12.0;
+    this.chances = 96.0;
     this.power_type_factor = 1.0 / 2.0;
     this.too_dangerous = this.too_dangerous_level();
   }

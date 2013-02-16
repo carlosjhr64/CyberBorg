@@ -17,7 +17,7 @@ class Ai
     @repair_on_damage = 50.0
     @repair_available = false
     # Aproximately one in chances of doing something dangerous.
-    @chances = 12.0
+    @chances = 96.0 # 48.0 # 24.0 # 12.0
     @power_type_factor = 1.0/2.0 # 4.0 # 8.0 #16.0
     @too_dangerous = @too_dangerous_level()
 
