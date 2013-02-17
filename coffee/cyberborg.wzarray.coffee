@@ -85,7 +85,7 @@ class WZArray
   # Rather than override JS's filter,
   # we use the plural filtes to distinguis the two.
   # filters stays in WZArray, while filter returns Array.
-  filters: (type) -> WZArray.bless(@.filter(type))
+  filters: (type) -> WZArray.bless(@filter(type))
 
   # Some of these filters below might not be being used, but
   # why not keep them?

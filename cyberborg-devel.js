@@ -16750,7 +16750,7 @@ Gotcha = (function() {
   };
 
   Gotcha.initiative = function(order) {
-    return [DORDER_ATTACK, DORDER_RECOVER, DORDER_MOVE].indexOf(order) > WZArray.NONE;
+    return [DORDER_ATTACK, DORDER_RECOVER, DORDER_REPAIR, DORDER_MOVE].indexOf(order) > WZArray.NONE;
   };
 
   Gotcha.routed = function(order) {
@@ -17231,10 +17231,46 @@ Ai = (function() {
     return false;
   };
 
+  Ai.prototype.repairs = function() {
+    var structure, structures, truck, trucks, _results;
+    trucks = GROUPS.for_all(function(obj) {
+      return obj.droidType === DROID_CONSTRUCT;
+    });
+    trucks = trucks.filters(function(obj) {
+      return obj.health > AI.repair_on_damage;
+    });
+    structures = GROUPS.for_all(function(obj) {
+      return obj.type === STRUCTURE;
+    });
+    structures = structures.filters(function(obj) {
+      return obj.health < AI.repair_on_damage;
+    });
+    structures = structures.filters(function(obj) {
+      return AI.resurrects[obj.namexy()] != null;
+    });
+    structures.sort(function(a, b) {
+      return a.health - b.health;
+    });
+    _results = [];
+    while (structures.length && trucks.length) {
+      structure = structures.shift();
+      trucks.nearest(structure);
+      truck = trucks.shift();
+      orderDroidObj(truck, DORDER_REPAIR, structure);
+      if (Trace.on) {
+        _results.push(Trace.blue("" + (truck.namexy()) + " to repair " + (structure.namexy()) + "."));
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  };
+
   Ai.prototype.group_executions = function(event) {
     var at, command, commands, group, name, order, pos, _i, _len;
     this.resurrection();
     this.routing();
+    this.repairs();
     for (_i = 0, _len = GROUPS.length; _i < _len; _i++) {
       group = GROUPS[_i];
       name = group.name;
@@ -17572,13 +17608,17 @@ eventDestroyed = function(object) {
 };
 
 eventDroidBuilt = function(droid, structure) {
-  var found, obj;
-  found = GROUPS.finds(structure);
+  var found, group, obj;
+  group = null;
+  if (found = GROUPS.finds(structure)) {
+    structure = found.object;
+    group = found.group;
+  }
   obj = {
     name: 'DroidBuilt',
     droid: new WZObject(droid),
-    structure: found.object,
-    group: found.group
+    structure: structure,
+    group: group
   };
   return AI.events(obj);
 };
@@ -17615,24 +17655,32 @@ eventStartLevel = function() {
 };
 
 eventStructureBuilt = function(structure, droid) {
-  var found, obj;
-  found = GROUPS.finds(droid);
+  var found, group, obj;
+  group = null;
+  if (found = GROUPS.finds(droid)) {
+    droid = found.object;
+    group = found.group;
+  }
   obj = {
     name: 'StructureBuilt',
     structure: new WZObject(structure),
-    droid: found.object,
-    group: found.group
+    droid: droid,
+    group: group
   };
   return AI.events(obj);
 };
 
 eventObjectSeen = function(sensor, object) {
-  var found, obj;
-  found = GROUPS.finds(sensor);
+  var found, group, obj;
+  group = null;
+  if (found = GROUPS.finds(sensor)) {
+    sensor = found.object;
+    group = found.group;
+  }
   obj = {
     name: 'ObjectSeen',
-    sensor: found.object,
-    group: found.group,
+    sensor: sensor,
+    group: group,
     object: new WZObject(object)
   };
   return AI.events(obj);

@@ -363,6 +363,26 @@ class Ai
             Trace.green "Re-classifying area #{at.x},#{at.y} as OK."
     false
 
+  repairs: () ->
+    # Healthy trucks
+    trucks = GROUPS.for_all((obj) -> obj.droidType is DROID_CONSTRUCT)
+    trucks = trucks.filters((obj) -> obj.health > AI.repair_on_damage)
+    # Damaged resurrectable structures sorted by damage
+    structures = GROUPS.for_all((obj) -> obj.type is STRUCTURE)
+    structures = structures.filters((obj) -> obj.health < AI.repair_on_damage)
+    # Basically, the structure must have been built under DORDER_MAINTAINANCE
+    structures = structures.filters((obj) -> AI.resurrects[obj.namexy()]?)
+    structures.sort((a,b) -> a.health - b.health)
+    # Each structure repaired by the next nearest truck
+    while structures.length and trucks.length
+      structure = structures.shift()
+      # Sort trucks by distance from structure
+      trucks.nearest(structure)
+      truck = trucks.shift()
+      orderDroidObj(truck, DORDER_REPAIR, structure)
+      if Trace.on
+        Trace.blue "#{truck.namexy()} to repair #{structure.namexy()}."
+
   # This is the work horse of the AI.
   # We iterate through all the groups,
   # higher ranks first,
@@ -372,6 +392,8 @@ class Ai
     @resurrection()
     # This AI will order heavily damaged units to repair/recycle
     @routing()
+    # This AI will order trucks to repair nearby structures
+    @repairs()
     for group in GROUPS
       name = group.name
       # For the sake of fairness to the human player,

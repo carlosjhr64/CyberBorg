@@ -47,14 +47,17 @@ eventDestroyed = (object) ->
     AI.events(obj)
 
 eventDroidBuilt = (droid, structure) ->
-  found = GROUPS.finds(structure)
+  group = null
+  if found = GROUPS.finds(structure)
+    structure = found.object
+    group = found.group
   obj =
     name: 'DroidBuilt'
     # Here, droid is an new game object
     droid: new WZObject(droid)
     # But structrue is pre-existing
-    structure: found.object
-    group: found.group
+    structure: structure
+    group: group
   AI.events(obj)
 
 eventDroidIdle = (droid) ->
@@ -80,22 +83,28 @@ eventStartLevel = () ->
   AI.events(obj)
 
 eventStructureBuilt = (structure, droid) ->
-  found = GROUPS.finds(droid)
+  group = null
+  if found = GROUPS.finds(droid)
+    droid = found.object
+    group = found.group
   obj =
     name: 'StructureBuilt'
     # Here, structure is new
     structure: new WZObject(structure)
     # But droid is prexisting!!!
-    droid: found.object
-    group: found.group
+    droid: droid
+    group: group
   AI.events(obj)
 
 eventObjectSeen = (sensor, object) ->
-  found = GROUPS.finds(sensor)
+  group = null
+  if found = GROUPS.finds(sensor)
+    sensor = found.object
+    group = found.group
   obj =
     name: 'ObjectSeen'
-    sensor: found.object
-    group: found.group
+    sensor: sensor
+    group: group
     object: new WZObject(object)
   AI.events(obj)
 

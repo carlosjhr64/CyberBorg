@@ -93,6 +93,7 @@ class Gotcha
   @initiative = (order) ->
     [ DORDER_ATTACK
       DORDER_RECOVER
+      DORDER_REPAIR
       DORDER_MOVE
     ].indexOf(order) > WZArray.NONE
 
