@@ -184,40 +184,41 @@ Command::base_commands = () ->
   penultima = commands.penultima()
   last = commands.last()
   last.savings = penultima.savings - last.cost
-
-  @savings = 0
-  @limit = 1
-  more = [
-    # Wait for power levels to come back up.
-    @pass @on_plenty @one @trucker()
-    @with_one_truck @research_facility @at @x-@s*@dx, @y
-    @with_one_truck @power_generator @at @x-@s*@dx, @y+@s*@dy
-    # Wait for power levels to come back up.
-    @pass @on_plenty @none()
-    @with_one_truck @research_facility @at @x, @y+@s*@dy
-    @with_one_truck @power_generator @at @x+@s*@dx, @y+@s*@dy
-  ]
-  commands = commands.concat(more)
-
-  if @horizontal
-    more = [
-      @pass @on_plenty @none()
-      @with_one_truck @research_facility @at @x+2*@s*@dx, @y+@s*@dy
-      @with_one_truck @power_generator @at @x+2*@s*@dx, @y
-      @pass @on_plenty @none()
-      @with_one_truck @research_facility @at @x+2*@s*@dx, @y-@s*@dy
-    ]
-  else
-    more = [
-      @pass @on_plenty @none()
-      @with_one_truck @research_facility @at @x+@s*@dx, @y+2*@s*@dy
-      @with_one_truck @power_generator @at @x, @y+2*@s*@dy
-      @pass @on_plenty @none()
-      @with_one_truck @research_facility @at @x-@s*@dx, @y+2*@s*@dy
-    ]
-  commands = commands.concat(more)
   # Convert the list to wzarray
   WZArray.bless(commands)
+
+## This to be moved to extend_base_commands
+# @savings = 0
+# @limit = 1
+# more = [
+#   # Wait for power levels to come back up.
+#   @pass @on_plenty @one @trucker()
+#   @with_one_truck @research_facility @at @x-@s*@dx, @y
+#   @with_one_truck @power_generator @at @x-@s*@dx, @y+@s*@dy
+#   # Wait for power levels to come back up.
+#   @pass @on_plenty @none()
+#   @with_one_truck @research_facility @at @x, @y+@s*@dy
+#   @with_one_truck @power_generator @at @x+@s*@dx, @y+@s*@dy
+# ]
+# commands = commands.concat(more)
+
+# if @horizontal
+#   more = [
+#     @pass @on_plenty @none()
+#     @with_one_truck @research_facility @at @x+2*@s*@dx, @y+@s*@dy
+#     @with_one_truck @power_generator @at @x+2*@s*@dx, @y
+#     @pass @on_plenty @none()
+#     @with_one_truck @research_facility @at @x+2*@s*@dx, @y-@s*@dy
+#   ]
+# else
+#   more = [
+#     @pass @on_plenty @none()
+#     @with_one_truck @research_facility @at @x+@s*@dx, @y+2*@s*@dy
+#     @with_one_truck @power_generator @at @x, @y+2*@s*@dy
+#     @pass @on_plenty @none()
+#     @with_one_truck @research_facility @at @x-@s*@dx, @y+2*@s*@dy
+#   ]
+# commands = commands.concat(more)
 
 Command::factory_commands = () ->
   @limit = 1 # Group size limit
@@ -230,7 +231,12 @@ Command::factory_commands = () ->
   commands.push(truck)
   # ... 12 machine gunners
   4.times -> commands.push(fastgun)
-  commands.push(truck)
+  # We'll then build one more truck...
+  commands.push(truck.dup()) # ... as a sigl'y modifiable object...
+  # and tell the ai to promote this group by 1.
+  commands.last().promote = 1
+  # Build 8 more fastguns for a total of 12.
+  8.times -> commands.push(fastgun)
   WZArray.bless(commands)
 
 Command::now_with_truck = (obj) ->

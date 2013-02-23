@@ -27,6 +27,8 @@ class Gotcha
           keyvals.push("#{key}:{#{at.x},#{at.y}}")
         when 'execute'
           keyvals.push("execute:->")
+        when 'dup'
+          # Nothing...
         else
           keyvals.push("#{key}:#{command[key]}")
     Trace.blue(keyvals.sort().join(' '))

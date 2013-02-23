@@ -394,6 +394,7 @@ class Ai
     @routing()
     # This AI will order trucks to repair nearby structures
     @repairs()
+    promotions = []
     for group in GROUPS
       name = group.name
       # For the sake of fairness to the human player,
@@ -410,6 +411,8 @@ class Ai
         unless @executes(group, command)
           commands.revert()
           break
+        if command.promote?
+          promotions.push([name, command.promote])
         if name = command.name
           order = command.order
           if order is FORDER_MANUFACTURE
@@ -419,5 +422,8 @@ class Ai
             pos = at unless pos = Location.picked(at)
             name = WZObject.namexy(name, pos.x, pos.y)
             @resurrects[name] = [group, command]
+    for name_promote in promotions
+      if GROUPS.promote(name_promote...) and Trace.on
+        Trace.blue("#{name_promote.first()} promoted by #{name_promote.last()}.")
     # Stalled units are consider of lowest rank...
     @stalled_units() # have any stalled unit try to execute their command.

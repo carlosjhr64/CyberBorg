@@ -61,6 +61,15 @@ Trace = (function() {
 
 })();
 
+Object.prototype.dup = function() {
+  var key, object;
+  object = {};
+  for (key in this) {
+    object[key] = this[key];
+  }
+  return object;
+};
+
 Location = (function() {
   /* CONSTRUCTOR
   */
@@ -745,6 +754,33 @@ Groups = (function() {
       }
     }
     return null;
+  };
+
+  Groups.prototype.index_of = function(name) {
+    var group, index, _i, _len;
+    index = 0;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      group = this[_i];
+      if (group.name === name) {
+        return index;
+      }
+      index += 1;
+    }
+    return null;
+  };
+
+  Groups.prototype.promote = function(name, di) {
+    var index, tmp;
+    if (di == null) {
+      di = -1;
+    }
+    index = this.index_of(name);
+    if ((index != null) && (tmp = this[index + di])) {
+      this[index + di] = this[index];
+      this[index] = tmp;
+      return true;
+    }
+    return false;
   };
 
   Groups.prototype.find = function(target) {
@@ -16653,6 +16689,8 @@ Gotcha = (function() {
         case 'execute':
           keyvals.push("execute:->");
           break;
+        case 'dup':
+          break;
         default:
           keyvals.push("" + key + ":" + command[key]);
       }
@@ -17267,10 +17305,11 @@ Ai = (function() {
   };
 
   Ai.prototype.group_executions = function(event) {
-    var at, command, commands, group, name, order, pos, _i, _len;
+    var at, command, commands, group, name, name_promote, order, pos, promotions, _i, _j, _len, _len1;
     this.resurrection();
     this.routing();
     this.repairs();
+    promotions = [];
     for (_i = 0, _len = GROUPS.length; _i < _len; _i++) {
       group = GROUPS[_i];
       name = group.name;
@@ -17290,6 +17329,9 @@ Ai = (function() {
           commands.revert();
           break;
         }
+        if (command.promote != null) {
+          promotions.push([name, command.promote]);
+        }
         if (name = command.name) {
           order = command.order;
           if (order === FORDER_MANUFACTURE) {
@@ -17303,6 +17345,12 @@ Ai = (function() {
             this.resurrects[name] = [group, command];
           }
         }
+      }
+    }
+    for (_j = 0, _len1 = promotions.length; _j < _len1; _j++) {
+      name_promote = promotions[_j];
+      if (GROUPS.promote.apply(GROUPS, name_promote) && Trace.on) {
+        Trace.blue("" + (name_promote.first()) + " promoted by " + (name_promote.last()) + ".");
       }
     }
     return this.stalled_units();
@@ -17437,7 +17485,7 @@ Command.prototype.with_one_truck = function(obj) {
 };
 
 Command.prototype.base_commands = function() {
-  var command, commands, energy_build, energy_cost, factory_build, factory_cost, generator_build, generator_cost, hq_build, hq_cost, last, max_savings, more, penultima, research_build, research_cost, savings, _i, _j, _k, _len, _len1, _len2;
+  var command, commands, energy_build, energy_cost, factory_build, factory_cost, generator_build, generator_cost, hq_build, hq_cost, last, max_savings, penultima, research_build, research_cost, savings, _i, _j, _k, _len, _len1, _len2;
   this.limit = 3;
   generator_cost = this.power_generator().cost;
   energy_cost = generator_cost + 4 * this.oil_derrick().cost;
@@ -17485,16 +17533,6 @@ Command.prototype.base_commands = function() {
   penultima = commands.penultima();
   last = commands.last();
   last.savings = penultima.savings - last.cost;
-  this.savings = 0;
-  this.limit = 1;
-  more = [this.pass(this.on_plenty(this.one(this.trucker()))), this.with_one_truck(this.research_facility(this.at(this.x - this.s * this.dx, this.y))), this.with_one_truck(this.power_generator(this.at(this.x - this.s * this.dx, this.y + this.s * this.dy))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x, this.y + this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x + this.s * this.dx, this.y + this.s * this.dy)))];
-  commands = commands.concat(more);
-  if (this.horizontal) {
-    more = [this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y + this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x + 2 * this.s * this.dx, this.y))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y - this.s * this.dy)))];
-  } else {
-    more = [this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + this.s * this.dx, this.y + 2 * this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x, this.y + 2 * this.s * this.dy))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x - this.s * this.dx, this.y + 2 * this.s * this.dy)))];
-  }
-  commands = commands.concat(more);
   return WZArray.bless(commands);
 };
 
@@ -17509,7 +17547,11 @@ Command.prototype.factory_commands = function() {
   4..times(function() {
     return commands.push(fastgun);
   });
-  commands.push(truck);
+  commands.push(truck.dup());
+  commands.last().promote = 1;
+  8..times(function() {
+    return commands.push(fastgun);
+  });
   return WZArray.bless(commands);
 };
 

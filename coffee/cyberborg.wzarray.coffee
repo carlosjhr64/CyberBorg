@@ -290,6 +290,22 @@ class Groups
         return({object:object,group:{list:Groups.RESERVE}})
     return null
 
+  index_of: (name) ->
+    index = 0
+    for group in @
+      return index if group.name is name
+      index += 1
+    null
+
+  # TODO: This is a swap... need to use splice instead.
+  promote: (name, di=-1) ->
+    index = @index_of(name)
+    if index? and tmp = @[index+di]
+      @[index+di] = @[index]
+      @[index] = tmp
+      return true
+    false
+
   # When we get pre-existing game objects from WZ's JS API,
   # we need to find them in our groups.
   # Otherwise we end up with duplicates.

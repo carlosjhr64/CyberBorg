@@ -1,3 +1,8 @@
+Object::dup = () ->
+  object =  {}
+  object[key] = @[key] for key of @
+  object
+
 class Location
   ###################
   ### CONSTRUCTOR ###
