@@ -16512,6 +16512,10 @@ Command = (function() {
     if (!obj.cost) {
       obj.cost = ((1.0 + obj.pcost / 100.0) * obj.bcost) + obj.tcost;
     }
+    obj.min = 1;
+    obj.max = 1;
+    obj.help = 1;
+    obj.limit = this.limit;
     return obj;
   };
 
@@ -17515,7 +17519,7 @@ Command.prototype.with_one_truck = function(obj) {
 };
 
 Command.prototype.base_commands = function() {
-  var command, commands, energy_build, energy_cost, factory_build, factory_cost, generator_build, generator_cost, hq_build, hq_cost, last, max_savings, penultima, research_build, research_cost, savings, _i, _j, _k, _len, _len1, _len2;
+  var command, commands, energy_build, energy_cost, factory_build, factory_cost, generator_build, generator_cost, hq_build, hq_cost, last, max_savings, more, penultima, research_build, research_cost, savings, _i, _j, _k, _len, _len1, _len2;
   this.limit = 3;
   generator_cost = this.power_generator().cost;
   energy_cost = generator_cost + 4 * this.oil_derrick().cost;
@@ -17564,12 +17568,16 @@ Command.prototype.base_commands = function() {
   last = commands.last();
   last.savings = penultima.savings - last.cost;
   last.promote = 2;
+  this.savings = 0;
+  this.limit = 1;
+  more = [this.with_one_truck(this.light_factory(this.at(this.x + this.s * this.dx, this.y + this.s * this.dy))), this.with_one_truck(this.research_facility(this.at(this.x - this.s * this.dx, this.y)))];
+  commands = commands.concat(more);
   return WZArray.bless(commands);
 };
 
 Command.prototype.factory_commands = function() {
   var commands, fastgun, truck;
-  this.limit = 1;
+  this.limit = 5;
   this.savings = 0;
   truck = this.on_budget(this.manufacture(this.fasttruck()));
   fastgun = this.on_budget(this.manufacture(this.fastgun()));

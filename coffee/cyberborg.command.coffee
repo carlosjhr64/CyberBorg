@@ -622,6 +622,10 @@ class Command
       obj.name = name
     unless obj.cost
       obj.cost = ((1.0 + obj.pcost/100.0) * obj.bcost) + obj.tcost
+    obj.min = 1
+    obj.max = 1
+    obj.help = 1
+    obj.limit = @limit
     obj
 
   maintain: (obj={}) ->

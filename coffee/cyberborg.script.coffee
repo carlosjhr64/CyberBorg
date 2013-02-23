@@ -185,6 +185,16 @@ Command::base_commands = () ->
   last = commands.last()
   last.savings = penultima.savings - last.cost
   last.promote = 2
+
+  # More commads...
+  @savings = 0
+  @limit = 1
+  more = [
+    @with_one_truck @light_factory @at @x+@s*@dx, @y+@s*@dy
+    @with_one_truck @research_facility @at @x-@s*@dx, @y
+  ]
+  commands = commands.concat(more)
+
   # Convert the list to wzarray
   WZArray.bless(commands)
 
@@ -222,7 +232,7 @@ Command::base_commands = () ->
 # commands = commands.concat(more)
 
 Command::factory_commands = () ->
-  @limit = 1 # Group size limit
+  @limit = 5 # Group size limit
   @savings = 0
   # The commands are...
   truck = @on_budget @manufacture @fasttruck()
