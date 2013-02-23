@@ -423,7 +423,10 @@ class Ai
             name = WZObject.namexy(name, pos.x, pos.y)
             @resurrects[name] = [group, command]
     for name_promote in promotions
-      if GROUPS.promote(name_promote...) and Trace.on
-        Trace.blue("#{name_promote.first()} promoted by #{name_promote.last()}.")
+      if GROUPS.promote(name_promote...)
+        if Trace.on
+          Trace.blue("New Group Order:")
+          for group in GROUPS
+            Trace.blue "\t#{group.name}"
     # Stalled units are consider of lowest rank...
     @stalled_units() # have any stalled unit try to execute their command.

@@ -297,14 +297,28 @@ class Groups
       index += 1
     null
 
-  # TODO: This is a swap... need to use splice instead.
-  promote: (name, di=-1) ->
-    index = @index_of(name)
-    if index? and tmp = @[index+di]
-      @[index+di] = @[index]
-      @[index] = tmp
+  swap: (i,j) ->
+    if tmp = @[j]
+      @[j] = @[i]
+      @[i] = tmp
       return true
     false
+
+  promote: (name, di=1) ->
+    promoted = false
+    index = @index_of(name)
+    unless index is null
+      k = 1
+      k = -1 if di < 0
+      index_di = index + di
+      while -1 < index < @length
+        if @swap(index, index+k)
+          promoted = true
+          index+=k
+          break if index is index_di
+        else
+          break
+    promoted
 
   # When we get pre-existing game objects from WZ's JS API,
   # we need to find them in our groups.

@@ -769,18 +769,42 @@ Groups = (function() {
     return null;
   };
 
-  Groups.prototype.promote = function(name, di) {
-    var index, tmp;
-    if (di == null) {
-      di = -1;
-    }
-    index = this.index_of(name);
-    if ((index != null) && (tmp = this[index + di])) {
-      this[index + di] = this[index];
-      this[index] = tmp;
+  Groups.prototype.swap = function(i, j) {
+    var tmp;
+    if (tmp = this[j]) {
+      this[j] = this[i];
+      this[i] = tmp;
       return true;
     }
     return false;
+  };
+
+  Groups.prototype.promote = function(name, di) {
+    var index, index_di, k, promoted;
+    if (di == null) {
+      di = 1;
+    }
+    promoted = false;
+    index = this.index_of(name);
+    if (index !== null) {
+      k = 1;
+      if (di < 0) {
+        k = -1;
+      }
+      index_di = index + di;
+      while ((-1 < index && index < this.length)) {
+        if (this.swap(index, index + k)) {
+          promoted = true;
+          index += k;
+          if (index === index_di) {
+            break;
+          }
+        } else {
+          break;
+        }
+      }
+    }
+    return promoted;
   };
 
   Groups.prototype.find = function(target) {
@@ -17305,7 +17329,7 @@ Ai = (function() {
   };
 
   Ai.prototype.group_executions = function(event) {
-    var at, command, commands, group, name, name_promote, order, pos, promotions, _i, _j, _len, _len1;
+    var at, command, commands, group, name, name_promote, order, pos, promotions, _i, _j, _k, _len, _len1, _len2;
     this.resurrection();
     this.routing();
     this.repairs();
@@ -17349,8 +17373,14 @@ Ai = (function() {
     }
     for (_j = 0, _len1 = promotions.length; _j < _len1; _j++) {
       name_promote = promotions[_j];
-      if (GROUPS.promote.apply(GROUPS, name_promote) && Trace.on) {
-        Trace.blue("" + (name_promote.first()) + " promoted by " + (name_promote.last()) + ".");
+      if (GROUPS.promote.apply(GROUPS, name_promote)) {
+        if (Trace.on) {
+          Trace.blue("New Group Order:");
+          for (_k = 0, _len2 = GROUPS.length; _k < _len2; _k++) {
+            group = GROUPS[_k];
+            Trace.blue("\t" + group.name);
+          }
+        }
       }
     }
     return this.stalled_units();
@@ -17533,6 +17563,7 @@ Command.prototype.base_commands = function() {
   penultima = commands.penultima();
   last = commands.last();
   last.savings = penultima.savings - last.cost;
+  last.promote = 2;
   return WZArray.bless(commands);
 };
 

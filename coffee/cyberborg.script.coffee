@@ -184,6 +184,7 @@ Command::base_commands = () ->
   penultima = commands.penultima()
   last = commands.last()
   last.savings = penultima.savings - last.cost
+  last.promote = 2
   # Convert the list to wzarray
   WZArray.bless(commands)
 
