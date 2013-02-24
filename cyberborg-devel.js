@@ -17333,7 +17333,7 @@ Ai = (function() {
   };
 
   Ai.prototype.group_executions = function(event) {
-    var at, command, commands, group, name, name_promote, order, pos, promotions, _i, _j, _k, _len, _len1, _len2;
+    var at, command, commands, group, name, name_promote, order, pos, promotions, _i, _j, _len, _len1, _results;
     this.resurrection();
     this.routing();
     this.repairs();
@@ -17343,6 +17343,9 @@ Ai = (function() {
       name = group.name;
       if (!(this.hq || this.base_group(name))) {
         continue;
+      }
+      if (name === LABS) {
+        this.stalled_units();
       }
       commands = group.commands;
       while (command = commands.next()) {
@@ -17375,19 +17378,29 @@ Ai = (function() {
         }
       }
     }
+    _results = [];
     for (_j = 0, _len1 = promotions.length; _j < _len1; _j++) {
       name_promote = promotions[_j];
       if (GROUPS.promote.apply(GROUPS, name_promote)) {
         if (Trace.on) {
           Trace.blue("New Group Order:");
-          for (_k = 0, _len2 = GROUPS.length; _k < _len2; _k++) {
-            group = GROUPS[_k];
-            Trace.blue("\t" + group.name);
-          }
+          _results.push((function() {
+            var _k, _len2, _results1;
+            _results1 = [];
+            for (_k = 0, _len2 = GROUPS.length; _k < _len2; _k++) {
+              group = GROUPS[_k];
+              _results1.push(Trace.blue("\t" + group.name));
+            }
+            return _results1;
+          })());
+        } else {
+          _results.push(void 0);
         }
+      } else {
+        _results.push(void 0);
       }
     }
-    return this.stalled_units();
+    return _results;
   };
 
   return Ai;

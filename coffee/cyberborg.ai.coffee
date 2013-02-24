@@ -402,6 +402,10 @@ class Ai
       # Without HQ, only BASE, FACTORIES, and LABS group
       # continue the command cycle.
       continue unless @hq or @base_group(name)
+      if name is LABS
+        # So far stalled units are labs.
+        # In any case, they'll execute just prior to the group itself.
+        @stalled_units() # have any stalled unit try to execute their command.
       commands = group.commands
       while command = commands.next()
         continue if @dangerous(command)
@@ -428,5 +432,3 @@ class Ai
           Trace.blue("New Group Order:")
           for group in GROUPS
             Trace.blue "\t#{group.name}"
-    # Stalled units are consider of lowest rank...
-    @stalled_units() # have any stalled unit try to execute their command.
