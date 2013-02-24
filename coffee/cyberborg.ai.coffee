@@ -364,9 +364,15 @@ class Ai
     false
 
   repairs: () ->
-    # Healthy trucks
-    trucks = GROUPS.for_all((obj) -> obj.droidType is DROID_CONSTRUCT)
-    trucks = trucks.filters((obj) -> obj.health > AI.repair_on_damage)
+    # Healthy available trucks
+    trucks = GROUPS.for_all(
+      (obj) ->
+        obj.droidType is DROID_CONSTRUCT and
+        obj.health > AI.repair_on_damage and
+        obj.order != DORDER_REPAIR and
+        obj.order != DORDER_BUILD and
+        obj.order != DORDER_HELPBUILD
+    )
     # Damaged resurrectable structures sorted by damage
     structures = GROUPS.for_all((obj) -> obj.type is STRUCTURE)
     structures = structures.filters((obj) -> obj.health < AI.repair_on_damage)
@@ -379,9 +385,16 @@ class Ai
       # Sort trucks by distance from structure
       trucks.nearest(structure)
       truck = trucks.shift()
-      orderDroidObj(truck, DORDER_REPAIR, structure)
-      if Trace.on
+      if orderDroidObj(truck, DORDER_REPAIR, structure) and Trace.on
         Trace.blue "#{truck.namexy()} to repair #{structure.namexy()}."
+    if trucks.length
+      structures = CyberBorg.get_unbuilt_structures()
+      while structures.length and trucks.length
+        structure = structures.shift()
+        trucks.nearest(structure)
+        truck = trucks.shift()
+        if orderDroidObj(truck, DORDER_HELPBUILD, structure) and Trace.on
+          Trace.blue "#{truck.namexy()} to build #{structure.namexy()}."
 
   # This is the work horse of the AI.
   # We iterate through all the groups,

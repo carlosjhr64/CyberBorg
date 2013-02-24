@@ -14670,6 +14670,10 @@ CyberBorg = (function() {
     return CyberBorg.enum_feature(ALL_PLAYERS, "OilResource").nearest(at);
   };
 
+  CyberBorg.get_unbuilt_structures = function() {
+    return CyberBorg.enum_struct().filters(this.is_not_built);
+  };
+
   CyberBorg.get_free_spots = function(at, n) {
     var i, j, list, pos, positions, x, y, _i, _j;
     if (n == null) {
@@ -16816,7 +16820,7 @@ Gotcha = (function() {
   };
 
   Gotcha.initiative = function(order) {
-    return [DORDER_ATTACK, DORDER_RECOVER, DORDER_REPAIR, DORDER_MOVE].indexOf(order) > WZArray.NONE;
+    return [DORDER_ATTACK, DORDER_RECOVER, DORDER_REPAIR, DORDER_HELPBUILD, DORDER_MOVE].indexOf(order) > WZArray.NONE;
   };
 
   Gotcha.routed = function(order) {
@@ -17300,10 +17304,7 @@ Ai = (function() {
   Ai.prototype.repairs = function() {
     var structure, structures, truck, trucks, _results;
     trucks = GROUPS.for_all(function(obj) {
-      return obj.droidType === DROID_CONSTRUCT;
-    });
-    trucks = trucks.filters(function(obj) {
-      return obj.health > AI.repair_on_damage;
+      return obj.droidType === DROID_CONSTRUCT && obj.health > AI.repair_on_damage && obj.order !== DORDER_REPAIR && obj.order !== DORDER_BUILD && obj.order !== DORDER_HELPBUILD;
     });
     structures = GROUPS.for_all(function(obj) {
       return obj.type === STRUCTURE;
@@ -17317,19 +17318,29 @@ Ai = (function() {
     structures.sort(function(a, b) {
       return a.health - b.health;
     });
-    _results = [];
     while (structures.length && trucks.length) {
       structure = structures.shift();
       trucks.nearest(structure);
       truck = trucks.shift();
-      orderDroidObj(truck, DORDER_REPAIR, structure);
-      if (Trace.on) {
-        _results.push(Trace.blue("" + (truck.namexy()) + " to repair " + (structure.namexy()) + "."));
-      } else {
-        _results.push(void 0);
+      if (orderDroidObj(truck, DORDER_REPAIR, structure) && Trace.on) {
+        Trace.blue("" + (truck.namexy()) + " to repair " + (structure.namexy()) + ".");
       }
     }
-    return _results;
+    if (trucks.length) {
+      structures = CyberBorg.get_unbuilt_structures();
+      _results = [];
+      while (structures.length && trucks.length) {
+        structure = structures.shift();
+        trucks.nearest(structure);
+        truck = trucks.shift();
+        if (orderDroidObj(truck, DORDER_HELPBUILD, structure) && Trace.on) {
+          _results.push(Trace.blue("" + (truck.namexy()) + " to build " + (structure.namexy()) + "."));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    }
   };
 
   Ai.prototype.group_executions = function(event) {

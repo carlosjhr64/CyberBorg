@@ -96,6 +96,7 @@ class Gotcha
     [ DORDER_ATTACK
       DORDER_RECOVER
       DORDER_REPAIR
+      DORDER_HELPBUILD
       DORDER_MOVE
     ].indexOf(order) > WZArray.NONE
 

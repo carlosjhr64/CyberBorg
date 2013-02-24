@@ -118,6 +118,9 @@ class CyberBorg
   @get_resources = (at) ->
     CyberBorg.enum_feature(ALL_PLAYERS, "OilResource").nearest(at)
 
+  @get_unbuilt_structures = () ->
+    CyberBorg.enum_struct().filters(@is_not_built)
+
   @get_free_spots = (at,n=1) ->
     x = at.x
     y = at.y
