@@ -107,8 +107,9 @@ class WZObject
 
   # Let's try to be a bit smarter....
   maintain_structure: (structure, at) ->
-    if built = GROUPS.structure_at(at)
-      return @repair_structure(built)
+    if pos = Location.picked(at)
+      if built = GROUPS.structure_at(pos)
+        return @repair_structure(built)
     @build_structure(structure, at)
 
   pursue_research: (research) ->

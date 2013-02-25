@@ -211,9 +211,11 @@ WZObject = (function() {
   };
 
   WZObject.prototype.maintain_structure = function(structure, at) {
-    var built;
-    if (built = GROUPS.structure_at(at)) {
-      return this.repair_structure(built);
+    var built, pos;
+    if (pos = Location.picked(at)) {
+      if (built = GROUPS.structure_at(pos)) {
+        return this.repair_structure(built);
+      }
     }
     return this.build_structure(structure, at);
   };
