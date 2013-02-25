@@ -35,15 +35,17 @@ Ai::allowed_hqless = (command) ->
   return false
 
 # Unacceptable losses threshold for an area.
+# Sets @too_dangerous and @chances.
 Ai::too_dangerous_level = () ->
-  threshold = @power_type_factor * powerType
+  # Aproximately one in chances of doing something dangerous.
+  @chances = 96.0
+  threshold = (1.0/2.0) * powerType
   m1 = 1.0 * GROUPS.count((object) -> object.stattype is RESOURCE_EXTRACTOR)
   m2 = 4.0 * GROUPS.count((object) -> object.stattype is POWER_GEN)
   m = m1
   m = m2 if m1 > m2
   m = 0.5 if m < 1.0
-  threshold = Math.sqrt(m)*threshold
-  return threshold
+  @too_dangerous = Math.sqrt(m)*threshold
 
 Ai::script = () ->
   # We'll create many groups besides the reserve, and

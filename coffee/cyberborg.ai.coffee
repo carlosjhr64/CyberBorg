@@ -16,13 +16,10 @@ class Ai
     @recycle_on_damage = 50.0
     @repair_on_damage = 50.0
     @repair_available = false
-    # Aproximately one in chances of doing something dangerous.
-    @chances = 96.0
-    @power_type_factor = 1.0/2.0
-    @too_dangerous = @too_dangerous_level()
+    @too_dangerous_level() # Sets @too_dangerous and @chances
 
   update: (event) ->
-    @too_dangerous = @too_dangerous_level()
+    @too_dangerous_level() # Updates @too_dangerous and @chances
     @power = CyberBorg.get_power()
     GROUPS.update()
     @gotcha.start(event)	if Trace.on
@@ -403,9 +400,10 @@ class Ai
         structure = structures.shift()
         trucks.nearest(structure)
         truck = trucks.shift()
-        # If the truck order is already *help*,
+        # If the truck order is already *build*,
         # just assume the structure is being taken cared of.
-        unless truck.order is DORDER_HELPBUILD
+        unless truck.order is DORDER_HELPBUILD or
+        trucks.order is DORDER_BUILD
           if orderDroidObj(truck, DORDER_HELPBUILD, structure)
             if Trace.on
               Trace.blue "#{truck.namexy()} to build #{structure.namexy()}."

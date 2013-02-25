@@ -16900,13 +16900,11 @@ Ai = (function() {
     this.recycle_on_damage = 50.0;
     this.repair_on_damage = 50.0;
     this.repair_available = false;
-    this.chances = 96.0;
-    this.power_type_factor = 1.0 / 2.0;
-    this.too_dangerous = this.too_dangerous_level();
+    this.too_dangerous_level();
   }
 
   Ai.prototype.update = function(event) {
-    this.too_dangerous = this.too_dangerous_level();
+    this.too_dangerous_level();
     this.power = CyberBorg.get_power();
     GROUPS.update();
     if (Trace.on) {
@@ -17348,7 +17346,7 @@ Ai = (function() {
         structure = structures.shift();
         trucks.nearest(structure);
         truck = trucks.shift();
-        if (truck.order !== DORDER_HELPBUILD) {
+        if (!(truck.order === DORDER_HELPBUILD || trucks.order === DORDER_BUILD)) {
           if (orderDroidObj(truck, DORDER_HELPBUILD, structure)) {
             if (Trace.on) {
               _results.push(Trace.blue("" + (truck.namexy()) + " to build " + (structure.namexy()) + "."));
@@ -17483,7 +17481,8 @@ Ai.prototype.allowed_hqless = function(command) {
 
 Ai.prototype.too_dangerous_level = function() {
   var m, m1, m2, threshold;
-  threshold = this.power_type_factor * powerType;
+  this.chances = 96.0;
+  threshold = (1.0 / 2.0) * powerType;
   m1 = 1.0 * GROUPS.count(function(object) {
     return object.stattype === RESOURCE_EXTRACTOR;
   });
@@ -17497,8 +17496,7 @@ Ai.prototype.too_dangerous_level = function() {
   if (m < 1.0) {
     m = 0.5;
   }
-  threshold = Math.sqrt(m) * threshold;
-  return threshold;
+  return this.too_dangerous = Math.sqrt(m) * threshold;
 };
 
 Ai.prototype.script = function() {
