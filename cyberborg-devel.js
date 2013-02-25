@@ -17311,7 +17311,7 @@ Ai = (function() {
   Ai.prototype.repairs = function() {
     var structure, structures, truck, trucks, _results;
     trucks = GROUPS.for_all(function(obj) {
-      return obj.droidType === DROID_CONSTRUCT && obj.health > AI.repair_on_damage && obj.order !== DORDER_REPAIR && obj.order !== DORDER_BUILD && obj.order !== DORDER_HELPBUILD;
+      return obj.droidType === DROID_CONSTRUCT && obj.health > AI.repair_on_damage;
     });
     structures = GROUPS.for_all(function(obj) {
       return obj.type === STRUCTURE;
@@ -17329,8 +17329,12 @@ Ai = (function() {
       structure = structures.shift();
       trucks.nearest(structure);
       truck = trucks.shift();
-      if (orderDroidObj(truck, DORDER_REPAIR, structure) && Trace.on) {
-        Trace.blue("" + (truck.namexy()) + " to repair " + (structure.namexy()) + ".");
+      if (truck.order !== DORDER_REPAIR) {
+        if (orderDroidObj(truck, DORDER_REPAIR, structure)) {
+          if (Trace.on) {
+            Trace.blue("" + (truck.namexy()) + " to repair " + (structure.namexy()) + ".");
+          }
+        }
       }
     }
     if (trucks.length) {
@@ -17340,8 +17344,16 @@ Ai = (function() {
         structure = structures.shift();
         trucks.nearest(structure);
         truck = trucks.shift();
-        if (orderDroidObj(truck, DORDER_HELPBUILD, structure) && Trace.on) {
-          _results.push(Trace.blue("" + (truck.namexy()) + " to build " + (structure.namexy()) + "."));
+        if (truck.order !== DORDER_HELPBUILD) {
+          if (orderDroidObj(truck, DORDER_HELPBUILD, structure)) {
+            if (Trace.on) {
+              _results.push(Trace.blue("" + (truck.namexy()) + " to build " + (structure.namexy()) + "."));
+            } else {
+              _results.push(void 0);
+            }
+          } else {
+            _results.push(void 0);
+          }
         } else {
           _results.push(void 0);
         }
