@@ -261,8 +261,8 @@ class Ai
       # If there are defenders...
       if first = defenders.first()
         # Tactic 2: Move towards nearest defender
-        x2 = ((first.x + vx)/2.0).to_i()
-        y2 = ((first.y + vy)/2.0).to_i()
+        x2 = ((2.0*first.x + vx)/3.0).to_i()
+        y2 = ((2.0*first.y + vy)/3.0).to_i()
         # Pick the tactic that places you farthest away from attacker!
         dx = ax - x
         dy = ay - y
@@ -271,7 +271,11 @@ class Ai
         if dx2*dx2+dy2*dy2 > dx*dx+dy*dy
           x = x2
           y = y2
-      orderDroidLoc(victim, DORDER_MOVE, x, y)
+      if droidCanReach(victim, x, y)
+        orderDroidLoc(victim, DORDER_MOVE, x, y)
+      else
+        # A bit of a failsafe.
+        orderDroid(victim, DORDER_RTB)
     if Trace.on
       Trace.blue "#{defenders.length} attacking #{attacker.namexy()}"
 

@@ -17152,8 +17152,8 @@ Ai = (function() {
       x = ((vx - ax) / 2.0).to_i() + vx;
       y = ((vy - ay) / 2.0).to_i() + vy;
       if (first = defenders.first()) {
-        x2 = ((first.x + vx) / 2.0).to_i();
-        y2 = ((first.y + vy) / 2.0).to_i();
+        x2 = ((2.0 * first.x + vx) / 3.0).to_i();
+        y2 = ((2.0 * first.y + vy) / 3.0).to_i();
         dx = ax - x;
         dy = ay - y;
         dx2 = ax - x2;
@@ -17163,7 +17163,11 @@ Ai = (function() {
           y = y2;
         }
       }
-      orderDroidLoc(victim, DORDER_MOVE, x, y);
+      if (droidCanReach(victim, x, y)) {
+        orderDroidLoc(victim, DORDER_MOVE, x, y);
+      } else {
+        orderDroid(victim, DORDER_RTB);
+      }
     }
     if (Trace.on) {
       return Trace.blue("" + defenders.length + " attacking " + (attacker.namexy()));
