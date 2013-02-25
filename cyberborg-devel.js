@@ -17088,7 +17088,11 @@ Ai = (function() {
       if (research === completed) {
         return group.layoffs(command);
       } else {
-        return this.stalled.push(structure);
+        if (structure.command != null) {
+          return this.stalled.push(structure);
+        } else {
+          return Trace.red("" + (structure.namexy()) + " completed " + completed + " without attached command.");
+        }
       }
     }
   };
@@ -17180,21 +17184,24 @@ Ai = (function() {
     var command, group, order, stalled, unit, _ref;
     stalled = [];
     while (unit = this.stalled.shift()) {
-      command = unit.command;
-      this.power -= command.cost;
-      if (this.has(command.power)) {
-        if (!unit.executes(command)) {
-          order = command.order.order_map();
-          Trace.red("" + unit.name + " could not execute " + order);
-          if (command.research) {
-            Trace.red("\t" + command.research);
+      if (command = unit.command) {
+        this.power -= command.cost;
+        if (this.has(command.power)) {
+          if (!unit.executes(command)) {
+            order = command.order.order_map();
+            Trace.red("" + unit.name + " could not execute " + order);
+            if (command.research) {
+              Trace.red("\t" + command.research);
+            }
+            if (group = (_ref = GROUPS.finds(unit)) != null ? _ref.group : void 0) {
+              group.layoffs(command);
+            }
           }
-          if (group = (_ref = GROUPS.finds(unit)) != null ? _ref.group : void 0) {
-            group.layoffs(command);
-          }
+        } else {
+          stalled.push(unit);
         }
       } else {
-        stalled.push(unit);
+        Trace.red("Stalled " + (unit.namexy()) + " did not have command.");
       }
     }
     return this.stalled = stalled;

@@ -209,7 +209,10 @@ class Ai
         group.layoffs(command)
       else
         # assume stalled...
-        @stalled.push(structure)
+        if structure.command?
+          @stalled.push(structure)
+        else
+          Trace.red "#{structure.namexy()} completed #{completed} without attached command."
 
   # A DroidIdle event occurs typically at the end of a move command.
   # The droid arrives and awaits new commands.
@@ -285,23 +288,25 @@ class Ai
   stalled_units: () ->
     stalled = []
     while unit = @stalled.shift()
-      command = unit.command
-      # regardless of the command's execution, we  deduct from power
-      # the command's cost to make subsequent commands aware of
-      # the actual power available to them.
-      @power -= command.cost
-      if @has(command.power)
-        unless unit.executes(command)
-          # Unexpected error... why would this ever happen?
-          order = command.order.order_map()
-          Trace.red "#{unit.name} could not execute #{order}"
-          Trace.red "\t#{command.research}" if command.research
-          if group = GROUPS.finds(unit)?.group
-            # TODO TBD so layoffs the entire command?
-            group.layoffs(command)
+      if command = unit.command
+        # regardless of the command's execution, we  deduct from power
+        # the command's cost to make subsequent commands aware of
+        # the actual power available to them.
+        @power -= command.cost
+        if @has(command.power)
+          unless unit.executes(command)
+            # Unexpected error... why would this ever happen?
+            order = command.order.order_map()
+            Trace.red "#{unit.name} could not execute #{order}"
+            Trace.red "\t#{command.research}" if command.research
+            if group = GROUPS.finds(unit)?.group
+              # TODO TBD so layoffs the entire command?
+              group.layoffs(command)
+        else
+          # push unit into stalled list
+          stalled.push(unit)
       else
-        # push unit into stalled list
-        stalled.push(unit)
+        Trace.red "Stalled #{unit.namexy()} did not have command."
     @stalled = stalled
 
   executes: (group, command) ->
