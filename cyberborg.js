@@ -61,6 +61,15 @@ Trace = (function() {
 
 })();
 
+Object.prototype.dup = function() {
+  var key, object;
+  object = {};
+  for (key in this) {
+    object[key] = this[key];
+  }
+  return object;
+};
+
 Location = (function() {
   /* CONSTRUCTOR
   */
@@ -745,6 +754,57 @@ Groups = (function() {
       }
     }
     return null;
+  };
+
+  Groups.prototype.index_of = function(name) {
+    var group, index, _i, _len;
+    index = 0;
+    for (_i = 0, _len = this.length; _i < _len; _i++) {
+      group = this[_i];
+      if (group.name === name) {
+        return index;
+      }
+      index += 1;
+    }
+    return null;
+  };
+
+  Groups.prototype.swap = function(i, j) {
+    var tmp;
+    if (tmp = this[j]) {
+      this[j] = this[i];
+      this[i] = tmp;
+      return true;
+    }
+    return false;
+  };
+
+  Groups.prototype.promote = function(name, di) {
+    var index, index_di, k, promoted;
+    if (di == null) {
+      di = 1;
+    }
+    promoted = false;
+    index = this.index_of(name);
+    if (index !== null) {
+      k = 1;
+      if (di < 0) {
+        k = -1;
+      }
+      index_di = index + di;
+      while ((-1 < index && index < this.length)) {
+        if (this.swap(index, index + k)) {
+          promoted = true;
+          index += k;
+          if (index === index_di) {
+            break;
+          }
+        } else {
+          break;
+        }
+      }
+    }
+    return promoted;
   };
 
   Groups.prototype.find = function(target) {
@@ -14610,6 +14670,10 @@ CyberBorg = (function() {
     return CyberBorg.enum_feature(ALL_PLAYERS, "OilResource").nearest(at);
   };
 
+  CyberBorg.get_unbuilt_structures = function() {
+    return CyberBorg.enum_struct().filters(this.is_not_built);
+  };
+
   CyberBorg.get_free_spots = function(at, n) {
     var i, j, list, pos, positions, x, y, _i, _j;
     if (n == null) {
@@ -16452,6 +16516,10 @@ Command = (function() {
     if (!obj.cost) {
       obj.cost = ((1.0 + obj.pcost / 100.0) * obj.bcost) + obj.tcost;
     }
+    obj.min = 1;
+    obj.max = 1;
+    obj.help = 1;
+    obj.limit = this.limit;
     return obj;
   };
 
@@ -16653,6 +16721,8 @@ Gotcha = (function() {
         case 'execute':
           keyvals.push("execute:->");
           break;
+        case 'dup':
+          break;
         default:
           keyvals.push("" + key + ":" + command[key]);
       }
@@ -16750,7 +16820,7 @@ Gotcha = (function() {
   };
 
   Gotcha.initiative = function(order) {
-    return [DORDER_ATTACK, DORDER_RECOVER, DORDER_MOVE].indexOf(order) > WZArray.NONE;
+    return [DORDER_ATTACK, DORDER_RECOVER, DORDER_REPAIR, DORDER_HELPBUILD, DORDER_MOVE].indexOf(order) > WZArray.NONE;
   };
 
   Gotcha.routed = function(order) {
@@ -17018,7 +17088,11 @@ Ai = (function() {
       if (research === completed) {
         return group.layoffs(command);
       } else {
-        return this.stalled.push(structure);
+        if (structure.command != null) {
+          return this.stalled.push(structure);
+        } else {
+          return Trace.red("" + (structure.namexy()) + " completed " + completed + " without attached command.");
+        }
       }
     }
   };
@@ -17078,8 +17152,8 @@ Ai = (function() {
       x = ((vx - ax) / 2.0).to_i() + vx;
       y = ((vy - ay) / 2.0).to_i() + vy;
       if (first = defenders.first()) {
-        x2 = ((first.x + vx) / 2.0).to_i();
-        y2 = ((first.y + vy) / 2.0).to_i();
+        x2 = ((2.0 * first.x + vx) / 3.0).to_i();
+        y2 = ((2.0 * first.y + vy) / 3.0).to_i();
         dx = ax - x;
         dy = ay - y;
         dx2 = ax - x2;
@@ -17089,7 +17163,11 @@ Ai = (function() {
           y = y2;
         }
       }
-      orderDroidLoc(victim, DORDER_MOVE, x, y);
+      if (droidCanReach(victim, x, y)) {
+        orderDroidLoc(victim, DORDER_MOVE, x, y);
+      } else {
+        orderDroid(victim, DORDER_RTB);
+      }
     }
     if (Trace.on) {
       return Trace.blue("" + defenders.length + " attacking " + (attacker.namexy()));
@@ -17110,21 +17188,24 @@ Ai = (function() {
     var command, group, order, stalled, unit, _ref;
     stalled = [];
     while (unit = this.stalled.shift()) {
-      command = unit.command;
-      this.power -= command.cost;
-      if (this.has(command.power)) {
-        if (!unit.executes(command)) {
-          order = command.order.order_map();
-          Trace.red("" + unit.name + " could not execute " + order);
-          if (command.research) {
-            Trace.red("\t" + command.research);
+      if (command = unit.command) {
+        this.power -= command.cost;
+        if (this.has(command.power)) {
+          if (!unit.executes(command)) {
+            order = command.order.order_map();
+            Trace.red("" + unit.name + " could not execute " + order);
+            if (command.research) {
+              Trace.red("\t" + command.research);
+            }
+            if (group = (_ref = GROUPS.finds(unit)) != null ? _ref.group : void 0) {
+              group.layoffs(command);
+            }
           }
-          if (group = (_ref = GROUPS.finds(unit)) != null ? _ref.group : void 0) {
-            group.layoffs(command);
-          }
+        } else {
+          stalled.push(unit);
         }
       } else {
-        stalled.push(unit);
+        Trace.red("Stalled " + (unit.namexy()) + " did not have command.");
       }
     }
     return this.stalled = stalled;
@@ -17231,15 +17312,74 @@ Ai = (function() {
     return false;
   };
 
+  Ai.prototype.repairs = function() {
+    var structure, structures, truck, trucks, _results;
+    trucks = GROUPS.for_all(function(obj) {
+      return obj.droidType === DROID_CONSTRUCT && obj.health > AI.repair_on_damage;
+    });
+    structures = GROUPS.for_all(function(obj) {
+      return obj.type === STRUCTURE;
+    });
+    structures = structures.filters(function(obj) {
+      return obj.health < AI.repair_on_damage;
+    });
+    structures = structures.filters(function(obj) {
+      return AI.resurrects[obj.namexy()] != null;
+    });
+    structures.sort(function(a, b) {
+      return a.health - b.health;
+    });
+    while (structures.length && trucks.length) {
+      structure = structures.shift();
+      trucks.nearest(structure);
+      truck = trucks.shift();
+      if (truck.order !== DORDER_REPAIR) {
+        if (orderDroidObj(truck, DORDER_REPAIR, structure)) {
+          if (Trace.on) {
+            Trace.blue("" + (truck.namexy()) + " to repair " + (structure.namexy()) + ".");
+          }
+        }
+      }
+    }
+    if (trucks.length) {
+      structures = CyberBorg.get_unbuilt_structures();
+      _results = [];
+      while (structures.length && trucks.length) {
+        structure = structures.shift();
+        trucks.nearest(structure);
+        truck = trucks.shift();
+        if (truck.order !== DORDER_HELPBUILD) {
+          if (orderDroidObj(truck, DORDER_HELPBUILD, structure)) {
+            if (Trace.on) {
+              _results.push(Trace.blue("" + (truck.namexy()) + " to build " + (structure.namexy()) + "."));
+            } else {
+              _results.push(void 0);
+            }
+          } else {
+            _results.push(void 0);
+          }
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    }
+  };
+
   Ai.prototype.group_executions = function(event) {
-    var at, command, commands, group, name, order, pos, _i, _len;
+    var at, command, commands, group, name, name_promote, order, pos, promotions, _i, _j, _len, _len1, _results;
     this.resurrection();
     this.routing();
+    this.repairs();
+    promotions = [];
     for (_i = 0, _len = GROUPS.length; _i < _len; _i++) {
       group = GROUPS[_i];
       name = group.name;
       if (!(this.hq || this.base_group(name))) {
         continue;
+      }
+      if (name === LABS) {
+        this.stalled_units();
       }
       commands = group.commands;
       while (command = commands.next()) {
@@ -17253,6 +17393,9 @@ Ai = (function() {
         if (!this.executes(group, command)) {
           commands.revert();
           break;
+        }
+        if (command.promote != null) {
+          promotions.push([name, command.promote]);
         }
         if (name = command.name) {
           order = command.order;
@@ -17269,7 +17412,29 @@ Ai = (function() {
         }
       }
     }
-    return this.stalled_units();
+    _results = [];
+    for (_j = 0, _len1 = promotions.length; _j < _len1; _j++) {
+      name_promote = promotions[_j];
+      if (GROUPS.promote.apply(GROUPS, name_promote)) {
+        if (Trace.on) {
+          Trace.blue("New Group Order:");
+          _results.push((function() {
+            var _k, _len2, _results1;
+            _results1 = [];
+            for (_k = 0, _len2 = GROUPS.length; _k < _len2; _k++) {
+              group = GROUPS[_k];
+              _results1.push(Trace.blue("\t" + group.name));
+            }
+            return _results1;
+          })());
+        } else {
+          _results.push(void 0);
+        }
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
   };
 
   return Ai;
@@ -17449,22 +17614,17 @@ Command.prototype.base_commands = function() {
   penultima = commands.penultima();
   last = commands.last();
   last.savings = penultima.savings - last.cost;
+  last.promote = 2;
   this.savings = 0;
   this.limit = 1;
-  more = [this.pass(this.on_plenty(this.one(this.trucker()))), this.with_one_truck(this.research_facility(this.at(this.x - this.s * this.dx, this.y))), this.with_one_truck(this.power_generator(this.at(this.x - this.s * this.dx, this.y + this.s * this.dy))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x, this.y + this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x + this.s * this.dx, this.y + this.s * this.dy)))];
-  commands = commands.concat(more);
-  if (this.horizontal) {
-    more = [this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y + this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x + 2 * this.s * this.dx, this.y))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + 2 * this.s * this.dx, this.y - this.s * this.dy)))];
-  } else {
-    more = [this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x + this.s * this.dx, this.y + 2 * this.s * this.dy))), this.with_one_truck(this.power_generator(this.at(this.x, this.y + 2 * this.s * this.dy))), this.pass(this.on_plenty(this.none())), this.with_one_truck(this.research_facility(this.at(this.x - this.s * this.dx, this.y + 2 * this.s * this.dy)))];
-  }
+  more = [this.with_one_truck(this.light_factory(this.at(this.x + this.s * this.dx, this.y + this.s * this.dy))), this.with_one_truck(this.research_facility(this.at(this.x - this.s * this.dx, this.y)))];
   commands = commands.concat(more);
   return WZArray.bless(commands);
 };
 
 Command.prototype.factory_commands = function() {
   var commands, fastgun, truck;
-  this.limit = 1;
+  this.limit = 5;
   this.savings = 0;
   truck = this.on_budget(this.manufacture(this.fasttruck()));
   fastgun = this.on_budget(this.manufacture(this.fastgun()));
@@ -17473,7 +17633,11 @@ Command.prototype.factory_commands = function() {
   4..times(function() {
     return commands.push(fastgun);
   });
-  commands.push(truck);
+  commands.push(truck.dup());
+  commands.last().promote = 1;
+  8..times(function() {
+    return commands.push(fastgun);
+  });
   return WZArray.bless(commands);
 };
 
@@ -17572,13 +17736,17 @@ eventDestroyed = function(object) {
 };
 
 eventDroidBuilt = function(droid, structure) {
-  var found, obj;
-  found = GROUPS.finds(structure);
+  var found, group, obj;
+  group = null;
+  if (found = GROUPS.finds(structure)) {
+    structure = found.object;
+    group = found.group;
+  }
   obj = {
     name: 'DroidBuilt',
     droid: new WZObject(droid),
-    structure: found.object,
-    group: found.group
+    structure: structure,
+    group: group
   };
   return AI.events(obj);
 };
@@ -17615,24 +17783,32 @@ eventStartLevel = function() {
 };
 
 eventStructureBuilt = function(structure, droid) {
-  var found, obj;
-  found = GROUPS.finds(droid);
+  var found, group, obj;
+  group = null;
+  if (found = GROUPS.finds(droid)) {
+    droid = found.object;
+    group = found.group;
+  }
   obj = {
     name: 'StructureBuilt',
     structure: new WZObject(structure),
-    droid: found.object,
-    group: found.group
+    droid: droid,
+    group: group
   };
   return AI.events(obj);
 };
 
 eventObjectSeen = function(sensor, object) {
-  var found, obj;
-  found = GROUPS.finds(sensor);
+  var found, group, obj;
+  group = null;
+  if (found = GROUPS.finds(sensor)) {
+    sensor = found.object;
+    group = found.group;
+  }
   obj = {
     name: 'ObjectSeen',
-    sensor: found.object,
-    group: found.group,
+    sensor: sensor,
+    group: group,
     object: new WZObject(object)
   };
   return AI.events(obj);
