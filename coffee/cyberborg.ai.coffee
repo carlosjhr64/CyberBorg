@@ -200,16 +200,16 @@ class Ai
   researched: (completed, structure, group) ->
     if structure # did we get the research from a structure?
       completed = completed.name # just interested in the name
-      research = structure.researching
-      command = structure.command
-      if research is completed
-        group.layoffs(command)
-      else
-        # assume stalled...
-        if structure.command?
-          @stalled.push(structure)
+      if command = structure.command
+        research = structure.researching
+        if research is completed
+          group.layoffs(command)
         else
-          Trace.red "#{structure.namexy()} completed #{completed} without attached command."
+          # assume stalled...
+          @stalled.push(structure)
+      else
+        # This happens when human player intervenes
+        Trace.red "#{structure.namexy()} completed #{completed} without attached command."
 
   # A DroidIdle event occurs typically at the end of a move command.
   # The droid arrives and awaits new commands.

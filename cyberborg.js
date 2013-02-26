@@ -17083,16 +17083,15 @@ Ai = (function() {
     var command, research;
     if (structure) {
       completed = completed.name;
-      research = structure.researching;
-      command = structure.command;
-      if (research === completed) {
-        return group.layoffs(command);
-      } else {
-        if (structure.command != null) {
-          return this.stalled.push(structure);
+      if (command = structure.command) {
+        research = structure.researching;
+        if (research === completed) {
+          return group.layoffs(command);
         } else {
-          return Trace.red("" + (structure.namexy()) + " completed " + completed + " without attached command.");
+          return this.stalled.push(structure);
         }
+      } else {
+        return Trace.red("" + (structure.namexy()) + " completed " + completed + " without attached command.");
       }
     }
   };
