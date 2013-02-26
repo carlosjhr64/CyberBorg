@@ -33,5 +33,4 @@ class Trace
       Trace.on = true # regarless of previous state.
       @out "\u001b[1;31m#{title}\u001b[0m"
       @out "\u001b[1;31m#{error.message}\u001b[0m"
-      @out error.stack
       Trace.on = previous_state

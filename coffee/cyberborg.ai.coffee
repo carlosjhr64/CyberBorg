@@ -59,7 +59,7 @@ class Ai
       @group_executions(event)
       @gotcha.end(event)
     catch error
-      Trace.error(error)
+      Trace.error(error, event.name)
 
   # When Warzone 2100 starts the game, it calls eventStartLevel.
   # eventStarLevel is WZ2100 JS API.

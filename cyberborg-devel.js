@@ -67,7 +67,6 @@ Trace = (function() {
       Trace.on = true;
       this.out("\u001b[1;31m" + title + "\u001b[0m");
       this.out("\u001b[1;31m" + error.message + "\u001b[0m");
-      this.out(error.stack);
       return Trace.on = previous_state;
     }
   };
@@ -16968,7 +16967,7 @@ Ai = (function() {
       this.group_executions(event);
       return this.gotcha.end(event);
     } catch (error) {
-      return Trace.error(error);
+      return Trace.error(error, event.name);
     }
   };
 
