@@ -856,6 +856,15 @@ Groups = (function() {
     return null;
   };
 
+  Groups.prototype.droid_weapons_nearest = function(object, n) {
+    if (n == null) {
+      n = this.length;
+    }
+    return this.for_all(function(obj) {
+      return obj.droidType === DROID_WEAPON;
+    }).nearest(object).slice(0, +(n - 1) + 1 || 9e9);
+  };
+
   return Groups;
 
 })();
@@ -17103,16 +17112,10 @@ Ai = (function() {
     return this.helping(droid);
   };
 
-  Ai.nearest_weapons_droids = function(object) {
-    return GROUPS.for_all(function(obj) {
-      return obj.droidType === DROID_WEAPON;
-    }).nearest(object).slice(0, 3);
-  };
-
   Ai.prototype.objectSeen = function(sensor, object, group) {
     var attacker, attackers, _i, _len;
     if (object.droidType === DROID_CONSTRUCT) {
-      attackers = Ai.nearest_weapons_droids(object);
+      attackers = GROUPS.droid_weapons_nearest(object, 3);
       for (_i = 0, _len = attackers.length; _i < _len; _i++) {
         attacker = attackers[_i];
         orderDroidObj(attacker, DORDER_ATTACK, object);
@@ -17133,14 +17136,13 @@ Ai = (function() {
   };
 
   Ai.prototype.attacked = function(victim, attacker, group) {
-    var ax, ay, defender, defenders, dx, dx2, dy, dy2, first, vx, vy, x, x2, y, y2, _i, _len, _ref;
+    var ax, ay, defender, defenders, dx, dx2, dy, dy2, first, vx, vy, x, x2, y, y2, _i, _len;
     if (group == null) {
       Trace.red("" + (victim.namexy()) + " not in a group");
     }
-    defenders = Ai.nearest_weapons_droids(attacker);
-    _ref = Ai.nearest_weapons_droids(attacker);
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      defender = _ref[_i];
+    defenders = GROUPS.droid_weapons_nearest(attacker, 3);
+    for (_i = 0, _len = defenders.length; _i < _len; _i++) {
+      defender = defenders[_i];
       orderDroidObj(defender, DORDER_ATTACK, attacker);
     }
     if (victim.type === DROID) {

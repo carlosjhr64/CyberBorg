@@ -221,13 +221,10 @@ class Ai
     # Anything else?  :)
     @helping(droid)
 
-  @nearest_weapons_droids = (object) ->
-    GROUPS.for_all((obj) -> obj.droidType is DROID_WEAPON).nearest(object)[0..2]
-
   objectSeen: (sensor, object, group) ->
     # These should be short oppotunity orders...
     if object.droidType is DROID_CONSTRUCT
-      attackers = Ai.nearest_weapons_droids(object)
+      attackers = GROUPS.droid_weapons_nearest(object, 3)
       for attacker in attackers
         orderDroidObj(attacker, DORDER_ATTACK, object)
       if Trace.on
@@ -244,8 +241,8 @@ class Ai
   attacked: (victim, attacker, group) ->
     unless group?
       Trace.red "#{victim.namexy()} not in a group"
-    defenders = Ai.nearest_weapons_droids(attacker)
-    for defender in Ai.nearest_weapons_droids(attacker)
+    defenders = GROUPS.droid_weapons_nearest(attacker, 3)
+    for defender in defenders
       orderDroidObj(defender, DORDER_ATTACK, attacker)
     if victim.type is DROID
       # Tactic 1: Move away from attacker

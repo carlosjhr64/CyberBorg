@@ -348,3 +348,6 @@ class Groups
     for object in @
       return object if object.name is name
     null
+
+  droid_weapons_nearest: (object, n=@length) ->
+    @for_all((obj) -> obj.droidType is DROID_WEAPON).nearest(object)[0..(n-1)]
