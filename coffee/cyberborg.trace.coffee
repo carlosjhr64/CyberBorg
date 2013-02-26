@@ -26,3 +26,7 @@ class Trace
 
   @blue = (message) ->
     @out "\u001b[1;34m#{message}\u001b[0m" if Trace.on
+
+  @error = (error, title='ERROR!') ->
+    Trace.red title
+    Trace.red error.message

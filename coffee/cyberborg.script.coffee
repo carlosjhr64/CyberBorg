@@ -34,11 +34,13 @@ Ai::allowed_hqless = (command) ->
       return true
   return false
 
-# Unacceptable losses threshold for an area.
-# Sets @too_dangerous and @chances.
-Ai::too_dangerous_level = () ->
+# Sets @too_dangerous, @chances, and @stalled_group.
+Ai::reinit = () ->
+  # Just prior to which group should stalled units try to execute?
+  @stalled_group = LABS
   # Aproximately one in chances of doing something dangerous.
   @chances = 96.0
+  # Unacceptable losses threshold for an area.
   threshold = (1.0/2.0) * powerType
   m1 = 1.0 * GROUPS.count((object) -> object.stattype is RESOURCE_EXTRACTOR)
   m2 = 4.0 * GROUPS.count((object) -> object.stattype is POWER_GEN)

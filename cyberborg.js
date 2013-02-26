@@ -57,6 +57,14 @@ Trace = (function() {
     }
   };
 
+  Trace.error = function(error, title) {
+    if (title == null) {
+      title = 'ERROR!';
+    }
+    Trace.red(title);
+    return Trace.red(error.message);
+  };
+
   return Trace;
 
 })();
@@ -16695,7 +16703,7 @@ Gotcha = (function() {
   }
 
   Gotcha.prototype.start = function(event) {
-    var coordinate, danger_level, droid, position, research, structure, too_dangerous, _results;
+    var coordinate, danger_level, droid, position, research, structure, _results;
     Trace.out(("Power: " + this.ai.power + "  Event: " + event.name + "  ") + ("Time: " + gameTime));
     if (structure = event.structure) {
       Trace.out("\t" + (structure.namexy()) + "\tCost: " + structure.cost);
@@ -16707,11 +16715,10 @@ Gotcha = (function() {
       Trace.out("\t" + (droid.namexy()) + "\tID:" + droid.id + "\tCost: " + droid.cost);
     }
     position = this.ai.location.position;
-    too_dangerous = this.ai.too_dangerous_level();
     _results = [];
     for (coordinate in position) {
       danger_level = position[coordinate];
-      if (danger_level > too_dangerous) {
+      if (danger_level > this.ai.too_dangerous) {
         _results.push(Trace.out("Danger area: " + coordinate + " " + (danger_level.to_i())));
       } else {
         _results.push(void 0);
@@ -16911,11 +16918,11 @@ Ai = (function() {
     this.recycle_on_damage = 50.0;
     this.repair_on_damage = 50.0;
     this.repair_available = false;
-    this.too_dangerous_level();
+    this.reinit();
   }
 
   Ai.prototype.update = function(event) {
-    this.too_dangerous_level();
+    this.reinit();
     this.power = CyberBorg.get_power();
     GROUPS.update();
     if (Trace.on) {
@@ -16938,11 +16945,26 @@ Ai = (function() {
       case 'Destroyed':
         return this.destroyed(event.object, event.group);
       case 'ObjectSeen':
-        return this.objectSeen(event.sensor, event.object, event.group);
+        try {
+          return this.objectSeen(event.sensor, event.object, event.group);
+        } catch (error) {
+          return Trace.error(error, 'objectSeen');
+        }
+        break;
       case 'Attacked':
-        return this.attacked(event.victim, event.attacker, event.group);
+        try {
+          return this.attacked(event.victim, event.attacker, event.group);
+        } catch (error) {
+          return Trace.error(error, 'attacked');
+        }
+        break;
       case 'Chat':
-        return this.chat(event.sender, event.to, event.message);
+        try {
+          return this.chat(event.sender, event.to, event.message);
+        } catch (error) {
+          return Trace.error(error, 'chat');
+        }
+        break;
       default:
         return Trace.red("" + event.name + " NOT HANDLED!");
     }
@@ -17275,7 +17297,7 @@ Ai = (function() {
       if (!(this.hq || this.base_group(name))) {
         continue;
       }
-      if (name === LABS) {
+      if (name === this.stalled_group) {
         this.stalled_units();
       }
       commands = group.commands;
@@ -17378,8 +17400,9 @@ Ai.prototype.allowed_hqless = function(command) {
   return false;
 };
 
-Ai.prototype.too_dangerous_level = function() {
+Ai.prototype.reinit = function() {
   var m, m1, m2, threshold;
+  this.stalled_group = LABS;
   this.chances = 96.0;
   threshold = (1.0 / 2.0) * powerType;
   m1 = 1.0 * GROUPS.count(function(object) {

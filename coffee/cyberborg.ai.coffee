@@ -16,10 +16,10 @@ class Ai
     @recycle_on_damage = 50.0
     @repair_on_damage = 50.0
     @repair_available = false
-    @too_dangerous_level() # Sets @too_dangerous and @chances
+    @reinit() # Sets @too_dangerous, @chances, and @stalled_group
 
   update: (event) ->
-    @too_dangerous_level() # Updates @too_dangerous and @chances
+    @reinit() # Updates @too_dangerous, @chances, and @stalled_group
     @power = CyberBorg.get_power()
     GROUPS.update()
     @gotcha.start(event)	if Trace.on
@@ -39,11 +39,20 @@ class Ai
       when 'Destroyed'
         @destroyed(event.object, event.group)
       when 'ObjectSeen'
-        @objectSeen(event.sensor, event.object, event.group)
+        try # volatile code
+          @objectSeen(event.sensor, event.object, event.group)
+        catch error
+          Trace.error(error, 'objectSeen')
       when 'Attacked'
-        @attacked(event.victim, event.attacker, event.group)
+        try # volatile code
+          @attacked(event.victim, event.attacker, event.group)
+        catch error
+          Trace.error(error, 'attacked')
       when 'Chat'
-        @chat(event.sender, event.to, event.message)
+        try # volatile code
+          @chat(event.sender, event.to, event.message)
+        catch error
+          Trace.error(error, 'chat')
       # We should catch all possibilities, but in case we missed something...
       else Trace.red("#{event.name} NOT HANDLED!")
 
@@ -340,7 +349,7 @@ class Ai
       # Without HQ, only BASE, FACTORIES, and LABS group
       # continue the command cycle.
       continue unless @hq or @base_group(name)
-      if name is LABS
+      if name is @stalled_group
         # So far stalled units are labs.
         # In any case, they'll execute just prior to the group itself.
         @stalled_units() # have any stalled unit try to execute their command.
