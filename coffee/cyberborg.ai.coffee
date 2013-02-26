@@ -39,20 +39,11 @@ class Ai
       when 'Destroyed'
         @destroyed(event.object, event.group)
       when 'ObjectSeen'
-        try # volatile code
           @objectSeen(event.sensor, event.object, event.group)
-        catch error
-          Trace.error(error, 'objectSeen')
       when 'Attacked'
-        try # volatile code
           @attacked(event.victim, event.attacker, event.group)
-        catch error
-          Trace.error(error, 'attacked')
       when 'Chat'
-        try # volatile code
           @chat(event.sender, event.to, event.message)
-        catch error
-          Trace.error(error, 'chat')
       # We should catch all possibilities, but in case we missed something...
       else Trace.red("#{event.name} NOT HANDLED!")
 
@@ -62,12 +53,13 @@ class Ai
   # After some data wrapping, the event data are funnel into a single event
   # function here.
   events: (event) ->
-    @update(event)
-    @switches(event)
-    # Next see what commands the groups can execute
-    @group_executions(event)
-    # Next, due to bugs either in this script or in the game...
-    @gotcha.end(event)
+    try
+      @update(event)
+      @switches(event)
+      @group_executions(event)
+      @gotcha.end(event)
+    catch error
+      Trace.error(error)
 
   # When Warzone 2100 starts the game, it calls eventStartLevel.
   # eventStarLevel is WZ2100 JS API.

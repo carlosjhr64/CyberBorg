@@ -35,12 +35,12 @@ Trace = (function() {
 
   Trace.red = function(message) {
     var previous_state;
-    previous_state = Trace.on;
     if (Trace.on || (selectedPlayer === me)) {
+      previous_state = Trace.on;
       Trace.on = true;
       this.out("\u001b[1;31m" + message + "\u001b[0m");
+      return Trace.on = previous_state;
     }
-    return Trace.on = previous_state;
   };
 
   Trace.debug = Trace.red;
@@ -58,11 +58,18 @@ Trace = (function() {
   };
 
   Trace.error = function(error, title) {
+    var previous_state;
     if (title == null) {
       title = 'ERROR!';
     }
-    Trace.red(title);
-    return Trace.red(error.message);
+    if (Trace.on || (selectedPlayer === me)) {
+      previous_state = Trace.on;
+      Trace.on = true;
+      this.out("\u001b[1;31m" + title + "\u001b[0m");
+      this.out("\u001b[1;31m" + error.message + "\u001b[0m");
+      this.out(error.stack);
+      return Trace.on = previous_state;
+    }
   };
 
   return Trace;
@@ -16944,36 +16951,25 @@ Ai = (function() {
       case 'Destroyed':
         return this.destroyed(event.object, event.group);
       case 'ObjectSeen':
-        try {
-          return this.objectSeen(event.sensor, event.object, event.group);
-        } catch (error) {
-          return Trace.error(error, 'objectSeen');
-        }
-        break;
+        return this.objectSeen(event.sensor, event.object, event.group);
       case 'Attacked':
-        try {
-          return this.attacked(event.victim, event.attacker, event.group);
-        } catch (error) {
-          return Trace.error(error, 'attacked');
-        }
-        break;
+        return this.attacked(event.victim, event.attacker, event.group);
       case 'Chat':
-        try {
-          return this.chat(event.sender, event.to, event.message);
-        } catch (error) {
-          return Trace.error(error, 'chat');
-        }
-        break;
+        return this.chat(event.sender, event.to, event.message);
       default:
         return Trace.red("" + event.name + " NOT HANDLED!");
     }
   };
 
   Ai.prototype.events = function(event) {
-    this.update(event);
-    this.switches(event);
-    this.group_executions(event);
-    return this.gotcha.end(event);
+    try {
+      this.update(event);
+      this.switches(event);
+      this.group_executions(event);
+      return this.gotcha.end(event);
+    } catch (error) {
+      return Trace.error(error);
+    }
   };
 
   Ai.prototype.startLevel = function() {

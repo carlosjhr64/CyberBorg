@@ -14,11 +14,11 @@ class Trace
   # It'll relay the message if being run in test mode,
   # regardless of the value of trace.
   @red = (message) ->
-    previous_state = Trace.on
     if Trace.on or (selectedPlayer is me)
+      previous_state = Trace.on
       Trace.on = true # regarless of previous state.
       @out "\u001b[1;31m#{message}\u001b[0m"
-    Trace.on = previous_state
+      Trace.on = previous_state
   @debug = @red # Alias
 
   @green = (message) ->
@@ -28,5 +28,10 @@ class Trace
     @out "\u001b[1;34m#{message}\u001b[0m" if Trace.on
 
   @error = (error, title='ERROR!') ->
-    Trace.red title
-    Trace.red error.message
+    if Trace.on or (selectedPlayer is me)
+      previous_state = Trace.on
+      Trace.on = true # regarless of previous state.
+      @out "\u001b[1;31m#{title}\u001b[0m"
+      @out "\u001b[1;31m#{error.message}\u001b[0m"
+      @out error.stack
+      Trace.on = previous_state
