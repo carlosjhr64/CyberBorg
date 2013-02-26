@@ -137,8 +137,7 @@ WZObject = (function() {
         return this.order = order;
       }
     } catch (error) {
-      Trace.red("Error updating " + (this.namexy()) + ", health:" + this.health + "%.");
-      return Trace.red(error);
+      return Trace.error(error, "Error updating " + (this.namexy()) + ", health:" + this.health + "%.");
     }
   };
 
@@ -14596,7 +14595,7 @@ Group = (function() {
       try {
         return command.execute(executers, this);
       } catch (error) {
-        Trace.red(error);
+        Trace.error(error, 'command.execute');
         if (command.cid != null) {
           this.layoffs(command);
         }
@@ -17195,14 +17194,18 @@ Ai = (function() {
           _results.push(void 0);
         }
       } else if (droid.health < this.recycle_on_damage) {
-        if (orderDroid(droid, DORDER_RECYCLE)) {
-          if (Trace.on) {
-            _results.push(Trace.blue("" + (droid.namexy()) + " to recycle."));
+        try {
+          if (orderDroid(droid, DORDER_RECYCLE)) {
+            if (Trace.on) {
+              _results.push(Trace.blue("" + (droid.namexy()) + " to recycle."));
+            } else {
+              _results.push(void 0);
+            }
           } else {
             _results.push(void 0);
           }
-        } else {
-          _results.push(void 0);
+        } catch (error) {
+          _results.push(Trace.error(error, 'orderDroid DORDER_RECYCLE'));
         }
       } else {
         _results.push(void 0);

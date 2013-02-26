@@ -81,7 +81,7 @@ class Group
       try
         return command.execute(executers, @)
       catch error
-        Trace.red error
+        Trace.error(error, 'command.execute')
         @layoffs(command) if command.cid?
         return 0
     return executers.length

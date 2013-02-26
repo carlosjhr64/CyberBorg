@@ -52,8 +52,7 @@ class WZObject
       # @status = obj.status
       # @modules = obj.modules
     catch error
-      Trace.red "Error updating #{@namexy()}, health:#{@health}%."
-      Trace.red error
+      Trace.error(error, "Error updating #{@namexy()}, health:#{@health}%.")
 
   @namexy = (name, x, y) -> "#{name}:#{x},#{y}"
   namexy: () -> WZObject.namexy(@name, @x, @y)

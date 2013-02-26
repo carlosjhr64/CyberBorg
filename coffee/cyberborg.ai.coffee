@@ -271,8 +271,11 @@ class Ai
           if orderDroid(droid, DORDER_RTR)
             Trace.blue "#{droid.namexy()} to repair." if Trace.on
       else if droid.health < @recycle_on_damage
-        if orderDroid(droid, DORDER_RECYCLE)
-          Trace.blue "#{droid.namexy()} to recycle." if Trace.on
+        try
+          if orderDroid(droid, DORDER_RECYCLE)
+            Trace.blue "#{droid.namexy()} to recycle." if Trace.on
+        catch error
+          Trace.error(error, 'orderDroid DORDER_RECYCLE')
 
   dangerous: (command) ->
     # Enemy has made this location too expensive, so skip it?
