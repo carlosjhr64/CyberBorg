@@ -17348,7 +17348,7 @@ Ai = (function() {
         structure = structures.shift();
         trucks.nearest(structure);
         truck = trucks.shift();
-        if (!(truck.order === DORDER_HELPBUILD || trucks.order === DORDER_BUILD)) {
+        if (!(truck.order === DORDER_HELPBUILD || truck.order === DORDER_BUILD)) {
           if (orderDroidObj(truck, DORDER_HELPBUILD, structure)) {
             if (Trace.on) {
               _results.push(Trace.blue("" + (truck.namexy()) + " to build " + (structure.namexy()) + "."));

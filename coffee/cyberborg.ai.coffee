@@ -403,7 +403,7 @@ class Ai
         # If the truck order is already *build*,
         # just assume the structure is being taken cared of.
         unless truck.order is DORDER_HELPBUILD or
-        trucks.order is DORDER_BUILD
+        truck.order is DORDER_BUILD
           if orderDroidObj(truck, DORDER_HELPBUILD, structure)
             if Trace.on
               Trace.blue "#{truck.namexy()} to build #{structure.namexy()}."
