@@ -32,5 +32,6 @@ class Trace
       previous_state = Trace.on
       Trace.on = true # regarless of previous state.
       @out "\u001b[1;31m#{title}\u001b[0m"
+      @out "\u001b[1;31m#{error.lineNumber}\u001b[0m"
       @out "\u001b[1;31m#{error.message}\u001b[0m"
       Trace.on = previous_state
