@@ -66,8 +66,7 @@ Trace = (function() {
       previous_state = Trace.on;
       Trace.on = true;
       this.out("\u001b[1;31m" + title + "\u001b[0m");
-      this.out("\u001b[1;31m" + error.lineNumber + "\u001b[0m");
-      this.out("\u001b[1;31m" + error.message + "\u001b[0m");
+      this.out("\u001b[1;31m" + error.lineNumber + ": " + error.message + "\u001b[0m");
       return Trace.on = previous_state;
     }
   };
