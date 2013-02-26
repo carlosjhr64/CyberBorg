@@ -17047,47 +17047,6 @@ Ai = (function() {
     return false;
   };
 
-  Ai.prototype.chat = function(sender, to, message) {
-    var words;
-    words = message.split(/\s+/);
-    if (sender === me) {
-      switch (words[0]) {
-        case 'report':
-          return this.report(words[1]);
-        case 'trace':
-          if (Trace.on) {
-            Trace.green("Tracing off.");
-          }
-          Trace.on = !Trace.on;
-          if (Trace.on) {
-            return Trace.green("Tracing on.");
-          }
-      }
-    }
-  };
-
-  Ai.prototype.report = function(who) {
-    var droid, empty, list, _i, _len, _ref, _ref1, _ref2, _ref3;
-    if (who === 'Reserve') {
-      list = Groups.RESERVE;
-    } else {
-      list = (_ref = GROUPS.named(who)) != null ? _ref.list : void 0;
-    }
-    if (list) {
-      empty = true;
-      for (_i = 0, _len = list.length; _i < _len; _i++) {
-        droid = list[_i];
-        empty && (empty = false);
-        console(("" + (droid.namexy()) + " ") + ("corder:" + ((_ref1 = droid.corder) != null ? _ref1.order_map() : void 0) + " ") + ("dorder:" + ((_ref2 = droid.dorder) != null ? _ref2.order_map() : void 0) + " ") + ("order:" + ((_ref3 = droid.order) != null ? _ref3.order_map() : void 0) + " ") + ("health:" + droid.health + "%"));
-      }
-      if (empty) {
-        return console("Group currently empty.");
-      }
-    } else {
-      return console("There is not group " + who);
-    }
-  };
-
   Ai.prototype.researched = function(completed, structure, group) {
     var command, research;
     if (structure) {
@@ -17110,69 +17069,6 @@ Ai = (function() {
       group.layoffs(droid.command);
     }
     return this.helping(droid);
-  };
-
-  Ai.prototype.objectSeen = function(sensor, object, group) {
-    var attacker, attackers, _i, _len;
-    if (object.droidType === DROID_CONSTRUCT) {
-      attackers = GROUPS.droid_weapons_nearest(object, 3);
-      for (_i = 0, _len = attackers.length; _i < _len; _i++) {
-        attacker = attackers[_i];
-        orderDroidObj(attacker, DORDER_ATTACK, object);
-      }
-      if (Trace.on) {
-        return Trace.blue("" + attackers.length + " attacking seen " + (object.namexy()));
-      }
-    } else if (object.stattype === OIL_DRUM) {
-      orderDroidObj(sensor, DORDER_RECOVER, object);
-      if (Trace.on) {
-        return Trace.blue("" + (sensor.namexy()) + " recovers " + (object.namexy()));
-      }
-    } else {
-      if (Trace.on) {
-        return Trace.out("" + (sensor.namexy()) + " spies " + (object.namexy()));
-      }
-    }
-  };
-
-  Ai.prototype.attacked = function(victim, attacker, group) {
-    var ax, ay, defender, defenders, dx, dx2, dy, dy2, first, vx, vy, x, x2, y, y2, _i, _len;
-    if (group == null) {
-      Trace.red("" + (victim.namexy()) + " not in a group");
-    }
-    defenders = GROUPS.droid_weapons_nearest(attacker, 3);
-    for (_i = 0, _len = defenders.length; _i < _len; _i++) {
-      defender = defenders[_i];
-      orderDroidObj(defender, DORDER_ATTACK, attacker);
-    }
-    if (victim.type === DROID) {
-      vx = victim.x;
-      vy = victim.y;
-      ax = attacker.x;
-      ay = attacker.y;
-      x = ((vx - ax) / 2.0).to_i() + vx;
-      y = ((vy - ay) / 2.0).to_i() + vy;
-      if (first = defenders.first()) {
-        x2 = ((2.0 * first.x + vx) / 3.0).to_i();
-        y2 = ((2.0 * first.y + vy) / 3.0).to_i();
-        dx = ax - x;
-        dy = ay - y;
-        dx2 = ax - x2;
-        dy2 = ay - y2;
-        if (dx2 * dx2 + dy2 * dy2 > dx * dx + dy * dy) {
-          x = x2;
-          y = y2;
-        }
-      }
-      if (droidCanReach(victim, x, y)) {
-        orderDroidLoc(victim, DORDER_MOVE, x, y);
-      } else {
-        orderDroid(victim, DORDER_RTB);
-      }
-    }
-    if (Trace.on) {
-      return Trace.blue("" + defenders.length + " attacking " + (attacker.namexy()));
-    }
   };
 
   Ai.prototype.has = function(power) {
@@ -17500,6 +17396,110 @@ Ai.prototype.too_dangerous_level = function() {
     m = 0.5;
   }
   return this.too_dangerous = Math.sqrt(m) * threshold;
+};
+
+Ai.prototype.objectSeen = function(sensor, object, group) {
+  var attacker, attackers, _i, _len;
+  if (object.droidType === DROID_CONSTRUCT) {
+    attackers = GROUPS.droid_weapons_nearest(object, 3);
+    for (_i = 0, _len = attackers.length; _i < _len; _i++) {
+      attacker = attackers[_i];
+      orderDroidObj(attacker, DORDER_ATTACK, object);
+    }
+    if (Trace.on) {
+      return Trace.blue("" + attackers.length + " attacking seen " + (object.namexy()));
+    }
+  } else if (object.stattype === OIL_DRUM) {
+    orderDroidObj(sensor, DORDER_RECOVER, object);
+    if (Trace.on) {
+      return Trace.blue("" + (sensor.namexy()) + " recovers " + (object.namexy()));
+    }
+  } else {
+    if (Trace.on) {
+      return Trace.out("" + (sensor.namexy()) + " spies " + (object.namexy()));
+    }
+  }
+};
+
+Ai.prototype.attacked = function(victim, attacker, group) {
+  var ax, ay, defender, defenders, dx, dx2, dy, dy2, first, vx, vy, x, x2, y, y2, _i, _len;
+  if (group == null) {
+    Trace.red("" + (victim.namexy()) + " not in a group");
+  }
+  defenders = GROUPS.droid_weapons_nearest(attacker, 3);
+  for (_i = 0, _len = defenders.length; _i < _len; _i++) {
+    defender = defenders[_i];
+    orderDroidObj(defender, DORDER_ATTACK, attacker);
+  }
+  if (victim.type === DROID) {
+    vx = victim.x;
+    vy = victim.y;
+    ax = attacker.x;
+    ay = attacker.y;
+    x = ((vx - ax) / 2.0).to_i() + vx;
+    y = ((vy - ay) / 2.0).to_i() + vy;
+    if (first = defenders.first()) {
+      x2 = ((2.0 * first.x + vx) / 3.0).to_i();
+      y2 = ((2.0 * first.y + vy) / 3.0).to_i();
+      dx = ax - x;
+      dy = ay - y;
+      dx2 = ax - x2;
+      dy2 = ay - y2;
+      if (dx2 * dx2 + dy2 * dy2 > dx * dx + dy * dy) {
+        x = x2;
+        y = y2;
+      }
+    }
+    if (droidCanReach(victim, x, y)) {
+      orderDroidLoc(victim, DORDER_MOVE, x, y);
+    } else {
+      orderDroid(victim, DORDER_RTB);
+    }
+  }
+  if (Trace.on) {
+    return Trace.blue("" + defenders.length + " attacking " + (attacker.namexy()));
+  }
+};
+
+Ai.prototype.chat = function(sender, to, message) {
+  var words;
+  words = message.split(/\s+/);
+  if (sender === me) {
+    switch (words[0]) {
+      case 'report':
+        return this.report(words[1]);
+      case 'trace':
+        if (Trace.on) {
+          Trace.green("Tracing off.");
+        }
+        Trace.on = !Trace.on;
+        if (Trace.on) {
+          return Trace.green("Tracing on.");
+        }
+    }
+  }
+};
+
+Ai.prototype.report = function(who) {
+  var droid, empty, list, _i, _len, _ref, _ref1, _ref2, _ref3;
+  if (who === 'Reserve') {
+    list = Groups.RESERVE;
+  } else {
+    list = (_ref = GROUPS.named(who)) != null ? _ref.list : void 0;
+  }
+  if (list) {
+    empty = true;
+    for (_i = 0, _len = list.length; _i < _len; _i++) {
+      droid = list[_i];
+      empty && (empty = false);
+      console(("" + (droid.namexy()) + " ") + ("corder:" + ((_ref1 = droid.corder) != null ? _ref1.order_map() : void 0) + " ") + ("dorder:" + ((_ref2 = droid.dorder) != null ? _ref2.order_map() : void 0) + " ") + ("order:" + ((_ref3 = droid.order) != null ? _ref3.order_map() : void 0) + " ") + ("health:" + droid.health + "%"));
+    }
+    if (empty) {
+      return console("Group currently empty.");
+    }
+  } else {
+    return console("There is not group " + who);
+  }
 };
 
 Ai.prototype.script = function() {

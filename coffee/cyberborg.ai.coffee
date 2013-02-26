@@ -150,38 +150,6 @@ class Ai
           return true
     return false
 
-  # Player commands...
-  # Some useful feedback and could be used for player commands.
-  chat: (sender, to, message) ->
-    words = message.split(/\s+/)
-    if sender is me
-      switch words[0]
-        when 'report' then @report(words[1])
-        when 'trace'
-          # Toggle tracing
-          Trace.green("Tracing off.") if Trace.on
-          Trace.on = !Trace.on
-          Trace.green("Tracing on.") if Trace.on
-        #else console("What?")
-
-  # Lists the units in the group by name, position, 'n stuff.
-  report: (who) ->
-    if who is 'Reserve'
-      list = Groups.RESERVE
-    else
-      list = GROUPS.named(who)?.list
-    if list
-      empty = true
-      for droid in list
-        empty &&= false
-        console "#{droid.namexy()} " +
-        "corder:#{droid.corder?.order_map()} " +
-        "dorder:#{droid.dorder?.order_map()} " +
-        "order:#{droid.order?.order_map()} " +
-        "health:#{droid.health}%"
-      console "Group currently empty." if empty
-    else console "There is not group #{who}"
-
   # The second structure that this AI builds is a research facility.
   # This AI may build five research facilities (the standard limit,
   # and again as first written).  The AI also makes use of
@@ -220,58 +188,6 @@ class Ai
     group.layoffs(droid.command) if droid.command
     # Anything else?  :)
     @helping(droid)
-
-  objectSeen: (sensor, object, group) ->
-    # These should be short oppotunity orders...
-    if object.droidType is DROID_CONSTRUCT
-      attackers = GROUPS.droid_weapons_nearest(object, 3)
-      for attacker in attackers
-        orderDroidObj(attacker, DORDER_ATTACK, object)
-      if Trace.on
-        Trace.blue "#{attackers.length} attacking seen #{object.namexy()}"
-    else if object.stattype is OIL_DRUM
-      orderDroidObj(sensor, DORDER_RECOVER, object)
-      if Trace.on
-        Trace.blue "#{sensor.namexy()} recovers #{object.namexy()}"
-    else
-      if Trace.on
-        Trace.out "#{sensor.namexy()} spies #{object.namexy()}"
-
-
-  attacked: (victim, attacker, group) ->
-    unless group?
-      Trace.red "#{victim.namexy()} not in a group"
-    defenders = GROUPS.droid_weapons_nearest(attacker, 3)
-    for defender in defenders
-      orderDroidObj(defender, DORDER_ATTACK, attacker)
-    if victim.type is DROID
-      # Tactic 1: Move away from attacker
-      vx = victim.x
-      vy = victim.y
-      ax = attacker.x
-      ay = attacker.y
-      x = ((vx - ax)/2.0).to_i() + vx
-      y = ((vy - ay)/2.0).to_i() + vy
-      # If there are defenders...
-      if first = defenders.first()
-        # Tactic 2: Move towards nearest defender
-        x2 = ((2.0*first.x + vx)/3.0).to_i()
-        y2 = ((2.0*first.y + vy)/3.0).to_i()
-        # Pick the tactic that places you farthest away from attacker!
-        dx = ax - x
-        dy = ay - y
-        dx2 = ax - x2
-        dy2 = ay - y2
-        if dx2*dx2+dy2*dy2 > dx*dx+dy*dy
-          x = x2
-          y = y2
-      if droidCanReach(victim, x, y)
-        orderDroidLoc(victim, DORDER_MOVE, x, y)
-      else
-        # A bit of a failsafe.
-        orderDroid(victim, DORDER_RTB)
-    if Trace.on
-      Trace.blue "#{defenders.length} attacking #{attacker.namexy()}"
 
   has: (power) ->
     if power?
@@ -367,7 +283,7 @@ class Ai
     false
 
   repairs: () ->
-    # Healthy available trucks
+    # Healthy available trucks TODO
     trucks = GROUPS.for_all(
       (obj) ->
         obj.droidType is DROID_CONSTRUCT and
