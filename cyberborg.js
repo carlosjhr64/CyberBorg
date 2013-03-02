@@ -16723,10 +16723,13 @@ Gotcha = (function() {
     _results = [];
     for (coordinate in position) {
       danger_level = position[coordinate];
+      if (!(typeof danger_level === 'number' && /^\d+,\d+$/.test(coordinate))) {
+        continue;
+      }
       if (danger_level > this.ai.too_dangerous) {
-        _results.push(Trace.out("Danger area: " + coordinate + " " + (danger_level.to_i())));
+        _results.push(Trace.green("Danger area: " + coordinate + " " + (danger_level.to_i())));
       } else {
-        _results.push(void 0);
+        _results.push(Trace.out("Danger area: " + coordinate + " " + (danger_level.to_i())));
       }
     }
     return _results;
@@ -17399,7 +17402,7 @@ Ai.prototype.allowed_hqless = function(command) {
 };
 
 Ai.prototype.reinit = function() {
-  var avg, key, m, m1, m2, n, sum, threshold, value, _ref;
+  var fsumn, key, m, m1, m2, n, sum, threshold, value, _ref;
   this.stalled_group = LABS;
   this.chances = 96.0;
   threshold = (1.0 / 2.0) * powerType;
@@ -17429,9 +17432,9 @@ Ai.prototype.reinit = function() {
     n += 1.0;
   }
   if (sum > 0.0) {
-    avg = sum / Math.sqrt(n);
-    if (avg < this.too_dangerous) {
-      return this.too_dangerous = avg;
+    fsumn = sum / (n + 1);
+    if (fsumn < this.too_dangerous) {
+      return this.too_dangerous = fsumn;
     }
   }
 };
