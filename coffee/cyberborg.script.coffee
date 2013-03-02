@@ -38,8 +38,10 @@ Ai::allowed_hqless = (command) ->
 Ai::reinit = () ->
   # Just prior to which group should stalled units try to execute?
   @stalled_group = LABS
+
   # Aproximately one in chances of doing something dangerous.
   @chances = 96.0
+
   # Unacceptable losses threshold for an area.
   threshold = (1.0/2.0) * powerType
   m1 = 1.0 * GROUPS.count((object) -> object.stattype is RESOURCE_EXTRACTOR)
@@ -48,6 +50,14 @@ Ai::reinit = () ->
   m = m2 if m1 > m2
   m = 0.5 if m < 1.0
   @too_dangerous = Math.sqrt(m)*threshold
+  sum = 0.0; n = 0.0
+  for key, value of @location.position when typeof value is 'number'
+    sum += value
+    n += 1.0
+  if sum > 0.0
+    avg = sum/Math.sqrt(n)
+    if avg < @too_dangerous
+      @too_dangerous = avg
 
 Ai::objectSeen = (sensor, object, group) ->
     # These should be short oppotunity orders...

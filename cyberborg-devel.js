@@ -17399,7 +17399,7 @@ Ai.prototype.allowed_hqless = function(command) {
 };
 
 Ai.prototype.reinit = function() {
-  var m, m1, m2, threshold;
+  var avg, key, m, m1, m2, n, sum, threshold, value, _ref;
   this.stalled_group = LABS;
   this.chances = 96.0;
   threshold = (1.0 / 2.0) * powerType;
@@ -17416,7 +17416,24 @@ Ai.prototype.reinit = function() {
   if (m < 1.0) {
     m = 0.5;
   }
-  return this.too_dangerous = Math.sqrt(m) * threshold;
+  this.too_dangerous = Math.sqrt(m) * threshold;
+  sum = 0.0;
+  n = 0.0;
+  _ref = this.location.position;
+  for (key in _ref) {
+    value = _ref[key];
+    if (!(typeof value === 'number')) {
+      continue;
+    }
+    sum += value;
+    n += 1.0;
+  }
+  if (sum > 0.0) {
+    avg = sum / Math.sqrt(n);
+    if (avg < this.too_dangerous) {
+      return this.too_dangerous = avg;
+    }
+  }
 };
 
 Ai.prototype.objectSeen = function(sensor, object, group) {
