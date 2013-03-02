@@ -55,9 +55,9 @@ Ai::reinit = () ->
     sum += value
     n += 1.0
   if sum > 0.0
-    avg = sum/Math.sqrt(n)
-    if avg < @too_dangerous
-      @too_dangerous = avg
+    fsumn = sum/(n+1) # f(sum,n)
+    if fsumn < @too_dangerous
+      @too_dangerous = fsumn
 
 Ai::objectSeen = (sensor, object, group) ->
     # These should be short oppotunity orders...
